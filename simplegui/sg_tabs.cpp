@@ -25,31 +25,41 @@
 #include <GL/gl.h>
 
 #include "sg_tabs.h"
-#include "sg_panel.h"
-#include "sg_button.h"
+#include "sg_stickybutton.h"
 #include "sg_events.h"
 
-SG_Tabs::SG_Tabs()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_Tabs", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SG_Texture tex,
+	SG_Texture dis_tex, SG_Texture click_tex, SG_Texture down_tex)
+	: SG_Compound(
+		(x<0) ? items.size(): 1,
+		(y<0) ? items.size(): 1,
+		0.0, 0.0) {
+  for(int n=0; n < (int)(items.size()); ++n) {
+    SG_StickyButton * sb =
+	new SG_StickyButton(items[n], tex, dis_tex, click_tex, down_tex);
+    AddWidget(sb);
+    if(n == 0) sb->TurnOn();
+    }
   }
 
 SG_Tabs::~SG_Tabs() {
   }
 
 bool SG_Tabs::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
+  if(event->user.code == SG_EVENT_STICKYON) {
+    vector<SG_Widget *>::iterator itrw = widgets.begin();
+    for(; itrw != widgets.end(); ++itrw) {
+      if((*itrw) && (*itrw) != event->user.data1) (*itrw)->TurnOff();
+      else if(*itrw) cur_on = itrw - widgets.begin();
       }
+    event->user.code = SG_EVENT_SELECT;
+    event->user.data1 = (void*)this;
+    event->user.data2 = (void*)cur_on;
+    return 1;
+    }
+  if(event->user.code == SG_EVENT_STICKYOFF) {
+    ((SG_Widget *)(event->user.data1))->TurnOn();
+    return 0;
     }
   return 0; // Silence children doing other things
   }
@@ -57,3 +67,15 @@ bool SG_Tabs::ChildEvent(SDL_Event *event) {
 //  bool SG_Tabs::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_Tabs::Default_Mouse_Cursor = NULL;
+
+void SG_Tabs::Set(int which) {
+  if(which < 0 || which >= (int)(widgets.size())) return; //Ignore invalid
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) (*itrw)->TurnOff();
+    }
+  widgets[which]->TurnOn();
+  cur_on = which;
+  }
+

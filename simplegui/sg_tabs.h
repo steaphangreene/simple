@@ -25,21 +25,34 @@
 #ifndef SG_TABS_H
 #define SG_TABS_H
 
-#include "sg_compound.h"
+#include <string>
+#include <vector>
+using namespace std;
 
-class SG_Button;
-class SG_TextArea;
+#include "sg_compound.h"
+#include "sg_texture.h"
+#include "sg_colors.h"
+
+#ifndef SG_AUTOSIZE
+#define SG_AUTOSIZE	-1
+#endif
+
+class SG_StickyButton;
 
 class SG_Tabs : public SG_Compound {
 public:
-  SG_Tabs();
+  SG_Tabs(vector<string> items, int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
+	SG_Texture tex = SG_COL_RAISED, SG_Texture dis_tex = SG_COL_LOW,
+	SG_Texture click_tex = SG_COL_LOW, SG_Texture down_tex = SG_COL_HIGH);
   virtual ~SG_Tabs();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+  int Which() { return cur_on; }
+  void Set(int which);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  int cur_on; //Which widget is currently on
   };
 
 #endif // SG_TABS_H

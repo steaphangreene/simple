@@ -1,5 +1,6 @@
 -=To FIX=-
 Need a way to handle sounds for compounds' buttons
+Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 
 -=TODO=-
 
@@ -32,3 +33,4 @@ Add time offset to AnimatedPanel widget?
 Allow SG_Table to be resizable?
 Console widget?
 Determing state dynamically based on flags and flag changes?
+Typecastor for char * (separated by '\n's) to vector<string>?
