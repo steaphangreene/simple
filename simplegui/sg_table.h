@@ -28,8 +28,8 @@
 using namespace std;
 
 struct SG_TableGeometry {
-  int col, row; //Starting Column/Row
-  int cols, rows; //Column/Row Size
+  int xpos, ypos;	//Starting X/Y Position (Cell)
+  int xsize, ysize;	//X/Y Size (in Cells)
   };
 
 class SG_Table : public SG_Alignment {
@@ -49,8 +49,8 @@ protected:
   void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
 
 //  static GL_MODEL Default_Mouse_Cursor;
-  int cols, rows;	//Geometry of Table
-  int col, row;		//Current Row/Column
+  int xsize, ysize;	//Geometry of Table
+  int xpos, ypos;		//Current X/Y Position
   vector<SG_TableGeometry> wgeom;
   };
 

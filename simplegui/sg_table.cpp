@@ -23,16 +23,16 @@
 
 #include "sg_table.h"
 
-SG_Table::SG_Table(int cls, int rws, float xbor, float ybor)
+SG_Table::SG_Table(int xsz, int ysz, float xbor, float ybor)
 	: SG_Alignment(xbor, ybor) {
-  if(rws < 1 || cls < 1) {
-    fprintf(stderr, "Illegal table geometry, (%dx%d)\n", cls, rws);
+  if(ysz < 1 || xsz < 1) {
+    fprintf(stderr, "Illegal table geometry, (%dx%d)\n", xsz, ysz);
     exit(1);
     }
-  rows = rws;
-  cols = cls;
-  row = 0;
-  col = 0;
+  xsize = xsz;
+  ysize = ysz;
+  xpos = 0;
+  ypos = 0;
   }
 
 SG_Table::~SG_Table() {
@@ -125,26 +125,26 @@ bool SG_Table::Render(unsigned long cur_time) {
   }
 
 bool SG_Table::AddWidget(SG_Widget *wid) {
-  SG_TableGeometry geom = { col, row, 1, 1 };
+  SG_TableGeometry geom = { xpos, ypos, 1, 1 };
   widgets.push_back(wid);
   wgeom.push_back(geom);
-  ++col;
-  if(col >= cols) {
-    col = 0; ++row;
-    if(row >= rows) row = 0;
+  ++xpos;
+  if(xpos >= xsize) {
+    xpos = 0; ++ypos;
+    if(ypos >= ysize) ypos = 0;
     }
   return 1;
   }
 
-bool SG_Table::AddWidget(SG_Widget *wid, int c1, int r1, int cs, int rs) {
-  if(c1 >= cols || c1 < 0 || c1+cs > cols || cs < 1
-	|| r1 >= rows || r1 < 0 || r1+rs > rows || rs < 1) {
+bool SG_Table::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
+  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
+	|| y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
     fprintf(stderr, "Illegal table placement, (%d,%d)/%dx%d in (%dx%d)\n",
-	c1, r1, cs, rs, cols, rows);
+	x1, y1, xs, ys, xsize, ysize);
     exit(1);
     }
 
-  SG_TableGeometry geom = { c1, r1, cs, rs };
+  SG_TableGeometry geom = { x1, y1, xs, ys };
   widgets.push_back(wid);
   wgeom.push_back(geom);
   return 1;
@@ -171,16 +171,16 @@ void SG_Table::CalcGeometry(const vector<SG_TableGeometry>::iterator &geom) {
   float xcs, ycs; //Relative Cell Sizes.
   float xcp, ycp; //Center Cell Poisiton.
 
-  xcs = 2.0 / cols;
-  ycs = 2.0 / rows;
+  xcs = 2.0 / xsize;
+  ycs = 2.0 / ysize;
 
-  xcp = float((*geom).col) + float((*geom).cols) / 2.0;
-  ycp = float((*geom).row) + float((*geom).rows) / 2.0;
+  xcp = float((*geom).xpos) + float((*geom).xsize) / 2.0;
+  ycp = float((*geom).ypos) + float((*geom).ysize) / 2.0;
 
   cur_geom.xp = -1.0 + xcs * xcp;
   cur_geom.yp = 1.0 - ycs * ycp;
-  cur_geom.xs = xcs * float((*geom).cols) / 2.0 - xborder/float(cols);
-  cur_geom.ys = ycs * float((*geom).rows) / 2.0 - yborder/float(rows);
+  cur_geom.xs = xcs * float((*geom).xsize) / 2.0 - xborder/float(xsize);
+  cur_geom.ys = ycs * float((*geom).ysize) / 2.0 - yborder/float(ysize);
 
 //  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
 //	cur_geom.xp, cur_geom.yp, cur_geom.xs, cur_geom.ys);
