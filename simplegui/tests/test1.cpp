@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#include "simplegui.h"
+#include "../simplegui.h"
 #include "renderer.h"
 #include "audio.h"
 

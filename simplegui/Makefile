@@ -2,14 +2,14 @@ all:	test
 
 
 #PRODUCTION OPTIONS (STANDARD)
-#CXX=	gcc
-#CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+CXX=	gcc
+CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
+LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 #DEGUGGING OPTIONS
-CXX=	gcc
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
+#CXX=	gcc
+#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
+#LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 #CXX=	i586-mingw32msvc-g++
@@ -24,11 +24,14 @@ all: $(OBJS)
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
+%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $<
+
 deps.mk:	*.cpp *.h
-	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
+	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f *.o test1 deps.mk
+	rm -f deps.mk *.o test1
 
 test:	test1
 
