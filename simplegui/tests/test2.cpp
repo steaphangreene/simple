@@ -45,27 +45,26 @@ int event_thread_handler(void *arg) {
 
   SDL_Event event;
 
-  while(!user_quit && SDL_WaitEvent(&event)) { {
-      int have_event = 0;
+  while(!user_quit && SDL_WaitEvent(&event)) {
+    int have_event = 0;
 
-      SDL_mutexP(gui_mutex);
-      have_event = gui->ProcessEvent(&event);
-      SDL_mutexV(gui_mutex);
+    SDL_mutexP(gui_mutex);
+    have_event = gui->ProcessEvent(&event);
+    SDL_mutexV(gui_mutex);
 
-      if(!have_event) continue;
-      if(event.type == SDL_SG_EVENT) {
-	if(event.user.code == SG_EVENT_BUTTONPRESS) {
-	  audio_play(click, 8, 8);
-	  }
+    if(!have_event) continue;
+    if(event.type == SDL_SG_EVENT) {
+      if(event.user.code == SG_EVENT_BUTTONPRESS) {
+	audio_play(click, 8, 8);
 	}
-      else if(event.type == SDL_KEYDOWN) {
-	if(event.key.keysym.sym == SDLK_ESCAPE) {
-	  user_quit = 1;
-	  }
-	}
-      else if(event.type == SDL_QUIT) {
+      }
+    else if(event.type == SDL_KEYDOWN) {
+      if(event.key.keysym.sym == SDLK_ESCAPE) {
 	user_quit = 1;
 	}
+      }
+    else if(event.type == SDL_QUIT) {
+      user_quit = 1;
       }
     }
   return 0;
@@ -161,7 +160,7 @@ int main(int argc, char **argv) {
 
   ev_t = SDL_CreateThread(event_thread_handler, NULL);
   game_t = SDL_CreateThread(game_thread_handler, NULL);
-  video_thread_handler(NULL); //thsi thread MUST be the video thread
+  video_thread_handler(NULL); //THIS thread MUST be the video thread
 
   SDL_WaitThread(ev_t, NULL);
   SDL_WaitThread(game_t, NULL);
