@@ -220,7 +220,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       mousey = float(event->button.y);
       ScreenToRelative(mousex, mousey);
 
-      return mWid->HandMouseEventTo(current_widget, event, mousex, mousey);
+      return mWid->HandEventTo(current_widget, event, mousex, mousey);
       }
     }
 
@@ -230,7 +230,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     ScreenToRelative(mousex, mousey);
 
     if(current_widget)
-      return mWid->HandMouseEventTo(current_widget, event, mousex, mousey);
+      return mWid->HandEventTo(current_widget, event, mousex, mousey);
 
     if(popWid && mousex < popx && mousey < popy
 	&& mousex > -popx && mousey > -popy) {
@@ -242,13 +242,13 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
   else if(event->type == SDL_KEYDOWN) {
     if(focus_widget) {
-      return mWid->HandMouseEventTo(focus_widget, event, mousex, mousey);
+      return mWid->HandEventTo(focus_widget, event, mousex, mousey);
       }
     }
 
   else if(event->type == SDL_KEYUP) {
     if(focus_widget) {
-      return mWid->HandMouseEventTo(focus_widget, event, mousex, mousey);
+      return mWid->HandEventTo(focus_widget, event, mousex, mousey);
       }
     }
 

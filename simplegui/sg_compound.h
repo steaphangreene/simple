@@ -29,7 +29,7 @@ public:
   SG_Compound(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Compound();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int ChildEvent(SDL_Event *event);

@@ -57,7 +57,7 @@ bool SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
-bool SG_Scrollable::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+bool SG_Scrollable::HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Align/Hand: Button Up at (%f,%f)\n", x, y);
@@ -69,12 +69,12 @@ bool SG_Scrollable::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
     if(widgets[0]->HasWidget(targ)) {
       x /= cur_geom.xs; //Scale the coordinates to widget's relative coords
       y /= cur_geom.ys;
-      return widgets[0]->HandMouseEventTo(targ, event, x, y);
+      return widgets[0]->HandEventTo(targ, event, x, y);
       }
     }
 
   if(background && background->HasWidget(targ)) {
-    return background->HandMouseEventTo(targ, event, x, y);
+    return background->HandEventTo(targ, event, x, y);
     }
 
   return 1;

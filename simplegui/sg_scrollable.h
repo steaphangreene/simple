@@ -37,7 +37,7 @@ public:
   SG_Scrollable(float xfac, float yfac);
   virtual ~SG_Scrollable();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

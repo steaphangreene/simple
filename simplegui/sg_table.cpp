@@ -68,7 +68,7 @@ bool SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
-bool SG_Table::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Table/Hand: Button Up at (%f,%f)\n", x, y);
@@ -84,12 +84,12 @@ bool SG_Table::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return (*itrw)->HandMouseEventTo(targ, event, x, y);
+      return (*itrw)->HandEventTo(targ, event, x, y);
       }
     }
 
   if(background->HasWidget(targ))
-    return background->HandMouseEventTo(targ, event, x, y);
+    return background->HandEventTo(targ, event, x, y);
 
   return 1;
   }

@@ -42,14 +42,14 @@ bool SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
   return ret;
   }
 
-bool SG_Compound::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+bool SG_Compound::HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Compound/Hand: Button Up at (%f,%f)\n", x, y);
 
   if(targ == this) return HandleEvent(event, x, y);
 
-  int ret = SG_Table::HandMouseEventTo(targ, event, x, y);
+  int ret = SG_Table::HandEventTo(targ, event, x, y);
   if(ret && event->type == SDL_SG_EVENT) {
     return ChildEvent(event);
     }

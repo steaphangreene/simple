@@ -32,7 +32,7 @@ bool SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
-bool SG_Widget::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
+bool SG_Widget::HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
   if(targ == this) return HandleEvent(event, x, y);
   return 1;
