@@ -51,3 +51,8 @@ SG_Texture::SG_Texture(int sg_cols) {
   yfact = 1.0;
   dirty = 1;
   }
+
+unsigned char sg_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
+unsigned char sg_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
+unsigned char sg_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
+unsigned char sg_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };

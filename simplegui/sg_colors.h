@@ -31,4 +31,3 @@
 #define SG_COL_MAX	6
 
 #endif // SG_COLORS_H
-
