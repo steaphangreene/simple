@@ -93,7 +93,10 @@ bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
     }
   else if(event->type == SDL_MOUSEBUTTONUP) {
     current_sg->UnsetCurrentWidget();
-    if(cur_action == SG_PT_BOX) {
+    if(cur_action == SG_PT_BLOCK) {
+      return 0;
+      }
+    else if(cur_action == SG_PT_BOX) {
       event_data[2] = act_x;
       event_data[3] = act_y;
       event->type = SDL_SG_EVENT;
@@ -104,9 +107,15 @@ bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_button = 0;
       return 1;
       }
+    else if(cur_action == SG_PT_CLICK) {
+      return 0; // Eat these events in this case
+      }
     }  
   else if(event->type == SDL_MOUSEMOTION) {
-    if(cur_action == SG_PT_BOX) {
+    if(cur_action == SG_PT_BLOCK) {
+      return 0;
+      }
+    else if(cur_action == SG_PT_BOX) {
       cur_x = x;
       cur_y = y;
       if(cur_x > 1.0) cur_x = 1.0;
@@ -114,6 +123,9 @@ bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       if(cur_x < -1.0) cur_x = -1.0;
       if(cur_y < -1.0) cur_y = -1.0;
       return 0;
+      }
+    else if(cur_action == SG_PT_CLICK) {
+      return 0; // Eat these events in this case
       }
     }  
 
