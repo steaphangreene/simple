@@ -23,3 +23,16 @@
 
 SV_Ortho::SV_Ortho(int xs, int ys) : SimpleVideo(xs, ys) {
   }
+
+bool SV_Ortho::StartScene(double zoom, double x, double y) {
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+  //This is the actual perspective setup
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-16.0/9.0*zoom*4, 16.0/9.0*zoom*4, -1.0*zoom*4, 1.0*zoom*4, 1.0, 64.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
+  return true;
+  }
