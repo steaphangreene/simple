@@ -102,6 +102,8 @@ test2:	test2.o renderer.o audio.o $(OBJS)
 
 win32:	$(WOBJS)
 
+wintest:	test1.exe test2.exe
+
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
 
