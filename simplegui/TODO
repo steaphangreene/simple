@@ -4,6 +4,7 @@ Need a way to handle sounds for compounds' buttons
 -=TODO=-
 
 -=To Flush Out=-
+Finish dynamically resizeable fonts
 Fix all the in-code "FIXME"s
 Implement actual mouse cursors
 Disabled state textures
@@ -21,7 +22,6 @@ Implement Menu
 
 -=Wishlist=-
 Icon objects ("Indicator Arrows")?
-Dynamically resizeable font?
 Widget-specific fonts?
 Drag and drop boxes?
 Modality of popup?
