@@ -23,8 +23,8 @@
 #define SDL_DEBUG	0	// options to SDL_Init()
 #endif	//SDL_DEBUG		// such as SDL_NO_PARACHUTE
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include "SDL.h"
+#include "SDL_opengl.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
