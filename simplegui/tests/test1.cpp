@@ -220,7 +220,11 @@ int main(int argc, char **argv) {
     while(SDL_PollEvent(&event)) {
       if(!gui->ProcessEvent(&event)) continue;
       if(event.type == SDL_SG_EVENT) {
-	if(event.user.code == SG_EVENT_BUTTONPRESS) {
+	if(event.user.code == SG_EVENT_BUTTONCLICK) {
+	  printf("Received SG_EVENT_BUTTONCLICK from %s button.\n",
+		name[(SG_Widget*)(event.user.data1)].c_str());
+	  }
+	else if(event.user.code == SG_EVENT_BUTTONPRESS) {
 	  printf("Received SG_EVENT_BUTTONPRESS from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);

@@ -58,6 +58,8 @@ bool SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.code = SG_EVENT_BUTTONRELEASE;
     event->user.data1 = (void*)this;
     event->user.data2 = NULL;
+    if(x >= -1.0 && y >= -1.0 && x <= 1.0 && y <= 1.0)
+      event->user.code = SG_EVENT_BUTTONCLICK;
     return 1;
     }  
 
