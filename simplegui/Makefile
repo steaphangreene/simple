@@ -24,12 +24,12 @@ all:	$(OBJS)
 
 #PRODUCTION OPTIONS (STANDARD)
 CXX=	gcc
-CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
+CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
 LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	gcc
-#CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS
@@ -49,7 +49,7 @@ OBJS:=	sg.o sg_widget.o sg_texture.o \
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lopengl32 -lglu32
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
@@ -90,7 +90,7 @@ test1:	test1.o renderer.o audio.o $(OBJS)
 win32:	$(WOBJS)
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
-	$(WCXX) $(WCXXFLAGS) -s -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
