@@ -1,5 +1,7 @@
 -=To FIX=-
 Need a way to handle sounds for compounds' buttons
+Handler for Widget::Disable() needed in SG_Alignment
+Include Widget::TurnOn/Off() in Widget
 
 -=TODO=-
 
