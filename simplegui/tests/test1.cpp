@@ -110,6 +110,7 @@ int main(int argc, char **argv) {
   gui->MasterWidget()->AddWidget(tab[0]);
   gui->MasterWidget()->RemoveWidget(tab[0]);	//Just to be sure it works!
   gui->MasterWidget()->AddWidget(tab[0]);
+
   tab[0]->AddWidget(pass[0], 0, 0, 3, 12);
   tab[0]->AddWidget(tab[1], 3, 0, 1, 12);
   tab[1]->AddWidget(align[0], 0, 0, 2, 4);
@@ -242,6 +243,10 @@ int main(int argc, char **argv) {
 	else if(event.user.code == SG_EVENT_FILEOPEN) {
 	  printf("Received SG_EVENT_FILEOPEN for filename '%s'.\n",
 		(char*)(event.user.data2));
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_OK) {
+	  printf("Received SG_EVENT_OK from a compound widget.\n");
 	  audio_play(click, 8, 8);
 	  }
 	else {

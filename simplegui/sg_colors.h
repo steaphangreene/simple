@@ -19,28 +19,17 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
+#ifndef SG_COLORS_H
+#define SG_COLORS_H
 
-//Basic Actions
-#define	SG_EVENT_BUTTONPRESS	100
-#define	SG_EVENT_BUTTONRELEASE	101
+#define SG_COL_NONE	0
+#define SG_COL_BG	1
+#define SG_COL_FG	2
+#define SG_COL_RAISED	3
+#define SG_COL_LOW	4
+#define SG_COL_TEXT	5
+#define SG_COL_HIGH	6
+#define SG_COL_MAX	7
 
-//Passthrough Actions
-#define	SG_EVENT_CLICK		1000
-#define	SG_EVENT_LEFTCLICK	1001
-#define	SG_EVENT_MIDDLECLICK	1002
-#define	SG_EVENT_RIGHTCLICK	1003
-#define	SG_EVENT_SCROLLUP	1004
-#define	SG_EVENT_SCROLLDOWN	1005
-#define	SG_EVENT_CLICKMAX	1032	//Max of 31 mouse buttons!
-
-#define	SG_EVENT_BOX		1032
-#define	SG_EVENT_LEFTBOX	1033
-#define	SG_EVENT_MIDDLEBOX	1034
-#define	SG_EVENT_RIGHTBOX	1035
-#define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
-
-//Compound Actions
-#define	SG_EVENT_OK		2000
-#define	SG_EVENT_FILEOPEN	2001
+#endif // SG_COLORS_H
 
