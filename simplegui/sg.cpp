@@ -205,7 +205,7 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
     else {			//Draw a real cursor
       glEnable(GL_BLEND);
       glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, mouse_cursor->texture);
+      glBindTexture(GL_TEXTURE_2D, mouse_cursor->GLTexture());
       glColor3f(1.0f, 1.0f, 1.0f);
 
       glBegin(GL_QUADS);
@@ -560,18 +560,7 @@ void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   mouse_cursor->xfact = (float)(mouse_cursor->src->w) / (float)(xsize);
   mouse_cursor->yfact = (float)(mouse_cursor->src->h) / (float)(ysize);
 
-  if(!mouse_cursor->texture) glGenTextures(1, &(mouse_cursor->texture));
-  glBindTexture(GL_TEXTURE_2D, mouse_cursor->texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4,
-                mouse_cursor->cur->w, mouse_cursor->cur->h, 0, GL_RGBA,
-                GL_UNSIGNED_BYTE, mouse_cursor->cur->pixels );
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  mouse_cursor->dirty = 0;
+  mouse_cursor->Update();
   }
 
 SimpleGUI *SimpleGUI::CurrentGUI() {

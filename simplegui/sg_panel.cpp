@@ -31,17 +31,7 @@ SG_Panel::SG_Panel(SG_Texture tex) : SG_Widget() {
   }
 
 SG_Panel::~SG_Panel() {
-  for(int tx = 0; tx < int(texture.size()); ++tx) {
-    if(texture[tx].cur) {
-      glFinish();
-      SDL_FreeSurface(texture[tx].cur);
-      texture[tx].cur = NULL;
-      }
-    if(texture[tx].texture) {
-      glDeleteTextures(1, &(texture[tx].texture));
-      texture[tx].texture = 0;
-      }
-    }
+// Deletion of SG_Texture objects takes care of everything.
   }
 
 int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
@@ -56,12 +46,16 @@ int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
 extern int nextpoweroftwo(int);
 
 void SG_Panel::BuildTexture(int st) {
+  int xsize = 16, ysize = 16;
+
+  if(texture[st].CheckCache()) {
+    return;
+    }
+
   if(texture[st].cur) {
     glFinish();
     SDL_FreeSurface(texture[st].cur);
     }
-
-  int xsize = 16, ysize = 16;
 
   if(texture[st].type == SG_TEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
@@ -96,18 +90,7 @@ void SG_Panel::BuildTexture(int st) {
     texture[st].yfact = (float)(texture[st].src->h) / (float)(ysize);
     }
 
-  if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
-  glBindTexture(GL_TEXTURE_2D, texture[st].texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4,
-		texture[st].cur->w, texture[st].cur->h, 0, GL_RGBA,
-                GL_UNSIGNED_BYTE, texture[st].cur->pixels );
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  texture[st].dirty = 0;
+  texture[st].Update();
   }
 
 bool SG_Panel::Render(unsigned long cur_time) {
@@ -125,7 +108,7 @@ bool SG_Panel::Render(unsigned long cur_time) {
     }
 
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, texture[state].texture);
+  glBindTexture(GL_TEXTURE_2D, texture[state].GLTexture());
   glColor3f(1.0f, 1.0f, 1.0f);
 
 

@@ -22,6 +22,10 @@
 #ifndef SG_TEXTURE_H
 #define SG_TEXTURE_H
 
+#include <map>
+#include <set>
+using namespace std;
+
 #include <SDL/SDL.h>
 
 enum SG_TextureType {
@@ -30,21 +34,34 @@ enum SG_TextureType {
    SG_TEXTURE_TRANSCOLOR,
    SG_TEXTURE_DEFINED,
    SG_TEXTURE_TRANS,
+   SG_TEXTURE_MAX
    };
 
 class SG_Texture {
 public:
   SG_Texture(SDL_Surface *tex);
   SG_Texture(int sg_cols);
+  ~SG_Texture();
+
+  bool CheckCache();
+  void Update();
+
+  GLuint GLTexture() { return texture; };
 
   SG_TextureType type;
-  GLuint texture;	//Current texture (when active)
   SDL_Surface *cur;	//Current texture buffer
   SDL_Surface *src;	//Only for SG_TEXTURE_DEFINED
   SDL_Color col;	//Only for SG_TEXTURE_COLOR
   SDL_Color fg;		//Only used by children (font color)
   float xfact, yfact;	//Portion of texture actually shown
   bool dirty; //Does the system need to rebuild this texture?
+
+protected:
+  GLuint texture;	//Current texture (when active)
+
+  void UpdateCache();
+  static map<SDL_Surface *, set<SG_Texture *> > trans_cache;
+  static map<SDL_Surface *, set<SG_Texture *> > def_cache;
   };
 
 extern unsigned char sg_col_u32b1[4];
