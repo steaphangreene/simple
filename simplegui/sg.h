@@ -103,18 +103,21 @@ protected:
   float popxpos, popypos;
   bool pop_modal;
 
-  int aspect_method;
-  float aspect;
-  float aspect_actual;
+  SG_Texture *mouse_cursor;
+  float mouse_xscale, mouse_yscale;
+
   SG_Widget *current_widget;
   SG_Widget *focus_widget;
 
-  SG_Texture *mouse_cursor;
-  float mouse_xscale, mouse_yscale;
+  int aspect_method;
+  float aspect, aspect_actual;
+  float newaspect_actual;
 
   int ScreenToRelative(float &x, float &y);
   int xunused, yunused;	//Current Screen Geometry
   int xsize, ysize;	//Current Screen Geometry
+  int newxunused, newyunused;	//Next Screen Geometry
+  int newxsize, newysize;	//Next Screen Geometry
 
   float mousex, mousey;	//Current Mouse Position
 

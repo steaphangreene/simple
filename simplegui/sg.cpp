@@ -51,6 +51,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   aspect = asp;
   aspect_actual = 1.0;
   aspect_method = aspmeth;
+  newaspect_actual = aspect_actual;
 
   int screen_geom[4];
   glGetIntegerv(GL_VIEWPORT, screen_geom);
@@ -58,6 +59,10 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   yunused = screen_geom[1]*2;
   xsize = screen_geom[2];
   ysize = screen_geom[3];
+  newxsize = xsize;
+  newysize = ysize;
+  newxunused = xunused;
+  newyunused = yunused;
 
   SDL_ShowCursor(0);
   SDL_EnableUNICODE(1);
@@ -130,18 +135,18 @@ bool SimpleGUI::Render(unsigned long cur_time) {
   }
 
 bool SimpleGUI::RenderStart(unsigned long cur_time) {
-  static int my_xunused = 0, my_yunused = 0, my_xsize = 0, my_ysize = 0;
-  if(my_xunused != xunused || my_yunused != yunused
-	|| my_xsize != xsize || my_ysize != ysize) {
+  if(newxunused != xunused || newyunused != yunused || newxsize != xsize
+	|| newysize != ysize || newaspect_actual != aspect_actual) {
+    xunused = newxunused;
+    yunused = newyunused;
+    xsize = newxsize;
+    ysize = newysize;
+    aspect_actual = newaspect_actual;
 
     int videoFlags = SDL_GetVideoSurface()->flags;
     SDL_SetVideoMode(xsize+xunused, ysize+yunused, 0, videoFlags);
 
     glViewport(xunused/2, yunused/2, xsize, ysize);
-    my_xunused = xunused;
-    my_yunused = yunused;
-    my_xsize = xsize;
-    my_ysize = ysize;
     }
   return 1;
   }
@@ -233,23 +238,21 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
   if(!event) return 0;
 
   if(event->type == SDL_VIDEORESIZE) {
-    xunused = 0;
-    yunused = 0;
-    xsize = event->resize.w;
-    ysize = event->resize.h;
+    newxunused = 0;
+    newyunused = 0;
+    newxsize = event->resize.w;
+    newysize = event->resize.h;
 
-    float asp = (float)(xsize) / (float)(ysize);
+    float asp = (float)(newxsize) / (float)(newysize);
     if((aspect_method & ASPECT_FIXED_X) && asp > aspect) {
-      xsize = int((float)(ysize)*aspect+0.5);
-      xunused = (event->resize.w - xsize);
+      newxsize = int((float)(newysize)*aspect+0.5);
+      newxunused = (event->resize.w - newxsize);
       }
     else if((aspect_method & ASPECT_FIXED_Y) && asp < aspect) {
-      ysize = int((float)(xsize)/aspect+0.5);
-      yunused = (event->resize.h - ysize);
+      newysize = int((float)(newxsize)/aspect+0.5);
+      newyunused = (event->resize.h - newysize);
       }
-
-    aspect_actual = asp / aspect;
-
+    newaspect_actual = asp / aspect;
     return 0; //Event Handled
     }
 
