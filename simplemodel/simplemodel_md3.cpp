@@ -30,58 +30,7 @@
 using namespace std;
 
 #include "simplemodel_q3dir.h"
-
-static long fread_longLE(FILE *fl) {
-  union { long l; char c[4]; } data;
-
-  fread(&data.l, 1, sizeof(long), fl);
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  swap(data.c[3], data.c[0]);
-  swap(data.c[2], data.c[1]);
-#endif
-
-  return data.l;
-  }
-
-static unsigned long fread_ulongLE(FILE *fl) {
-  union { unsigned long l; char c[4]; } data;
-
-  fread(&data.l, 1, sizeof(unsigned long), fl);
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  swap(data.c[3], data.c[0]);
-  swap(data.c[2], data.c[1]);
-#endif
-
-  return data.l;
-  }
-
-static short fread_shortLE(FILE *fl) {
-  union { short s; char c[2]; } data;
-
-  fread(&data.s, 1, sizeof(short), fl);
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  swap(data.c[1], data.c[0]);
-#endif
-
-  return data.s;
-  }
-
-static float fread_floatLE(FILE *fl) {
-  union { float f; char c[4]; } data;
-
-  fread(&data.f, 1, sizeof(float), fl);
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  swap(data.c[3], data.c[0]);
-  swap(data.c[2], data.c[1]);
-#endif
-
-  return data.f;
-  }
-
+#include "saferead.h"
 
 SimpleModel_Md3::SimpleModel_Md3(const string &filenm,
 	const string &modelnm, const string &skinnm) {
@@ -138,7 +87,7 @@ bool SimpleModel_Md3::Load(const string &filenm,
 	skinname.c_str());
     return false;
     }
-  filever = fread_longLE(model);
+  freadLE(filever, model);
   if(filever != 15) {
     fprintf(stderr, "WARNING: File '%s' is not an v15 MD3 file!\n",
 	skinname.c_str());
@@ -146,9 +95,11 @@ bool SimpleModel_Md3::Load(const string &filenm,
     }
   fseek(model, 68, SEEK_CUR); // Skip the name of the file
 
-  num_frames = fread_ulongLE(model);
-  num_tags = fread_ulongLE(model);
-  meshes.resize(fread_longLE(model));
+  freadLE(num_frames, model);
+  freadLE(num_tags, model);
+  unsigned long num_meshes;
+  freadLE(num_meshes, model);
+  meshes.resize(num_meshes);
 
   fseek(model, 20, SEEK_CUR); // Skip the rest of the header (FIXME: Skins!)
 
@@ -160,21 +111,21 @@ bool SimpleModel_Md3::Load(const string &filenm,
   pTags.resize(num_frames * num_tags);
   for(unsigned int tag = 0; tag < num_frames * num_tags; ++tag) {
     fread(pTags[tag].name, 64, 1, model);
-    pTags[tag].pos.data[12] = fread_floatLE(model);	// Location vector
-    pTags[tag].pos.data[13] = fread_floatLE(model);	// Location vector
-    pTags[tag].pos.data[14] = fread_floatLE(model);	// Location vector
+    freadLE(pTags[tag].pos.data[12], model);	// Location vector
+    freadLE(pTags[tag].pos.data[13], model);	// Location vector
+    freadLE(pTags[tag].pos.data[14], model);	// Location vector
     pTags[tag].pos.data[15] = 1;
-    pTags[tag].pos.data[0] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[1] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[2] = fread_floatLE(model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[0], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[1], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[2], model);	// Rotation matrix
     pTags[tag].pos.data[3] = 0;
-    pTags[tag].pos.data[4] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[5] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[6] = fread_floatLE(model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[4], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[5], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[6], model);	// Rotation matrix
     pTags[tag].pos.data[7] = 0;
-    pTags[tag].pos.data[8] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[9] = fread_floatLE(model);	// Rotation matrix
-    pTags[tag].pos.data[10] = fread_floatLE(model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[8], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[9], model);	// Rotation matrix
+    freadLE(pTags[tag].pos.data[10], model);	// Rotation matrix
     }
 
 
@@ -188,17 +139,30 @@ bool SimpleModel_Md3::Load(const string &filenm,
 
     fread(meshes[meshnum].name, 68, 1, model);
 
-    unsigned long num_mframes = fread_ulongLE(model);
+    unsigned long num_mframes;
+    freadLE(num_mframes, model);
+
     fseek(model, 4, SEEK_CUR);		//I'm skipping the number of skins here
-    unsigned long num_vertices = fread_ulongLE(model);
-    unsigned long num_faces = fread_ulongLE(model);
 
-    long face_offset = fread_longLE(model);
+    unsigned long num_vertices;
+    freadLE(num_vertices, model);
+
+    unsigned long num_faces;
+    freadLE(num_faces, model);
+
+    long face_offset;
+    freadLE(face_offset, model);
+
     fseek(model, 4, SEEK_CUR);		//I'm skipping the header size here
-    long uv_offset = fread_longLE(model);
-    long vertex_offset = fread_longLE(model);
-    long mesh_size = fread_longLE(model);
 
+    long uv_offset;
+    freadLE(uv_offset, model);
+
+    long vertex_offset;
+    freadLE(vertex_offset, model);
+
+    long mesh_size;
+    freadLE(mesh_size, model);
 
     meshes[meshnum].faces.resize(num_faces);
     meshes[meshnum].coords.resize(num_vertices);
@@ -209,24 +173,29 @@ bool SimpleModel_Md3::Load(const string &filenm,
 	// Seek to the start of the face data, then read it in
     fseek(model, offset + face_offset, SEEK_SET);
     for(unsigned int face=0; face < meshes[meshnum].faces.size(); ++face) {
-      meshes[meshnum].faces[face].vertices[0] = fread_longLE(model);
-      meshes[meshnum].faces[face].vertices[1] = fread_longLE(model);
-      meshes[meshnum].faces[face].vertices[2] = fread_longLE(model);
+      freadLE(meshes[meshnum].faces[face].vertices[0], model);
+      freadLE(meshes[meshnum].faces[face].vertices[1], model);
+      freadLE(meshes[meshnum].faces[face].vertices[2], model);
       }
 
 	// Seek to the start of the texture coordinate data, then read it in
     fseek(model, offset + uv_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].coords.size(); ++vert) {
-      meshes[meshnum].coords[vert].coord[0] = fread_floatLE(model);
-      meshes[meshnum].coords[vert].coord[1] = fread_floatLE(model);
+      freadLE(meshes[meshnum].coords[vert].coord[0], model);
+      freadLE(meshes[meshnum].coords[vert].coord[1], model);
       }
 
 	// Seek to the start of the triangle information, then read it in.
     fseek(model, offset + vertex_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].triangles.size(); ++vert) {
-      meshes[meshnum].triangles[vert].vertex[0] = float(fread_shortLE(model)) / 64.0F;
-      meshes[meshnum].triangles[vert].vertex[1] = float(fread_shortLE(model)) / 64.0F;
-      meshes[meshnum].triangles[vert].vertex[2] = float(fread_shortLE(model)) / 64.0F;
+      short tmp;
+      freadLE(tmp, model);
+      meshes[meshnum].triangles[vert].vertex[0] = float(tmp) / 64.0F;
+      freadLE(tmp, model);
+      meshes[meshnum].triangles[vert].vertex[1] = float(tmp) / 64.0F;
+      freadLE(tmp, model);
+      meshes[meshnum].triangles[vert].vertex[2] = float(tmp) / 64.0F;
+
       fread(meshes[meshnum].triangles[vert].normal, 1, 2, model); // FIXME: What are these for?
       }
 
