@@ -47,6 +47,7 @@ protected:
 #define SG_PT_BLOCK	1
 #define SG_PT_CLICK	2
 #define SG_PT_BOX	3
+#define SG_PT_MENU	4
 
 #endif // SG_PASSTHROUGH_H
 

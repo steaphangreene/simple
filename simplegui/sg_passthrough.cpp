@@ -22,6 +22,7 @@
 #include <GL/gl.h>
 
 #include "sg_passthrough.h"
+#include "sg_textarea.h" // FIXME: Menu eventaully
 #include "sg_events.h"
 #include "sg_globals.h"
 
@@ -93,6 +94,15 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_y = y;
       return 0;
       }
+    else if(button_action[event->button.button - 1] == SG_PT_MENU) {
+      cur_action = SG_PT_MENU;
+      cur_button = event->button.button;
+      act_x = x;
+      act_y = y;
+      AddWidget(new SG_TextArea("Menu!"));
+      widgets[0]->Ignore();
+      return 0;
+      }
     else {
       fprintf(stderr, "Unknown setting for button handler (%d)\n",
 		button_action[event->button.button - 1]);
@@ -115,6 +125,21 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_button = 0;
       return 1;
       }
+    else if(cur_action == SG_PT_MENU) {
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_MENU + cur_button;
+      event->user.data1 = (void*)this;
+      event->user.data2 = (void*)1;//Pick option #1 //FIXME: STUB!
+      cur_action = SG_PT_IGNORE;
+      cur_button = 0;
+
+      printf("Did it\n");
+      SG_Widget *w = widgets[0];
+      RemoveWidget(w);
+      delete w;
+
+      return 1;
+      }
     else if(cur_action == SG_PT_CLICK) {
       return 0; // Eat these events in this case
       }
@@ -131,6 +156,9 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       if(cur_x < -1.0) cur_x = -1.0;
       if(cur_y < -1.0) cur_y = -1.0;
       return 0;
+      }
+    else if(cur_action == SG_PT_MENU) {
+      return 0; // Eat these events in this case // FIXME: ?
       }
     else if(cur_action == SG_PT_CLICK) {
       return 0; // Eat these events in this case
@@ -155,6 +183,7 @@ bool SG_PassThrough::Render(unsigned long cur_time) {
     if(*itrw) {
       glPushMatrix();
       CalcGeometry();
+      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
@@ -181,8 +210,16 @@ bool SG_PassThrough::Render(unsigned long cur_time) {
 //  static GL_MODEL SG_PassThrough::Default_Mouse_Cursor = NULL;
 
 void SG_PassThrough::CalcGeometry() {
-  cur_geom.xp = 0.0; // Not used by SG_PassThrough widget
-  cur_geom.yp = 0.0; // Not used by SG_PassThrough widget
-  cur_geom.xs = 1.0 - xborder;
-  cur_geom.ys = 1.0 - yborder;
+  if(cur_action == SG_PT_MENU) {
+    cur_geom.xp = act_x;
+    cur_geom.yp = act_y;
+    cur_geom.xs = 0.125 - xborder;	//Hardcoded for now
+    cur_geom.ys = 0.0625 - yborder;
+    }
+  else {
+    cur_geom.xp = 0.0; // Not used by SG_PassThrough widget
+    cur_geom.yp = 0.0; // Not used by SG_PassThrough widget
+    cur_geom.xs = 1.0 - xborder;
+    cur_geom.ys = 1.0 - yborder;
+    }
   }
