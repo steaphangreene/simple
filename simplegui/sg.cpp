@@ -46,6 +46,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   mWid = new SG_Alignment();
   popWid = NULL;
   popx = 0.5, popy = 0.5;
+  popxpos = 0.0, popypos = 0.0;
   aspect = asp;
   aspect_actual = 1.0;
   aspect_method = aspmeth;
@@ -172,6 +173,7 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
 
   if(popWid) {
     glPushMatrix();
+	glTranslatef(popxpos, popypos, 0.0);
     glScalef(popx, popy, 1.0);
     popWid->Render(cur_time);
     glPopMatrix();
@@ -518,12 +520,14 @@ int SimpleGUI::NewColor(float r, float g, float b,
   return ret;
   }
 
-void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py) {
+void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py, float posx, float posy) {
   popWid = wid;
+  popxpos = posx;
+  popypos = posy;
   popx = px;
   popy = py;
   }
-
+  
 extern int nextpoweroftwo(int);
 
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
