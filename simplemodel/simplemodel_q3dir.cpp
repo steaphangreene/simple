@@ -63,9 +63,6 @@ bool SimpleModel_Q3Dir::Load(const string &filenm) {
 
   if(!LoadCFG(filename + "/animation.cfg")) return false;
 
-  SetAnimation(TORSO_STAND);
-  SetAnimation(LEGS_IDLE);
-
   return false;
   }
 
@@ -105,22 +102,65 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
   return true;
   }
 
-bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim, const vector<Uint32> &start_time) {
+bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time) const {
   //FIXME: Interpolate Models Using Animations
   //FIXME: Interpolate Tags
+
+  if(anim.size() < 2 || start_time.size() < 2) {
+    fprintf(stderr, "WARNING: Not enough anims/times sent to Q3 renderer.\n");
+    return false;
+    }
+
+  vector<int> leganim(1);
+  vector<Uint32> legtime(1);
+  vector<int> torsoanim(1);
+  vector<Uint32> torsotime(1);
+
+  leganim[0] = anim[0];
+  legtime[0] = start_time[0];
+  torsoanim[0] = anim[1];
+  torsotime[0] = start_time[1];
+
+  //Do some auto-correction for not-quite valid inputs
+  if(torsotime[0] >= legtime[0] && torsoanim[0] < BOTH_MAX) { 
+    leganim[0] = torsoanim[0];
+    legtime[0] = torsotime[0];
+    }
+  else if(legtime[0] >= torsotime[0] && leganim[0] < BOTH_MAX) {
+    torsoanim[0] = leganim[0];
+    torsotime[0] = legtime[0];
+    }
+  else if(torsoanim[0] < BOTH_MAX) { 
+    torsoanim[0] = TORSO_STAND;
+    torsotime[0] = legtime[0];
+    }
+  else if(leganim[0] < BOTH_MAX) {
+    leganim[0] = LEGS_IDLE;
+    legtime[0] = torsotime[0];
+    }
+
+  if(leganim[0] >= BOTH_MAX) {	//Adjust for Leg Offset
+    leganim[0] -= (LEGS_START - TORSO_START);
+    }
+
   if(legs) {
     glPushMatrix();
     glScalef(0.0625, 0.0625, 0.0625);
-    legs->Render(cur_time);
-    if(torso && legs->MoveToTag("tag_torso")) {
-      torso->Render(cur_time);
+
+    legs->Render(cur_time, leganim, legtime);
+
+    if(torso && legs->MoveToTag("tag_torso", cur_time, leganim, legtime)) {
+      torso->Render(cur_time, torsoanim, torsotime);
+
       glPushMatrix();
-      if(head && torso->MoveToTag("tag_head")) {
-	head->Render(cur_time);
+      if(head && torso->MoveToTag("tag_head", cur_time, torsoanim, torsotime)) {
+	head->Render(cur_time);	//No animations
 	}
       glPopMatrix();
-      if(weapon && torso->MoveToTag("tag_weapon")) {
-	weapon->Render(cur_time);
+
+      if(weapon && torso->MoveToTag("tag_weapon", cur_time, torsoanim, torsotime)) {
+	weapon->Render(cur_time); //No animations
 	}
       }
     glPopMatrix();
@@ -130,23 +170,11 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim, const v
   }
 
 void SimpleModel_Q3Dir::SetAnimation(int anim) {
-  if(anim < BOTH_MAX) {
-    torso->SetAnimation(anim);
-    legs->SetAnimation(anim);
-    }
-  else if(anim < TORSO_MAX) {
-    torso->SetAnimation(anim);
-    if(legs->GetAnimation() < BOTH_MAX)
-	legs->SetAnimation(LEGS_IDLE - (LEGS_START - TORSO_START));
-    }
-  else if(anim < LEGS_MAX) {
-    anim -= (LEGS_START - TORSO_START);
-    legs->SetAnimation(anim);
-    if(torso->GetAnimation() < BOTH_MAX) torso->SetAnimation(TORSO_STAND);
-    }
+  fprintf(stderr, "WARNING: Calling unsupported old function SetAnimation()\n");
   }
 
 int SimpleModel_Q3Dir::GetAnimation() {
+  fprintf(stderr, "WARNING: Calling unsupported old function GetAnimation()\n");
   return 0;
   }
 

@@ -35,7 +35,7 @@ public:
 
   virtual bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>());
+	const vector<Uint32> &start_time = vector<Uint32>()) const;
 
   virtual void SetAnimation(int part);
 

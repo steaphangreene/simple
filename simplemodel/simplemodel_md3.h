@@ -73,12 +73,16 @@ public:
 
   virtual bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>());
-  bool MoveToTag(unsigned long tag);
+	const vector<Uint32> &start_time = vector<Uint32>()) const;
+  bool MoveToTag(unsigned long tag, Uint32 cur_time,
+        const vector<int> &anim = vector<int>(),
+        const vector<Uint32> &start_time = vector<Uint32>()) const;
 
-  unsigned long TagNameToIndex(const string &tagname);
-  bool MoveToTag(const string &tagname) {
-    return MoveToTag(TagNameToIndex(tagname));
+  unsigned long TagNameToIndex(const string &tagname) const;
+  bool MoveToTag(const string &tagname, Uint32 cur_time,
+        const vector<int> &anim = vector<int>(),
+        const vector<Uint32> &start_time = vector<Uint32>()) const {
+    return MoveToTag(TagNameToIndex(tagname), cur_time, anim, start_time);
     }
 
   virtual void SetAnimation(int anim);
@@ -91,15 +95,13 @@ protected:
   SimpleModel_MD3();
   string modelname, skinname;
 
+  int CalcFrame(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time) const;
+
   unsigned long num_tags;	// Number of tags PER FRAME
   vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames
   vector<MD3Mesh> meshes;
   vector<MD3AnimationData> animations;
-
-	//Temporary - these should not be here for static models
-  int current_anim;
-  int current_frame;
-  Uint32 last_time;
   };
 
 #endif	//SIMPLEMODEL_MD3_H

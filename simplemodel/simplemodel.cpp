@@ -52,7 +52,8 @@ bool SimpleModel::Load(const string &filenm) {
   return false;
   }
 
-bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim, const vector<Uint32> &start_time) {
+bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time) const {
   return false;
   }
 

@@ -34,17 +34,10 @@ using namespace std;
 
 SimpleModel_MD3::SimpleModel_MD3(const string &filenm,
 	const string &modelnm, const string &skinnm) {
-  current_anim = 0;
-  current_frame = 0;
-  last_time = 0;
-
   Load(filenm, modelnm, skinnm);
   }
 
 SimpleModel_MD3::SimpleModel_MD3() {
-  current_anim = 0;
-  current_frame = 0;
-  last_time = 0;
   }
 
 SimpleModel_MD3::~SimpleModel_MD3() {
@@ -231,28 +224,11 @@ bool SimpleModel_MD3::Load(const string &filenm,
   return false;
   }
 
-bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim, const vector<Uint32> &start_time) {
+bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time) const {
   glCullFace(GL_FRONT);	//MD3 models use front face culling
 
-  int start = 0, end = 1;
-
-  if(animations.size() > 0) {
-    start = animations[current_anim].start;
-    end   = animations[current_anim].end;
-
-    int next_frame = (current_frame + 1);
-    if(next_frame >= end) next_frame = start;
-
-    //FIXME: Actually interpolate!
-    Uint32 time = SDL_GetTicks();
-    float since = time - last_time;
-
-    int fps = animations[current_anim].fps;
-    if(since >= (1000.0 / fps)) {
-      current_frame = next_frame;
-      last_time = time;
-      }
-    }
+  int frame = CalcFrame(cur_time, anim, start_time);
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
     if(meshes[obj].texture && meshes[obj].texture->type != SM_TEXTURE_NONE) {
@@ -260,7 +236,7 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim, const vec
 
       glBegin(GL_TRIANGLES);
 
-      int vertindex = current_frame * meshes[obj].coords.size();
+      int vertindex = frame * meshes[obj].coords.size();
 
       for(unsigned int j = 0; j < meshes[obj].faces.size(); j++) {
 	for(int whichVertex = 0; whichVertex < 3; whichVertex++) {
@@ -284,11 +260,12 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim, const vec
   }
 
 void SimpleModel_MD3::SetAnimation(int anim) {
-  if(animations.size() > 0 && (int)(animations.size()) > anim) {
-    current_anim = anim;
-    current_frame = animations[current_anim].start;
-    last_time = SDL_GetTicks();
-    }
+  fprintf(stderr, "WARNING: Calling unsupported old function SetAnimation()\n");
+  }
+
+int SimpleModel_MD3::GetAnimation() {
+  fprintf(stderr, "WARNING: Calling unsupported old function GetAnimation()\n");
+  return 0;
   }
 
 int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
@@ -303,11 +280,7 @@ int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
   return animations.size() - 1;
   }
 
-int SimpleModel_MD3::GetAnimation() {
-  return current_anim;
-  }
-
-unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) {
+unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) const {
   unsigned int tag = 0;
   for(; tag < num_tags; ++tag) {
     if(!strcasecmp(pTags[tag].name, tagname.c_str())) break;
@@ -316,13 +289,38 @@ unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) {
   else return tag;
   }
 
-bool SimpleModel_MD3::MoveToTag(unsigned long tag) {
+bool SimpleModel_MD3::MoveToTag(unsigned long tag, Uint32 cur_time,
+	const vector<int> &anim, const vector<Uint32> &start_time) const {
   if(tag >= num_tags) return false;
 
+  int frame = CalcFrame(cur_time, anim, start_time);
+
   //FIXME: Do Interpolation!
-  Quaternion matrix = pTags[current_frame * num_tags + tag].pos;
+  Quaternion matrix = pTags[frame * num_tags + tag].pos;
 
   glMultMatrixf(matrix.data);
 
   return true;
+  }
+
+int SimpleModel_MD3::CalcFrame(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time) const {
+  int frame = 0;
+
+  //FIXME: Do Interpolation!
+  if(animations.size() > 0) {
+    if(anim.size() < 1 || start_time.size() < 1) {
+      fprintf(stderr, "WARNING: Not enough anims/times sent to animated MD3.\n");
+      return false;
+      }
+
+    //FIXME: Actually interpolate!
+    int start = animations[anim[0]].start;
+    int end = animations[anim[0]].end;
+    float fps = animations[anim[0]].fps;
+    float elapsed = cur_time - start_time[0];
+    frame = start + (int)(elapsed * fps / 1000.0) % (end - start);
+    }
+
+  return frame;
   }

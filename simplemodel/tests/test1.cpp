@@ -33,6 +33,26 @@ using namespace std;
 #include "../sm_q3anim.h"
 #include "renderer.h"
 
+vector<int> anims;
+vector<Uint32> times;
+
+static void SetAnim(int anim) {
+  if(anim < BOTH_MAX) {
+    anims[0] = anim;
+    anims[1] = anim;
+    times[0] = SDL_GetTicks();
+    times[1] = SDL_GetTicks();
+    }
+  else if(anim < TORSO_MAX) {
+    anims[1] = anim;
+    times[1] = SDL_GetTicks();
+    }
+  else if(anim < LEGS_MAX) {
+    anims[0] = anim;
+    times[0] = SDL_GetTicks();
+    }
+  }
+
 int main(int argc, char **argv) {
   int xs=640, ys=480;
 
@@ -62,6 +82,11 @@ int main(int argc, char **argv) {
     ((SimpleModel_Q3Dir*)mod)->SetWeapon(weap);
     }
 
+  anims.push_back(LEGS_IDLE);
+  anims.push_back(TORSO_STAND);
+  times.push_back(SDL_GetTicks());
+  times.push_back(SDL_GetTicks());
+
   int quit = 0;
   while(!quit) {
     SDL_Event event;
@@ -71,64 +96,39 @@ int main(int argc, char **argv) {
 	}
       else if(event.type == SDL_KEYDOWN) {
         if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-        else if(event.key.keysym.sym == SDLK_1)
-				mod->SetAnimation(BOTH_DEATH1);
-        else if(event.key.keysym.sym == SDLK_2)
-				mod->SetAnimation(BOTH_DEAD1);
-        else if(event.key.keysym.sym == SDLK_3)
-				mod->SetAnimation(BOTH_DEATH2);
-        else if(event.key.keysym.sym == SDLK_4)
-				mod->SetAnimation(BOTH_DEAD2);
-        else if(event.key.keysym.sym == SDLK_5)
-				mod->SetAnimation(BOTH_DEATH3);
-        else if(event.key.keysym.sym == SDLK_6)
-				mod->SetAnimation(BOTH_DEAD3);
+        else if(event.key.keysym.sym == SDLK_1) SetAnim(BOTH_DEATH1);
+        else if(event.key.keysym.sym == SDLK_2) SetAnim(BOTH_DEAD1);
+        else if(event.key.keysym.sym == SDLK_3) SetAnim(BOTH_DEATH2);
+        else if(event.key.keysym.sym == SDLK_4) SetAnim(BOTH_DEAD2);
+        else if(event.key.keysym.sym == SDLK_5) SetAnim(BOTH_DEATH3);
+        else if(event.key.keysym.sym == SDLK_6) SetAnim(BOTH_DEAD3);
 
-        else if(event.key.keysym.sym == SDLK_q)
-				mod->SetAnimation(TORSO_GESTURE);
-        else if(event.key.keysym.sym == SDLK_w)
-				mod->SetAnimation(TORSO_ATTACK);
-        else if(event.key.keysym.sym == SDLK_e)
-				mod->SetAnimation(TORSO_ATTACK2);
-        else if(event.key.keysym.sym == SDLK_r)
-				mod->SetAnimation(TORSO_DROP);
-        else if(event.key.keysym.sym == SDLK_t)
-				mod->SetAnimation(TORSO_RAISE);
-        else if(event.key.keysym.sym == SDLK_y)
-				mod->SetAnimation(TORSO_STAND);
-        else if(event.key.keysym.sym == SDLK_u)
-				mod->SetAnimation(TORSO_STAND2);
+        else if(event.key.keysym.sym == SDLK_q) SetAnim(TORSO_GESTURE);
+        else if(event.key.keysym.sym == SDLK_w) SetAnim(TORSO_ATTACK);
+        else if(event.key.keysym.sym == SDLK_e) SetAnim(TORSO_ATTACK2);
+        else if(event.key.keysym.sym == SDLK_r) SetAnim(TORSO_DROP);
+        else if(event.key.keysym.sym == SDLK_t) SetAnim(TORSO_RAISE);
+        else if(event.key.keysym.sym == SDLK_y) SetAnim(TORSO_STAND);
+        else if(event.key.keysym.sym == SDLK_u) SetAnim(TORSO_STAND2);
 
-        else if(event.key.keysym.sym == SDLK_a)
-				mod->SetAnimation(LEGS_WALKCR);
-        else if(event.key.keysym.sym == SDLK_s)
-				mod->SetAnimation(LEGS_WALK);
-        else if(event.key.keysym.sym == SDLK_d)
-				mod->SetAnimation(LEGS_RUN);
-        else if(event.key.keysym.sym == SDLK_f)
-				mod->SetAnimation(LEGS_BACK);
-        else if(event.key.keysym.sym == SDLK_g)
-				mod->SetAnimation(LEGS_SWIM);
-        else if(event.key.keysym.sym == SDLK_h)
-				mod->SetAnimation(LEGS_JUMP);
-        else if(event.key.keysym.sym == SDLK_j)
-				mod->SetAnimation(LEGS_LAND);
-        else if(event.key.keysym.sym == SDLK_k)
-				mod->SetAnimation(LEGS_JUMPB);
-        else if(event.key.keysym.sym == SDLK_l)
-				mod->SetAnimation(LEGS_LANDB);
-        else if(event.key.keysym.sym == SDLK_SEMICOLON)
-				mod->SetAnimation(LEGS_IDLE);
-        else if(event.key.keysym.sym == SDLK_QUOTE)
-				mod->SetAnimation(LEGS_IDLECR);
-        else if(event.key.keysym.sym == SDLK_RETURN)
-				mod->SetAnimation(LEGS_TURN);
+        else if(event.key.keysym.sym == SDLK_a) SetAnim(LEGS_WALKCR);
+        else if(event.key.keysym.sym == SDLK_s) SetAnim(LEGS_WALK);
+        else if(event.key.keysym.sym == SDLK_d) SetAnim(LEGS_RUN);
+        else if(event.key.keysym.sym == SDLK_f) SetAnim(LEGS_BACK);
+        else if(event.key.keysym.sym == SDLK_g) SetAnim(LEGS_SWIM);
+        else if(event.key.keysym.sym == SDLK_h) SetAnim(LEGS_JUMP);
+        else if(event.key.keysym.sym == SDLK_j) SetAnim(LEGS_LAND);
+        else if(event.key.keysym.sym == SDLK_k) SetAnim(LEGS_JUMPB);
+        else if(event.key.keysym.sym == SDLK_l) SetAnim(LEGS_LANDB);
+        else if(event.key.keysym.sym == SDLK_SEMICOLON) SetAnim(LEGS_IDLE);
+        else if(event.key.keysym.sym == SDLK_QUOTE) SetAnim(LEGS_IDLECR);
+        else if(event.key.keysym.sym == SDLK_RETURN) SetAnim(LEGS_TURN);
         else {
           }
         }
       }
     start_scene();
-    mod->Render(SDL_GetTicks());
+    mod->Render(SDL_GetTicks(), anims, times);
     finish_scene();
     }
 
