@@ -77,6 +77,7 @@ protected:
 #include "sg_table.h"
 #include "sg_button.h"
 #include "sg_panel.h"
+#include "sg_progressbar.h"
 #include "sg_passthrough.h"
 #include "sg_textarea.h"
 #include "sg_translabel.h"

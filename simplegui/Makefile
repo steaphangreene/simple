@@ -38,7 +38,8 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 #LIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lopengl32 -lglu32
 
 OBJS:=	simplegui.o sg_widget.o sg_alignment.o sg_table.o \
-	sg_panel.o sg_textarea.o sg_button.o sg_passthrough.o sg_translabel.o
+	sg_panel.o sg_textarea.o sg_button.o sg_progressbar.o \
+	sg_passthrough.o sg_translabel.o
 
 all: $(OBJS)
 

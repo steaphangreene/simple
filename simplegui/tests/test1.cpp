@@ -68,6 +68,7 @@ int main(int argc, char **argv) {
   SG_PassThrough *pass[2];
   SG_TextArea *text;
   SG_TransLabel *trans;
+  SG_ProgressBar *prog;
 
   tab[0] = new SG_Table(4, 12);
   tab[1] = new SG_Table(2, 12);
@@ -90,6 +91,10 @@ int main(int argc, char **argv) {
   tab[0]->AddWidget(tab[1], 3, 0, 1, 12);
   tab[1]->AddWidget(align[0], 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
+
+  trans = new SG_TransLabel("TransLabel Is Here", 0.6, 0.4, 0.3);
+  trans->SetMargins(0.2, 0.2);
+  tab[0]->AddWidget(trans, 1, 3, 1, 1);
 
   panel[1] = new SG_Panel(1.0, 1.0, 1.0);
   panel[2] = new SG_Panel(0.0, 0.0, 0.0);
@@ -132,9 +137,10 @@ int main(int argc, char **argv) {
   text->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(text, 0, 4, 2, 1);
 
-  trans = new SG_TransLabel("TransLabel Is Here", 0.6, 0.4, 0.3);
-  trans->SetMargins(0.2, 0.2);
-  tab[0]->AddWidget(trans, 1, 3, 1, 1);
+  prog = new SG_ProgressBar("Progress",
+	0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0);
+  prog->SetMargins(0.2, 0.2);
+  tab[1]->AddWidget(prog, 0, 8, 2, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
 
