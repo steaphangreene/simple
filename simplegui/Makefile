@@ -66,4 +66,13 @@ test:	test1
 test1:	test1.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
 
+TSTR:=	$(shell date -u +"%Y%m%d%H%M")
+backup:	tar
+tar:
+	cd .. ; tar chvf simplegui.$(TSTR).tar \
+		simplegui/Makefile simplegui/TODO simplegui/COPYING \
+		simplegui/*.cpp simplegui/*.h \
+		simplegui/tests/*.cpp simplegui/tests/*.h
+	gzip -9 ../simplegui.$(TSTR).tar
+
 include deps.mk

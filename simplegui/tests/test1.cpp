@@ -39,12 +39,31 @@ using namespace std;
 static SimpleGUI *gui;
 
 int main(int argc, char **argv) {
+  char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
   int xs=1024, ys=768;
-  if(argc > 1) {
-    if(sscanf(argv[1], "%dx%d", &xs, &ys) != 2) {
-      xs=1024; ys=768;
+
+  int cur_arg = 1;
+
+  while(1) {		//Don't ever code anything like this
+    if(argc > cur_arg) {
+      if(!strcasecmp(argv[cur_arg]+strlen(argv[cur_arg])-4, ".ttf")) {
+	fontfn = argv[cur_arg];
+	++cur_arg;
+	continue;
+	}	
       }
+    if(argc > cur_arg) {
+      if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
+	xs=1024; ys=768;
+	}
+      else {
+	++cur_arg;
+	continue;
+	}
+      }
+    break;
     }
+
   if(!init_renderer(xs, ys)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
     }
@@ -57,7 +76,7 @@ int main(int argc, char **argv) {
 //  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
 //  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
 
-  gui->LoadFont("fonts/Adventure Subtitles Normal.ttf");
+  gui->LoadFont(fontfn);
 
   map<SG_Widget *, string> name;
 
