@@ -93,7 +93,7 @@ void SG_TextArea::BuildTexture(int st) {
   { int pos = 0, lpos=0;
     while(lpos < int(message.length()) && int(line.size()) < maxy) {
       pos = message.find('\n', lpos);
-      if(pos <= lpos) pos = message.length();
+      if(pos < lpos) pos = message.length();
       line.push_back(message.substr(lpos, pos - lpos));
       lpos = pos+1;
       }
