@@ -32,7 +32,7 @@ class SG_TextArea;
 
 class SG_FileBrowser : public SG_Compound {
 public:
-  SG_FileBrowser(const string &filt);
+  SG_FileBrowser(const string &filter);
   virtual ~SG_FileBrowser();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
@@ -40,9 +40,12 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  string filter;
+  string dir;	//Directory
+  string reg;	//Pseudo-Regex of Files
   SG_Button *openb;
-  SG_TextArea *nameb;
+  SG_TextArea *dirb;
+  SG_TextArea *fileb;
+  string filename;
   };
 
 #endif // SG_FILEBROWSER_H
