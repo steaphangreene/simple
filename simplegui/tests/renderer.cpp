@@ -112,8 +112,8 @@ int init_renderer(int xs, int ys) {
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 //  // Messing with Alpha channel
-//  glDepthFunc(GL_LEQUAL);
-  glDepthFunc(GL_LESS);
+  glDepthFunc(GL_LEQUAL);
+//  glDepthFunc(GL_LESS);
 
   // Enable depth testing for hidden line removal
   glEnable(GL_DEPTH_TEST);
