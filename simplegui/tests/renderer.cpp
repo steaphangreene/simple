@@ -76,7 +76,7 @@ int init_renderer(int xs, int ys) {
   videoInfo = SDL_GetVideoInfo();
 
   videoFlags = SDL_OPENGL;
-  videoFlags |= SDL_GL_DOUBLEBUFFER;
+//  videoFlags |= SDL_GL_DOUBLEBUFFER;
   videoFlags |= SDL_HWPALETTE;
   videoFlags |= SDL_RESIZABLE;
   if(fullscreen_mode)
@@ -161,27 +161,7 @@ int init_renderer(int xs, int ys) {
   return 1;
   }
 
-int start_scene(int player) {
-  static Uint32 lasttick = 0;
-  Uint32 difftick = SDL_GetTicks()-lasttick;
-
-  ++phase;
-
-  if(lasttick == 0) {
-    lasttick = SDL_GetTicks();
-    difftick = 30;
-    }
-  else lasttick += 30;
-
-  if(difftick < 0 || difftick >= 1000000) {
-    int d = (int)difftick;
-    SDL_Delay(-d);
-    }
-
-  if(difftick > 60 && difftick < 1000000) {
-    return -1;
-    }
-
+int start_scene() {
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   //This is the actual perspective setup
@@ -194,7 +174,7 @@ int start_scene(int player) {
   return 1;
   }
 
-int finish_scene(int player) {
+int finish_scene() {
   glFlush();
   SDL_GL_SwapBuffers();
 

@@ -74,7 +74,7 @@ int event_thread_handler(void *arg) {
 int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
   while(!user_quit) {
 
-    start_scene(0);
+    start_scene();
     unsigned long cur_time = SDL_GetTicks();
 
     SDL_mutexP(gui_mutex);
@@ -85,7 +85,7 @@ int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
     gui->Render(cur_time);
     SDL_mutexV(gui_mutex);
 
-    finish_scene(0);
+    finish_scene();
     }
   return 0;
   }

@@ -350,9 +350,9 @@ int main(int argc, char **argv) {
 //	printf("Received unintercepted key release.\n");
 	}
       }
-    start_scene(0);
+    start_scene();
     gui->Render(SDL_GetTicks());
-    finish_scene(0);
+    finish_scene();
     }
 
   gui->UnsetPopupWidget(); 

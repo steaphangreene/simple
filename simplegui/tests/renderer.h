@@ -23,8 +23,8 @@
 #define RENDERER_H
 
 int init_renderer(int, int);
-int start_scene(int);
-int finish_scene(int);
+int start_scene();
+int finish_scene();
 void toggle_fullscreen(void);
 void resize_display(int, int);
 
