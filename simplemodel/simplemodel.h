@@ -38,6 +38,8 @@ public:
 
   virtual bool Render(Uint32 cur_time);
 
+  virtual void SetAnimation(int part, int anim);
+
 protected:
   string filename;
   };

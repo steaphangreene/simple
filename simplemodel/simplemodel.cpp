@@ -53,3 +53,6 @@ bool SimpleModel::Load(const string &filenm) {
 bool SimpleModel::Render(Uint32 cur_time) {
   return false;
   }
+
+void SimpleModel::SetAnimation(int part, int anim) {
+  }

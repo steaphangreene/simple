@@ -73,3 +73,8 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
   head->Render(cur_time);
   return false;
   }
+
+void SimpleModel_Q3Dir::SetAnimation(int part, int anim) {
+  if(part == 1) legs->SetAnimation(0, anim);
+  else if(part == 2) torso->SetAnimation(0, anim);
+  }

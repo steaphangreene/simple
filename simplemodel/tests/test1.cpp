@@ -57,6 +57,15 @@ int main(int argc, char **argv) {
 	}
       else if(event.type == SDL_KEYDOWN) {
         if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+        else if(event.key.keysym.sym == SDLK_1) mod->SetAnimation(1, 1);
+        else if(event.key.keysym.sym == SDLK_2) mod->SetAnimation(1, 2);
+        else if(event.key.keysym.sym == SDLK_3) mod->SetAnimation(1, 3);
+        else if(event.key.keysym.sym == SDLK_4) mod->SetAnimation(1, 4);
+        else if(event.key.keysym.sym == SDLK_5) mod->SetAnimation(1, 5);
+        else if(event.key.keysym.sym == SDLK_6) mod->SetAnimation(1, 6);
+        else if(event.key.keysym.sym == SDLK_7) mod->SetAnimation(1, 7);
+        else if(event.key.keysym.sym == SDLK_8) mod->SetAnimation(1, 8);
+        else if(event.key.keysym.sym == SDLK_9) mod->SetAnimation(1, 9);
         else {
           }
         }

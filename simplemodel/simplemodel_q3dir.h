@@ -34,6 +34,8 @@ public:
 
   virtual bool Render(Uint32 cur_time);
 
+  virtual void SetAnimation(int part, int anim);
+
 protected:
   SimpleModel_Q3Dir();
   SimpleModel_Md3 *head, *legs, *torso, *weapon;
