@@ -42,6 +42,8 @@ bool SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();
     if(x >= -cur_geom.xs && x <= cur_geom.xs

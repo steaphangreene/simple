@@ -33,6 +33,7 @@ SG_Widget::~SG_Widget() {
   }
 
 bool SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
   return 1;
   }
 

@@ -48,7 +48,7 @@ bool SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Panel/Handle: Button Down at (%f,%f)\n", x, y);
 
-  return 0;	// This widget eats all mouse events
+  return 0;	// This widget eats all mouse events all the time
   }
 
 void SG_Panel::BuildTexture(int st) {

@@ -38,6 +38,8 @@ public:
   void SetMargins(float xmar, float ymar);
   void SetText(const string &mes);
   const string &Text();
+  virtual void Disable();
+  virtual void Enable();
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

@@ -35,6 +35,8 @@ bool SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Compound/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
   int ret = SG_Table::HandleEvent(event, x, y);
   if(ret && event->type == SDL_SG_EVENT) {
     return ChildEvent(event);

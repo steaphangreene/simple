@@ -49,6 +49,8 @@ bool SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Table/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {

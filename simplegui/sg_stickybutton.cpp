@@ -38,6 +38,8 @@ bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "StickyButton/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     flags |= SG_WIDGET_FLAGS_PRESSED;
     flags ^= SG_WIDGET_FLAGS_ON;

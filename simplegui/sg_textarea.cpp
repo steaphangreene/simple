@@ -43,7 +43,7 @@ SG_TextArea::~SG_TextArea() {
 bool SG_TextArea::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "TextArea/Handle: Button Down at (%f,%f)\n", x, y);
-  return 0;	//This widget eats all events
+  return 0;	//This widget eats all events all the time
   }
 
 //  bool SG_TextArea::SetDefaultCursor(GL_MODEL *cur);
@@ -211,4 +211,14 @@ void SG_TextArea::BuildTexture(int st) {
   glBindTexture(GL_TEXTURE_2D, 0);
 
   texture[st].dirty = 0;
+  }
+
+void SG_TextArea::Disable() {
+  flags |= SG_WIDGET_FLAGS_DISABLED;
+  state = 1;
+  }
+ 
+void SG_TextArea::Enable() {
+  flags &= (~SG_WIDGET_FLAGS_DISABLED);
+  state = 0;
   }

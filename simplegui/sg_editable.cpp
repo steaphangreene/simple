@@ -39,6 +39,8 @@ bool SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Editable/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     current_sg->SetCurrentWidget(this);
     current_sg->SetFocusWidget(this);
