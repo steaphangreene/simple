@@ -45,6 +45,10 @@ int main(int argc, char **argv) {
     }
 
   SimpleModel *mod = SM_LoadModel(argv[1]);
+  if(!mod) {
+    fprintf(stderr, "ERROR: Model load failed\n");
+    exit(1);
+    }
 
   int quit = 0;
   while(!quit) {
