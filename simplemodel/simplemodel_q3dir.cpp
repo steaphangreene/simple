@@ -63,8 +63,8 @@ bool SimpleModel_Q3Dir::Load(const string &filenm) {
 
   if(!LoadCFG(filename + "/animation.cfg")) return false;
 
-  torso->SetAnimation(11);
-  legs->SetAnimation(15);
+  SetAnimation(TORSO_STAND);
+  SetAnimation(LEGS_IDLE);
 
   return false;
   }
