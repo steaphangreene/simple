@@ -25,31 +25,41 @@
 #include <GL/gl.h>
 
 #include "sg_multitab.h"
-#include "sg_panel.h"
-#include "sg_button.h"
+#include "sg_tabs.h"
 #include "sg_events.h"
 
-SG_MultiTab::SG_MultiTab()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_MultiTab", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+SG_MultiTab::SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
+	int tinvpro,
+	SG_Texture ttex, SG_Texture dis_ttex, SG_Texture click_ttex,
+	SG_Texture down_ttex) : SG_Compound(1, tinvpro, 0.0, 0.0) {
+  if(items.size() != areas.size()) {
+    fprintf(stderr, "ERROR: SG_MultiTab given vectors of different sizes!\n");
+    exit(1);
+    }
+  if(items.size() == 0) {
+    fprintf(stderr, "ERROR: SG_MultiTab given vectors of zero size!\n");
+    exit(1);
+    }
+  SG_Tabs *wid =
+    new SG_Tabs(items, SG_AUTOSIZE, 1, ttex, dis_ttex, click_ttex, down_ttex);
+  AddWidget(wid, 0, 0, 1, 1);
+  AddWidget(areas[((SG_Tabs *)(widgets[0]))->Which()], 0, 1, 1, ysize - 1);
+  subscreens = areas;
   }
 
 SG_MultiTab::~SG_MultiTab() {
   }
 
+void SG_MultiTab::Set(int which) {
+  RemoveWidget(widgets[1]); //Always REALLY current subwidget
+  AddWidget(subscreens[which], 0, 1, 1, ysize - 1);
+  }
+
 bool SG_MultiTab::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
-      }
+  if(event->user.code == SG_EVENT_SELECT) {
+    Set(*((int *)(event->user.data2)));
+    event->user.data1 = (void*) this;	//Now it's MY select event
+    return 1;
     }
   return 0; // Silence children doing other things
   }

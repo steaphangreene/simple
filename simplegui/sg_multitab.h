@@ -25,21 +25,28 @@
 #ifndef SG_MULTITAB_H
 #define SG_MULTITAB_H
 
-#include "sg_compound.h"
+#include <vector>
+using namespace std;
 
-class SG_Button;
-class SG_TextArea;
+#include "sg_compound.h"
+#include "sg_tabs.h"
+
+class SG_Alignment;
 
 class SG_MultiTab : public SG_Compound {
 public:
-  SG_MultiTab();
+  SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
+	int tinvpro = 8, 
+	SG_Texture ttex = SG_COL_RAISED, SG_Texture dis_ttex = SG_COL_LOW,
+	SG_Texture click_ttex = SG_COL_LOW, SG_Texture down_ttex = SG_COL_HIGH);
   virtual ~SG_MultiTab();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+  void Set(int);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  vector<SG_Alignment *> subscreens;
   };
 
 #endif // SG_MULTITAB_H
