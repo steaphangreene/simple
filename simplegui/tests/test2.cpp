@@ -71,7 +71,7 @@ int event_thread_handler(void *arg) {
   return 0;
   }
 
-int video_thread_handler(void *arg) {
+int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
   while(!user_quit) {
 
     start_scene(0);
@@ -91,14 +91,13 @@ int video_thread_handler(void *arg) {
   }
 
 int game_thread_handler(void *arg) {
-  while(!user_quit) {
+//  while(!user_quit) {
+//    We would do game stuff - carfully coordinated with input from events
+//    and output to renderers.
 
-//  Do game stuff - carfully coordinated with input from events
-//  and output to renderers
-
-//  This would just busy-wait as it's called now, so I don't really call it
-
-    }
+//    This would just busy-wait as it's written now, so the while() is
+//    commented out.
+//    }
   return 0;
   }
 
@@ -158,15 +157,14 @@ int main(int argc, char **argv) {
 
   gui_mutex = SDL_CreateMutex();
 
-  SDL_Thread *ev_t;
-//  SDL_Thread *game_t;
+  SDL_Thread *ev_t, *game_t;
 
   ev_t = SDL_CreateThread(event_thread_handler, NULL);
-//  game_t = game_thread_handler(NULL);
+  game_t = SDL_CreateThread(game_thread_handler, NULL);
   video_thread_handler(NULL); //thsi thread MUST be the video thread
 
   SDL_WaitThread(ev_t, NULL);
-//  SDL_WaitThread(game_t, NULL);
+  SDL_WaitThread(game_t, NULL);
 
   delete gui;
   return 0;
