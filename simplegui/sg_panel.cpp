@@ -26,21 +26,7 @@
 #include "sg_panel.h"
 
 SG_Panel::SG_Panel(int c) : SG_Widget() {
-  texture.resize(1);
-  if(c > 0) {
-    texture[0].type = SG_TEXTURE_COLOR;
-    texture[0].col = *(current_sg->Color(c));
-    }
-  else {
-    texture[0].type = SG_TEXTURE_TRANS;
-    }
-  texture[0].texture = 0;
-  texture[0].cur = NULL;
-  texture[0].src = NULL;
-  texture[0].xfact = 1.0;
-  texture[0].yfact = 1.0;
-  texture[0].dirty = 1;
-
+  texture.push_back(c);
   state = 0;
   }
 
@@ -123,4 +109,3 @@ bool SG_Panel::Render() {
 //  bool SG_Panel::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_Panel::Default_Mouse_Cursor = NULL;
-

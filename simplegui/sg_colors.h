@@ -27,9 +27,8 @@
 #define SG_COL_FG	2
 #define SG_COL_RAISED	3
 #define SG_COL_LOW	4
-#define SG_COL_TEXT	5
-#define SG_COL_HIGH	6
-#define SG_COL_MAX	7
+#define SG_COL_HIGH	5
+#define SG_COL_MAX	6
 
 #endif // SG_COLORS_H
 

@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
 
   gui->LoadFont(fontfn);
 
+  gui->SetDefaultTextColor(0.0, 0.0, 0.0);
   int black = gui->NewColor(0.0, 0.0, 0.0);
   int white = gui->NewColor(1.0, 1.0, 1.0);
 
@@ -119,7 +120,7 @@ int main(int argc, char **argv) {
   tab[1]->SetBackground(panel[0]);
 
   trans = new SG_TransLabel("TransLabel Widget\nIs Right Here",
-	gui->NewColor(0.6, 0.4, 0.3));
+	gui->NewColor(0.0, 0.0, 0.0, 0.6, 0.4, 0.3));
   trans->SetMargins(0.2, 0.2);
   tab[0]->AddWidget(trans, 1, 2, 1, 2);
 
@@ -132,17 +133,17 @@ int main(int argc, char **argv) {
   align->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
-	gui->NewColor(1.0, 0.0, 0.0), black, gui->NewColor(1.0, 0.5, 0.5));
+	gui->NewColor(1.0, 0.0, 0.0), gui->NewColor(1.0, 0.5, 0.5));
   button[1] = new SG_Button("Green",
-	gui->NewColor(0.0, 1.0, 0.0), black, gui->NewColor(0.5, 1.0, 0.5));
+	gui->NewColor(0.0, 1.0, 0.0), gui->NewColor(0.5, 1.0, 0.5));
   button[2] = new SG_Button("Blue",
-	gui->NewColor(0.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.5, 1.0));
+	gui->NewColor(0.0, 0.0, 1.0), gui->NewColor(0.5, 0.5, 1.0));
   button[3] = new SG_StickyButton("Yellow",
-	gui->NewColor(1.0, 1.0, 0.0), black, gui->NewColor(0.5, 0.5, 0.0));
+	gui->NewColor(1.0, 1.0, 0.0), gui->NewColor(0.5, 0.5, 0.0));
   button[4] = new SG_StickyButton("Cyan",
-	gui->NewColor(0.0, 1.0, 1.0), black, gui->NewColor(0.0, 0.5, 0.5));
+	gui->NewColor(0.0, 1.0, 1.0), gui->NewColor(0.0, 0.5, 0.5));
   button[5] = new SG_StickyButton("", //Blank!
-	gui->NewColor(1.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.0, 0.5));
+	gui->NewColor(1.0, 0.0, 1.0), gui->NewColor(0.5, 0.0, 0.5));
 
   name[button[0]] = "red";
   name[button[1]] = "green";
@@ -161,12 +162,12 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(button[5], 1, 7);
 
   text = new SG_TextArea(
-	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3), black);
+	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
   text->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(text, 0, 4, 2, 1);
 
   prog = new SG_ProgressBar("Progress",
-	gui->NewColor(0.3, 0.3, 0.3), black, gui->NewColor(0.6, 0.0, 0.0));
+	gui->NewColor(0.3, 0.3, 0.3), gui->NewColor(0.6, 0.0, 0.0));
   prog->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(prog, 0, 8, 2, 1);
 
@@ -194,14 +195,18 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EVENT_STICKYON from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
-	  if(event.user.data1 == (void*)button[5])
+	  if(event.user.data1 == (void*)button[4])
+	    text->SetText("Or is it?");
+	  else if(event.user.data1 == (void*)button[5])
 	    gui->SetPopupWidget(popup, 0.3, 0.3); 
 	  }
 	else if(event.user.code == SG_EVENT_STICKYOFF) {
 	  printf("Received SG_EVENT_STICKYOFF from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
-	  if(event.user.data1 == (void*)button[5])
+	  if(event.user.data1 == (void*)button[4])
+	    text->SetText("Text Area Is Here");
+	  else if(event.user.data1 == (void*)button[5])
 	    gui->UnsetPopupWidget(); 
 	  }
 	else if(event.user.code == SG_EVENT_BUTTONRELEASE) {

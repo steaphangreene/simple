@@ -64,10 +64,18 @@ public:
   float Red(int c);
   float Green(int c);
   float Blue(int c);
-  const SDL_Color *Color(int c);
-  void SetColor(int c, float r, float g, float b);
+  float TextRed(int c);
+  float TextGreen(int c);
+  float TextBlue(int c);
+  const SDL_Color *BGColor(int c);
+  const SDL_Color *TextColor(int c);
+  void SetColor(int c, float r, float g, float b,
+	float tr = -1.0, float tg = -1.0, float tb = -1.0);
   int NewColor();
-  int NewColor(float r, float g, float b);
+  int NewColor(float r, float g, float b,
+	float tr = -1.0, float tg = -1.0, float tb = -1.0);
+  void SetDefaultTextColor(float tr, float tg, float tb);
+  const SDL_Color *DefaultTextColor();
 
 protected:
   bool Resize(float asp);
@@ -91,6 +99,7 @@ protected:
   TTF_Font *cur_font;
 
   vector<SDL_Color> col;
+  SDL_Color text_col;
   };
 
 #include "sg_events.h"

@@ -6,7 +6,7 @@ AnimatedPanel
 Arrows in text objects ("Indicator Arrows")
 
 -=To Flush Out=-
-Add passed-in texture support
+Finish passed-in texture support
 Implement actual mouse cursors
 Disabled state textures
 Implement Scrollable

@@ -25,16 +25,10 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_Editable::SG_Editable(string mes, int c, int tc, int dc, int fc)
-		: SG_TextArea(mes, c, tc) {
-  texture.resize(3);
-  texture[1] = texture[0];
-  texture[1].col = *(current_sg->Color(dc));
-  texture[1].dirty = 1;
-
-  texture[2] = texture[0];
-  texture[2].col = *(current_sg->Color(fc));
-  texture[1].dirty = 1;
+SG_Editable::SG_Editable(string mes, int c, int dc, int fc)
+		: SG_TextArea(mes, c) {
+  texture.push_back(dc);
+  texture.push_back(fc);
   }
 
 SG_Editable::~SG_Editable() {

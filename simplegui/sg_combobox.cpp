@@ -32,10 +32,10 @@
 SG_ComboBox::SG_ComboBox()
 	: SG_Compound(8, 5, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_TEXT, SG_COL_LOW);
+  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
   AddWidget(okb, 7, 4, 1, 1);
   SG_Widget *labelb =
-	new SG_TextArea("SG_ComboBox", SG_COL_LOW, SG_COL_TEXT);
+	new SG_TextArea("SG_ComboBox", SG_COL_LOW);
   AddWidget(labelb, 1, 2, 6, 1);
   }
 

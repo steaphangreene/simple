@@ -57,31 +57,36 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   current_sg = this;
   current_widget = NULL;
 
-  col.resize(SG_COL_MAX);
+  col.resize(SG_COL_MAX * 2);
 
-  col[SG_COL_BG].r = 60;
-  col[SG_COL_BG].g = 60;
-  col[SG_COL_BG].b = 60;
+  text_col.r = 0;
+  text_col.g = 0;
+  text_col.b = 0;
 
-  col[SG_COL_FG].r = 90;
-  col[SG_COL_FG].g = 90;
-  col[SG_COL_FG].b = 90;
+  col[SG_COL_BG*2 + 0].r = 60;
+  col[SG_COL_BG*2 + 0].g = 60;
+  col[SG_COL_BG*2 + 0].b = 60;
+  col[SG_COL_BG*2 + 1] = text_col;
 
-  col[SG_COL_RAISED].r = 150;
-  col[SG_COL_RAISED].g = 150;
-  col[SG_COL_RAISED].b = 150;
+  col[SG_COL_FG*2 + 0].r = 90;
+  col[SG_COL_FG*2 + 0].g = 90;
+  col[SG_COL_FG*2 + 0].b = 90;
+  col[SG_COL_FG*2 + 1] = text_col;
 
-  col[SG_COL_LOW].r = 30;
-  col[SG_COL_LOW].g = 30;
-  col[SG_COL_LOW].b = 30;
+  col[SG_COL_RAISED*2 + 0].r = 150;
+  col[SG_COL_RAISED*2 + 0].g = 150;
+  col[SG_COL_RAISED*2 + 0].b = 150;
+  col[SG_COL_RAISED*2 + 1] = text_col;
 
-  col[SG_COL_HIGH].r = 90;
-  col[SG_COL_HIGH].g = 90;
-  col[SG_COL_HIGH].b = 150;
+  col[SG_COL_LOW*2 + 0].r = 30;
+  col[SG_COL_LOW*2 + 0].g = 30;
+  col[SG_COL_LOW*2 + 0].b = 30;
+  col[SG_COL_LOW*2 + 1] = text_col;
 
-  col[SG_COL_TEXT].r = 0;
-  col[SG_COL_TEXT].g = 0;
-  col[SG_COL_TEXT].b = 0;
+  col[SG_COL_HIGH*2 + 0].r = 90;
+  col[SG_COL_HIGH*2 + 0].g = 90;
+  col[SG_COL_HIGH*2 + 0].b = 150;
+  col[SG_COL_HIGH*2 + 1] = text_col;
 
   cur_font = NULL;
   }
@@ -282,36 +287,72 @@ void SimpleGUI::LoadFont(const char *fontfn) {
   }
 
 float SimpleGUI::Red(int c) {
-  return col[c].r / 255.0f;
+  return col[c*2 + 0].r / 255.0f;
   }
 
 float SimpleGUI::Green(int c) {
-  return col[c].g / 255.0f;
+  return col[c*2 + 0].g / 255.0f;
   }
 
 float SimpleGUI::Blue(int c) {
-  return col[c].b / 255.0f;
+  return col[c*2 + 0].b / 255.0f;
   }
 
-const SDL_Color *SimpleGUI::Color(int c) {
-  return &col[c];
+float SimpleGUI::TextRed(int c) {
+  return col[c*2 + 1].r / 255.0f;
   }
 
-void SimpleGUI::SetColor(int c, float r, float g, float b) {
-  col[c].r = (Uint8)(r*255.0f);
-  col[c].g = (Uint8)(g*255.0f);
-  col[c].b = (Uint8)(b*255.0f);
+float SimpleGUI::TextGreen(int c) {
+  return col[c*2 + 1].g / 255.0f;
+  }
+
+float SimpleGUI::TextBlue(int c) {
+  return col[c*2 + 1].b / 255.0f;
+  }
+
+const SDL_Color *SimpleGUI::BGColor(int c) {
+  return &col[c*2 + 0];
+  }
+
+const SDL_Color *SimpleGUI::TextColor(int c) {
+  return &col[c*2 + 1];
+  }
+
+void SimpleGUI::SetDefaultTextColor(float tr, float tg, float tb) {
+  text_col.r = (Uint8)(tr*255.0f);
+  text_col.g = (Uint8)(tg*255.0f);
+  text_col.b = (Uint8)(tb*255.0f);
+  }
+
+const SDL_Color *SimpleGUI::DefaultTextColor() {
+  return &text_col;
+  }
+
+void SimpleGUI::SetColor(int c, float r, float g, float b,
+	float tr, float tg, float tb) {
+  col[c*2 + 0].r = (Uint8)(r*255.0f);
+  col[c*2 + 0].g = (Uint8)(g*255.0f);
+  col[c*2 + 0].b = (Uint8)(b*255.0f);
+  if(r == -1.0) {
+    col[c*2 + 1] = text_col;
+    }
+  else {
+    col[c*2 + 1].r = (Uint8)(tr*255.0f);
+    col[c*2 + 1].g = (Uint8)(tg*255.0f);
+    col[c*2 + 1].b = (Uint8)(tb*255.0f);
+    }
   };
 
 int SimpleGUI::NewColor() {
   int ret = col.size();
-  col.resize(ret+1);
-  return ret;
+  col.resize(ret+2);
+  return ret/2;
   }
 
-int SimpleGUI::NewColor(float r, float g, float b) {
+int SimpleGUI::NewColor(float r, float g, float b,
+	float tr, float tg, float tb) {
   int ret = NewColor();
-  SetColor(ret, r, g, b);
+  SetColor(ret, r, g, b, tr, tg, tb);
   return ret;
   }
 

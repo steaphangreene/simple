@@ -28,8 +28,7 @@
 
 #include <math.h>
 
-SG_TextArea::SG_TextArea(string mes, int c, int tc) : SG_Panel(c) {
-  texture[0].fg = *(current_sg->Color(tc));
+SG_TextArea::SG_TextArea(string mes, int c) : SG_Panel(c) {
   message = mes;
   xmargin = 0.125;
   ymargin = 0.125;
@@ -51,6 +50,15 @@ bool SG_TextArea::HandleMouseEvent(SDL_Event *event, float x, float y) {
 void SG_TextArea::SetMargins(float xmar, float ymar) {
   xmargin = xmar;
   ymargin = ymar;
+  }
+
+void SG_TextArea::SetText(const string &mes) {
+  message = mes;
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  }
+
+const string &SG_TextArea::Text() {
+  return message;
   }
 
 int nextpoweroftwo(int x)
@@ -99,10 +107,21 @@ void SG_TextArea::BuildTexture(int st) {
   ysize = nextpoweroftwo(bysize);
 
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
-  texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+  if(texture[st].type == SG_TEXTURE_COLOR) {
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
 			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-  SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
+    SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
+    }
+  else if(texture[st].type == SG_TEXTURE_TRANS) {
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    }
+  else if(texture[st].type == SG_TEXTURE_DEFINED) {
+    //FIXME: Implement this for real!
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    }
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
   for(int ln = 0; ln < int(line.size()); ++ln) {

@@ -26,8 +26,7 @@
 
 class SG_Button : public SG_TextArea {
 public:
-  SG_Button(string mes,
-	int c = SG_COL_RAISED, int tc = SG_COL_TEXT, int cc = SG_COL_LOW);
+  SG_Button(string mes, int c = SG_COL_RAISED, int cc = SG_COL_LOW);
   virtual ~SG_Button();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

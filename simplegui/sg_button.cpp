@@ -25,12 +25,10 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Button::SG_Button(string mes, int c, int tc, int cc)
-	: SG_TextArea(mes, c, tc) {
-  texture.resize(3);
-  texture[1] = texture[0];
-  texture[1].col = *(current_sg->Color(cc));
-  texture[1].dirty = 1;
+SG_Button::SG_Button(string mes, int c, int cc)
+	: SG_TextArea(mes, c) {
+  texture.push_back(cc);
+  texture.push_back(cc);	//FIXME: Disabled Texture!
   }
 
 SG_Button::~SG_Button() {

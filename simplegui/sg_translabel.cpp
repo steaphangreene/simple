@@ -27,7 +27,8 @@
 #include <SDL/SDL_ttf.h>
 
 SG_TransLabel::SG_TransLabel(string mes, int c)
-	: SG_TextArea(mes, 0, c) {
+	: SG_TextArea(mes, c) {
+  texture[0].type = SG_TEXTURE_TRANS;
   }
 
 SG_TransLabel::~SG_TransLabel() {

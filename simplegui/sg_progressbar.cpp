@@ -25,12 +25,9 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_ProgressBar::SG_ProgressBar(string mes, int c, int tc, int dc)
-		: SG_TextArea(mes, c, tc) {
-  texture.resize(2);
-  texture[1] = texture[0];
-  texture[1].col = *(current_sg->Color(dc));
-  texture[1].dirty = 1;
+SG_ProgressBar::SG_ProgressBar(string mes, int c, int dc)
+	: SG_TextArea(mes, c) {
+  texture.push_back(dc);
   }
 
 SG_ProgressBar::~SG_ProgressBar() {

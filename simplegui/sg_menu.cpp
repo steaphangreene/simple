@@ -25,12 +25,9 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_Menu::SG_Menu(string itms, int c, int tc, int ac)
-		: SG_TextArea(itms, c, tc) {
-  texture.resize(2);
-  texture[1] = texture[0];
-  texture[1].col = *(current_sg->Color(ac));
-  texture[1].dirty = 1;
+SG_Menu::SG_Menu(string itms, int c, int ac)
+		: SG_TextArea(itms, c) {
+  texture.push_back(ac);
   }
 
 SG_Menu::~SG_Menu() {

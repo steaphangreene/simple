@@ -25,13 +25,9 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_StickyButton::SG_StickyButton(string mes, int c, int tc, int cc, int pc)
-	: SG_Button(mes, c, tc, cc) {
-  texture.resize(4);
-  texture[3] = texture[0];
-  texture[3].col = *(current_sg->Color(pc));
-  texture[3].dirty = 1;
-
+SG_StickyButton::SG_StickyButton(string mes, int c, int cc, int pc)
+	: SG_Button(mes, c, cc) {
+  texture.push_back(pc);
   on = 0;
   }
 

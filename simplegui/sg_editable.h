@@ -26,8 +26,7 @@
 
 class SG_Editable : public SG_TextArea {
 public:
-  SG_Editable(string mes,
-	int c = SG_COL_LOW, int tc = SG_COL_TEXT,
+  SG_Editable(string mes, int c = SG_COL_LOW, 
 	int dc = SG_COL_BG, int fc = SG_COL_HIGH);
   virtual ~SG_Editable();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
