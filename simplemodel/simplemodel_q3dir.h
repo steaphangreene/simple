@@ -36,10 +36,13 @@ public:
 
   virtual void SetAnimation(int part, int anim);
 
+  virtual int GetAnimation(int part);
+
 protected:
+  bool LoadCFG(const string &filenm);
+
   SimpleModel_Q3Dir();
-  SimpleModel_Md3 *head, *legs, *torso, *weapon;
+  SimpleModel_Md3 *head, *torso, *legs, *weapon;
   };
 
 #endif	//SIMPLEMODEL_Q3DIR_H
-

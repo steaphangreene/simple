@@ -19,44 +19,47 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL.h>
+#ifndef	Q3ANIM_H
+#define	Q3ANIM_H
 
-#include <cstdio>
-#include <cstdlib>
-using namespace std;
+enum Q3Animation {
+  ANIM_START = 0,
 
-#include "simplemodel.h"
-#include "simplemodel_q3dir.h"
+  BOTH_START = ANIM_START,
+  BOTH_DEATH1 = BOTH_START,
+  BOTH_DEAD1,
+  BOTH_DEATH2,
+  BOTH_DEAD2,
+  BOTH_DEATH3,
+  BOTH_DEAD3,
+  BOTH_MAX,
 
-SimpleModel *SM_LoadModel(const string &filename) {
-  FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
-  if(cfg) {
-    fclose(cfg);
-    return new SimpleModel_Q3Dir(filename);
-    }
-  fprintf(stderr, "WARNING: Failed to detect model type of '%s',\n",
-	filename.c_str());
-  return NULL;
-  }
+  TORSO_START = BOTH_MAX,
+  TORSO_GESTURE = TORSO_START,
+  TORSO_ATTACK,
+  TORSO_ATTACK2,
+  TORSO_DROP,
+  TORSO_RAISE,
+  TORSO_STAND,
+  TORSO_STAND2,
+  TORSO_MAX,
 
-SimpleModel::SimpleModel() {
-  }
+  LEGS_START = TORSO_MAX,
+  LEGS_WALKCR = LEGS_START,
+  LEGS_WALK,
+  LEGS_RUN,
+  LEGS_BACK,
+  LEGS_SWIM,
+  LEGS_JUMP,
+  LEGS_LAND,
+  LEGS_JUMPB,
+  LEGS_LANDB,
+  LEGS_IDLE,
+  LEGS_IDLECR,
+  LEGS_TURN,
+  LEGS_MAX,
 
-SimpleModel::~SimpleModel() {
-  }
+  ANIM_MAX = LEGS_MAX
+  };
 
-bool SimpleModel::Load(const string &filenm) {
-  filename = filenm;
-  return false;
-  }
-
-bool SimpleModel::Render(Uint32 cur_time) {
-  return false;
-  }
-
-void SimpleModel::SetAnimation(int part, int anim) {
-  }
-
-int SimpleModel::GetAnimation(int part) {
-  return 0;
-  }
+#endif	//Q3ANIM_H

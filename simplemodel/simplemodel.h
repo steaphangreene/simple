@@ -40,6 +40,8 @@ public:
 
   virtual void SetAnimation(int part, int anim);
 
+  virtual int GetAnimation(int part);
+
 protected:
   string filename;
   };

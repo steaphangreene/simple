@@ -57,15 +57,34 @@ int main(int argc, char **argv) {
 	}
       else if(event.type == SDL_KEYDOWN) {
         if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-        else if(event.key.keysym.sym == SDLK_1) mod->SetAnimation(1, 1);
-        else if(event.key.keysym.sym == SDLK_2) mod->SetAnimation(1, 2);
-        else if(event.key.keysym.sym == SDLK_3) mod->SetAnimation(1, 3);
-        else if(event.key.keysym.sym == SDLK_4) mod->SetAnimation(1, 4);
-        else if(event.key.keysym.sym == SDLK_5) mod->SetAnimation(1, 5);
-        else if(event.key.keysym.sym == SDLK_6) mod->SetAnimation(1, 6);
-        else if(event.key.keysym.sym == SDLK_7) mod->SetAnimation(1, 7);
-        else if(event.key.keysym.sym == SDLK_8) mod->SetAnimation(1, 8);
-        else if(event.key.keysym.sym == SDLK_9) mod->SetAnimation(1, 9);
+        else if(event.key.keysym.sym == SDLK_1) mod->SetAnimation(0, 0);
+        else if(event.key.keysym.sym == SDLK_2) mod->SetAnimation(0, 1);
+        else if(event.key.keysym.sym == SDLK_3) mod->SetAnimation(0, 2);
+        else if(event.key.keysym.sym == SDLK_4) mod->SetAnimation(0, 3);
+        else if(event.key.keysym.sym == SDLK_5) mod->SetAnimation(0, 4);
+        else if(event.key.keysym.sym == SDLK_6) mod->SetAnimation(0, 5);
+        else if(event.key.keysym.sym == SDLK_q) mod->SetAnimation(1, 0);
+        else if(event.key.keysym.sym == SDLK_w) mod->SetAnimation(1, 1);
+        else if(event.key.keysym.sym == SDLK_e) mod->SetAnimation(1, 2);
+        else if(event.key.keysym.sym == SDLK_r) mod->SetAnimation(1, 3);
+        else if(event.key.keysym.sym == SDLK_t) mod->SetAnimation(1, 4);
+        else if(event.key.keysym.sym == SDLK_y) mod->SetAnimation(1, 5);
+        else if(event.key.keysym.sym == SDLK_u) mod->SetAnimation(1, 6);
+        else if(event.key.keysym.sym == SDLK_i) mod->SetAnimation(1, 7);
+        else if(event.key.keysym.sym == SDLK_o) mod->SetAnimation(1, 8);
+        else if(event.key.keysym.sym == SDLK_p) mod->SetAnimation(1, 9);
+        else if(event.key.keysym.sym == SDLK_a) mod->SetAnimation(2, 0);
+        else if(event.key.keysym.sym == SDLK_s) mod->SetAnimation(2, 1);
+        else if(event.key.keysym.sym == SDLK_d) mod->SetAnimation(2, 2);
+        else if(event.key.keysym.sym == SDLK_f) mod->SetAnimation(2, 3);
+        else if(event.key.keysym.sym == SDLK_g) mod->SetAnimation(2, 4);
+        else if(event.key.keysym.sym == SDLK_h) mod->SetAnimation(2, 5);
+        else if(event.key.keysym.sym == SDLK_j) mod->SetAnimation(2, 6);
+        else if(event.key.keysym.sym == SDLK_k) mod->SetAnimation(2, 7);
+        else if(event.key.keysym.sym == SDLK_l) mod->SetAnimation(2, 8);
+        else if(event.key.keysym.sym == SDLK_SEMICOLON) mod->SetAnimation(2, 9);
+        else if(event.key.keysym.sym == SDLK_QUOTE) mod->SetAnimation(2, 10);
+        else if(event.key.keysym.sym == SDLK_RETURN) mod->SetAnimation(2, 11);
         else {
           }
         }

@@ -26,27 +26,29 @@
 #include <cstdlib>
 using namespace std;
 
+#include "q3anim.h"
 #include "simplemodel_q3dir.h"
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &filenm) {
   head = NULL;
-  legs = NULL;
   torso = NULL;
+  legs = NULL;
   weapon = NULL;
   Load(filenm);
   }
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir() {
   head = NULL;
-  legs = NULL;
   torso = NULL;
+  legs = NULL;
   weapon = NULL;
   }
 
 SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
   if(head) delete head;
-  if(legs) delete legs;
   if(torso) delete torso;
+  if(legs) delete legs;
+
   if(weapon) weapon = NULL;	// Not mine!
   }
 
@@ -54,14 +56,55 @@ bool SimpleModel_Q3Dir::Load(const string &filenm) {
   filename = filenm;
   head = new SimpleModel_Md3(
 	filename, filename + "/head.md3", filename + "/head_default.skin");
-  legs = new SimpleModel_Md3(
-	filename, filename + "/lower.md3", filename + "/lower_default.skin");
   torso = new SimpleModel_Md3(
 	filename, filename + "/upper.md3", filename + "/upper_default.skin");
+  legs = new SimpleModel_Md3(
+	filename, filename + "/lower.md3", filename + "/lower_default.skin");
 
-  //FIXME: Set Initial Animation
+  if(!LoadCFG(filename + "/animation.cfg")) return false;
+
+  torso->SetAnimation(0, 11);
+  legs->SetAnimation(0, 15);
 
   return false;
+  }
+
+bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
+    FILE *cfg = fopen(filenm.c_str(), "r");
+    if(!cfg) {
+      fprintf(stderr, "WARNING: Could not open model animations file '%s'!\n",
+	filenm.c_str());
+      return false;
+      }
+
+    int start=0, num=0, loop=0, fps=0;
+    int torso_first = -1, legs_offset = -1;
+    for(int anim = ANIM_START; anim < ANIM_MAX; ++anim) {
+      while(fscanf(cfg, "%d %d %d %d %*[^\n]", &start, &num, &loop, &fps) < 4) {
+	fscanf(cfg, "%*[^\n]");	//Skip this line
+	}
+      printf("Anim #%d: %d %d %d %d\n", anim, start, num, loop, fps);
+
+      if(anim < BOTH_MAX) {
+        torso->AddAnimation(start, start + num, loop, fps);
+	legs->AddAnimation(start, start + num, loop, fps);
+        }
+      else if(anim < TORSO_MAX) {
+	if(torso_first < 0) torso_first = start;
+        torso->AddAnimation(start, start + num, loop, fps);
+        }
+      else if(anim < LEGS_MAX) {
+	if(legs_offset < 0) legs_offset = start - torso_first;
+	start -= legs_offset;
+	legs->AddAnimation(start, start + num, loop, fps);
+        }
+      else {
+	fprintf(stderr, "WARNING: Too many animations for Q3 in '%s'!\n",
+		filenm.c_str());
+	}
+      }
+    fclose(cfg);
+  return true;
   }
 
 bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
@@ -75,6 +118,22 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
   }
 
 void SimpleModel_Q3Dir::SetAnimation(int part, int anim) {
-  if(part == 1) legs->SetAnimation(0, anim);
-  else if(part == 2) torso->SetAnimation(0, anim);
+  if(part != 0) anim += 6;	//Offset for the BOTH_ animations
+  if(part == 0) {
+    torso->SetAnimation(0, anim);
+    legs->SetAnimation(0, anim);
+    }
+  else if(part == 1) {
+    torso->SetAnimation(0, anim);
+    if(legs->GetAnimation(0) < 6) legs->SetAnimation(0, 15);
+    }
+  else if(part == 2) {
+    legs->SetAnimation(0, anim);
+    if(torso->GetAnimation(0) < 6) torso->SetAnimation(0, 11);
+    }
   }
+
+int SimpleModel_Q3Dir::GetAnimation(int part) {
+  return 0;
+  }
+
