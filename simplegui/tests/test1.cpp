@@ -356,8 +356,8 @@ int main(int argc, char **argv) {
     }
 
   gui->UnsetPopupWidget(); 
-  delete popup; //Will delete all children
-  delete tab[0]; //Will delete all children
+  delete popup;  //Will delete all children
+  delete gui;    //Will delete all children
 
   return 0;
   }
