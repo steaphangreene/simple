@@ -25,21 +25,29 @@
 #ifndef SG_COMBOBOX_H
 #define SG_COMBOBOX_H
 
+#include <vector>
+using namespace std;
+
 #include "sg_compound.h"
+#include "sg_texture.h"
+#include "sg_colors.h"
 
 class SG_Button;
 class SG_TextArea;
 
 class SG_ComboBox : public SG_Compound {
 public:
-  SG_ComboBox();
+  SG_ComboBox(vector<string> options, int binvpro = 8,
+	SG_Texture btex = SG_COL_RAISED, SG_Texture btex_dis = SG_COL_LOW,
+	SG_Texture btex_click = SG_COL_LOW,
+	SG_Texture ttex = SG_COL_FG, SG_Texture ttex_dis = SG_COL_BG);
   virtual ~SG_ComboBox();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  SG_Button *opb;
   };
 
 #endif // SG_COMBOBOX_H

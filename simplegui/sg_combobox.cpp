@@ -29,14 +29,15 @@
 #include "sg_button.h"
 #include "sg_events.h"
 
-SG_ComboBox::SG_ComboBox()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
+SG_ComboBox::SG_ComboBox(vector<string> options, int binvpro,
+        SG_Texture btex, SG_Texture btex_dis, SG_Texture btex_click,
+        SG_Texture ttex, SG_Texture ttex_dis)
+	: SG_Compound(binvpro, 1, 0.0, 0.0) {
+  opb = new SG_Button("v", btex, btex_dis, btex_click);
+  AddWidget(opb, binvpro-1, 0, 1, 1);
   SG_Widget *labelb =
-	new SG_TextArea("SG_ComboBox", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+	new SG_TextArea(options[0], SG_COL_LOW);
+  AddWidget(labelb, 0, 0, binvpro-1, 1);
   }
 
 SG_ComboBox::~SG_ComboBox() {
@@ -44,12 +45,7 @@ SG_ComboBox::~SG_ComboBox() {
 
 bool SG_ComboBox::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
-      }
+    //Unimplemented
     }
   return 0; // Silence children doing other things
   }
