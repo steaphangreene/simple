@@ -29,6 +29,7 @@ using namespace std;
 
 #include "sg.h"
 #include "sg_alignment.h"
+#include "sg_events.h"
 
 SimpleGUI *current_sg = NULL;
 
@@ -240,7 +241,17 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       mousey = float(event->button.y);
       ScreenToRelative(mousex, mousey);
 
-      return mWid->HandEventTo(current_widget, event, mousex, mousey);
+      int ret = 0;
+      ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
+      if(popWid && ret && event->type != SDL_SG_EVENT) {
+	ret = popWid->HandEventTo(current_widget, event,
+		mousex*popx, mousey*popy);
+	}
+      if(ret && event->type != SDL_SG_EVENT) {
+	ret = current_widget->HandleEvent(event, 0.0, 0.0);
+	}
+      current_widget = NULL; 
+      return ret;
       }
     }
 
