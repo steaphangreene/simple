@@ -240,7 +240,8 @@ int main(int argc, char **argv) {
 
   popup = new SG_Table(6, 6);
   popup->SetBackground(new SG_Panel());
-  popup->AddWidget(new SG_Button("Popup!\nHere!"), 1, 1, 4, 4);
+//  popup->AddWidget(new SG_Button("Popup!\nHere!"), 1, 1, 4, 4);
+  popup->AddWidget(new SG_Editable("Popup!\nHere!"), 1, 1, 4, 4);
 
   SDL_Event event;
   int user_quit = 0;

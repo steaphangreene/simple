@@ -294,13 +294,25 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
   else if(event->type == SDL_KEYDOWN) {
     if(focus_widget) {
-      return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+      if(mWid->HasWidget(focus_widget)) {
+	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      if(popWid->HasWidget(focus_widget)) {
+	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
       }
     }
 
   else if(event->type == SDL_KEYUP) {
     if(focus_widget) {
-      return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+      if(mWid->HasWidget(focus_widget)) {
+	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      if(popWid->HasWidget(focus_widget)) {
+	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
       }
     }
 
