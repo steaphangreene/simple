@@ -35,6 +35,7 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   message = mes;
   xmargin = mx;
   ymargin = my;
+  font_size = -1; //AUTO
   }
 
 SG_TextArea::~SG_TextArea() {
@@ -63,6 +64,11 @@ void SG_TextArea::SetText(const string &mes) {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   }
 
+void SG_TextArea::SetFontSize(int sz) {
+  font_size = sz;
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  }
+
 const string &SG_TextArea::Text() {
   return message;
   }
@@ -85,7 +91,7 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   SDL_Surface *tmp_text = NULL;
-  int xsize = 0, ysize = 0, xoff = 0, yoff = 0, fontsz = -1;
+  int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
   vector<string> line;
   int maxx = 80, maxy = 40;
@@ -107,9 +113,9 @@ void SG_TextArea::BuildTexture(int st) {
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    fontsz = ysize / lines_visible;
-    if(current_sg->Font(fontsz) == NULL) {
-      fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", fontsz);
+    font_size = ysize / lines_visible;
+    if(current_sg->Font(font_size) == NULL) {
+      fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
       SG_Panel::BuildTexture(st);
       return;
       }
@@ -139,7 +145,7 @@ void SG_TextArea::BuildTexture(int st) {
 	line.back() = line.back().substr(0, maxx);
 
       lpos = pos+1;
-      TTF_SizeText(current_sg->Font(fontsz), line.back().c_str(), &tmpx, &tmpy);
+      TTF_SizeText(current_sg->Font(font_size), line.back().c_str(), &tmpx, &tmpy);
       if(bxsize < tmpx) bxsize = tmpx;
       bysize += tmpy;
       }
@@ -195,7 +201,7 @@ void SG_TextArea::BuildTexture(int st) {
   for(int ln = 0; ln < int(line.size()); ++ln) {
     if(line[ln].length() > 0) {
       tmp_text =
-	TTF_RenderText_Blended(current_sg->Font(fontsz), line[ln].c_str(),
+	TTF_RenderText_Blended(current_sg->Font(font_size), line[ln].c_str(),
 		texture[st].fg);
       if(!tmp_text) {
 	fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
@@ -210,7 +216,7 @@ void SG_TextArea::BuildTexture(int st) {
       SDL_BlitSurface(tmp_text, &srec, texture[st].cur, &drec);
       SDL_FreeSurface(tmp_text);
       }
-    drec.y += TTF_FontHeight(current_sg->Font(fontsz));
+    drec.y += TTF_FontHeight(current_sg->Font(font_size));
     }
 
   if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));

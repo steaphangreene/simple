@@ -37,6 +37,7 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
   void SetText(const string &mes);
+  void SetFontSize(int sz);	// Ignored for defined-texture widgets
   const string &Text();
   virtual void Disable();
   virtual void Enable();
@@ -49,6 +50,7 @@ protected:
   float xmargin, ymargin;
   int lines_visible;
   string message;
+  int font_size;
   };
 
 #endif // SG_TEXTAREA_H
