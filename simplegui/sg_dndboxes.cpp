@@ -55,24 +55,32 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
       if(x < xsize && y < ysize && present[y*xsize+x]) ++num_cells; 
       if(x < xsize && y > 0 && present[(y-1)*xsize+x]) ++num_cells; 
       if(num_cells > 0) {
-	if(num_cells > 1) glColor3f(0.5, 0.5, 0.5);
-	else glColor3f(1.0, 1.0, 1.0);
+	double bor_col = 1.0, bor_dep = 0.0;
+	if(num_cells > 1) {	// Is between two active cells
+	  bor_col = 0.5;
+	  bor_dep = -0.03125;
+	  }
+	glColor3f(bor_col, bor_col, bor_col);
 	glVertex3f(-1.0 + (2.0*((float)(x+1))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
+		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
+		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
 	}
 
       num_cells = 0;
       if(y < ysize && x < xsize && present[y*xsize+x]) ++num_cells; 
       if(y < ysize && x > 0 && present[y*xsize+x-1]) ++num_cells; 
       if(num_cells > 0) {
-	if(num_cells > 1) glColor3f(0.5, 0.5, 0.5);
-	else glColor3f(1.0, 1.0, 1.0);
+	double bor_col = 1.0, bor_dep = 0.0;
+	if(num_cells > 1) {	// Is between two active cells
+	  bor_col = 0.5;
+	  bor_dep = -0.03125;
+	  }
+	glColor3f(bor_col, bor_col, bor_col);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
+		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y+1))/((float)(ysize))), 0.0);
+		1.0 - (2.0*((float)(y+1))/((float)(ysize))), bor_dep);
 	}
       }
     }
