@@ -110,6 +110,7 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
   //FIXME: Interpolate Tags
   if(legs) {
     glPushMatrix();
+    glScalef(0.0625, 0.0625, 0.0625);
     legs->Render(cur_time);
     if(torso && legs->MoveToTag("tag_torso")) {
       torso->Render(cur_time);

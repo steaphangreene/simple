@@ -19,45 +19,27 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL.h>
-
-#include <cstdio>
-#include <cstdlib>
-using namespace std;
+#ifndef	SIMPLEMODEL_SPHERE_H
+#define	SIMPLEMODEL_SPHERE_H
 
 #include "simplemodel.h"
-#include "simplemodel_q3dir.h"
-#include "simplemodel_sphere.h"
+#include "simplemodel_md3.h"
 
-SimpleModel *SM_LoadModel(const string &filename) {
-  FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
-  if(cfg) {
-    fclose(cfg);
-    return new SimpleModel_Q3Dir(filename);
-    }
-  fprintf(stderr, "WARNING: Failed to detect model type of '%s',\n",
-	filename.c_str());
-  return new SimpleModel_Sphere();
-  }
+class SimpleModel_Sphere : public SimpleModel {
+public:
+  SimpleModel_Sphere();
+  SimpleModel_Sphere(const string &filenm);
+  virtual ~SimpleModel_Sphere();
 
-SimpleModel::SimpleModel() {
-  }
+  virtual bool Load(const string &filenm);
 
-SimpleModel::~SimpleModel() {
-  }
+  virtual bool Render(Uint32 cur_time);
 
-bool SimpleModel::Load(const string &filenm) {
-  filename = filenm;
-  return false;
-  }
+  virtual void SetAnimation(int part);
 
-bool SimpleModel::Render(Uint32 cur_time) {
-  return false;
-  }
+  virtual int GetAnimation();
 
-void SimpleModel::SetAnimation(int anim) {
-  }
+protected:
+  };
 
-int SimpleModel::GetAnimation() {
-  return 0;
-  }
+#endif	//SIMPLEMODEL_SPHERE_H

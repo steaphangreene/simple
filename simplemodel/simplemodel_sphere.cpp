@@ -20,44 +20,37 @@
 // *************************************************************************
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 
 #include <cstdio>
 #include <cstdlib>
 using namespace std;
 
-#include "simplemodel.h"
-#include "simplemodel_q3dir.h"
 #include "simplemodel_sphere.h"
 
-SimpleModel *SM_LoadModel(const string &filename) {
-  FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
-  if(cfg) {
-    fclose(cfg);
-    return new SimpleModel_Q3Dir(filename);
-    }
-  fprintf(stderr, "WARNING: Failed to detect model type of '%s',\n",
-	filename.c_str());
-  return new SimpleModel_Sphere();
+SimpleModel_Sphere::SimpleModel_Sphere(const string &filenm) {
   }
 
-SimpleModel::SimpleModel() {
+SimpleModel_Sphere::SimpleModel_Sphere() {
   }
 
-SimpleModel::~SimpleModel() {
+SimpleModel_Sphere::~SimpleModel_Sphere() {
   }
 
-bool SimpleModel::Load(const string &filenm) {
-  filename = filenm;
-  return false;
+bool SimpleModel_Sphere::Load(const string &filenm) {
+  return true;
   }
 
-bool SimpleModel::Render(Uint32 cur_time) {
-  return false;
+bool SimpleModel_Sphere::Render(Uint32 cur_time) {
+  GLUquadric *quad = gluNewQuadric();
+  gluSphere(quad, 1.0, 16, 16);
+  gluDeleteQuadric(quad);
+  return true;
   }
 
-void SimpleModel::SetAnimation(int anim) {
+void SimpleModel_Sphere::SetAnimation(int anim) {
   }
 
-int SimpleModel::GetAnimation() {
+int SimpleModel_Sphere::GetAnimation() {
   return 0;
   }
