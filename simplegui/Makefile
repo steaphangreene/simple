@@ -93,7 +93,7 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o test1 test2 *.win32_o *.exe
+	rm -f deps.mk *.o test1 test2 test3 *.win32_o *.exe
 
 test:	test1 test2 test3
 
