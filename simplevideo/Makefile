@@ -69,7 +69,7 @@ libsimplevideo.a:	$(OBJS)
 libsimplevideo.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimplevideo.win32_a $(WOBJS)
 
-ChangeLog:	*.cpp *.h TODO COPYING Makefile CVS scripts/* tests/*
+ChangeLog:	*.cpp *.h TODO COPYING Makefile CVS scripts/*
 	./scripts/cvs2cl.pl --hide-filenames --no-wrap --stdout | tr '\t' '@' | sed 's-^@-@* -g' | tr '@' '\t' | sed 's-stea-sgreene-g' > ChangeLog
 
 %.o:	%.cpp
