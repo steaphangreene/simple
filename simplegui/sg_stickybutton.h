@@ -26,8 +26,8 @@
 
 class SG_StickyButton : public SG_Button {
 public:
-  SG_StickyButton(string mes, int c = SG_COL_RAISED,
-	int cc = SG_COL_LOW, int pc = SG_COL_HIGH );
+  SG_StickyButton(string mes, SG_Texture c = SG_COL_RAISED,
+	SG_Texture cc = SG_COL_LOW, SG_Texture pc = SG_COL_HIGH );
   virtual ~SG_StickyButton();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

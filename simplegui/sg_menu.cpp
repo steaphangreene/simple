@@ -25,7 +25,7 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_Menu::SG_Menu(string itms, int c, int ac)
+SG_Menu::SG_Menu(string itms, SG_Texture c, SG_Texture ac)
 		: SG_TextArea(itms, c) {
   texture.push_back(ac);
   }

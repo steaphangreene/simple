@@ -28,7 +28,7 @@
 
 #include <math.h>
 
-SG_TextArea::SG_TextArea(string mes, int c) : SG_Panel(c) {
+SG_TextArea::SG_TextArea(string mes, SG_Texture c) : SG_Panel(c) {
   message = mes;
   xmargin = 0.125;
   ymargin = 0.125;

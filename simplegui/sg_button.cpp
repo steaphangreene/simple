@@ -25,7 +25,7 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Button::SG_Button(string mes, int c, int cc)
+SG_Button::SG_Button(string mes, SG_Texture c, SG_Texture cc)
 	: SG_TextArea(mes, c) {
   texture.push_back(cc);
   texture.push_back(cc);	//FIXME: Disabled Texture!

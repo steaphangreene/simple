@@ -127,15 +127,15 @@ int main(int argc, char **argv) {
 
   panel[1] = new SG_Panel(white);
 
-  vector<int> cols;
-  cols.push_back(black);
-  cols.push_back(black);
-  cols.push_back(black);
-  cols.push_back(black);
-  cols.push_back(black);
-  cols.push_back(white);
-  cols.push_back(black);
-  cols.push_back(white);
+  vector<SG_Texture> cols;
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(white));
+  cols.push_back(SG_Texture(black));
+  cols.push_back(SG_Texture(white));
   anim = new SG_AnimatedPanel(cols, 125.0f);
 
   scroll->SetBackground(panel[1]);

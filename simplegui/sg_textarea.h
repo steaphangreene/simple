@@ -32,7 +32,7 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my);
 
 class SG_TextArea : public SG_Panel {
 public:
-  SG_TextArea(string mes, int c = SG_COL_BG);
+  SG_TextArea(string mes, SG_Texture c = SG_COL_BG);
   virtual ~SG_TextArea();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

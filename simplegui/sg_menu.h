@@ -26,7 +26,7 @@
 
 class SG_Menu : public SG_TextArea {
 public:
-  SG_Menu(string itms, int c, int ac);
+  SG_Menu(string itms, SG_Texture c, SG_Texture ac);
 		//The idea is that newlines will separate menuitems
   virtual ~SG_Menu();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

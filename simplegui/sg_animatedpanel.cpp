@@ -26,7 +26,7 @@
 
 #include <SDL/SDL_ttf.h>
 
-SG_AnimatedPanel::SG_AnimatedPanel(const vector<int> &txtrs, float mspf)
+SG_AnimatedPanel::SG_AnimatedPanel(const vector<SG_Texture> &txtrs, float mspf)
 	: SG_Panel(txtrs[0]) {
   for(int tx=1; tx < int(txtrs.size()); ++tx) {
     texture.push_back(txtrs[tx]);
