@@ -37,6 +37,11 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
 
+#PROFILING OPTIONS
+#CXX=	gcc
+#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
+#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+
 OBJS:=	sg.o sg_widget.o sg_texture.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
 	sg_panel.o sg_animatedpanel.o \
