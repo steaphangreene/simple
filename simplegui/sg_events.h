@@ -65,7 +65,7 @@
 #define SG_EVENT_SELECT_ITEM	3000
 #define SG_EVENT_UNSELECT_ITEM	3001
 
-union SG_Event_DataType {	//Pointer to this static is wgat is put in event.data2
-  float f[8];
+union SG_Event_DataType {	// Pointer to this static is what is put
+  float f[8];			//  in event.data2
   int i[8];
   };
