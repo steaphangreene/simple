@@ -32,6 +32,7 @@ SG_TransLabel::SG_TransLabel(string mes, int col, float mx, float my)
 	(col == -1) ? current_sg->NewColor(0.0, 0.0, 0.0) : col,
 	mx, my) {
   SetTransparent(true);
+  Ignore();
   }
 
 SG_TransLabel::~SG_TransLabel() {
