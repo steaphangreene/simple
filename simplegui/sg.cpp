@@ -226,10 +226,11 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
     }
 
   //This puts the perspective back where it was
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();   
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
 
   return 1;
   }
