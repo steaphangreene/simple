@@ -1,3 +1,11 @@
+// *************************************************************************
+//  This file was created from a data-conversion script by Steaphan Greene
+//
+//  I make no claim to ownership or copyright of this data or this file.
+//
+//  Anyone can feel free to do whatever they want with it.
+// *************************************************************************
+
 static const unsigned char click_data[] = {
 	0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0xff, 0xff,
 	0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,

@@ -1,16 +1,22 @@
 // *************************************************************************
-// This is a component of Acid Rain, Pre ALPHA non-distribution version
+//  This file is adapted from a part of Acid Rain by Steaphan Greene
 //
-// -By Insomnia (Steaphan Greene)   (Copyright 2002-2004 Steaphan Greene)
-//                   (stea@core.binghamton.edu)
-//      No waranty stated or implied, I am not responsible for any damage
-// caused directly or indirectly by this software.
-//      Permision granted for use/distribution/modification by anyone,
-// provided this header remains intact, and modified versions are marked
-// as so immediately below this header.
-//      Products utilizing the code or methods within may be distributed
-// freely along with this licence, but any sales for profit of such products
-// must have the author's permission, and may be subject to a royaltee fee.
+//  Copyright 2002-2005 Steaphan Greene <stea@cs.binghamton.edu>
+//
+//  SimpleGUI is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  SimpleGUI is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with SimpleGUI (see the file named "COPYING");
+//  if not, write to the the Free Software Foundation, Inc.,
+//  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
 #include <cstdio>
