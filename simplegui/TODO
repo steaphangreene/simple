@@ -3,7 +3,6 @@
 -=TODO=-
 Pop-Ups/Dialogs
 Scrollable
-Editable
 
 -=To Flush Out=-
 Multi-line Text Areas (Needed for Menus too)
@@ -18,6 +17,7 @@ Implement PullDown
 Implement SliderBar
 Implement ScrollingArea
 Implement Menu
+Implement Editable
 Disabled State Textures
 Need a way to handle sounds for compound's buttons
 

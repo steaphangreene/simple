@@ -100,6 +100,14 @@ protected:
 #include "sg_translabel.h"
 #include "sg_compound.h"
 #include "sg_filebrowser.h"
+#include "sg_combobox.h"
+#include "sg_editable.h"
+#include "sg_listbox.h"
+#include "sg_multitab.h"
+#include "sg_pulldown.h"
+#include "sg_radiobuttons.h"
+#include "sg_scrollingarea.h"
+#include "sg_sliderbar.h"
 
 #endif	//SIMPLEGUI_H
 
