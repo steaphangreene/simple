@@ -141,7 +141,11 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousex = float(event->motion.x);
     mousey = float(event->motion.y);
     ScreenToRelative(mousex, mousey);
-    if(mWid) return mWid->HandleMouseEvent(event, mousex, mousey);
+
+    if(current_widget)
+      return mWid->HandMouseEventTo(current_widget, event, mousex, mousey);
+    else if(mWid)
+      return mWid->HandleMouseEvent(event, mousex, mousey);
     }
 
   return 1;

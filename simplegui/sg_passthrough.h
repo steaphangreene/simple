@@ -15,6 +15,7 @@ protected:
   int button_action[3];	//Auto-Handling of the main three buttons
   int cur_action, cur_button;
   float act_x, act_y;
+  float cur_x, cur_y;
 
   void CalcGeometry();
 

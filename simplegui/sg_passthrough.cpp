@@ -58,6 +58,8 @@ bool SG_PassThrough::HandleMouseEvent(SDL_Event *event, float x, float y) {
       cur_button = event->button.button;
       act_x = x;
       act_y = y;
+      cur_x = x;
+      cur_y = y;
       return 0;
       }
     else {
@@ -78,6 +80,17 @@ bool SG_PassThrough::HandleMouseEvent(SDL_Event *event, float x, float y) {
       cur_action = SG_PT_IGNORE;
       cur_button = 0;
       return 1;
+      }
+    }  
+  else if(event->type == SDL_MOUSEMOTION) {
+    if(cur_action == SG_PT_BOX) {
+      cur_x = x;
+      cur_y = y;
+      if(cur_x > 1.0) cur_x = 1.0;
+      if(cur_y > 1.0) cur_y = 1.0;
+      if(cur_x < -1.0) cur_x = -1.0;
+      if(cur_y < -1.0) cur_y = -1.0;
+      return 0;
       }
     }  
 
@@ -103,6 +116,16 @@ bool SG_PassThrough::Render() {
       (*itrw)->Render();
       glPopMatrix();
       }
+    }
+
+  if(cur_action == SG_PT_BOX) {
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(cur_x, cur_y, 0.0);
+    glVertex3f(act_x, cur_y, 0.0);
+    glVertex3f(act_x, act_y, 0.0);
+    glVertex3f(cur_x, act_y, 0.0);
+    glEnd();
     }
 
   glPopMatrix();
