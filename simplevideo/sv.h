@@ -33,7 +33,7 @@ public:
   bool FinishScene();
   bool ToggleFullscreen();
   bool Resize(int, int);
-private:
+protected:
   SDL_Surface *surface;
   int videoFlags;
 
