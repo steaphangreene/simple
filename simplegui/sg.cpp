@@ -48,6 +48,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   ysize = screen_geom[3];
 
   SDL_ShowCursor(0);
+  SDL_EnableUNICODE(1);
 
   mb_state = 0;
 
@@ -56,6 +57,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   current_sg = this;
   current_widget = NULL;
+  focus_widget = NULL;
 
   col.resize(SG_COL_MAX * 2);
 
@@ -188,6 +190,8 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mb_state |= SDL_BUTTON(event->button.button);
     if(current_widget) return 0;		// Ignore another press
 
+    focus_widget = NULL;	// They must reclaim this if it's still theirs
+
     mousex = float(event->button.x);
     mousey = float(event->button.y);
     ScreenToRelative(mousex, mousey);
@@ -227,6 +231,12 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       }
 
     return mWid->HandleMouseEvent(event, mousex, mousey);
+    }
+
+  else if(event->type == SDL_KEYDOWN) {
+    if(focus_widget) {
+      return focus_widget->HandleKeyboardEvent(event);
+      }
     }
 
   return 1;

@@ -46,6 +46,7 @@ bool SG_StickyButton::HandleMouseEvent(SDL_Event *event, float x, float y) {
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_STICKYOFF + on;
     event->user.data1 = (void*)this;
+    event->user.data2 = NULL;
     return 1;
     }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
@@ -58,6 +59,7 @@ bool SG_StickyButton::HandleMouseEvent(SDL_Event *event, float x, float y) {
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONRELEASE;
     event->user.data1 = (void*)this;
+    event->user.data2 = NULL;
     return 1;
     }  
 

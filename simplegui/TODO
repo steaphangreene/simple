@@ -1,5 +1,6 @@
 -=To FIX=-
 Need a way to handle sounds for compound's buttons
+Allow compounds to intercept KB events too
 
 -=TODO=-
 AnimatedPanel
@@ -20,7 +21,6 @@ Implement PullDown
 Implement SliderBar
 Implement ScrollingArea
 Implement Menu
-Implement Editable
 
 -=Wishlist=-
 Separate public simplegui.h from internal defs?

@@ -79,32 +79,55 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   SDL_Surface *tmp_text = NULL;
-  int bxsize = 0, bysize = 0;
   int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
   vector<string> line;
-  { int pos = 0, lpos=0, tmpx=0, tmpy=0;
-    while(lpos < int(message.length())) {
+  int maxx = 80, maxy = 40;
+  while(1) { 
+    int bxsize = 0, bysize = 0;
+    int pos = 0, lpos=0, tmpx=0, tmpy=0;
+						//FIXME: Scroll?
+    while(lpos < int(message.length()) && int(line.size()) < maxy) {
       pos = message.find('\n', lpos);
       if(pos <= lpos) pos = message.length();
       line.push_back(message.substr(lpos, pos - lpos));
+
+      //FIXME: Scroll?
+      if(int(line.back().length()) > maxx)
+	line.back() = line.back().substr(0, maxx);
+
       lpos = pos+1;
       TTF_SizeText(current_sg->Font(), line.back().c_str(), &tmpx, &tmpy);
       if(bxsize < tmpx) bxsize = tmpx;
       bysize += tmpy;
       }
+
+    xsize = bxsize;	//Used temporarilly - not final values
+    ysize = bysize;
+    bxsize = int((float)(bxsize) / (1.0f - xmargin * 2.0f) + 0.5f);
+    bysize = int((float)(bysize) / (1.0f - ymargin * 2.0f) + 0.5f);
+    xoff = (bxsize-xsize)/2;
+    yoff = (bysize-ysize)/2;
+
+    //OpenGL Needs a power of two size - grow to next
+    xsize = nextpoweroftwo(bxsize);	// Final values
+    ysize = nextpoweroftwo(bysize);
+
+    int max;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
+
+    texture[st].xfact = (float)(bxsize) / (float)(xsize);
+    texture[st].yfact = (float)(bysize) / (float)(ysize);
+
+    if(xsize > max && ysize > max) { --maxx; --maxy; }
+    else if(xsize > max) { --maxx; }
+    else if(ysize > max) { --maxy; }
+    else break;
+
+    line.clear();
+
+//    fprintf(stderr, "%dx%d %dx%d\n", xsize, ysize, max, max);
     }
-
-  xsize = bxsize;	//Used temporarilly - not final values
-  ysize = bysize;
-  bxsize = int((float)(bxsize) / (1.0f - xmargin * 2.0f) + 0.5f);
-  bysize = int((float)(bysize) / (1.0f - ymargin * 2.0f) + 0.5f);
-  xoff = (bxsize-xsize)/2;
-  yoff = (bysize-ysize)/2;
-
-  //OpenGL Needs a power of two size - grow to next
-  xsize = nextpoweroftwo(bxsize);	// Final values
-  ysize = nextpoweroftwo(bysize);
 
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
   if(texture[st].type == SG_TEXTURE_COLOR) {
@@ -125,6 +148,7 @@ void SG_TextArea::BuildTexture(int st) {
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
   for(int ln = 0; ln < int(line.size()); ++ln) {
+//    fprintf(stderr, "Render: '%s'\n", line[ln].c_str());
     tmp_text =
 	TTF_RenderText_Blended(current_sg->Font(), line[ln].c_str(),
 		texture[st].fg);
@@ -149,9 +173,6 @@ void SG_TextArea::BuildTexture(int st) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       
 
   glBindTexture(GL_TEXTURE_2D, 0);
-
-  texture[st].xfact = (float)(bxsize) / (float)(xsize);
-  texture[st].yfact = (float)(bysize) / (float)(ysize);
 
   texture[st].dirty = 0;
   }

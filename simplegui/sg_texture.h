@@ -19,24 +19,31 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_EDITABLE_H
-#define SG_EDITABLE_H
+#ifndef SG_TEXTURE_H
+#define SG_TEXTURE_H
 
-#include "sg_textarea.h"
+#include <SDL/SDL.h>
 
-class SG_Editable : public SG_TextArea {
+enum SG_TextureType {
+   SG_TEXTURE_NONE = 0,
+   SG_TEXTURE_COLOR,
+   SG_TEXTURE_TRANS,
+   SG_TEXTURE_DEFINED
+   };
+
+class SG_Texture {
 public:
-  SG_Editable(string mes, int c = SG_COL_LOW, 
-	int dc = SG_COL_BG, int fc = SG_COL_HIGH);
-  virtual ~SG_Editable();
-  virtual bool HandleKeyboardEvent(SDL_Event *event);
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+  SG_Texture(SDL_Surface *tex);
+  SG_Texture(int sg_cols);
+
+  SG_TextureType type;
+  GLuint texture;	//Current texture (when active)
+  SDL_Surface *cur;	//Current texture buffer
+  SDL_Surface *src;	//Only for SG_TEXTURE_DEFINED
+  SDL_Color col;	//Only for SG_TEXTURE_COLOR
+  SDL_Color fg;		//Only used by children (font color)
+  float xfact, yfact;	//Portion of texture actually shown
+  bool dirty; //Does the system need to rebuild this texture?
   };
 
-#endif // SG_EDITABLE_H
-
+#endif // SG_TEXTURE_H

@@ -28,6 +28,10 @@ SG_Widget::SG_Widget() {
 SG_Widget::~SG_Widget() {
   }
 
+bool SG_Widget::HandleKeyboardEvent(SDL_Event *event) {
+  return 1;
+  }
+
 bool SG_Widget::HandleMouseEvent(SDL_Event *event, float x, float y) {
   return 1;
   }

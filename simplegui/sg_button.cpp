@@ -45,6 +45,7 @@ bool SG_Button::HandleMouseEvent(SDL_Event *event, float x, float y) {
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONPRESS;
     event->user.data1 = (void*)this;
+    event->user.data2 = NULL;
     return 1;
     }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
@@ -57,6 +58,7 @@ bool SG_Button::HandleMouseEvent(SDL_Event *event, float x, float y) {
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONRELEASE;
     event->user.data1 = (void*)this;
+    event->user.data2 = NULL;
     return 1;
     }  
 

@@ -268,11 +268,26 @@ int main(int argc, char **argv) {
 	  }
 	else if(event.user.code == SG_EVENT_FILEOPEN) {
 	  printf("Received SG_EVENT_FILEOPEN for filename '%s'.\n",
-		(char*)(event.user.data2));
+		((SG_FileBrowser*)(event.user.data1))->FileName().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_OK) {
 	  printf("Received SG_EVENT_OK from a compound widget.\n");
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_EDIT) {
+	  printf("Received SG_EVENT_EDIT - value = '%s'.\n",
+		((SG_Editable*)(event.user.data1))->Text().c_str());
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_EDITABORT) {
+	  printf("Received SG_EVENT_EDITABORT - value = '%s'.\n",
+		((SG_Editable*)(event.user.data1))->Text().c_str());
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_EDITCOMPLETE) {
+	  printf("Received SG_EVENT_EDITCOMPLETE - value = '%s'.\n",
+		((SG_Editable*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else {

@@ -19,24 +19,35 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_EDITABLE_H
-#define SG_EDITABLE_H
+#include <GL/gl.h>
 
-#include "sg_textarea.h"
+#include "sg_texture.h"
+#include "sg_globals.h"
 
-class SG_Editable : public SG_TextArea {
-public:
-  SG_Editable(string mes, int c = SG_COL_LOW, 
-	int dc = SG_COL_BG, int fc = SG_COL_HIGH);
-  virtual ~SG_Editable();
-  virtual bool HandleKeyboardEvent(SDL_Event *event);
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+SG_Texture::SG_Texture(SDL_Surface *tex) {
+  type = SG_TEXTURE_DEFINED;
+  fg = *(current_sg->DefaultTextColor());
+  texture = 0;
+  cur = NULL;
+  src = tex;
+  xfact = 1.0;
+  yfact = 1.0;
+  dirty = 1;
+  }
 
-#endif // SG_EDITABLE_H
-
+SG_Texture::SG_Texture(int sg_cols) {
+  if(sg_cols > 0) {
+    type = SG_TEXTURE_COLOR;
+    col = *(current_sg->BGColor(sg_cols));
+    fg = *(current_sg->TextColor(sg_cols));
+    }
+  else {
+    type = SG_TEXTURE_TRANS;
+    }
+  texture = 0;
+  cur = NULL;
+  src = NULL;
+  xfact = 1.0;
+  yfact = 1.0;
+  dirty = 1;
+  }

@@ -54,6 +54,7 @@ int SG_SliderBar::ChildEvent(SDL_Event *event) {
     if(event->user.data1 == (void *)(okb)) {
       event->user.code = SG_EVENT_OK;
       event->user.data1 = (void*)this;
+      event->user.data2 = NULL;
       return 1;
       }
     }

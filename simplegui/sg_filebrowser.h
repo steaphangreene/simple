@@ -36,6 +36,7 @@ public:
   virtual ~SG_FileBrowser();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int ChildEvent(SDL_Event *event);
+  const string &FileName();
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

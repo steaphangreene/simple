@@ -38,6 +38,7 @@ using namespace std;
 
 class SG_Widget;
 class SG_Alignment;
+class SG_Editable;
 
 class SimpleGUI {
 public:
@@ -55,6 +56,11 @@ public:
 
   void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
   void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
+  SG_Widget *CurrentWidget() { return current_widget; };
+
+  void SetFocusWidget(SG_Widget *wid) { focus_widget = wid; };
+  void UnsetFocusWidget() { SetFocusWidget(NULL); };
+  SG_Widget *FocusWidget() { return focus_widget; };
 
   void LoadFont(const char *fontfn);
   void SetFont(TTF_Font *f) { cur_font = f; };
@@ -86,7 +92,7 @@ protected:
   float aspect_actual;
   SG_Widget *current_widget;
 //  GL_MODEL *mouse_cursor;
-//  SG_Editable *focus_widget;
+  SG_Widget *focus_widget;
 
   int ScreenToRelative(float &x, float &y);
   int xoffset, yoffset;	//Current Screen Geometry

@@ -24,6 +24,7 @@
 #include "sg_filebrowser.h"
 #include "sg_panel.h"
 #include "sg_button.h"
+#include "sg_editable.h"
 #include "sg_events.h"
 
 SG_FileBrowser::SG_FileBrowser(const string &filt)
@@ -32,7 +33,7 @@ SG_FileBrowser::SG_FileBrowser(const string &filt)
   background = new SG_Panel(SG_COL_FG);
   openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_LOW);
   AddWidget(openb, 6, 4, 2, 1);
-  nameb = new SG_TextArea("file.txt", SG_COL_LOW);
+  nameb = new SG_Editable("file.txt", SG_COL_LOW, SG_COL_BG, SG_COL_HIGH);
   AddWidget(nameb, 1, 2, 6, 1);
   }
 
@@ -51,11 +52,15 @@ int SG_FileBrowser::ChildEvent(SDL_Event *event) {
     if(event->user.data1 == (void *)(openb)) {
       event->user.code = SG_EVENT_FILEOPEN;
       event->user.data1 = (void*)this;
-      event->user.data2 = (void*)"file.txt";
+      event->user.data2 = NULL;
       return 1;
       }
     }
   return 0; // Silence children doing other things
+  }
+
+const string &SG_FileBrowser::FileName() {
+  return nameb->Text();
   }
 
 //  bool SG_FileBrowser::SetDefaultCursor(GL_MODEL *cur);
