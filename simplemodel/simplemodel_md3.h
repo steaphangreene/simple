@@ -96,6 +96,7 @@ protected:
 	//Temporary - these should not be here for static models
   int current_anim;
   int current_frame;
+  Uint32 last_time;
   };
 
 #endif	//SIMPLEMODEL_MD3_H

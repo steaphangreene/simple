@@ -22,7 +22,7 @@
 #all:	libsimplemodel.a
 all:	test
 
-win32:	libsimplemodel.win32_a
+win32:	libsimplemodel.win32_a win32_test
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
@@ -59,7 +59,7 @@ OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o sm_texture.o
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lopengl32 -lglu32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o sm_texture.win32_o
 

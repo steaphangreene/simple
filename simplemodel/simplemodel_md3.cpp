@@ -88,6 +88,7 @@ SimpleModel_Md3::SimpleModel_Md3(const string &filenm,
 	const string &modelnm, const string &skinnm) {
   current_anim = 0;
   current_frame = 0;
+  last_time = 0;
 
   Load(filenm, modelnm, skinnm);
   }
@@ -95,6 +96,7 @@ SimpleModel_Md3::SimpleModel_Md3(const string &filenm,
 SimpleModel_Md3::SimpleModel_Md3() {
   current_anim = 0;
   current_frame = 0;
+  last_time = 0;
   }
 
 SimpleModel_Md3::~SimpleModel_Md3() {
@@ -284,18 +286,23 @@ bool SimpleModel_Md3::Render(Uint32 cur_time) {
 
   int start = 0, end = 1;
 
-  Md3AnimationData *pAnim = &(animations[current_anim]);
-
   if(animations.size() > 0) {
-    start = pAnim->start;
-    end   = pAnim->end;
+    start = animations[current_anim].start;
+    end   = animations[current_anim].end;
+
+    int next_frame = (current_frame + 1);
+    if(next_frame >= end) next_frame = start;
+
+    //FIXME: Actually interpolate!
+    Uint32 time = SDL_GetTicks();
+    float since = time - last_time;
+
+    int fps = animations[current_anim].fps;
+    if(since >= (1000.0 / fps)) {
+      current_frame = next_frame;
+      last_time = time;
+      }
     }
-
-  int next_frame = (current_frame + 1) % end;
-
-  if(next_frame == 0) next_frame = start;
-
-  //FIXME: Actually interpolate!
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
     glBindTexture(GL_TEXTURE_2D, meshes[obj].texture);
@@ -328,6 +335,7 @@ void SimpleModel_Md3::SetAnimation(int anim) {
   if(animations.size() > 0 && (int)(animations.size()) > anim) {
     current_anim = anim;
     current_frame = animations[current_anim].start;
+    last_time = SDL_GetTicks();
     }
   }
 
