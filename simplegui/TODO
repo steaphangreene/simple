@@ -1,8 +1,8 @@
 -=To FIX=-
 
 -=TODO=-
+Replace color parts with color object
 Multi-line Text Areas
-Clean up Font Selection/Loading
 Disabled State Textures
 Menus
 Pop-Ups/Dialogs
@@ -15,5 +15,6 @@ Menu
 Compound Widgets!
 
 -=Wishlist=-
+Widget-Specific Fonts?
 Event Forwarding/Returning?
 Drag and Drop Boxes?

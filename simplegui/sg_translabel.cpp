@@ -21,10 +21,10 @@
 
 #include <GL/gl.h>
 
+#include "sg_globals.h"
 #include "sg_translabel.h"
 
 #include <SDL/SDL_ttf.h>
-extern TTF_Font *font;
 
 SG_TransLabel::SG_TransLabel(string mes, float red, float green, float blue)
 	: SG_Widget() {
@@ -32,30 +32,14 @@ SG_TransLabel::SG_TransLabel(string mes, float red, float green, float blue)
   fg.r = (Uint8)(red*255.0f);
   fg.g = (Uint8)(green*255.0f);
   fg.b = (Uint8)(blue*255.0f);
-
-  char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
-  if(!font) {
-    if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n", TTF_GetError());      exit(1);
-      }
-    atexit(TTF_Quit);
-
-    font = TTF_OpenFont(fontfn, 100);
-    if(!font) {
-      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfn);
-      exit(1);
-      }
-    }
+  cur = NULL;
 
   BuildTransTexture();
   }
 
 SG_TransLabel::~SG_TransLabel() {
-  if(font) TTF_CloseFont(font);
-  font = NULL;
-
   glFinish();   //Be sure we don't pull the rug out from under GL
-  SDL_FreeSurface(cur);
+  if(cur) SDL_FreeSurface(cur);
   glDeleteTextures(1, &texture);
   }
 
@@ -103,11 +87,16 @@ void SG_TransLabel::BuildTransTexture() {
     texture = 0;
     return;
     }
+  if(current_sg == NULL || current_sg->Font() == NULL) {
+    fprintf(stderr, "WARNING: No Font Loaded!\n");
+    texture = 0;
+    return;
+    }
 
   SDL_Surface *tmp_text;
   int xsize, ysize;
 
-  tmp_text = TTF_RenderText_Blended(font, message.c_str(), fg);
+  tmp_text = TTF_RenderText_Blended(current_sg->Font(), message.c_str(), fg);
   if(!tmp_text) {
     fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
     exit(1);

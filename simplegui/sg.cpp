@@ -54,10 +54,16 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   current_sg = this;
   current_widget = NULL;
+
+  cur_font = NULL;
   }
 
 SimpleGUI::~SimpleGUI() {
   delete mWid;
+  mWid = NULL;
+
+  if(cur_font) TTF_CloseFont(cur_font);
+  cur_font = NULL;
   }
 
 bool SimpleGUI::Render(unsigned long cur_time) {
@@ -142,7 +148,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousey = float(event->button.y);
     ScreenToRelative(mousex, mousey);
 
-    if(mWid) return mWid->HandleMouseEvent(event, mousex, mousey);
+    return mWid->HandleMouseEvent(event, mousex, mousey);
     }
 
   else if(event->type == SDL_MOUSEBUTTONUP) {
@@ -165,7 +171,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(current_widget)
       return mWid->HandMouseEventTo(current_widget, event, mousex, mousey);
-    else if(mWid)
+    else
       return mWid->HandleMouseEvent(event, mousex, mousey);
     }
 
@@ -207,4 +213,21 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
     }
 
   return 1;
+  }
+
+void SimpleGUI::LoadFont(const char *fontfn) {
+  if(!cur_font) {
+    if(TTF_Init()) {
+      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
+	fontfn, TTF_GetError());
+      exit(1);
+      }
+    atexit(TTF_Quit);
+
+    cur_font = TTF_OpenFont(fontfn, 100);
+    if(!cur_font) {
+      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfn);
+      exit(1);
+      }
+    }
   }

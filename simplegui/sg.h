@@ -23,6 +23,7 @@
 #define	SIMPLEGUI_H
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 
 #define ASPECT_NO_SUPPORT	0
 #define ASPECT_EXPANDING_X	1
@@ -40,8 +41,14 @@ public:
   bool Render(unsigned long cur_time = 0);
   bool ProcessEvent(SDL_Event *event);
   SG_Alignment *MasterWidget() { return mWid; };
-  void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; }
-  void UnsetCurrentWidget() { SetCurrentWidget(NULL); }
+
+  void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
+  void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
+
+  void LoadFont(const char *fontfn);
+  void SetFont(TTF_Font *f) { cur_font = f; };
+  void UnsetFont() { cur_font = NULL; };
+  TTF_Font *Font() { return cur_font; };
 
 protected:
   bool Resize(float asp);
@@ -61,6 +68,7 @@ protected:
 
   unsigned long mb_state;	// Bit Vector of Mouse Button States
 				// Can't handle more than 32 Buttons
+  TTF_Font *cur_font;
   };
 
 #include "sg_events.h"

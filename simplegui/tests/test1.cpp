@@ -20,6 +20,7 @@
 // *************************************************************************
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 #include <SDL/SDL_keysym.h>
 #include <cstdio>
 #include <cstring>
@@ -56,6 +57,7 @@ int main(int argc, char **argv) {
 //  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
 //  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
 
+  gui->LoadFont("fonts/Adventure Subtitles Normal.ttf");
 
   map<SG_Widget *, string> name;
 

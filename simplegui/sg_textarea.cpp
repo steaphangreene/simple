@@ -21,11 +21,10 @@
 
 #include <GL/gl.h>
 
-#include "sg_textarea.h"
-
 #include <SDL/SDL_ttf.h>
-TTF_Font *font = NULL;
 
+#include "sg_textarea.h"
+#include "sg_globals.h"
 
 #include <math.h>
 
@@ -41,11 +40,16 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
     BuildTexture(tex);
     return;
     }
+  if(current_sg == NULL || current_sg->Font() == NULL) {
+    fprintf(stderr, "WARNING: No Font Loaded!\n");
+    BuildTexture(tex);
+    return;
+    }
 
   SDL_Surface *tmp_text;
   int xsize, ysize;
 
-  tmp_text = TTF_RenderText_Blended(font, mes.c_str(), tex.fg);
+  tmp_text = TTF_RenderText_Blended(current_sg->Font(), mes.c_str(), tex.fg);
   if(!tmp_text) {
     fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
     exit(1);
@@ -94,28 +98,10 @@ SG_TextArea::SG_TextArea(string mes,
   xmargin = 0.0;
   ymargin = 0.0;
 
-  char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
-  if(!font) {
-    if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n", TTF_GetError());
-      exit(1);
-      }
-    atexit(TTF_Quit);
-
-    font = TTF_OpenFont(fontfn, 100);
-    if(!font) {
-      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfn);
-      exit(1);
-      }
-    }
-
   BuildTexture(texture[0], message, xmargin, ymargin);
   }
 
 SG_TextArea::~SG_TextArea() {
-  if(font) TTF_CloseFont(font);
-  font = NULL;
-
   glFinish();	//Be sure we don't pull the rug out from under GL
   SDL_FreeSurface(texture[0].cur);
   glDeleteTextures(1, &(texture[0].texture));
