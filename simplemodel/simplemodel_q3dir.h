@@ -23,6 +23,7 @@
 #define	SIMPLEMODEL_Q3DIR_H
 
 #include "simplemodel.h"
+#include "simplemodel_md3.h"
 
 class SimpleModel_Q3Dir : public SimpleModel {
 public:
@@ -34,6 +35,8 @@ public:
   virtual bool Render(Uint32 cur_time);
 
 protected:
+  SimpleModel_Q3Dir();
+  SimpleModel_Md3 *head, *legs, *torso, *weapon;
   };
 
 #endif	//SIMPLEMODEL_Q3DIR_H

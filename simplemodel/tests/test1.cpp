@@ -20,11 +20,9 @@
 // *************************************************************************
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_opengl.h>
 #include <SDL/SDL_keysym.h>
 #include <cstdio>
-#include <cstring>
-#include <map>
 #include <string>
 
 using namespace std;
@@ -63,7 +61,9 @@ int main(int argc, char **argv) {
           }
         }
       }
+    start_scene();
     mod->Render(SDL_GetTicks());
+    finish_scene();
     }
 
   return 0;

@@ -20,7 +20,7 @@
 // *************************************************************************
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_opengl.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -29,18 +29,47 @@ using namespace std;
 #include "simplemodel_q3dir.h"
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &filenm) {
-  Load(filename);
+  head = NULL;
+  legs = NULL;
+  torso = NULL;
+  weapon = NULL;
+  Load(filenm);
+  }
+
+SimpleModel_Q3Dir::SimpleModel_Q3Dir() {
+  head = NULL;
+  legs = NULL;
+  torso = NULL;
+  weapon = NULL;
   }
 
 SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
+  if(head) delete head;
+  if(legs) delete legs;
+  if(torso) delete torso;
+  if(weapon) weapon = NULL;	// Not mine!
   }
 
 bool SimpleModel_Q3Dir::Load(const string &filenm) {
   filename = filenm;
-  fprintf(stderr, "Loading Q3Dir Model\n");
+  head = new SimpleModel_Md3(
+	filename, filename + "/head.md3", filename + "/head_default.skin");
+  legs = new SimpleModel_Md3(
+	filename, filename + "/lower.md3", filename + "/lower_default.skin");
+  torso = new SimpleModel_Md3(
+	filename, filename + "/upper.md3", filename + "/upper_default.skin");
+
+  //FIXME: Set Initial Animation
+
   return false;
   }
 
 bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
+  //FIXME: Attach submodels to tags
+  //FIXME: Interpolate Models Using Animations
+  //FIXME: Interpolate Tags
+  legs->Render(cur_time);
+  torso->Render(cur_time);
+  head->Render(cur_time);
   return false;
   }

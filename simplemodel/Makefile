@@ -19,50 +19,49 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimplemodel.a
+#all:	libsimplemodel.a
+all:	test
 
 win32:	libsimplemodel.win32_a
-
-#all:	test
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+#LIBS=	`sdl-config --libs` -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -framework OpenGL
+#LIBS=	`sdl-config --libs` -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
+#LIBS=	`sdl-config --libs` -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+LIBS=	`sdl-config --libs` -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
+#LIBS=	`sdl-config --libs` -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+#LIBS=	`sdl-config --libs` -lGL -lGLU
 
-OBJS:=	simplemodel.o simplemodel_q3dir.o
+OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lopengl32 -lglu32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lopengl32 -lglu32
 
-WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o
+WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o
 
 libsimplemodel.a:	$(OBJS)
 	ar rcs libsimplemodel.a $(OBJS)

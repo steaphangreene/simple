@@ -23,7 +23,11 @@
 #define	SIMPLEMODEL_H
 
 #include <string>
+#include <vector>
 using namespace std;
+
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 
 class SimpleModel {
 public:

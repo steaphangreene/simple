@@ -150,7 +150,7 @@ int init_renderer(int xs, int ys) {
   return 1;
   }
 
-int start_scene(double zoom) {
+int start_scene() {
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   //This is the actual perspective setup
@@ -160,11 +160,11 @@ int start_scene(double zoom) {
 //  glFrustum(-0.8, 0.8, 0.6, -0.6, 5.0, 20.0);
 //  glTranslatef(0.0, 0.0, -4.0);
 //  glFrustum(1.0, -1.0, -1.0, 1.0, 1.0, 8.0);
-  gluPerspective(45.0, 16.0/9.0, 1.0, 16.0);
+  gluPerspective(45.0, 4.0/3.0, 4.0, 4000.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(zoom, zoom, zoom*2, 0.0, 0.0, 0.0, -zoom, -zoom, 0.0);
-  glTranslatef(-32.0, -32.0, 0.0);	// Temporary - CENTER
+//  gluLookAt(0.0, 5.5, -120.0, 0.0, 5.5, 0.0, 0.0, 1.0, 0.0);
+  gluLookAt(120.0, 0.0, 5.5, 0.0, 0.0, 5.5, 0.0, 0.0, 1.0);
   return 1;
   }
 
@@ -237,21 +237,4 @@ void toggle_fullscreen(void) {
   SDL_WM_ToggleFullScreen(surface);
   videoFlags ^= SDL_FULLSCREEN;
   fullscreen_mode = (videoFlags & SDL_FULLSCREEN) != 0;
-  }
-
-//This doesn't work like you might think.
-void pixels_to_location(double *x, double *y) {
-  (*x) -= (double)hgap;
-  (*y) -= (double)vgap;
-
-  if((*x) < 0.0) (*x)=-10.0, (*y)=-10.0;
-  else if((*y) < 0.0) (*x)=-10.0, (*y)=-10.0;
-  else if((*x) >= (double)xsize) (*x)=-10.0, (*y)=-10.0;
-  else if((*y) >= (double)ysize) (*x)=-10.0, (*y)=-10.0;
-  else {
-    (*x) /= (double)ysize;  // INTENTIONAL - Divide by YSIZE, not XSIZE!
-    (*y) /= (double)ysize;
-    (*x) *= 2.0;  (*x) -= 1.0;
-    (*y) *= 2.0;  (*y) -= 1.0;
-    }
   }
