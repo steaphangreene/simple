@@ -1,5 +1,5 @@
 -=To FIX=-
-Need a way to handle sounds for compound's buttons
+Unify mouse and kb event passing system
 Allow compounds to intercept KB events too
 
 -=TODO=-
