@@ -70,10 +70,10 @@ all: $(OBJS)
 %.o:	tests/%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
-%.win32_o:	%.cpp
+%.win32_o:	%.cpp %.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp
+%.win32_o:	tests/%.cpp %.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
 deps.mk:	*.cpp *.h
