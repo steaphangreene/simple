@@ -35,7 +35,7 @@ public:
   SG_ScrollingArea();
   virtual ~SG_ScrollingArea();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual int ChildEvent(SDL_Event *event);
+  virtual bool ChildEvent(SDL_Event *event);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

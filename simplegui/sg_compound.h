@@ -32,7 +32,7 @@ public:
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual int ChildEvent(SDL_Event *event);
+  virtual bool ChildEvent(SDL_Event *event);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

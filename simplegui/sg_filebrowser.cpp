@@ -47,7 +47,7 @@ SG_FileBrowser::~SG_FileBrowser() {	//Even Need this?
     }
   }
 
-int SG_FileBrowser::ChildEvent(SDL_Event *event) {
+bool SG_FileBrowser::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(event->user.data1 == (void *)(openb)) {
       event->user.code = SG_EVENT_FILEOPEN;

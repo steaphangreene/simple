@@ -35,7 +35,7 @@ public:
   SG_FileBrowser(const string &filt);
   virtual ~SG_FileBrowser();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual int ChildEvent(SDL_Event *event);
+  virtual bool ChildEvent(SDL_Event *event);
   const string &FileName();
   
 protected:

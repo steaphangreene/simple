@@ -49,7 +49,7 @@ SG_SliderBar::~SG_SliderBar() {	//Even Need this?
     }
   }
 
-int SG_SliderBar::ChildEvent(SDL_Event *event) {
+bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(event->user.data1 == (void *)(okb)) {
       event->user.code = SG_EVENT_OK;

@@ -56,7 +56,7 @@ bool SG_Compound::HandEventTo(SG_Widget *targ, SDL_Event *event,
   return ret;
   }
 
-int SG_Compound::ChildEvent(SDL_Event *event) {
+bool SG_Compound::ChildEvent(SDL_Event *event) {
   return 1;
   }
 
