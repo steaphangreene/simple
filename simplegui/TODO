@@ -24,5 +24,4 @@ Need a way to handle sounds for compound's buttons
 -=Wishlist=-
 Separate public simplegui.h from internal defs?
 Widget-Specific Fonts?
-Event Forwarding/Returning?
 Drag and Drop Boxes?
