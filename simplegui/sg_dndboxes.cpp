@@ -22,24 +22,45 @@
 // This file was created from (or actually IS) a basic compound widget
 // def, so it's not defined and is really just a place-holder for now.
 
-#ifndef SG_BASICCOMPOUND_H
-#define SG_BASICCOMPOUND_H
+#include <GL/gl.h>
 
-#include "sg_compound.h"
+#include "sg_dndboxes.h"
+#include "sg_panel.h"
+#include "sg_button.h"
+#include "sg_events.h"
 
-class SG_Button;
-class SG_TextArea;
+SG_DNDBoxes::SG_DNDBoxes()
+	: SG_Compound(8, 5, 0.1, 0.1) {
+  background = new SG_Panel(SG_COL_FG);
+  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
+  AddWidget(okb, 7, 4, 1, 1);
+  SG_Widget *labelb =
+	new SG_TextArea("SG_DNDBoxes", SG_COL_LOW);
+  AddWidget(labelb, 1, 2, 6, 1);
+  }
 
-class SG_BasicCompound : public SG_Compound {
-public:
-  SG_BasicCompound();
-  virtual ~SG_BasicCompound();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool ChildEvent(SDL_Event *event);
+SG_DNDBoxes::~SG_DNDBoxes() {	//Even Need this?
+  vector<SG_Widget *> tmp = widgets;
+  vector<SG_Widget *>::iterator itr = tmp.begin();
+  widgets.clear();
+  wgeom.clear();
+  for(; itr != tmp.end(); ++itr) {
+    if(*itr) delete (*itr);
+    }
+  }
+
+bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
+  if(event->user.code == SG_EVENT_BUTTONPRESS) {
+    if(event->user.data1 == (void *)(okb)) {
+      event->user.code = SG_EVENT_OK;
+      event->user.data1 = (void*)this;
+      event->user.data2 = NULL;
+      return 1;
+      }
+    }
+  return 0; // Silence children doing other things
+  }
+
+//  bool SG_DNDBoxes::SetDefaultCursor(GL_MODEL *cur);
   
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
-  };
-
-#endif // SG_BASICCOMPOUND_H
+//  static GL_MODEL SG_DNDBoxes::Default_Mouse_Cursor = NULL;

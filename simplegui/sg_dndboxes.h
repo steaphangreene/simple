@@ -22,18 +22,18 @@
 // This file was created from (or actually IS) a basic compound widget
 // def, so it's not defined and is really just a place-holder for now.
 
-#ifndef SG_BASICCOMPOUND_H
-#define SG_BASICCOMPOUND_H
+#ifndef SG_DNDBOXES_H
+#define SG_DNDBOXES_H
 
 #include "sg_compound.h"
 
 class SG_Button;
 class SG_TextArea;
 
-class SG_BasicCompound : public SG_Compound {
+class SG_DNDBoxes : public SG_Compound {
 public:
-  SG_BasicCompound();
-  virtual ~SG_BasicCompound();
+  SG_DNDBoxes();
+  virtual ~SG_DNDBoxes();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   
@@ -42,4 +42,4 @@ protected:
   SG_Button *okb;
   };
 
-#endif // SG_BASICCOMPOUND_H
+#endif // SG_DNDBOXES_H
