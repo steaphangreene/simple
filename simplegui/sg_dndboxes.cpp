@@ -43,8 +43,7 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 
   glPushMatrix();
 
-  if(background) background->Render(cur_time);	//Same "layer" as parent
-  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
+  glTranslatef(0.0, 0.0, 0.03125);		//Advance to next half "layer"
 
   glBegin(GL_LINES);
   for(int x = 0; x <= xsize; ++x) {
@@ -58,7 +57,7 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 	double bor_col = 1.0, bor_dep = 0.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
-	  bor_dep = -0.03125;
+	  bor_dep = -0.015625;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
 	glVertex3f(-1.0 + (2.0*((float)(x+1))/((float)(xsize))), 
@@ -74,7 +73,7 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 	double bor_col = 1.0, bor_dep = 0.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
-	  bor_dep = -0.03125;
+	  bor_dep = -0.015625;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
@@ -86,27 +85,9 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
     }
   glEnd();
 
-  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
-  vector<SG_Widget *>::iterator itrw = widgets.begin();
-  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    if(*itrw) {
-      glPushMatrix();
-      CalcGeometry(itrg);
-//      if((*itrw) == current_sg->CurrentWidget()) {
-//	float x, y;
-//	current_sg->GetMousePos(x, y);
-//	glTranslatef(x - cur_offx, y - cur_offy, 0.0); //FIXME: Scale is WRONG!
-//	}
-      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
-      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
-      (*itrw)->Render(cur_time);
-      glPopMatrix();
-      }
-    }
   glPopMatrix();
 
-  return 1;
+  return SG_Table::Render(cur_time);
   }
 
 bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
