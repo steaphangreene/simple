@@ -279,7 +279,7 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
   return 1;
   }
 
-void SimpleGUI::LoadFont(const char *fontfn) {
+void SimpleGUI::LoadFont(const char *fontfn, int ptsize) {
   if(!cur_font) {
     if(TTF_Init()) {
       fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
@@ -288,7 +288,7 @@ void SimpleGUI::LoadFont(const char *fontfn) {
       }
     atexit(TTF_Quit);
 
-    cur_font = TTF_OpenFont(fontfn, 100);
+    cur_font = TTF_OpenFont(fontfn, ptsize);
     if(!cur_font) {
       fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfn);
       exit(1);

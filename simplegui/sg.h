@@ -62,7 +62,7 @@ public:
   void UnsetFocusWidget() { SetFocusWidget(NULL); };
   SG_Widget *FocusWidget() { return focus_widget; };
 
-  void LoadFont(const char *fontfn);
+  void LoadFont(const char *fontfn, int ptsz = 20);
   void SetFont(TTF_Font *f) { cur_font = f; };
   void UnsetFont() { cur_font = NULL; };
   TTF_Font *Font() { return cur_font; };
