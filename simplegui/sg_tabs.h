@@ -40,7 +40,7 @@ using namespace std;
 class SG_StickyButton;
 
 class SG_Tabs : public SG_Compound {
-public:
+public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
   SG_Tabs(vector<string> items, int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
 	SG_Texture tex = SG_COL_RAISED, SG_Texture dis_tex = SG_COL_LOW,
 	SG_Texture click_tex = SG_COL_LOW, SG_Texture down_tex = SG_COL_HIGH);
