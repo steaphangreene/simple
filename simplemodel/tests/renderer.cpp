@@ -47,8 +47,8 @@ void load_textures(void) {
 
 int init_renderer(int xs, int ys) {
   const SDL_VideoInfo *videoInfo;
-  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
-  GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
+//  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
+//  GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
 
   xsize = xs;   ysize = ys;
 
@@ -134,11 +134,11 @@ int init_renderer(int xs, int ys) {
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
 
-  // Create a Directional Light Source
-  glLightfv(GL_LIGHT0, GL_POSITION, light1_pos);
-  glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
+//  // Create a Directional Light Source
+//  glLightfv(GL_LIGHT0, GL_POSITION, light1_pos);
+//  glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
+//  glEnable(GL_LIGHT0);
+//  glEnable(GL_LIGHTING);
 
   // Set the new viewport size
   glViewport(0, 0, (GLint)xsize, (GLint)ysize);
