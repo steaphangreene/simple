@@ -68,16 +68,16 @@ protected:
   static map<SDL_Surface *, set<SM_Texture *> > def_cache;
   };
 
-extern unsigned char sg_col_u32b1[4];
-extern unsigned char sg_col_u32b2[4];
-extern unsigned char sg_col_u32b3[4];
-extern unsigned char sg_col_u32b4[4];
+extern unsigned char sm_col_u32b1[4];
+extern unsigned char sm_col_u32b2[4];
+extern unsigned char sm_col_u32b3[4];
+extern unsigned char sm_col_u32b4[4];
 
-#define SG_COL_U32B1 (*((unsigned long *)(sg_col_u32b1)))
-#define SG_COL_U32B2 (*((unsigned long *)(sg_col_u32b2)))
-#define SG_COL_U32B3 (*((unsigned long *)(sg_col_u32b3)))
-#define SG_COL_U32B4 (*((unsigned long *)(sg_col_u32b4)))
+#define SM_COL_U32B1 (*((unsigned long *)(sm_col_u32b1)))
+#define SM_COL_U32B2 (*((unsigned long *)(sm_col_u32b2)))
+#define SM_COL_U32B3 (*((unsigned long *)(sm_col_u32b3)))
+#define SM_COL_U32B4 (*((unsigned long *)(sm_col_u32b4)))
 
-#define SG_SDL_RGBA_COLFIELDS SG_COL_U32B1, SG_COL_U32B2, SG_COL_U32B3, SG_COL_U32B4
+#define SM_SDL_RGBA_COLFIELDS SM_COL_U32B1, SM_COL_U32B2, SM_COL_U32B3, SM_COL_U32B4
 
 #endif // SM_TEXTURE_H

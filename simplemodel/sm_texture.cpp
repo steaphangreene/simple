@@ -130,7 +130,7 @@ void SM_Texture::Update() {
   if(type == SM_TEXTURE_DEFINED) {
     int xsize = nextpoweroftwo(src->w);
     int ysize = nextpoweroftwo(src->h);
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SG_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SM_SDL_RGBA_COLFIELDS);
     memset(cur->pixels, 0, xsize*ysize*4);
     SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(src, NULL, cur, NULL);
@@ -169,7 +169,7 @@ void SM_Texture::UpdateCache() {
 map<SDL_Surface *, set<SM_Texture *> > SM_Texture::trans_cache;
 map<SDL_Surface *, set<SM_Texture *> > SM_Texture::def_cache;
 
-unsigned char sg_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
-unsigned char sg_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
-unsigned char sg_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
-unsigned char sg_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
+unsigned char sm_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
+unsigned char sm_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
+unsigned char sm_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
+unsigned char sm_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
