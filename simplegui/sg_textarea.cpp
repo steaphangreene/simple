@@ -28,10 +28,11 @@
 
 #include <math.h>
 
-SG_TextArea::SG_TextArea(string mes, SG_Texture c) : SG_Panel(c) {
+SG_TextArea::SG_TextArea(string mes, SG_Texture tex, float mx, float my)
+	: SG_Panel(tex) {
   message = mes;
-  xmargin = 0.125;
-  ymargin = 0.125;
+  xmargin = mx;
+  ymargin = my;
   }
 
 SG_TextArea::~SG_TextArea() {
