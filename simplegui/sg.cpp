@@ -252,7 +252,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 	ret = popWid->HandEventTo(current_widget, event,
 		mousex*popx, mousey*popy);
 	}
-      if(ret && event->type != SDL_SG_EVENT) {
+      if(current_widget && ret && event->type != SDL_SG_EVENT) {
 	ret = current_widget->HandleEvent(event, 0.0, 0.0);
 	}
       current_widget = NULL; 
