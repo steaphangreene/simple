@@ -75,8 +75,8 @@ int main(int argc, char **argv) {
   int click = audio_buildsound(click_data, sizeof(click_data));
   int bong = audio_buildsound(bong_data, sizeof(bong_data));
 
-  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);
-//  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
+//  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);
+  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
 //  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
 
   gui->LoadFont(fontfn);
