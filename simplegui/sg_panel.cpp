@@ -25,8 +25,8 @@
 #include "sg_colors.h"
 #include "sg_panel.h"
 
-SG_Panel::SG_Panel(SG_Texture c) : SG_Widget() {
-  texture.push_back(c);
+SG_Panel::SG_Panel(SG_Texture bgtex) : SG_Widget() {
+  texture.push_back(bgtex);
   state = 0;
   }
 

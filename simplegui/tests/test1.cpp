@@ -43,7 +43,7 @@ static SimpleGUI *gui;
 
 int main(int argc, char **argv) {
   char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
-  int xs=1024, ys=768;
+  int xs=640, ys=480;
 
   int cur_arg = 1;
 

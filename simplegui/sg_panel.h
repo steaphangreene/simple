@@ -34,7 +34,7 @@ using namespace std;
 
 class SG_Panel : public SG_Widget {
 public:
-  SG_Panel(SG_Texture c = SG_COL_BG);
+  SG_Panel(SG_Texture bgtex = SG_COL_BG);
   virtual ~SG_Panel();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
