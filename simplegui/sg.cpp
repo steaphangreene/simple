@@ -231,7 +231,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(popWid && mousex < popx && mousey < popy
 	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleEvent(event, mousex*popx, mousey*popy);
+      return popWid->HandleEvent(event, mousex/popx, mousey/popy);
       }
 
     return mWid->HandleEvent(event, mousex, mousey);
@@ -250,7 +250,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
       if(popWid && ret && event->type != SDL_SG_EVENT) {
 	ret = popWid->HandEventTo(current_widget, event,
-		mousex*popx, mousey*popy);
+		mousex/popx, mousey/popy);
 	}
       if(current_widget && ret && event->type != SDL_SG_EVENT) {
 	ret = current_widget->HandleEvent(event, 0.0, 0.0);
@@ -270,7 +270,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(popWid && mousex < popx && mousey < popy
 	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleEvent(event, mousex*popx, mousey*popy);
+      return popWid->HandleEvent(event, mousex/popx, mousey/popy);
       }
 
     return mWid->HandleEvent(event, mousex, mousey);
