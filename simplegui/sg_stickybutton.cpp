@@ -66,6 +66,16 @@ bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
+void SG_StickyButton::TurnOn() {
+  flags |= SG_WIDGET_FLAGS_ON;
+  if(state == 0) state = 3;
+  }
+
+void SG_StickyButton::TurnOff() {
+  flags &= (~SG_WIDGET_FLAGS_ON);
+  if(state == 3) state = 0;
+  }
+
 //  bool SG_StickyButton::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_StickyButton::Default_Mouse_Cursor = NULL;

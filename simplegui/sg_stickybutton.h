@@ -32,6 +32,8 @@ public:
   virtual ~SG_StickyButton();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual void TurnOn();
+  virtual void TurnOff();
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
