@@ -24,8 +24,8 @@
 #include "sg_events.h"
 #include "sg_compound.h"
 
-SG_Compound::SG_Compound(int cls, int rws, float xbor, float ybor)
-	: SG_Table(cls, rws, xbor, ybor) {
+SG_Compound::SG_Compound(int xsz, int ysz, float xbor, float ybor)
+	: SG_Table(xsz, ysz, xbor, ybor) {
   }
 
 SG_Compound::~SG_Compound() {	//Even need this?
