@@ -75,7 +75,7 @@ void SG_Panel::BuildTexture(int st) {
   SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
 
-  glGenTextures(1, &(texture[st].texture));
+  if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
   glBindTexture(GL_TEXTURE_2D, texture[st].texture);
   glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_BGRA,
                 GL_UNSIGNED_BYTE, texture[st].cur->pixels );

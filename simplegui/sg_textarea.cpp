@@ -120,7 +120,7 @@ void SG_TextArea::BuildTexture(int st) {
     drec.y += srec.h;
     }
 
-  glGenTextures(1, &(texture[st].texture));
+  if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
   glBindTexture(GL_TEXTURE_2D, texture[st].texture);
   glTexImage2D(GL_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_BGRA, 
 		GL_UNSIGNED_BYTE, texture[st].cur->pixels );

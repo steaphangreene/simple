@@ -19,8 +19,8 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-#all:	$(OBJS)
-all:	test
+all:	$(OBJS)
+#all:	test
 
 #PRODUCTION OPTIONS (STANDARD)
 CXX=	gcc
