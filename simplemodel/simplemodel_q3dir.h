@@ -38,6 +38,8 @@ public:
 
   virtual int GetAnimation();
 
+  void SetWeapon(SimpleModel_Md3 *weap);
+
 protected:
   bool LoadCFG(const string &filenm);
 

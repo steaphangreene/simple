@@ -28,14 +28,16 @@
 using namespace std;
 
 #include "../simplemodel.h"
+#include "../simplemodel_q3dir.h"
+#include "../simplemodel_md3.h"
 #include "../sm_q3anim.h"
 #include "renderer.h"
 
 int main(int argc, char **argv) {
   int xs=640, ys=480;
 
-  if(argc != 2) {
-    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir>\n", argv[0]);
+  if(argc < 2 || argc > 3) {
+    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
     exit(1);
     }
 
@@ -43,10 +45,21 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
     }
 
+  SimpleModel_Md3 *weap = NULL; //Created below
   SimpleModel *mod = SM_LoadModel(argv[1]);
   if(!mod) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
+    }
+  if(argc == 3) {
+    weap = new SimpleModel_Md3(argv[2],
+	(string(argv[2]) + "/machinegun.md3").c_str(),
+	(string(argv[2]) + "/m41a.jpg").c_str());
+    if(!weap) {
+      fprintf(stderr, "ERROR: Weapon model load failed\n");
+      exit(1);
+      }
+    ((SimpleModel_Q3Dir*)mod)->SetWeapon(weap);
     }
 
   int quit = 0;
