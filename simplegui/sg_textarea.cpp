@@ -131,7 +131,7 @@ void SG_TextArea::BuildTexture(int st) {
     line.clear();
     while(lpos < int(message.length()) && int(line.size()) < maxy) {
       pos = message.find('\n', lpos);
-      if(pos <= lpos) pos = message.length();
+      if(pos < lpos) pos = message.length();
       line.push_back(message.substr(lpos, pos - lpos));
 
       //FIXME: Scroll?
@@ -193,23 +193,24 @@ void SG_TextArea::BuildTexture(int st) {
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
   for(int ln = 0; ln < int(line.size()); ++ln) {
-    tmp_text =
+    if(line[ln].length() > 0) {
+      tmp_text =
 	TTF_RenderText_Blended(current_sg->Font(fontsz), line[ln].c_str(),
 		texture[st].fg);
-    if(!tmp_text) {
-      fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
-      exit(1);
+      if(!tmp_text) {
+	fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
+	exit(1);
+	}
+      srec.w = tmp_text->w;
+      srec.h = tmp_text->h;
+      if(texture[st].type == SG_TEXTURE_TRANS
+		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
+	}
+      SDL_BlitSurface(tmp_text, &srec, texture[st].cur, &drec);
+      SDL_FreeSurface(tmp_text);
       }
-
-    srec.w = tmp_text->w;
-    srec.h = tmp_text->h;
-    if(texture[st].type == SG_TEXTURE_TRANS
-	|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
-      SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
-      }
-    SDL_BlitSurface(tmp_text, &srec, texture[st].cur, &drec);
-    SDL_FreeSurface(tmp_text);
-    drec.y += srec.h;
+    drec.y += TTF_FontHeight(current_sg->Font(fontsz));
     }
 
   if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
