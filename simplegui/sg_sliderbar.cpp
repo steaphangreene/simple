@@ -27,16 +27,34 @@
 #include "sg_sliderbar.h"
 #include "sg_panel.h"
 #include "sg_button.h"
+#include "sg_dragable.h"
 #include "sg_events.h"
 
-SG_SliderBar::SG_SliderBar()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_SliderBar", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+SG_SliderBar::SG_SliderBar(bool vert, int binvpro,
+        SG_Texture b1tex, SG_Texture b1tex_dis, SG_Texture b1tex_click,
+        SG_Texture b2tex, SG_Texture b2tex_dis, SG_Texture b2tex_click,
+        SG_Texture handtex, SG_Texture bgtex)
+	: SG_Compound(vert ? 1 : binvpro, vert? binvpro : 1, 0.0, 0.0) {
+  vertical = vert;
+  SetBackground(new SG_Panel(bgtex));
+  handle = new SG_Dragable(handtex);
+
+  if(vert) {
+    incb = new SG_Button("^", b1tex, b1tex_dis, b1tex_click);
+    decb = new SG_Button("v", b2tex, b2tex_dis, b2tex_click);
+    AddWidget(incb, 0, 0);
+    AddWidget(decb, 0, binvpro-1);
+    AddWidget(handle, 0, binvpro/2);	//Hardcoded placement/range (for now)
+    handle->SetLimits(0.0, -2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1));
+    }
+  else {
+    incb = new SG_Button(">", b1tex, b1tex_dis, b1tex_click);
+    decb = new SG_Button("<", b2tex, b2tex_dis, b2tex_click);
+    AddWidget(incb, binvpro-1, 0);
+    AddWidget(decb, 0, 0);
+    AddWidget(handle, binvpro/2, 0);	//Hardcoded placement/range (for now)
+    handle->SetLimits(-2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1), 0.0);
+    }
   }
 
 SG_SliderBar::~SG_SliderBar() {
@@ -44,12 +62,7 @@ SG_SliderBar::~SG_SliderBar() {
 
 bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
-      }
+    // FIXME: Unimplemented
     }
   return 0; // Silence children doing other things
   }

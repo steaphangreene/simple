@@ -26,20 +26,30 @@
 #define SG_SLIDERBAR_H
 
 #include "sg_compound.h"
+#include "sg_texture.h"
+#include "sg_colors.h"
 
 class SG_Button;
 class SG_TextArea;
+class SG_Dragable;
 
 class SG_SliderBar : public SG_Compound {
 public:
-  SG_SliderBar();
+  SG_SliderBar(bool vert = false, int binvpro = 16,
+        SG_Texture b1tex = SG_COL_RAISED, SG_Texture b1tex_dis = SG_COL_LOW,
+        SG_Texture b1tex_click = SG_COL_LOW,
+        SG_Texture b2tex = SG_COL_RAISED, SG_Texture b2tex_dis = SG_COL_LOW,
+        SG_Texture b2tex_click = SG_COL_LOW,
+	SG_Texture handtex = SG_COL_FG, SG_Texture bgtex = SG_COL_BG);
   virtual ~SG_SliderBar();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  SG_Dragable *handle;
+  SG_Button *incb, *decb;
+  bool vertical;
   };
 
 #endif // SG_SLIDERBAR_H

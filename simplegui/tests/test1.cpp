@@ -97,8 +97,6 @@ int main(int argc, char **argv) {
   SG_TextArea *text;
   SG_TransLabel *trans;
   SG_ProgressBar *prog;
-//  SG_FileBrowser *fileb;
-  SG_ComboBox *combob;
 
   tab[0] = new SG_Table(4, 12);
   tab[1] = new SG_Table(2, 12);
@@ -214,9 +212,11 @@ int main(int argc, char **argv) {
   prog->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(prog, 0, 8, 2, 1);
 
+//  SG_FileBrowser *fileb;
 //  fileb = new SG_FileBrowser("*.cpp");
 //  tab[1]->AddWidget(fileb, 0, 9, 2, 3);
 
+  SG_ComboBox *combob;
   vector<string> opts;
   opts.push_back("Option 1");
   opts.push_back("Option 2");
@@ -232,6 +232,9 @@ int main(int argc, char **argv) {
   stack1->AddWidget(stack3);
   tab[1]->AddWidget(stack1, 0, 10, 1, 1);
   stack3->Ignore();
+
+  SG_SliderBar *slide = new SG_SliderBar();
+  tab[1]->AddWidget(slide, 0, 11, 2, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
 
