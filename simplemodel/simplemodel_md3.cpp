@@ -50,17 +50,6 @@ SimpleModel_Md3::SimpleModel_Md3() {
 SimpleModel_Md3::~SimpleModel_Md3() {
   }
 
-static int nextpoweroftwo(int x) {
-  if(x <= 2) return 2;
-
-  --x;		//Hitch it down in case it's exactly a power of 2
-  int p = 1;
-  for(; x != 1; ++p, x>>=1);
-  x <<= p;
-  return x;
-  }
-
-
 bool SimpleModel_Md3::Load(const string &filenm,
 	const string &modelnm, const string &skinnm) {
   filename = filenm;
@@ -71,7 +60,8 @@ bool SimpleModel_Md3::Load(const string &filenm,
   FILE *model = fopen(modelname.c_str(), "r");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
-	skinname.c_str());
+	modelname.c_str());
+    perror("WARNING");
     return false;
     }
 
@@ -210,6 +200,7 @@ bool SimpleModel_Md3::Load(const string &filenm,
   if(!skin) {
     fprintf(stderr, "WARNING: Unable to open skin file '%s'!\n",
 	skinname.c_str());
+    perror("WARNING");
     return false;
     }
 
@@ -226,18 +217,9 @@ bool SimpleModel_Md3::Load(const string &filenm,
 	  SM_Texture *tmptex = new SM_Texture(tex);
 	  texture.push_back(tmptex);
 
-	  //FIXME: This should be in SM_Texture!
-	  int xsize = nextpoweroftwo(tmptex->src->w);
-	  int ysize = nextpoweroftwo(tmptex->src->h);
-	  tmptex->cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-		SG_SDL_RGBA_COLFIELDS);
-	  memset(tmptex->cur->pixels, 0, xsize*ysize*4);
-	  SDL_SetAlpha(tmptex->src, 0, SDL_ALPHA_OPAQUE);
-	  SDL_BlitSurface(tmptex->src, NULL, tmptex->cur, NULL);
-
           tmptex->Update();
 
-	  meshes[i].texture = texture.back()->GLTexture();
+	  meshes[i].texture = texture.back();
 	  }
 	}
       }
@@ -273,22 +255,24 @@ bool SimpleModel_Md3::Render(Uint32 cur_time) {
     }
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
-    glBindTexture(GL_TEXTURE_2D, meshes[obj].texture);
+    if(meshes[obj].texture && meshes[obj].texture->type != SM_TEXTURE_NONE) {
+      glBindTexture(GL_TEXTURE_2D, meshes[obj].texture->GLTexture());
 
-    glBegin(GL_TRIANGLES);
+      glBegin(GL_TRIANGLES);
 
-    int vertindex = current_frame * meshes[obj].coords.size();
+      int vertindex = current_frame * meshes[obj].coords.size();
 
-    for(unsigned int j = 0; j < meshes[obj].faces.size(); j++) {
-      for(int whichVertex = 0; whichVertex < 3; whichVertex++) {
-	int index = meshes[obj].faces[j].vertices[whichVertex];
+      for(unsigned int j = 0; j < meshes[obj].faces.size(); j++) {
+	for(int whichVertex = 0; whichVertex < 3; whichVertex++) {
+	  int index = meshes[obj].faces[j].vertices[whichVertex];
 
-	glTexCoord2f(meshes[obj].coords[index].coord[0],
+	  glTexCoord2f(meshes[obj].coords[index].coord[0],
 		meshes[obj].coords[index].coord[1]);
 
-	glVertex3f(meshes[obj].triangles[vertindex + index].vertex[0],
+	  glVertex3f(meshes[obj].triangles[vertindex + index].vertex[0],
 		meshes[obj].triangles[vertindex + index].vertex[1],
 		meshes[obj].triangles[vertindex +index].vertex[2]);
+	  }
         }
       }
     glEnd();

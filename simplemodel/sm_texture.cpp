@@ -24,6 +24,16 @@
 
 #include "sm_texture.h"
 
+static int nextpoweroftwo(int x) {
+  if(x <= 2) return 2;
+
+  --x;          //Hitch it down in case it's exactly a power of 2
+  int p = 1;
+  for(; x != 1; ++p, x>>=1);
+  x <<= p;
+  return x;
+  }
+
 SM_Texture::SM_Texture(SDL_Surface *tex) {
   type = SM_TEXTURE_DEFINED;
   texture = 0;
@@ -41,9 +51,10 @@ SM_Texture::SM_Texture(const string &filenm) {
   cur = NULL;
   src = IMG_Load(filenm.c_str());
   if(!src) {
-    fprintf(stderr, "ERROR: Could not load image: '%s'!\n", filenm.c_str());
-    perror("ERROR");
-    exit(1);
+    // Judging by many of the models I've see, this is not an error.
+    type = SM_TEXTURE_NONE;
+    dirty = 0;
+    return;
     }
   xfact = 1.0;
   yfact = 1.0;
@@ -116,21 +127,31 @@ bool SM_Texture::CheckCache() {
   }
 
 void SM_Texture::Update() {
-  if(texture == 0) glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-//  glTexImage2D(GL_TEXTURE_2D, 0, 4,
+  if(type == SM_TEXTURE_DEFINED) {
+    int xsize = nextpoweroftwo(src->w);
+    int ysize = nextpoweroftwo(src->h);
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SG_SDL_RGBA_COLFIELDS);
+    memset(cur->pixels, 0, xsize*ysize*4);
+    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+    SDL_BlitSurface(src, NULL, cur, NULL);
+
+    if(texture == 0) glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+//    glTexImage2D(GL_TEXTURE_2D, 0, 4,
 //	cur->w, cur->h, 0, GL_RGBA,
 //	GL_UNSIGNED_BYTE, cur->pixels );
 
-  gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cur->w, cur->h, GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cur->w, cur->h, GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
 
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-  dirty = 0;
+    dirty = 0;
+    }
   UpdateCache();
   }
 
