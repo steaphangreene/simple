@@ -25,11 +25,11 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_PassThrough::SG_PassThrough(int la, int ma, int ra)
+SG_PassThrough::SG_PassThrough(int lact, int mact, int ract)
 	: SG_Alignment(0.0, 0.0) {
-  button_action[0] = la;
-  button_action[1] = ma;
-  button_action[2] = ra;
+  button_action[0] = lact;
+  button_action[1] = mact;
+  button_action[2] = ract;
   cur_action = SG_PT_IGNORE;
   cur_button = 0;
   }

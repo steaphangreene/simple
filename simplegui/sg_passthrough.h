@@ -26,7 +26,7 @@
 
 class SG_PassThrough : public SG_Alignment {
 public:
-  SG_PassThrough(int la, int ma, int ra);
+  SG_PassThrough(int lact, int mact, int ract);
   virtual ~SG_PassThrough();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);

@@ -30,3 +30,4 @@ Add "INTANGIBLE" flag?
 Add time offset to AnimatedPanel widget?
 Catch deletion of current_widget?
 Allow SG_Table to be resizable?
+Console widget?
