@@ -54,9 +54,9 @@ bool SimpleModel::Render(Uint32 cur_time) {
   return false;
   }
 
-void SimpleModel::SetAnimation(int part, int anim) {
+void SimpleModel::SetAnimation(int anim) {
   }
 
-int SimpleModel::GetAnimation(int part) {
+int SimpleModel::GetAnimation() {
   return 0;
   }

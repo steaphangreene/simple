@@ -26,7 +26,7 @@
 #include <cstdlib>
 using namespace std;
 
-#include "q3anim.h"
+#include "sm_q3anim.h"
 #include "simplemodel_q3dir.h"
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &filenm) {
@@ -63,8 +63,8 @@ bool SimpleModel_Q3Dir::Load(const string &filenm) {
 
   if(!LoadCFG(filename + "/animation.cfg")) return false;
 
-  torso->SetAnimation(0, 11);
-  legs->SetAnimation(0, 15);
+  torso->SetAnimation(11);
+  legs->SetAnimation(15);
 
   return false;
   }
@@ -106,32 +106,45 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
   }
 
 bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
-  //FIXME: Attach submodels to tags
   //FIXME: Interpolate Models Using Animations
   //FIXME: Interpolate Tags
-  legs->Render(cur_time);
-  torso->Render(cur_time);
-  head->Render(cur_time);
+  if(legs) {
+    glPushMatrix();
+    legs->Render(cur_time);
+    if(torso && legs->MoveToTag("tag_torso")) {
+      torso->Render(cur_time);
+      glPushMatrix();
+      if(head && torso->MoveToTag("tag_head")) {
+	head->Render(cur_time);
+	}
+      glPopMatrix();
+      if(weapon && torso->MoveToTag("tag_weapon")) {
+	weapon->Render(cur_time);
+	}
+      }
+    glPopMatrix();
+    return true;
+    }
   return false;
   }
 
-void SimpleModel_Q3Dir::SetAnimation(int part, int anim) {
-  if(part != 0) anim += 6;	//Offset for the BOTH_ animations
-  if(part == 0) {
-    torso->SetAnimation(0, anim);
-    legs->SetAnimation(0, anim);
+void SimpleModel_Q3Dir::SetAnimation(int anim) {
+  if(anim < BOTH_MAX) {
+    torso->SetAnimation(anim);
+    legs->SetAnimation(anim);
     }
-  else if(part == 1) {
-    torso->SetAnimation(0, anim);
-    if(legs->GetAnimation(0) < 6) legs->SetAnimation(0, 15);
+  else if(anim < TORSO_MAX) {
+    torso->SetAnimation(anim);
+    if(legs->GetAnimation() < 6) legs->SetAnimation(9);
     }
-  else if(part == 2) {
-    legs->SetAnimation(0, anim);
-    if(torso->GetAnimation(0) < 6) torso->SetAnimation(0, 11);
+  else if(anim < LEGS_MAX) {
+    anim -= (LEGS_START - TORSO_START);
+    legs->SetAnimation(anim);
+    if(torso->GetAnimation() < 6) torso->SetAnimation(5);
     }
   }
 
-int SimpleModel_Q3Dir::GetAnimation(int part) {
+int SimpleModel_Q3Dir::GetAnimation() {
   return 0;
   }
 

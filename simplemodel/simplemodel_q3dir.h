@@ -34,9 +34,9 @@ public:
 
   virtual bool Render(Uint32 cur_time);
 
-  virtual void SetAnimation(int part, int anim);
+  virtual void SetAnimation(int part);
 
-  virtual int GetAnimation(int part);
+  virtual int GetAnimation();
 
 protected:
   bool LoadCFG(const string &filenm);

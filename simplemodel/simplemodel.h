@@ -29,6 +29,8 @@ using namespace std;
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
+#include "sm_texture.h"
+
 class SimpleModel {
 public:
   SimpleModel();
@@ -38,12 +40,13 @@ public:
 
   virtual bool Render(Uint32 cur_time);
 
-  virtual void SetAnimation(int part, int anim);
+  virtual void SetAnimation(int anim);
 
-  virtual int GetAnimation(int part);
+  virtual int GetAnimation();
 
 protected:
   string filename;
+  vector<SM_Texture *> texture;
   };
 
 SimpleModel *SM_LoadModel(const string &filename);
