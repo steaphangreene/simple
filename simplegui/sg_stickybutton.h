@@ -19,30 +19,25 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
+#ifndef SG_STICKYBUTTON_H
+#define SG_STICKYBUTTON_H
 
-//Basic Actions
-#define	SG_EVENT_BUTTONPRESS	100
-#define	SG_EVENT_BUTTONRELEASE	101
-#define	SG_EVENT_STICKYOFF	102
-#define	SG_EVENT_STICKYON	103
+#include "sg_button.h"
 
-//Passthrough Actions
-#define	SG_EVENT_CLICK		1000
-#define	SG_EVENT_LEFTCLICK	1001
-#define	SG_EVENT_MIDDLECLICK	1002
-#define	SG_EVENT_RIGHTCLICK	1003
-#define	SG_EVENT_SCROLLUP	1004
-#define	SG_EVENT_SCROLLDOWN	1005
-#define	SG_EVENT_CLICKMAX	1032	//Max of 31 mouse buttons!
+class SG_StickyButton : public SG_Button {
+public:
+  SG_StickyButton(string mes,
+	int c = SG_COL_RAISED, int tc = SG_COL_TEXT,
+	int cc = SG_COL_LOW, int pc = SG_COL_HIGH );
+  virtual ~SG_StickyButton();
+  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  bool IsOn() { return on; };
+  
+protected:
+//  static GL_MODEL Default_Mouse_Cursor;
+  bool on;
+  };
 
-#define	SG_EVENT_BOX		1032
-#define	SG_EVENT_LEFTBOX	1033
-#define	SG_EVENT_MIDDLEBOX	1034
-#define	SG_EVENT_RIGHTBOX	1035
-#define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
-
-//Compound Actions
-#define	SG_EVENT_OK		2000
-#define	SG_EVENT_FILEOPEN	2001
+#endif // SG_STICKYBUTTON_H
 

@@ -134,11 +134,11 @@ int main(int argc, char **argv) {
 	gui->NewColor(0.0, 1.0, 0.0), black, gui->NewColor(0.5, 1.0, 0.5));
   button[2] = new SG_Button("Blue",
 	gui->NewColor(0.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.5, 1.0));
-  button[3] = new SG_Button("Yellow",
+  button[3] = new SG_StickyButton("Yellow",
 	gui->NewColor(1.0, 1.0, 0.0), black, gui->NewColor(0.5, 0.5, 0.0));
-  button[4] = new SG_Button("Cyan",
+  button[4] = new SG_StickyButton("Cyan",
 	gui->NewColor(0.0, 1.0, 1.0), black, gui->NewColor(0.0, 0.5, 0.5));
-  button[5] = new SG_Button("", //Blank!
+  button[5] = new SG_StickyButton("", //Blank!
 	gui->NewColor(1.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.0, 0.5));
 
   name[button[0]] = "red";
@@ -180,6 +180,16 @@ int main(int argc, char **argv) {
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONPRESS) {
 	  printf("Received SG_EVENT_BUTTONPRESS from %s button.\n",
+		name[(SG_Widget*)(event.user.data1)].c_str());
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_STICKYON) {
+	  printf("Received SG_EVENT_STICKYON from %s button.\n",
+		name[(SG_Widget*)(event.user.data1)].c_str());
+	  audio_play(click, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_STICKYOFF) {
+	  printf("Received SG_EVENT_STICKYOFF from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
 	  }
