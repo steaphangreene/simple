@@ -40,7 +40,7 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 #CXX=	i586-mingw32msvc-g++
 #CXXFLAGS=	-O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-#LIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lopengl32 -lglu32
+#LIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lopengl32 -lglu32
 
 OBJS:=	simplegui.o sg_widget.o sg_texture.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
