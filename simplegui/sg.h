@@ -46,6 +46,9 @@ class SimpleGUI {
 public:
   SimpleGUI(int aspmeth, float asp);
   ~SimpleGUI();
+
+  static SimpleGUI *CurrentGUI();
+
   bool RenderStart(unsigned long cur_time);
   bool RenderFinish(unsigned long cur_time);
   bool Render(unsigned long cur_time);

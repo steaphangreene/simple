@@ -554,3 +554,7 @@ void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
 
   mouse_cursor->dirty = 0;
   }
+
+SimpleGUI *SimpleGUI::CurrentGUI() {
+  return current_sg;
+  }
