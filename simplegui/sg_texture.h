@@ -56,6 +56,6 @@ extern unsigned char sg_col_u32b4[4];
 #define SG_COL_U32B3 (*((unsigned long *)(sg_col_u32b3)))
 #define SG_COL_U32B4 (*((unsigned long *)(sg_col_u32b4)))
 
-#define SG_RGBA_COLFIELDS SG_COL_U32B1, SG_COL_U32B2, SG_COL_U32B3, SG_COL_U32B4
+#define SG_SDL_RGBA_COLFIELDS SG_COL_U32B1, SG_COL_U32B2, SG_COL_U32B3, SG_COL_U32B4
 
 #endif // SG_TEXTURE_H

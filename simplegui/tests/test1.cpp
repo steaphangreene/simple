@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
   cols.resize(NUM_FRAMES, (SDL_Surface *)(NULL));
   for(int tx=0; tx < NUM_FRAMES; ++tx) {  //Create NUM_FRAMES actual textures
     cols[tx].src = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
-	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	SG_SDL_RGBA_COLFIELDS);
     SDL_FillRect(cols[tx].src, NULL, SDL_MapRGB(cols[tx].src->format, 0, 0, 0));
     unsigned long colwht = SDL_MapRGB(cols[tx].src->format, 255, 255, 255);
     for(int x=0; x < FRAME_DIM; ++x) {

@@ -132,18 +132,18 @@ void SG_TextArea::BuildTexture(int st) {
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
   if(texture[st].type == SG_TEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_RGBA_COLFIELDS);
+	SG_SDL_RGBA_COLFIELDS);
     SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
     }
   else if(texture[st].type == SG_TEXTURE_TRANS) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	SG_RGBA_COLFIELDS);
+	SG_SDL_RGBA_COLFIELDS);
     }
   else if(texture[st].type == SG_TEXTURE_DEFINED) {
     //FIXME: Implement this for real!
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	SG_RGBA_COLFIELDS);
+	SG_SDL_RGBA_COLFIELDS);
     }
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
