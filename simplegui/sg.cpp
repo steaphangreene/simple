@@ -151,6 +151,10 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
   glPushMatrix();
   glLoadIdentity();
 
+  //This makes sure the needed functions are setup right for the widgets.
+  glBlendFunc(GL_SRC_ALPHA,  GL_ONE_MINUS_SRC_ALPHA);
+  glDisable(GL_BLEND);
+
   if(aspect_actual > 1.0 && (aspect_method & ASPECT_EXPANDING_X)) {
     glScalef(1.0/aspect_actual, 1.0, 1.0);
     }
