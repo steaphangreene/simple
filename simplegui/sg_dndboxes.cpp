@@ -98,9 +98,20 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 bool SG_DNDBoxes::AddItem(SG_Panel *wid, int x1, int y1, int xs, int ys) {
   if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
         || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
-    fprintf(stderr, "Illegal DND placement, (%d,%d)/%dx%d in (%dx%d)\n",
+    fprintf(stderr, "Illegal DND add, (%d,%d)/%dx%d in (%dx%d)\n",
         x1, y1, xs, ys, xsize, ysize);
+    return 0;
     }
+
+  for(int x = x1; x <= x1+xs; ++x) {
+    for(int y = y1; y <= y1+ys; ++y) {
+      if(!present[y*xsize + x]) {
+	fprintf(stderr, "Illegal DND add, cell (%d,%d) not present.\n", x, y);
+	return 0;
+	}
+      }
+    }
+
   SG_TableGeometry geom = { x1, y1, xs, ys };
   widgets.push_back(wid);
   wgeom.push_back(geom);
