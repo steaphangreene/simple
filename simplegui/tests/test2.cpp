@@ -45,27 +45,30 @@ int event_thread_handler(void *arg) {
 
   SDL_Event event;
 
-  while(!user_quit && SDL_WaitEvent(&event)) {
-    int have_event = 0;
+  while(!user_quit) {
+    while(!user_quit && SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS)) {
+      int have_event = 0;
 
-    SDL_mutexP(gui_mutex);
-    have_event = gui->ProcessEvent(&event);
-    SDL_mutexV(gui_mutex);
+      SDL_mutexP(gui_mutex);
+      have_event = gui->ProcessEvent(&event);
+      SDL_mutexV(gui_mutex);
 
-    if(!have_event) continue;
-    if(event.type == SDL_SG_EVENT) {
-      if(event.user.code == SG_EVENT_BUTTONPRESS) {
-	audio_play(click, 8, 8);
+      if(!have_event) continue;
+      if(event.type == SDL_SG_EVENT) {
+	if(event.user.code == SG_EVENT_BUTTONPRESS) {
+	  audio_play(click, 8, 8);
+	  }
 	}
-      }
-    else if(event.type == SDL_KEYDOWN) {
-      if(event.key.keysym.sym == SDLK_ESCAPE) {
+      else if(event.type == SDL_KEYDOWN) {
+	if(event.key.keysym.sym == SDLK_ESCAPE) {
+	  user_quit = 1;
+	  }
+	}
+      else if(event.type == SDL_QUIT) {
 	user_quit = 1;
 	}
       }
-    else if(event.type == SDL_QUIT) {
-      user_quit = 1;
-      }
+    SDL_Delay(10); // Weak, yes, but this is how SDL does it too. :(
     }
   return 0;
   }
@@ -73,17 +76,29 @@ int event_thread_handler(void *arg) {
 int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
   while(!user_quit) {
 
+    SDL_PumpEvents();
     start_scene();
     unsigned long cur_time = SDL_GetTicks();
 
+    SDL_PumpEvents();
     SDL_mutexP(gui_mutex);
+
+    SDL_PumpEvents();
     gui->RenderStart(cur_time);
+
+    SDL_PumpEvents();
     SDL_mutexV(gui_mutex);
 
+    SDL_PumpEvents();
     SDL_mutexP(gui_mutex);
+
+    SDL_PumpEvents();
     gui->Render(cur_time);
+
+    SDL_PumpEvents();
     SDL_mutexV(gui_mutex);
 
+    SDL_PumpEvents();
     finish_scene();
     }
   return 0;
