@@ -28,26 +28,16 @@
 
 using namespace std;
 
-#include "sg_widget.h"
+#include "sg_textarea.h"
 
-class SG_TransLabel : public SG_Widget {
+class SG_TransLabel : public SG_TextArea {
 public:
   SG_TransLabel(string mes, int c);
   virtual ~SG_TransLabel();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  void SetMargins(float xmar, float ymar);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  void BuildTransTexture();
-  string message;
-  GLuint texture;	//Current texture (when active)
-  SDL_Surface *cur;	//Current texture buffer
-  SDL_Color fg;
-  float xfact, yfact;
-  float xmargin, ymargin;
   };
 
 #endif // SG_TRANSLABEL_H

@@ -30,7 +30,7 @@ SG_Button::SG_Button(string mes, int c, int tc, int cc)
   texture.resize(3);
   texture[1] = texture[0];
   texture[1].col = *(current_sg->Color(cc));
-  BuildTexture(texture[1], message, 0.0, 0.0);
+  BuildTexture(texture[1], message, xmargin, ymargin);
   }
 
 SG_Button::~SG_Button() {

@@ -3,8 +3,10 @@ Need a way to handle sounds for compound's buttons
 Verify clean up of textures on widget deletion
 
 -=TODO=-
+AnimatedPanel
 
 -=To Flush Out=-
+Add passed-in texture support
 Implement actual mouse cursors
 Disabled state textures
 Implement Scrollable
@@ -19,7 +21,6 @@ Implement SliderBar
 Implement ScrollingArea
 Implement Menu
 Implement Editable
-Add passed-in texture support
 
 -=Wishlist=-
 Separate public simplegui.h from internal defs?

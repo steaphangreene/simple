@@ -38,7 +38,7 @@ enum SG_TextureType {
   };
 
 struct SG_Texture {
-  int type;
+  SG_TextureType type;
   GLuint texture;	//Current texture (when active)
   SDL_Surface *cur;	//Current texture buffer
   SDL_Surface *src;	//Only for SG_TEXTURE_DEFINED

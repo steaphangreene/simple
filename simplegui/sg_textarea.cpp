@@ -48,7 +48,7 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
 
   SDL_Surface *tmp_text = NULL;
   int bxsize = 0, bysize = 0;
-  int xsize = 0, ysize = 0;
+  int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
   vector<string> line;
   { int pos = 0, lpos=0, tmpx=0, tmpy=0;
@@ -63,8 +63,15 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
       }
     }
 
+  xsize = bxsize;	//Used temporarilly - not final values
+  ysize = bysize;
+  bxsize = int((float)(bxsize) / (1.0f - mx * 2.0f) + 0.5f);
+  bysize = int((float)(bysize) / (1.0f - my * 2.0f) + 0.5f);
+  xoff = (bxsize-xsize)/2;
+  yoff = (bysize-ysize)/2;
+
   //OpenGL Needs a power of two size - grow to next
-  xsize = nextpoweroftwo(bxsize);
+  xsize = nextpoweroftwo(bxsize);	// Final values
   ysize = nextpoweroftwo(bysize);
 
   tex.cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
@@ -72,7 +79,7 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
   SDL_FillRect(tex.cur, NULL, SDL_MapRGB(tex.cur->format,
 	tex.col.r, tex.col.g, tex.col.b));
 
-  SDL_Rect srec = { 0, 0, 0, 0}, drec = { 0, 0, 0, 0 };
+  SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
   for(int ln = 0; ln < int(line.size()); ++ln) {
     tmp_text =
 	TTF_RenderText_Blended(current_sg->Font(), line[ln].c_str(), tex.fg);
@@ -100,17 +107,13 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
 
   tex.xfact = (float)(bxsize) / (float)(xsize);
   tex.yfact = (float)(bysize) / (float)(ysize);
-
-// FIXME - implement new version of this.
-//  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
-//  glScalef(1.0-xmargin, 1.0-ymargin, 1.0);	//Scale for margins
   }
 
 SG_TextArea::SG_TextArea(string mes, int c, int tc) : SG_Panel(c) {
   texture[0].fg = *(current_sg->Color(tc));
   message = mes;
-  xmargin = 0.0;
-  ymargin = 0.0;
+  xmargin = 0.125;
+  ymargin = 0.125;
 
   BuildTexture(texture[0], message, xmargin, ymargin);
   }

@@ -30,11 +30,11 @@ SG_Editable::SG_Editable(string mes, int c, int tc, int dc, int fc)
   texture.resize(3);
   texture[1] = texture[0];
   texture[1].col = *(current_sg->Color(dc));
-  BuildTexture(texture[1], message, 0.0, 0.0);
+  BuildTexture(texture[1], message, xmargin, ymargin);
 
   texture[2] = texture[0];
   texture[2].col = *(current_sg->Color(fc));
-  BuildTexture(texture[2], message, 0.0, 0.0);
+  BuildTexture(texture[2], message, xmargin, ymargin);
   }
 
 SG_Editable::~SG_Editable() {

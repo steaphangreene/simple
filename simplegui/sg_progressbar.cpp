@@ -30,7 +30,7 @@ SG_ProgressBar::SG_ProgressBar(string mes, int c, int tc, int dc)
   texture.resize(2);
   texture[1] = texture[0];
   texture[1].col = *(current_sg->Color(dc));
-  BuildTexture(texture[1], message, 0.0, 0.0);
+  BuildTexture(texture[1], message, xmargin, ymargin);
   }
 
 SG_ProgressBar::~SG_ProgressBar() {

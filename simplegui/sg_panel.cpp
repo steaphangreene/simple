@@ -45,7 +45,7 @@ void BuildTexture(SG_Texture &tex) {
 SG_Panel::SG_Panel(int c) : SG_Widget() {
   texture.resize(1);
   texture[0].type = SG_TEXTURE_COLOR;
-  texture[0].col = *(current_sg->Color(c));
+  if(c > 0) texture[0].col = *(current_sg->Color(c));
   texture[0].src = NULL;
   texture[0].texture = 0;
   texture[0].xfact = 1.0;
