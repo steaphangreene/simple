@@ -39,14 +39,7 @@ SG_MultiTab::SG_MultiTab()
   AddWidget(labelb, 1, 2, 6, 1);
   }
 
-SG_MultiTab::~SG_MultiTab() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_MultiTab::~SG_MultiTab() {
   }
 
 bool SG_MultiTab::ChildEvent(SDL_Event *event) {

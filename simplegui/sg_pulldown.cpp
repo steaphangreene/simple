@@ -39,14 +39,7 @@ SG_PullDown::SG_PullDown()
   AddWidget(labelb, 1, 2, 6, 1);
   }
 
-SG_PullDown::~SG_PullDown() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_PullDown::~SG_PullDown() {
   }
 
 bool SG_PullDown::ChildEvent(SDL_Event *event) {

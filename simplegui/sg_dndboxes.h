@@ -32,14 +32,15 @@ class SG_TextArea;
 
 class SG_DNDBoxes : public SG_Compound {
 public:
-  SG_DNDBoxes();
+  SG_DNDBoxes(int xsz, int ysz);
   virtual ~SG_DNDBoxes();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+  void TakeOut(int xp, int yp);
+  void PutIn(int xp, int yp);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
   };
 
 #endif // SG_DNDBOXES_H

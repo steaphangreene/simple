@@ -39,14 +39,7 @@ SG_ListBox::SG_ListBox()
   AddWidget(labelb, 1, 2, 6, 1);
   }
 
-SG_ListBox::~SG_ListBox() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_ListBox::~SG_ListBox() {
   }
 
 bool SG_ListBox::ChildEvent(SDL_Event *event) {

@@ -39,14 +39,7 @@ SG_RadioButtons::SG_RadioButtons()
   AddWidget(labelb, 1, 2, 6, 1);
   }
 
-SG_RadioButtons::~SG_RadioButtons() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_RadioButtons::~SG_RadioButtons() {
   }
 
 bool SG_RadioButtons::ChildEvent(SDL_Event *event) {

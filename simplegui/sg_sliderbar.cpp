@@ -39,14 +39,7 @@ SG_SliderBar::SG_SliderBar()
   AddWidget(labelb, 1, 2, 6, 1);
   }
 
-SG_SliderBar::~SG_SliderBar() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_SliderBar::~SG_SliderBar() {
   }
 
 bool SG_SliderBar::ChildEvent(SDL_Event *event) {

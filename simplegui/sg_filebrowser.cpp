@@ -37,14 +37,7 @@ SG_FileBrowser::SG_FileBrowser(const string &filt)
   AddWidget(nameb, 1, 2, 6, 1);
   }
 
-SG_FileBrowser::~SG_FileBrowser() {	//Even Need this?
-  vector<SG_Widget *> tmp = widgets;
-  vector<SG_Widget *>::iterator itr = tmp.begin();
-  widgets.clear();
-  wgeom.clear();
-  for(; itr != tmp.end(); ++itr) {
-    if(*itr) delete (*itr);
-    }
+SG_FileBrowser::~SG_FileBrowser() {
   }
 
 bool SG_FileBrowser::ChildEvent(SDL_Event *event) {
