@@ -1,21 +1,28 @@
 -=To FIX=-
 
--=To Flush Out=-
-Implement global colors, remove color initializers
-Implement ProgressBar
-Multi-line Text Areas
-Disabled State Textures
-Need a way to handle sounds for compound's buttons
-
 -=TODO=-
-Compound Widgets
-Menus
 Pop-Ups/Dialogs
-Implement Actual Mouse Cursors
+Menu
 Scrollable
 Editable
 StickyButton
 Menu
+MultiTab
+ListBox
+RadioButtons
+ComboBox
+PullDown
+SliderBar
+ScrollingArea
+
+-=To Flush Out=-
+Implement global colors, remove color initializers
+Implement Actual Mouse Cursors
+Implement ProgressBar
+Implement FileBrowser
+Multi-line Text Areas
+Disabled State Textures
+Need a way to handle sounds for compound's buttons
 
 -=Wishlist=-
 Separate public simplegui.h from internal defs?
