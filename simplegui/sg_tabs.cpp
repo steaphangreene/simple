@@ -46,15 +46,18 @@ SG_Tabs::~SG_Tabs() {
   }
 
 bool SG_Tabs::ChildEvent(SDL_Event *event) {
+  static SG_Event_DataType event_data;
+
   if(event->user.code == SG_EVENT_STICKYON) {
     vector<SG_Widget *>::iterator itrw = widgets.begin();
     for(; itrw != widgets.end(); ++itrw) {
       if((*itrw) && (*itrw) != event->user.data1) (*itrw)->TurnOff();
       else if(*itrw) cur_on = itrw - widgets.begin();
       }
+    event_data.i[0] = cur_on;
     event->user.code = SG_EVENT_SELECT;
     event->user.data1 = (void*)this;
-    event->user.data2 = (void*)cur_on;
+    event->user.data2 = (void*)&event_data;
     return 1;
     }
   if(event->user.code == SG_EVENT_STICKYOFF) {

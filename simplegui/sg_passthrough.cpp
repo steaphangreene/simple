@@ -64,10 +64,10 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       }
     }
 
-  static float event_data[8];	//Pointer to this static is put in event struct
+  static SG_Event_DataType event_data; //Pointer to this is put in event struct
 
-  event_data[0] = x;
-  event_data[1] = y;
+  event_data.f[0] = x;
+  event_data.f[1] = y;
 
   if(event->type == SDL_MOUSEBUTTONDOWN) {
     current_sg->SetCurrentWidget(this);
@@ -76,7 +76,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       event->user.code = SG_EVENT_CLICK + event->button.button;
       event->type = SDL_SG_EVENT;
       event->user.data1 = (void*)this;
-      event->user.data2 = (void*)event_data;
+      event->user.data2 = (void*)&event_data;
       return 1;
       }
     else if(button_action[event->button.button - 1] == SG_PT_IGNORE) {
@@ -115,21 +115,22 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       return 0;
       }
     else if(cur_action == SG_PT_BOX) {
-      event_data[2] = act_x;
-      event_data[3] = act_y;
+      event_data.f[2] = act_x;
+      event_data.f[3] = act_y;
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_BOX + cur_button;  //Preserve Original Button
       event->user.data1 = (void*)this;
-      event->user.data2 = (void*)event_data;
+      event->user.data2 = (void*)&event_data;
       cur_action = SG_PT_IGNORE;
       cur_button = 0;
       return 1;
       }
     else if(cur_action == SG_PT_MENU) {
+      event_data.i[0] = 1;	//Pick option #1 //FIXME: HARDCODED STUB!
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_MENU + cur_button;
       event->user.data1 = (void*)this;
-      event->user.data2 = (void*)1;//Pick option #1 //FIXME: STUB!
+      event->user.data2 = (void*)&event_data;
       cur_action = SG_PT_IGNORE;
       cur_button = 0;
 

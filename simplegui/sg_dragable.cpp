@@ -53,7 +53,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
-  static float event_data[2];
+  static SG_Event_DataType event_data;
 
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     current_sg->SetCurrentWidget(this);
@@ -78,13 +78,13 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
       off_y = y - base_y;
       if(off_y > max_y) off_y = max_y;
       if(off_y < min_y) off_y = min_y;
-      event_data[0] = off_x;
-      event_data[1] = off_x;
+      event_data.f[0] = off_x;
+      event_data.f[1] = off_x;
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_DRAGMOVE;
       event->user.data1 = (void*)this;
-      event->user.data2 = (void*)event_data;
+      event->user.data2 = (void*)&event_data;
       return 1;
       }
     return 0;
@@ -96,14 +96,14 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     off_y = y - base_y;
     if(off_y > max_y) off_y = max_y;
     if(off_y < min_y) off_y = min_y;
-    event_data[0] = off_x;
-    event_data[1] = off_x;
+    event_data.f[0] = off_x;
+    event_data.f[1] = off_x;
 
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_DRAGRELEASE;
     event->user.data1 = (void*)this;
-    event->user.data2 = (void*)event_data;
+    event->user.data2 = (void*)&event_data;
     return 1;
     }  
 

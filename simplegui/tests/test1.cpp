@@ -337,7 +337,7 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EVENT_BOX from %s, for button #%d"
 			" item %d selected.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str(),
-		event.user.code - SG_EVENT_BOX, (int)(event.user.data2));
+		event.user.code - SG_EVENT_BOX, *((int*)(event.user.data2)));
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_FILEOPEN) {
