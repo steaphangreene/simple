@@ -34,11 +34,12 @@ SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SG_Texture tex,
 		(x<=0) ? items.size(): x,
 		(y<=0) ? items.size(): y,
 		0.0, 0.0) {
+  cur_on = 0;
   for(int n=0; n < (int)(items.size()); ++n) {
     SG_StickyButton * sb =
 	new SG_StickyButton(items[n], tex, dis_tex, click_tex, down_tex);
     AddWidget(sb);
-    if(n == 0) sb->TurnOn();
+    if(n == cur_on) sb->TurnOn();
     }
   }
 
