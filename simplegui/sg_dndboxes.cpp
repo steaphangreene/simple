@@ -95,7 +95,7 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
   return 1;
   }
 
-bool SG_DNDBoxes::AddItem(SG_Panel *wid, int x1, int y1, int xs, int ys) {
+bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
   if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
         || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
     fprintf(stderr, "Illegal DND add, (%d,%d)/%dx%d in (%dx%d)\n",
@@ -113,7 +113,9 @@ bool SG_DNDBoxes::AddItem(SG_Panel *wid, int x1, int y1, int xs, int ys) {
     }
 
   SG_TableGeometry geom = { x1, y1, xs, ys };
-  widgets.push_back(wid);
+  SG_Button *but = new SG_Button("", icon, icon, icon);
+  but->SetTransparent();
+  widgets.push_back(but);
   wgeom.push_back(geom);
   return 0;
   }
