@@ -20,12 +20,16 @@
 // *************************************************************************
 
 #include "sg_alignment.h"
+#include "sg_globals.h"
 
 SG_Widget::SG_Widget() {
   flags = 0;
   }
 
 SG_Widget::~SG_Widget() {
+  if(current_sg->CurrentWidget() == this) current_sg->UnsetCurrentWidget();
+  if(current_sg->FocusWidget() == this) current_sg->UnsetFocusWidget();
+  if(current_sg->PopupWidget() == this) current_sg->UnsetPopupWidget();
   }
 
 bool SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
