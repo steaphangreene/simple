@@ -1,12 +1,14 @@
 -=To FIX=-
 
 -=To Flush Out=-
+Implement global colors, remove color initializers
 Implement ProgressBar
-Replace color parts with color object
 Multi-line Text Areas
 Disabled State Textures
+Need a way to handle sounds for compound's buttons
 
 -=TODO=-
+Compound Widgets
 Menus
 Pop-Ups/Dialogs
 Implement Actual Mouse Cursors
@@ -14,9 +16,9 @@ Scrollable
 Editable
 StickyButton
 Menu
-Compound Widgets
 
 -=Wishlist=-
+Separate public simplegui.h from internal defs?
 Widget-Specific Fonts?
 Event Forwarding/Returning?
 Drag and Drop Boxes?

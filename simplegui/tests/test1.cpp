@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
   SG_TextArea *text;
   SG_TransLabel *trans;
   SG_ProgressBar *prog;
+  SG_FileBrowser *fileb;
 
   tab[0] = new SG_Table(4, 12);
   tab[1] = new SG_Table(2, 12);
@@ -142,6 +143,9 @@ int main(int argc, char **argv) {
   prog->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(prog, 0, 8, 2, 1);
 
+  fileb = new SG_FileBrowser("*.cpp");
+  tab[1]->AddWidget(fileb, 0, 9, 2, 3);
+
   tab[1]->SetBorder(0.0625, 0.125);
 
   SDL_Event event;
@@ -211,6 +215,11 @@ int main(int argc, char **argv) {
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
+	  }
+	else if(event.user.code == SG_EVENT_FILEOPEN) {
+	  printf("Received SG_EVENT_FILEOPEN for filename '%s'.\n",
+		(char*)(event.user.data2));
+	  audio_play(click, 8, 8);
 	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);

@@ -19,26 +19,28 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
+#include <GL/gl.h>
 
-//Basic Actions
-#define	SG_EVENT_BUTTONPRESS	100
-#define	SG_EVENT_BUTTONRELEASE	101
+#include "sg_progressbar.h"
+#include "sg_events.h"
 
-//Passthrough Actions
-#define	SG_EVENT_CLICK		1000
-#define	SG_EVENT_LEFTCLICK	1001
-#define	SG_EVENT_MIDDLECLICK	1002
-#define	SG_EVENT_RIGHTCLICK	1003
-#define	SG_EVENT_SCROLLUP	1004
-#define	SG_EVENT_SCROLLDOWN	1005
-#define	SG_EVENT_CLICKMAX	1032	//Max of 31 mouse buttons!
+SG_ProgressBar::SG_ProgressBar(string mes, float red, float green, float blue,
+	float tred, float tgreen, float tblue,
+	float dred, float dgreen, float dblue)
+		: SG_TextArea(mes, red, green, blue, tred, tgreen, tblue) {
+  texture.resize(2);
+  texture[1] = texture[0];
+  texture[1].col.r = (Uint8)(dred*255.0f);
+  texture[1].col.g = (Uint8)(dgreen*255.0f);
+  texture[1].col.b = (Uint8)(dblue*255.0f);
+  BuildTexture(texture[1], message, 0.0, 0.0);
+  }
 
-#define	SG_EVENT_BOX		1032
-#define	SG_EVENT_LEFTBOX	1033
-#define	SG_EVENT_MIDDLEBOX	1034
-#define	SG_EVENT_RIGHTBOX	1035
-#define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
+SG_ProgressBar::~SG_ProgressBar() {
+  }
 
-//Compound Actions
-#define	SG_EVENT_FILEOPEN	2000
+//  bool SG_ProgressBar::SetDefaultCursor(GL_MODEL *cur);
+  
+//  static GL_MODEL SG_ProgressBar::Default_Mouse_Cursor = NULL;
+
+

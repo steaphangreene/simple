@@ -27,6 +27,11 @@ CXX=	gcc
 CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
 LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
+#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
+#CXX=	gcc
+#CXXFLAGS=	-O2 -Wall `sdl-config --cflags`
+#LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
+
 #DEGUGGING OPTIONS
 #CXX=	gcc
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
@@ -39,6 +44,7 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 OBJS:=	simplegui.o sg_widget.o sg_alignment.o sg_table.o \
 	sg_panel.o sg_textarea.o sg_button.o sg_progressbar.o \
+	sg_compound.o sg_filebrowser.o \
 	sg_passthrough.o sg_translabel.o
 
 all: $(OBJS)

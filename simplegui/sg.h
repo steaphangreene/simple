@@ -81,6 +81,8 @@ protected:
 #include "sg_passthrough.h"
 #include "sg_textarea.h"
 #include "sg_translabel.h"
+#include "sg_compound.h"
+#include "sg_filebrowser.h"
 
 #endif	//SIMPLEGUI_H
 
