@@ -51,6 +51,7 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
+  deque<int> Which() { return selhistory; }
   
  
 protected:

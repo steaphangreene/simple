@@ -231,6 +231,15 @@ int main(int argc, char **argv) {
 		((SG_Editable*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
+	else if(event.user.code == SG_EVENT_SELECT_ITEM || event.user.code ==SG_EVENT_UNSELECT_ITEM ) {
+	  printf("A listbox selection has changed to: ");
+	  deque<int> dq = (((SG_ListBox*)(event.user.data1))->Which());
+	  deque<int>::iterator iter=dq.begin();
+	  for(;iter!=dq.end();iter++) {
+  	      printf("%d ",(*iter));
+            }
+	  printf("\n");
+	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);
 	  }
