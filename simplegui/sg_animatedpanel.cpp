@@ -19,7 +19,7 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <GL/gl.h>
+#include <SDL/SDL_opengl.h>
 
 #include "sg_globals.h"
 #include "sg_animatedpanel.h"

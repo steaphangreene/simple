@@ -30,6 +30,11 @@ win32:	libsimplegui.win32_a
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
+#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
+#CXX=	gcc
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
+#LIBS=	`sdl-config --libs` -lSDL_ttf -framework OpenGL
+
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	gcc
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`

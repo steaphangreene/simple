@@ -22,7 +22,7 @@
 #ifndef SG_ANIMATEDPANEL_H
 #define SG_ANIMATEDPANEL_H
 
-#include <GL/gl.h>
+#include <SDL/SDL_opengl.h>
 
 #include <string>
 
