@@ -38,7 +38,7 @@ public:
 
   virtual bool Load(const string &filenm);
 
-  virtual bool Render(Uint32 cur_time, int anim = 0, Uint32 start_time = 0);
+  virtual bool Render(Uint32 cur_time, const vector<int> &anim = vector<int>(), Uint32 start_time = 0);
 
   virtual void SetAnimation(int anim);
 

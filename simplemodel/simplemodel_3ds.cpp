@@ -43,7 +43,7 @@ bool SimpleModel_3DS::Load(const string &filenm) {
   return true;
   }
 
-bool SimpleModel_3DS::Render(Uint32 cur_time, int anim, Uint32 start_time) {
+bool SimpleModel_3DS::Render(Uint32 cur_time, const vector<int> &anim, Uint32 start_time) {
   //Fixme: Unimplemented!
   return true;
   }
