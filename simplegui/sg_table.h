@@ -34,7 +34,7 @@ struct SG_TableGeometry {
 
 class SG_Table : public SG_Alignment {
 public:
-  SG_Table(int cls, int rws, float xbor = 0.0, float ybor = 0.0);
+  SG_Table(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Table();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
