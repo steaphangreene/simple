@@ -1,7 +1,9 @@
 -=To FIX=-
 
 -=TODO=-
-Clean up Text/Textures/Colors Implementation
+Multi-line Text Areas
+Clean up Font Selection/Loading
+Disabled State Textures
 Menus
 Pop-Ups/Dialogs
 Implement Actual Mouse Cursors

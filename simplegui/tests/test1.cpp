@@ -39,35 +39,41 @@ int main(int argc, char **argv) {
   map<SG_Widget *, string> name;
 
   SG_Table *tab[2];
-  SG_Widget *widget[3];
+  SG_Widget *panel[3];
   SG_Button *button[6];
-  SG_Alignment *align;
-  SG_PassThrough *pass;
+  SG_Alignment *align[2];
+  SG_PassThrough *pass[2];
   SG_TextArea *text;
 
   tab[0] = new SG_Table(4, 1);
   tab[1] = new SG_Table(2, 12);
 
-  align = new SG_Alignment();
-  align->SetBorder(0.25, 0.25);
+  align[0] = new SG_Alignment();
+  align[0]->SetBorder(0.125, 0.125);
 
-  widget[0] = new SG_Panel(0.2, 0.2, 0.2);
+  align[1] = new SG_Alignment();
+  align[1]->SetBorder(0.0, 0.0);
 
-  pass = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
+  panel[0] = new SG_Panel(0.2, 0.2, 0.2);
+
+  pass[0] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
+  pass[1] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
 
   gui->MasterWidget()->AddWidget(tab[0]);
   gui->MasterWidget()->RemoveWidget(tab[0]);	//Just to be sure it works!
   gui->MasterWidget()->AddWidget(tab[0]);
-  tab[0]->AddWidget(pass, 0, 0, 3, 1);
+  tab[0]->AddWidget(pass[0], 0, 0, 3, 1);
   tab[0]->AddWidget(tab[1], 3, 0);
-  tab[1]->AddWidget(align, 0, 0, 2, 4);
-  tab[1]->SetBackground(widget[0]);
+  tab[1]->AddWidget(align[0], 0, 0, 2, 4);
+  tab[1]->SetBackground(panel[0]);
 
-  widget[1] = new SG_Panel(1.0, 1.0, 1.0);
-  widget[2] = new SG_Panel(0.0, 0.0, 0.0);
+  panel[1] = new SG_Panel(1.0, 1.0, 1.0);
+  panel[2] = new SG_Panel(0.0, 0.0, 0.0);
 
-  align->SetBackground(widget[1]);
-  align->AddWidget(widget[2]);
+  align[0]->SetBackground(panel[1]);
+  align[0]->AddWidget(align[1]);
+  align[1]->SetBackground(panel[2]);
+  align[1]->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
 		1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.5, 0.5);
@@ -79,7 +85,7 @@ int main(int argc, char **argv) {
 		1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.0);
   button[4] = new SG_Button("Cyan",
 		0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5);
-  button[5] = new SG_Button("Purple",
+  button[5] = new SG_Button("", //Blank!
 		1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5);
 
   name[button[0]] = "red";
@@ -88,6 +94,8 @@ int main(int argc, char **argv) {
   name[button[3]] = "yellow";
   name[button[4]] = "cyan";
   name[button[5]] = "purple";
+  name[pass[0]] = "Main Area";
+  name[pass[1]] = "Minimap";
 
   tab[1]->AddWidget(button[0], 0, 5);
   tab[1]->AddWidget(button[1], 0, 6);
@@ -96,7 +104,7 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(button[4], 1, 6);
   tab[1]->AddWidget(button[5], 1, 7);
 
-  text = new SG_TextArea("Text Area Aquired", 0.6, 0.4, 0.3, 0.0, 0.0, 0.0);
+  text = new SG_TextArea("Text Area Is Here", 0.6, 0.4, 0.3, 0.0, 0.0, 0.0);
   text->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(text, 0, 4, 2, 1);
 
@@ -118,44 +126,51 @@ int main(int argc, char **argv) {
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  }
 	else if(event.user.code == SG_EVENT_LEFTCLICK) {
-	  printf("Received SG_EVENT_LEFTCLICK from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_LEFTCLICK from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_MIDDLECLICK) {
-	  printf("Received SG_EVENT_MIDDLECLICK from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_MIDDLECLICK from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_RIGHTCLICK) {
-	  printf("Received SG_EVENT_RIGHTCLICK from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_RIGHTCLICK from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_SCROLLUP) {
-	  printf("Received SG_EVENT_SCROLLUP from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_SCROLLUP from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  }
 	else if(event.user.code == SG_EVENT_SCROLLDOWN) {
-	  printf("Received SG_EVENT_SCROLLDOWN from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_SCROLLDOWN from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  }
 	else if(event.user.code >= SG_EVENT_CLICK
 		&& event.user.code < SG_EVENT_CLICKMAX) {
-	  printf("Received SG_EVENT_OTHERCLICK from PassThrough, at (%f,%f).\n",
+	  printf("Received SG_EVENT_OTHERCLICK from %s, at (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code >= SG_EVENT_BOX
 		&& event.user.code < SG_EVENT_BOXMAX) {
-	  printf("Received SG_EVENT_BOX from PassThrough, for button #%d"
+	  printf("Received SG_EVENT_BOX from %s, for button #%d"
 			" - for area (%f,%f) - (%f,%f).\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
 		event.user.code - SG_EVENT_BOX,
 		((float*)(event.user.data2))[2],
 		((float*)(event.user.data2))[3],

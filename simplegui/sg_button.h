@@ -10,12 +10,10 @@ public:
 	float cred, float cgreen, float cblue);
   virtual ~SG_Button();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  float cl_r, cl_g, cl_b;
   };
 
 #endif // SG_BUTTON_H

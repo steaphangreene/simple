@@ -6,14 +6,70 @@
 static TTF_Font *font = NULL;
 
 
+#include <math.h>
+
+int nextpoweroftwo(int x)
+{
+        double logbase2 = log(x) / log(2);
+        return int(round(pow(2,ceil(logbase2))));
+}
+
+
+void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
+  if(mes.length() < 1) {
+    BuildTexture(tex);
+    return;
+    }
+
+  SDL_Surface *tmp_text;
+  int xsize, ysize;
+
+  tmp_text = TTF_RenderText_Blended(font, mes.c_str(), tex.fg);
+  if(!tmp_text) {
+    fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
+    exit(1);
+    }
+
+  //OpenGL Needs a power of two size - grow to next
+  xsize = nextpoweroftwo(tmp_text->w);
+  ysize = nextpoweroftwo(tmp_text->h);
+
+  tex.cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+  SDL_FillRect(tex.cur, NULL, SDL_MapRGB(tex.cur->format,
+	tex.col.r, tex.col.g, tex.col.b));
+
+  SDL_BlitSurface(tmp_text, 0, tex.cur, 0);
+
+  glGenTextures(1, &(tex.texture));
+  glBindTexture(GL_TEXTURE_2D, tex.texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_BGRA, 
+		GL_UNSIGNED_BYTE, tex.cur->pixels );
+
+  // Setup Texture Params
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  tex.xfact = (float)(tmp_text->w) / (float)(xsize);
+  tex.yfact = (float)(tmp_text->h) / (float)(ysize);
+
+  SDL_FreeSurface(tmp_text);
+
+// FIXME - implement new version of this.
+//  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
+//  glScalef(1.0-xmargin, 1.0-ymargin, 1.0);	//Scale for margins
+  }
+
 SG_TextArea::SG_TextArea(string mes,
 	float red, float green, float blue,
 	float tred, float tgreen, float tblue)
 		: SG_Panel(red, green, blue) {
+  texture[0].fg.r = (Uint8)(tred*255.0f);
+  texture[0].fg.g = (Uint8)(tgreen*255.0f);
+  texture[0].fg.b = (Uint8)(tblue*255.0f);
   message = mes;
-  tx_r = tred;
-  tx_g = tgreen;
-  tx_b = tblue;
   xmargin = 0.0;
   ymargin = 0.0;
 
@@ -31,11 +87,17 @@ SG_TextArea::SG_TextArea(string mes,
       exit(1);
       }
     }
+
+  BuildTexture(texture[0], message, xmargin, ymargin);
   }
 
 SG_TextArea::~SG_TextArea() {
   TTF_CloseFont(font);
   font = NULL;
+
+  glFinish();	//Be sure we don't pull the rug out from under GL
+  SDL_FreeSurface(texture[0].cur);
+  glDeleteTextures(1, &(texture[0].texture));
   }
 
 bool SG_TextArea::HandleMouseEvent(SDL_Event *event, float x, float y) {
@@ -43,110 +105,6 @@ bool SG_TextArea::HandleMouseEvent(SDL_Event *event, float x, float y) {
 //    fprintf(stderr, "TextArea/Handle: Button Down at (%f,%f)\n", x, y);
   return 0;	//This widget eats all events
   }
-
-#include <math.h>
-
-int nextpoweroftwo(int x)
-{
-        double logbase2 = log(x) / log(2);
-        return int(round(pow(2,ceil(logbase2))));
-}
-
-bool SG_TextArea::Render() {
-//  fprintf(stderr, "Rendering TextArea %p!\n", this);
-
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
-
-//  SG_Panel::Render();
-
-  glPushMatrix();
-  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
-  glScalef(1.0-xmargin, 1.0-ymargin, 1.0);	//Scale for margins
-
-  SDL_Surface *initial;
-  SDL_Surface *intermediary;
-  int w,h;
-  GLuint texture;
-  SDL_Color bg_color = { (Uint8)(bg_r*255), (Uint8)(bg_g*255), (Uint8)(bg_b*255) };
-  SDL_Color tx_color = { (Uint8)(tx_r*255), (Uint8)(tx_g*255), (Uint8)(tx_b*255) };
-//  SDL_Color tx_color = { 255, 255, 255, 255 };
-
-  /* Use SDL_TTF to render our text */
-  initial = TTF_RenderText_Blended(font, message.c_str(), tx_color);
-
-  if(!initial) {
-    fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
-    exit(1);
-    }
-
-  /* Convert the rendered text to a known format */
-  w = nextpoweroftwo(initial->w);
-  h = nextpoweroftwo(initial->h);
-        
-  intermediary = SDL_CreateRGBSurface(0, w, h, 32, 
-			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-  SDL_FillRect(intermediary, NULL, SDL_MapRGB(intermediary->format,
-	(Uint8)(bg_r*255), (Uint8)(bg_g*255), (Uint8)(bg_b*255)));
-
-  SDL_BlitSurface(initial, 0, intermediary, 0);
-        
-  /* Tell GL about our new texture */
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_BGRA, 
-		GL_UNSIGNED_BYTE, intermediary->pixels );
-        
-  /* GL_NEAREST looks horrible, if scaled... */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       
-
-  /* prepare to render our texture */
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glColor3f(1.0f, 1.0f, 1.0f);
-
-  float xfactor = (float)(initial->w) / (float)(w);
-  float yfactor = (float)(initial->h) / (float)(h);
-        
-//  glColor3f(bg_r, bg_g, bg_b);
-  /* Draw a quad at location */
-  glBegin(GL_QUADS);
-
-  glTexCoord2f(0.0,	yfactor);
-  glVertex3f(-1.0, -1.0, 0.0);
-
-  glTexCoord2f(xfactor,	yfactor); 
-  glVertex3f( 1.0, -1.0, 0.0);
-
-  glTexCoord2f(xfactor,	0.0); 
-  glVertex3f( 1.0, 1.0, 0.0);
-
-  glTexCoord2f(0.0,	0.0); 
-  glVertex3f(-1.0, 1.0,	0.0);
-
-  glEnd();
-
-  /* Bad things happen if we delete the texture before it finishes */
-  glFinish();
-
-  /* Clean up */
-  SDL_FreeSurface(initial);
-  SDL_FreeSurface(intermediary);
-  glDeleteTextures(1, &texture);
-
-
-//  glColor3f(bg_r, bg_g, bg_b);
-//  glBegin(GL_QUADS);
-//  glVertex3f(-1.0, -1.0, 0.0);
-//  glVertex3f( 1.0, -1.0, 0.0);
-//  glVertex3f( 1.0,  1.0, 0.0);
-//  glVertex3f(-1.0,  1.0, 0.0);
-//  glEnd();
-
-  glPopMatrix();
-  return 1;
-  }
-
 
 //  bool SG_TextArea::SetDefaultCursor(GL_MODEL *cur);
   
