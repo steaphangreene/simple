@@ -40,6 +40,7 @@ using namespace std;
 class SG_Widget;
 class SG_Alignment;
 class SG_Editable;
+class SG_Texture;
 
 class SimpleGUI {
 public:
@@ -88,6 +89,8 @@ public:
 
   void GetMousePos(float &mx, float &my) { mx = mousex; my = mousey; };
 
+  void SetMouseCursor(SDL_Surface *cur, float xsc = 0.0625, float ysc = 0.0625);
+
 protected:
   SG_Alignment *mWid, *popWid;
   float popx, popy;
@@ -95,8 +98,10 @@ protected:
   float aspect;
   float aspect_actual;
   SG_Widget *current_widget;
-//  GL_MODEL *mouse_cursor;
   SG_Widget *focus_widget;
+
+  SG_Texture *mouse_cursor;
+  float mouse_xscale, mouse_yscale;
 
   int ScreenToRelative(float &x, float &y);
   int xunused, yunused;	//Current Screen Geometry

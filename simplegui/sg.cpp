@@ -30,6 +30,7 @@ using namespace std;
 #include "sg.h"
 #include "sg_alignment.h"
 #include "sg_events.h"
+#include "sg_texture.h"
 
 SimpleGUI *current_sg = NULL;
 
@@ -63,6 +64,9 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   mousex = -100.0;	// So system knows not to draw cursor until it moves
   mousey = -100.0;
+  mouse_cursor = NULL;
+  mouse_xscale = 0.0625;
+  mouse_yscale = 0.0625;
 
   col.resize(SG_COL_MAX * 2);
 
@@ -175,19 +179,42 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
 
   //Now we draw the mouse cursor (if at least one axis is within coord system)
   if((mousex >= -1.0 && mousex <= 1.0) || (mousey >= -1.0 && mousey <= 1.0)) {
-    glTranslatef(mousex, mousey, 0.5);		//Just a square cursor for now
-    glScalef(0.0625/aspect, 0.0625, 1.0);
+    glTranslatef(mousex, mousey, 0.5);
+    glScalef(mouse_xscale/aspect, mouse_yscale, 1.0);
 
-    //Just to show how basic animation could work
-    float glow = (sin((float)(cur_time)/200.0f) + 1.0f) / 2.0f;
-    glColor3f(glow, glow, 1.0f - glow);
+    if(!mouse_cursor) {		//Just a square cursor for now
+      //Just to show how basic animation could work
+      float glow = (sin((float)(cur_time)/200.0f) + 1.0f) / 2.0f;
+      glColor3f(glow, glow, 1.0f - glow);
 
-    glBegin(GL_QUADS);
-    glVertex3f(0.0, -1.0, 0.0);
-    glVertex3f(1.0, -1.0, 0.0);
-    glVertex3f(1.0,  0.0, 0.0);
-    glVertex3f(0.0,  0.0, 0.0);
-    glEnd();
+      glBegin(GL_QUADS);
+      glVertex3f(0.0, -1.0, 0.0);
+      glVertex3f(1.0, -1.0, 0.0);
+      glVertex3f(1.0,  0.0, 0.0);
+      glVertex3f(0.0,  0.0, 0.0);
+      glEnd();
+      }
+    else {			//Draw a real cursor
+      glEnable(GL_BLEND);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, mouse_cursor->texture);
+      glColor3f(1.0f, 1.0f, 1.0f);
+
+      glBegin(GL_QUADS);
+      glTexCoord2f(0.0, mouse_cursor->yfact);
+      glVertex3f(-1.0, -1.0, 0.0);
+      glTexCoord2f(mouse_cursor->xfact, mouse_cursor->yfact);
+      glVertex3f( 1.0, -1.0, 0.0);
+      glTexCoord2f(mouse_cursor->xfact, 0.0);
+      glVertex3f( 1.0, 1.0, 0.0);
+      glTexCoord2f(0.0, 0.0);
+      glVertex3f(-1.0, 1.0, 0.0);
+      glEnd();
+
+      glBindTexture(GL_TEXTURE_2D, 0);
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_BLEND);
+      }
     }
 
   //This puts the perspective back where it was
@@ -495,4 +522,35 @@ void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py) {
   popWid = wid;
   popx = px;
   popy = py;
+  }
+
+extern int nextpoweroftwo(int);
+
+void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
+  if(mouse_cursor) delete mouse_cursor;
+  mouse_cursor = new SG_Texture(cur);
+  mouse_xscale = xsc;
+  mouse_yscale = ysc;
+
+  int xsize = nextpoweroftwo(mouse_cursor->src->w);
+  int ysize = nextpoweroftwo(mouse_cursor->src->h);
+  mouse_cursor->cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
+	SG_SDL_RGBA_COLFIELDS);
+  SDL_SetAlpha(mouse_cursor->src, 0, SDL_ALPHA_TRANSPARENT);
+  SDL_BlitSurface(mouse_cursor->src, NULL, mouse_cursor->cur, NULL);
+  mouse_cursor->xfact = (float)(mouse_cursor->src->w) / (float)(xsize);
+  mouse_cursor->yfact = (float)(mouse_cursor->src->h) / (float)(ysize);
+
+  if(!mouse_cursor->texture) glGenTextures(1, &(mouse_cursor->texture));
+  glBindTexture(GL_TEXTURE_2D, mouse_cursor->texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4,
+                mouse_cursor->cur->w, mouse_cursor->cur->h, 0, GL_RGBA,
+                GL_UNSIGNED_BYTE, mouse_cursor->cur->pixels );
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  mouse_cursor->dirty = 0;
   }
