@@ -96,7 +96,7 @@ protected:
   SG_Widget *focus_widget;
 
   int ScreenToRelative(float &x, float &y);
-  int xoffset, yoffset;	//Current Screen Geometry
+  int xunused, yunused;	//Current Screen Geometry
   int xsize, ysize;	//Current Screen Geometry
 
   float mousex, mousey;	//Current Mouse Position

@@ -50,8 +50,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   int screen_geom[4];
   glGetIntegerv(GL_VIEWPORT, screen_geom);
-  xoffset = screen_geom[0];
-  yoffset = screen_geom[1];
+  xunused = screen_geom[0]*2;
+  yunused = screen_geom[1]*2;
   xsize = screen_geom[2];
   ysize = screen_geom[3];
 
@@ -99,6 +99,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   }
 
 SimpleGUI::~SimpleGUI() {
+  glFinish();
+
   delete mWid;
   mWid = NULL;
   if(popWid) delete popWid;
@@ -116,12 +118,16 @@ bool SimpleGUI::Render(unsigned long cur_time) {
   }
 
 bool SimpleGUI::RenderStart(unsigned long cur_time) {
-  static int my_xoffset = 0, my_yoffset = 0, my_xsize = 0, my_ysize = 0;
-  if(my_xoffset != xoffset || my_yoffset != yoffset
+  static int my_xunused = 0, my_yunused = 0, my_xsize = 0, my_ysize = 0;
+  if(my_xunused != xunused || my_yunused != yunused
 	|| my_xsize != xsize || my_ysize != ysize) {
-    glViewport(xoffset, yoffset, xsize, ysize);
-    my_xoffset = xoffset;
-    my_yoffset = yoffset;
+
+    int videoFlags = SDL_GetVideoSurface()->flags;
+    SDL_SetVideoMode(xsize+xunused, ysize+yunused, 0, videoFlags);
+
+    glViewport(xunused/2, yunused/2, xsize, ysize);
+    my_xunused = xunused;
+    my_yunused = yunused;
     my_xsize = xsize;
     my_ysize = ysize;
     }
@@ -187,22 +193,19 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
   if(!event) return 0;
 
   if(event->type == SDL_VIDEORESIZE) {
-    xoffset = 0;
-    yoffset = 0;
+    xunused = 0;
+    yunused = 0;
     xsize = event->resize.w;
     ysize = event->resize.h;
-
-    int videoFlags = SDL_GetVideoSurface()->flags;
-    SDL_SetVideoMode(event->resize.w, event->resize.h, 0, videoFlags);
 
     float asp = (float)(xsize) / (float)(ysize);
     if((aspect_method & ASPECT_FIXED_X) && asp > aspect) {
       xsize = int((float)(ysize)*aspect+0.5);
-      xoffset = (event->resize.w - xsize) / 2;
+      xunused = (event->resize.w - xsize);
       }
     else if((aspect_method & ASPECT_FIXED_Y) && asp < aspect) {
       ysize = int((float)(xsize)/aspect+0.5);
-      yoffset = (event->resize.h - ysize) / 2;
+      yunused = (event->resize.h - ysize);
       }
 
     aspect_actual = asp / aspect;
@@ -274,14 +277,14 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
 int SimpleGUI::ScreenToRelative(float &x, float &y) {
 //  fprintf(stderr, "(%f,%f) on (%d,%d):%dx%d\n", x, y,
-//	xoffset, yoffset, xsize, ysize);
+//	xunused, yunused, xsize, ysize);
 
-  if(xsize <= 0 || ysize <= 0 || xoffset < 0 || yoffset < 0) { //Invalid
+  if(xsize <= 0 || ysize <= 0 || xunused < 0 || yunused < 0) { //Invalid
     return 0;
     }
 
-  x -= (float)(xoffset);
-  y -= (float)(yoffset);
+  x -= (float)(xunused/2);
+  y -= (float)(yunused/2);
 
   if(x < 0.0 || y < 0.0 || x >= (float)(xsize) || y >= (float)(ysize)) {
     return 0;
