@@ -132,18 +132,18 @@ void SG_TextArea::BuildTexture(int st) {
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
   if(texture[st].type == SG_TEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
     SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
     }
   else if(texture[st].type == SG_TEXTURE_TRANS) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
     }
   else if(texture[st].type == SG_TEXTURE_DEFINED) {
     //FIXME: Implement this for real!
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
     }
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
@@ -165,7 +165,7 @@ void SG_TextArea::BuildTexture(int st) {
 
   if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
   glBindTexture(GL_TEXTURE_2D, texture[st].texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_BGRA, 
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA, 
 		GL_UNSIGNED_BYTE, texture[st].cur->pixels );
 
   // Setup Texture Params

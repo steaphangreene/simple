@@ -37,11 +37,6 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
 
-#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
-#CXX=	i586-mingw32msvc-g++
-#CXXFLAGS=	-O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-#LIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lopengl32 -lglu32
-
 OBJS:=	simplegui.o sg_widget.o sg_texture.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
 	sg_panel.o sg_animatedpanel.o \
@@ -52,6 +47,21 @@ OBJS:=	simplegui.o sg_widget.o sg_texture.o \
 	sg_scrollingarea.o \
 	sg_passthrough.o sg_translabel.o
 
+#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
+WCXX=	i586-mingw32msvc-g++
+WCXXFLAGS=	-O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lopengl32 -lglu32
+
+WOBJS:=	simplegui.win32_o sg_widget.win32_o sg_texture.win32_o \
+	sg_alignment.win32_o sg_table.win32_o sg_scrollable.win32_o \
+	sg_panel.win32_o sg_animatedpanel.win32_o \
+	sg_textarea.win32_o sg_progressbar.win32_o sg_editable.win32_o \
+	sg_button.win32_o sg_stickybutton.win32_o sg_menu.win32_o \
+	sg_compound.win32_o sg_filebrowser.win32_o sg_multitab.win32_o sg_listbox.win32_o \
+	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
+	sg_scrollingarea.win32_o \
+	sg_passthrough.win32_o sg_translabel.win32_o
+
 all: $(OBJS)
 
 %.o:	%.cpp
@@ -60,16 +70,25 @@ all: $(OBJS)
 %.o:	tests/%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
+%.win32_o:	%.cpp
+	$(WCXX) $(WCXXFLAGS) -c $< -o $@
+
+%.win32_o:	tests/%.cpp
+	$(WCXX) $(WCXXFLAGS) -c $< -o $@
+
 deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o test1
+	rm -f deps.mk *.o test1 *.win32_o *.exe
 
 test:	test1
 
 test1:	test1.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
+
+test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.o renderer.o audio.o $(WOBJS) $(WLIBS)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
