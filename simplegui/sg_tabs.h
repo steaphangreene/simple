@@ -19,36 +19,27 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+// This file was created from (or actually IS) a basic compound widget
+// def, so it's not defined and is really just a place-holder for now.
 
-#include "sg.h"
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
-#include "sg_table.h"
-#include "sg_scrollable.h"
-#include "sg_button.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
+#ifndef SG_TABS_H
+#define SG_TABS_H
+
 #include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_dndboxes.h"
-#include "sg_tabs.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
 
-#endif	//SIMPLEGUI_H
+class SG_Button;
+class SG_TextArea;
 
+class SG_Tabs : public SG_Compound {
+public:
+  SG_Tabs();
+  virtual ~SG_Tabs();
+//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool ChildEvent(SDL_Event *event);
+  
+protected:
+//  static GL_MODEL Default_Mouse_Cursor;
+  SG_Button *okb;
+  };
+
+#endif // SG_TABS_H

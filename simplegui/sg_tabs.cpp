@@ -19,36 +19,41 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+// This file was created from (or actually IS) a basic compound widget
+// def, so it's not defined and is really just a place-holder for now.
 
-#include "sg.h"
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
-#include "sg_table.h"
-#include "sg_scrollable.h"
-#include "sg_button.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
-#include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_dndboxes.h"
+#include <GL/gl.h>
+
 #include "sg_tabs.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
+#include "sg_panel.h"
+#include "sg_button.h"
+#include "sg_events.h"
 
-#endif	//SIMPLEGUI_H
+SG_Tabs::SG_Tabs()
+	: SG_Compound(8, 5, 0.1, 0.1) {
+  background = new SG_Panel(SG_COL_FG);
+  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
+  AddWidget(okb, 7, 4, 1, 1);
+  SG_Widget *labelb =
+	new SG_TextArea("SG_Tabs", SG_COL_LOW);
+  AddWidget(labelb, 1, 2, 6, 1);
+  }
 
+SG_Tabs::~SG_Tabs() {
+  }
+
+bool SG_Tabs::ChildEvent(SDL_Event *event) {
+  if(event->user.code == SG_EVENT_BUTTONPRESS) {
+    if(event->user.data1 == (void *)(okb)) {
+      event->user.code = SG_EVENT_OK;
+      event->user.data1 = (void*)this;
+      event->user.data2 = NULL;
+      return 1;
+      }
+    }
+  return 0; // Silence children doing other things
+  }
+
+//  bool SG_Tabs::SetDefaultCursor(GL_MODEL *cur);
+  
+//  static GL_MODEL SG_Tabs::Default_Mouse_Cursor = NULL;

@@ -54,7 +54,7 @@ OBJS:=	sg.o sg_widget.o sg_texture.o \
 	sg_button.o sg_stickybutton.o sg_menu.o \
 	sg_compound.o sg_filebrowser.o sg_multitab.o sg_listbox.o \
 	sg_radiobuttons.o sg_combobox.o sg_pulldown.o sg_sliderbar.o \
-	sg_scrollingarea.o sg_dndboxes.o \
+	sg_scrollingarea.o sg_dndboxes.o sg_tabs.o \
 	sg_passthrough.o sg_translabel.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
@@ -69,7 +69,7 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
 	sg_button.win32_o sg_stickybutton.win32_o sg_menu.win32_o \
 	sg_compound.win32_o sg_filebrowser.win32_o sg_multitab.win32_o sg_listbox.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
-	sg_scrollingarea.win32_o sg_dndboxes.win32_o \
+	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o
 
 all: $(OBJS)
