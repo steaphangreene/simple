@@ -19,7 +19,10 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	$(OBJS)
+all:	libsimplegui.a
+
+win32:	libsimplegui.win32_a
+
 #all:	test
 
 #PRODUCTION OPTIONS (STANDARD)
@@ -72,7 +75,11 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o
 
-all: $(OBJS)
+libsimplegui.a:	$(OBJS)
+	ar rcs libsimplegui.a $(OBJS)
+
+libsimplegui.win32_a:	$(WOBJS)
+	i586-mingw32msvc-ar rcs libsimplegui.win32_a $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile CVS scripts/* tests/*
 	cvs2cl.pl --hide-filenames --no-wrap --stdout | tr '\t' '@' | sed 's-^@-@* -g' | tr '@' '\t' | sed 's-stea-sgreene-g' > ChangeLog
@@ -93,31 +100,30 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o test1 test2 test3 *.win32_o *.exe
+	rm -f deps.mk *.o *.a test1 test2 test3 *.win32_o *.win32_a *.exe
 
 test:	test1 test2 test3
 
-test1:	test1.o renderer.o audio.o $(OBJS)
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
+test1:	test1.o renderer.o audio.o libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimplegui.a $(LIBS)
 
-test2:	test2.o renderer.o audio.o $(OBJS)
-	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o $(OBJS) $(LIBS)
+test2:	test2.o renderer.o audio.o libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o libsimplegui.a $(LIBS)
 
-test3:  test3.o renderer.o audio.o $(OBJS)
-	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o $(OBJS) $(LIBS)
+test3:  test3.o renderer.o audio.o libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o libsimplegui.a $(LIBS)
 	
-win32:	$(WOBJS)
+win32_test:	test1.exe test2.exe test3.exe
+wintest:	win32_test
 
-wintest:	test1.exe test2.exe test3.exe
+test1.exe:	test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
 
-test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
+test2.exe:	test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
 
-test2.exe:	test2.win32_o renderer.win32_o audio.win32_o $(WOBJS)
-	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
-
-test3.exe:	test3.win32_o renderer.win32_o audio.win32_o $(WOBJS)
-	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
+test3.exe:	test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
