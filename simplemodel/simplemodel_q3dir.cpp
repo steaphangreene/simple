@@ -146,6 +146,7 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim,
 
   if(legs) {
     glPushMatrix();
+    glTranslatef(0.0, 0.0, 1.5);	//Adjust for floor height
     glScalef(0.0625, 0.0625, 0.0625);
 
     legs->Render(cur_time, leganim, legtime);
