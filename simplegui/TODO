@@ -31,3 +31,4 @@ Add "INTANGIBLE" flag?
 Add time offset to AnimatedPanel widget?
 Allow SG_Table to be resizable?
 Console widget?
+Determing state dynamically based on flags and flag changes?
