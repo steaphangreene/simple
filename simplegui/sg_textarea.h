@@ -34,7 +34,7 @@ class SG_TextArea : public SG_Panel {
 public:
   SG_TextArea(string mes, SG_Texture c = SG_COL_BG);
   virtual ~SG_TextArea();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
   void SetText(const string &mes);

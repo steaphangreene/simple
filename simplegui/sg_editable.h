@@ -29,8 +29,7 @@ public:
   SG_Editable(string mes, SG_Texture c = SG_COL_LOW, 
 	SG_Texture dc = SG_COL_BG, SG_Texture fc = SG_COL_HIGH);
   virtual ~SG_Editable();
-  virtual bool HandleKeyboardEvent(SDL_Event *event);
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   

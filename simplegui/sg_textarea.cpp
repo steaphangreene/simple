@@ -37,7 +37,7 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture c) : SG_Panel(c) {
 SG_TextArea::~SG_TextArea() {
   }
 
-bool SG_TextArea::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_TextArea::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "TextArea/Handle: Button Down at (%f,%f)\n", x, y);
   return 0;	//This widget eats all events

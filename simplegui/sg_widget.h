@@ -32,8 +32,7 @@ class SG_Widget {
 public:
   SG_Widget();
   virtual ~SG_Widget();
-  virtual bool HandleKeyboardEvent(SDL_Event *event);
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);

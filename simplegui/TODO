@@ -1,11 +1,9 @@
 -=To FIX=-
-Unify mouse and kb event passing system
-Allow compounds to intercept KB events too
 
 -=TODO=-
-Arrows in text objects ("Indicator Arrows")
 
 -=To Flush Out=-
+Fix all the in-code "FIXME"s
 Implement actual mouse cursors
 Disabled state textures
 Implement Scrollable
@@ -21,6 +19,7 @@ Implement ScrollingArea
 Implement Menu
 
 -=Wishlist=-
+Icon objects ("Indicator Arrows")?
 Dynamically resizeable font?
 Separate public simplegui.h from internal defs?
 Widget-specific fonts?

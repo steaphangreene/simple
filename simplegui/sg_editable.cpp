@@ -35,8 +35,24 @@ SG_Editable::SG_Editable(string mes, SG_Texture c,
 SG_Editable::~SG_Editable() {
   }
 
-bool SG_Editable::HandleKeyboardEvent(SDL_Event *event) {
-  if(event->type == SDL_KEYDOWN) {
+bool SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
+//  if(event->type == SDL_MOUSEBUTTONDOWN)
+//    fprintf(stderr, "Editable/Handle: Button Down at (%f,%f)\n", x, y);
+
+  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
+    current_sg->SetCurrentWidget(this);
+    current_sg->SetFocusWidget(this);
+    state = 2;
+    return 0;
+    }
+  else if(event->type == SDL_MOUSEBUTTONDOWN) { // Eat other buttons
+    return 0;
+    }
+  else if(event->type == SDL_MOUSEBUTTONUP) {
+    current_sg->UnsetCurrentWidget();
+    return 0;
+    }
+  else if(event->type == SDL_KEYDOWN) {
     if(event->key.keysym.sym == SDLK_ESCAPE) {	// Revert?
       current_sg->UnsetFocusWidget();
       event->type = SDL_SG_EVENT;
@@ -77,26 +93,10 @@ bool SG_Editable::HandleKeyboardEvent(SDL_Event *event) {
 	return 1;
 	}
       }
+    return 0;  //Eat keyboard events I don't handle.
     }
-  return 0;  //Eat keyboard events I don't handle.
-  }
-
-bool SG_Editable::HandleMouseEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "Editable/Handle: Button Down at (%f,%f)\n", x, y);
-
-  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
-    current_sg->SetCurrentWidget(this);
-    current_sg->SetFocusWidget(this);
-    state = 2;
-    return 0;
-    }
-  else if(event->type == SDL_MOUSEBUTTONDOWN) { // Eat other buttons
-    return 0;
-    }
-  else if(event->type == SDL_MOUSEBUTTONUP) {
-    current_sg->UnsetCurrentWidget();
-    return 0;
+  else if(event->type == SDL_KEYUP) {
+    return 0;  //Eat keyboard events I don't handle.
     }
 
   return 1;

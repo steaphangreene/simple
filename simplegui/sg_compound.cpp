@@ -38,7 +38,7 @@ SG_Compound::~SG_Compound() {	//Even need this?
     }
   }
 
-bool SG_Compound::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Compound/Handle: Button Down at (%f,%f)\n", x, y);
 
@@ -54,7 +54,7 @@ bool SG_Compound::HandleMouseEvent(SDL_Event *event, float x, float y) {
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      ret = (*itrw)->HandleMouseEvent(event, x, y);
+      ret = (*itrw)->HandleEvent(event, x, y);
       break;
       }
     }
@@ -63,7 +63,7 @@ bool SG_Compound::HandleMouseEvent(SDL_Event *event, float x, float y) {
     return ChildEvent(event);
     }
 
-  if(background) ret = background->HandleMouseEvent(event, x, y);
+  if(background) ret = background->HandleEvent(event, x, y);
 
   if(ret && event->type == SDL_SG_EVENT) {
     return ChildEvent(event);
@@ -77,7 +77,7 @@ bool SG_Compound::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Compound/Hand: Button Up at (%f,%f)\n", x, y);
 
-  if(targ == this) return HandleMouseEvent(event, x, y);
+  if(targ == this) return HandleEvent(event, x, y);
 
   int ret = 1;
 

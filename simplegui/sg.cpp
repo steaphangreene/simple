@@ -198,10 +198,10 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(popWid && mousex < popx && mousey < popy
 	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleMouseEvent(event, mousex*popx, mousey*popy);
+      return popWid->HandleEvent(event, mousex*popx, mousey*popy);
       }
 
-    return mWid->HandleMouseEvent(event, mousex, mousey);
+    return mWid->HandleEvent(event, mousex, mousey);
     }
 
   else if(event->type == SDL_MOUSEBUTTONUP) {
@@ -227,15 +227,21 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(popWid && mousex < popx && mousey < popy
 	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleMouseEvent(event, mousex*popx, mousey*popy);
+      return popWid->HandleEvent(event, mousex*popx, mousey*popy);
       }
 
-    return mWid->HandleMouseEvent(event, mousex, mousey);
+    return mWid->HandleEvent(event, mousex, mousey);
     }
 
   else if(event->type == SDL_KEYDOWN) {
     if(focus_widget) {
-      return focus_widget->HandleKeyboardEvent(event);
+      return mWid->HandMouseEventTo(focus_widget, event, mousex, mousey);
+      }
+    }
+
+  else if(event->type == SDL_KEYUP) {
+    if(focus_widget) {
+      return mWid->HandMouseEventTo(focus_widget, event, mousex, mousey);
       }
     }
 

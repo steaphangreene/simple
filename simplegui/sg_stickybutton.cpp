@@ -35,7 +35,7 @@ SG_StickyButton::SG_StickyButton(string mes, SG_Texture c,
 SG_StickyButton::~SG_StickyButton() {
   }
 
-bool SG_StickyButton::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "StickyButton/Handle: Button Down at (%f,%f)\n", x, y);
 

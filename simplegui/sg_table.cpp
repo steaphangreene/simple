@@ -45,7 +45,7 @@ SG_Table::~SG_Table() {
     }
   }
 
-bool SG_Table::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Table/Handle: Button Down at (%f,%f)\n", x, y);
 
@@ -59,11 +59,11 @@ bool SG_Table::HandleMouseEvent(SDL_Event *event, float x, float y) {
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return (*itrw)->HandleMouseEvent(event, x, y);
+      return (*itrw)->HandleEvent(event, x, y);
       }
     }
 
-  if(background) return background->HandleMouseEvent(event, x, y);
+  if(background) return background->HandleEvent(event, x, y);
 
   return 1;
   }
@@ -73,7 +73,7 @@ bool SG_Table::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Table/Hand: Button Up at (%f,%f)\n", x, y);
 
-  if(targ == this) return HandleMouseEvent(event, x, y);
+  if(targ == this) return HandleEvent(event, x, y);
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();

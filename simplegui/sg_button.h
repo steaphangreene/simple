@@ -29,7 +29,7 @@ public:
   SG_Button(string mes,
 	SG_Texture c = SG_COL_RAISED, SG_Texture cc = SG_COL_LOW);
   virtual ~SG_Button();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:

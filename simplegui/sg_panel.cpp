@@ -44,7 +44,7 @@ SG_Panel::~SG_Panel() {
     }
   }
 
-bool SG_Panel::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Panel/Handle: Button Down at (%f,%f)\n", x, y);
 

@@ -37,7 +37,7 @@ SG_PassThrough::SG_PassThrough(int la, int ma, int ra)
 SG_PassThrough::~SG_PassThrough() {
   }
 
-bool SG_PassThrough::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
 
@@ -49,7 +49,7 @@ bool SG_PassThrough::HandleMouseEvent(SDL_Event *event, float x, float y) {
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return widgets[0]->HandleMouseEvent(event, x, y);
+      return widgets[0]->HandleEvent(event, x, y);
       }
     }
 

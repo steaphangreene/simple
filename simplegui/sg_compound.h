@@ -28,7 +28,7 @@ class SG_Compound : public SG_Table {
 public:
   SG_Compound(int cls, int rws, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Compound();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

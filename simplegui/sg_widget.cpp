@@ -28,17 +28,13 @@ SG_Widget::SG_Widget() {
 SG_Widget::~SG_Widget() {
   }
 
-bool SG_Widget::HandleKeyboardEvent(SDL_Event *event) {
-  return 1;
-  }
-
-bool SG_Widget::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
 bool SG_Widget::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
-  if(targ == this) return HandleMouseEvent(event, x, y);
+  if(targ == this) return HandleEvent(event, x, y);
   return 1;
   }
 

@@ -38,7 +38,7 @@ SG_Scrollable::~SG_Scrollable() {
     }
   }
 
-bool SG_Scrollable::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
 
@@ -48,11 +48,11 @@ bool SG_Scrollable::HandleMouseEvent(SDL_Event *event, float x, float y) {
 		&& y >= -cur_geom.ys && y <= cur_geom.ys) {
       x /= cur_geom.xs; //Scale the coordinates to widget's relative coords
       y /= cur_geom.ys;
-      return widgets[0]->HandleMouseEvent(event, x, y);
+      return widgets[0]->HandleEvent(event, x, y);
       }
     }
 
-  if(background) return background->HandleMouseEvent(event, x, y);
+  if(background) return background->HandleEvent(event, x, y);
 
   return 1;
   }
@@ -62,7 +62,7 @@ bool SG_Scrollable::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Align/Hand: Button Up at (%f,%f)\n", x, y);
 
-  if(targ == this) return HandleMouseEvent(event, x, y);
+  if(targ == this) return HandleEvent(event, x, y);
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();

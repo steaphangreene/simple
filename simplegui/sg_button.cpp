@@ -34,7 +34,7 @@ SG_Button::SG_Button(string mes, SG_Texture c, SG_Texture cc)
 SG_Button::~SG_Button() {
   }
 
-bool SG_Button::HandleMouseEvent(SDL_Event *event, float x, float y) {
+bool SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Button/Handle: Button Down at (%f,%f)\n", x, y);
 
