@@ -134,7 +134,6 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_action = SG_PT_IGNORE;
       cur_button = 0;
 
-      printf("Did it\n");
       SG_Widget *w = widgets[0];
       RemoveWidget(w);
       delete w;
