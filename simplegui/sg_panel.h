@@ -34,6 +34,7 @@ using namespace std;
 enum SG_TextureType {
   SG_TEXTURE_NONE = 0,
   SG_TEXTURE_COLOR,
+  SG_TEXTURE_TRANS,
   SG_TEXTURE_DEFINED
   };
 
@@ -45,6 +46,7 @@ struct SG_Texture {
   SDL_Color col;	//Only for SG_TEXTURE_COLOR
   SDL_Color fg;		//Only used by children (font color)
   float xfact, yfact;	//Portion of texture actually shown
+  bool dirty; //Does the system need to rebuild this texture?
   };
 
 void BuildTexture(SG_Texture &tex);
@@ -59,6 +61,9 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+
+  virtual void BuildTexture(int st);
+
   vector<SG_Texture> texture;
   int state; //Which texture to use - for multi-state support
   };

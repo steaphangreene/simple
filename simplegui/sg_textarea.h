@@ -40,6 +40,9 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+
+  virtual void BuildTexture(int st);
+
   float xmargin, ymargin;
   string message;
   };

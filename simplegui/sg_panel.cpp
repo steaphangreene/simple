@@ -25,34 +25,23 @@
 #include "sg_colors.h"
 #include "sg_panel.h"
 
-void BuildTexture(SG_Texture &tex) {
-  tex.cur = SDL_CreateRGBSurface(0, 16, 16, 32,
-	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-  SDL_FillRect(tex.cur, NULL, SDL_MapRGB(tex.cur->format,
-	tex.col.r, tex.col.g, tex.col.b));
-
-  glGenTextures(1, &(tex.texture));
-  glBindTexture(GL_TEXTURE_2D, tex.texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_BGRA,
-                GL_UNSIGNED_BYTE, tex.cur->pixels );
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  }
-
 SG_Panel::SG_Panel(int c) : SG_Widget() {
   texture.resize(1);
-  texture[0].type = SG_TEXTURE_COLOR;
-  if(c > 0) texture[0].col = *(current_sg->Color(c));
-  texture[0].src = NULL;
+  if(c > 0) {
+    texture[0].type = SG_TEXTURE_COLOR;
+    texture[0].col = *(current_sg->Color(c));
+    }
+  else {
+    texture[0].type = SG_TEXTURE_TRANS;
+    }
   texture[0].texture = 0;
+  texture[0].cur = NULL;
+  texture[0].src = NULL;
   texture[0].xfact = 1.0;
   texture[0].yfact = 1.0;
-  state = 0;
+  texture[0].dirty = 1;
 
-  BuildTexture(texture[0]);
+  state = 0;
   }
 
 SG_Panel::~SG_Panel() {
@@ -65,10 +54,31 @@ bool SG_Panel::HandleMouseEvent(SDL_Event *event, float x, float y) {
   return 0;	// This widget eats all mouse events
   }
 
+void SG_Panel::BuildTexture(int st) {
+  texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
+	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+  SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
+	texture[st].col.r, texture[st].col.g, texture[st].col.b));
+
+  glGenTextures(1, &(texture[st].texture));
+  glBindTexture(GL_TEXTURE_2D, texture[st].texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_BGRA,
+                GL_UNSIGNED_BYTE, texture[st].cur->pixels );
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  texture[st].dirty = 0;
+  }
+
 bool SG_Panel::Render() {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
+
+  if(texture[state].dirty) BuildTexture(state);
 
   glPushMatrix();
 

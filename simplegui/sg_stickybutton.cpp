@@ -30,7 +30,7 @@ SG_StickyButton::SG_StickyButton(string mes, int c, int tc, int cc, int pc)
   texture.resize(4);
   texture[3] = texture[0];
   texture[3].col = *(current_sg->Color(pc));
-  BuildTexture(texture[3], message, xmargin, ymargin);
+  texture[3].dirty = 1;
 
   on = 0;
   }
