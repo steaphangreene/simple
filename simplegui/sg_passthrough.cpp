@@ -1,0 +1,122 @@
+#include <GL/gl.h>
+
+#include "sg_passthrough.h"
+#include "sg_events.h"
+#include "sg_globals.h"
+
+SG_PassThrough::SG_PassThrough(int la, int ma, int ra)
+	: SG_Alignment(0.0, 0.0) {
+  button_action[0] = la;
+  button_action[1] = ma;
+  button_action[2] = ra;
+  cur_action = SG_PT_IGNORE;
+  cur_button = 0;
+  }
+
+SG_PassThrough::~SG_PassThrough() {
+  }
+
+bool SG_PassThrough::HandleMouseEvent(SDL_Event *event, float x, float y) {
+//  if(event->type == SDL_MOUSEBUTTONDOWN)
+//    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
+
+  if(widgets.size() >= 1 && widgets[0]) {
+    CalcGeometry();
+    if(x >= cur_geom.xp-cur_geom.xs && x <= cur_geom.xp+cur_geom.xs
+        && y >= cur_geom.yp-cur_geom.ys && y <= cur_geom.yp+cur_geom.ys) {
+      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
+      y -= cur_geom.yp;
+      x /= cur_geom.xs;
+      y /= cur_geom.ys;
+      return widgets[0]->HandleMouseEvent(event, x, y);
+      }
+    }
+
+  static float event_data[8];	//Pointer to this static is put in event struct
+
+  event_data[0] = x;
+  event_data[1] = y;
+
+  if(event->type == SDL_MOUSEBUTTONDOWN) {
+    current_sg->SetCurrentWidget(this);
+    if(event->button.button > 3		//We only handle left/mid/right buttons
+	|| button_action[event->button.button - 1] == SG_PT_CLICK) {
+      event->user.code = SG_EVENT_CLICK + event->button.button;
+      event->type = SDL_SG_EVENT;
+      event->user.data1 = (void*)this;
+      event->user.data2 = (void*)event_data;
+      return 1;
+      }
+    else if(button_action[event->button.button - 1] == SG_PT_IGNORE) {
+      return 1;
+      }
+    else if(button_action[event->button.button - 1] == SG_PT_BLOCK) {
+      return 0;
+      }
+    else if(button_action[event->button.button - 1] == SG_PT_BOX) {
+      cur_action = SG_PT_BOX;
+      cur_button = event->button.button;
+      act_x = x;
+      act_y = y;
+      return 0;
+      }
+    else {
+      fprintf(stderr, "Unknown setting for button handler (%d)\n",
+		button_action[event->button.button - 1]);
+      exit(1);
+      }
+    }
+  else if(event->type == SDL_MOUSEBUTTONUP) {
+    current_sg->UnsetCurrentWidget();
+    if(cur_action == SG_PT_BOX) {
+      event_data[2] = act_x;
+      event_data[3] = act_y;
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_BOX + cur_button;  //Preserve Original Button
+      event->user.data1 = (void*)this;
+      event->user.data2 = (void*)event_data;
+      cur_action = SG_PT_IGNORE;
+      cur_button = 0;
+      return 1;
+      }
+    }  
+
+  return 1;
+  }
+
+bool SG_PassThrough::Render() {
+//  fprintf(stderr, "Rendering PassThrough %p!\n", this);
+
+  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
+
+  glPushMatrix();
+
+  if(background) background->Render();	//Same "layer" as parent
+  glTranslatef(0.0, 0.0, 0.0625);	//Advance to next "layer"
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) {
+      glPushMatrix();
+      CalcGeometry();
+      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
+      (*itrw)->Render();
+      glPopMatrix();
+      }
+    }
+
+  glPopMatrix();
+
+  return 1;
+  }
+
+//  bool SG_PassThrough::SetDefaultCursor(GL_MODEL *cur);
+  
+//  static GL_MODEL SG_PassThrough::Default_Mouse_Cursor = NULL;
+
+void SG_PassThrough::CalcGeometry() {
+  cur_geom.xp = 0.0; // Not used by SG_PassThrough widget
+  cur_geom.yp = 0.0; // Not used by SG_PassThrough widget
+  cur_geom.xs = 1.0 - xborder;
+  cur_geom.ys = 1.0 - yborder;
+  }
