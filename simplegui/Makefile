@@ -87,8 +87,10 @@ test:	test1
 test1:	test1.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
 
+win32:	$(WOBJS)
+
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.o renderer.o audio.o $(WOBJS) $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
