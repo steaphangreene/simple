@@ -103,6 +103,7 @@ int init_renderer(int xs, int ys) {
 
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClearDepth(1.0);
 
   // Set the shading model
   glShadeModel(GL_SMOOTH);
@@ -111,7 +112,7 @@ int init_renderer(int xs, int ys) {
   // Set the polygon mode to fill
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-//  // Messing with Alpha channel
+// Define how to determine if something's below something else
   glDepthFunc(GL_LEQUAL);
 //  glDepthFunc(GL_LESS);
 
