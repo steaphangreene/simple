@@ -45,6 +45,17 @@ SG_Panel::SG_Panel(int c) : SG_Widget() {
   }
 
 SG_Panel::~SG_Panel() {
+  for(int tx = 0; tx < int(texture.size()); ++tx) {
+    if(texture[tx].cur) {
+      glFinish();
+      SDL_FreeSurface(texture[tx].cur);
+      texture[tx].cur = NULL;
+      }
+    if(texture[tx].texture) {
+      glDeleteTextures(1, &(texture[tx].texture));
+      texture[tx].texture = 0;
+      }
+    }
   }
 
 bool SG_Panel::HandleMouseEvent(SDL_Event *event, float x, float y) {
@@ -55,6 +66,10 @@ bool SG_Panel::HandleMouseEvent(SDL_Event *event, float x, float y) {
   }
 
 void SG_Panel::BuildTexture(int st) {
+  if(texture[st].cur) {
+    glFinish();
+    SDL_FreeSurface(texture[st].cur);
+    }
   texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
 	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
   SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,

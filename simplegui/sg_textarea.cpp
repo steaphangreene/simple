@@ -36,9 +36,6 @@ SG_TextArea::SG_TextArea(string mes, int c, int tc) : SG_Panel(c) {
   }
 
 SG_TextArea::~SG_TextArea() {
-  glFinish();	//Be sure we don't pull the rug out from under GL
-  SDL_FreeSurface(texture[0].cur);
-  glDeleteTextures(1, &(texture[0].texture));
   }
 
 bool SG_TextArea::HandleMouseEvent(SDL_Event *event, float x, float y) {
@@ -63,8 +60,6 @@ int nextpoweroftwo(int x)
 }
 
 void SG_TextArea::BuildTexture(int st) {
-  fprintf(stderr, "Building!\n");
-
   if(message.length() < 1) {
     SG_Panel::BuildTexture(st);
     return;
@@ -103,6 +98,7 @@ void SG_TextArea::BuildTexture(int st) {
   xsize = nextpoweroftwo(bxsize);	// Final values
   ysize = nextpoweroftwo(bysize);
 
+  if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
   texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
 			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
   SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,

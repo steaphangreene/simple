@@ -1,9 +1,9 @@
 -=To FIX=-
 Need a way to handle sounds for compound's buttons
-Verify clean up of textures on widget deletion
 
 -=TODO=-
 AnimatedPanel
+Arrows in text objects ("Indicator Arrows")
 
 -=To Flush Out=-
 Add passed-in texture support
