@@ -158,14 +158,15 @@ int main(int argc, char **argv) {
 
   gui_mutex = SDL_CreateMutex();
 
-  SDL_Thread *ev_t, *rend_t;
+  SDL_Thread *ev_t;
+//  SDL_Thread *game_t;
 
   ev_t = SDL_CreateThread(event_thread_handler, NULL);
-  rend_t = SDL_CreateThread(video_thread_handler, NULL);
-//  game_thread_handler(NULL); //THIS THREAD would be the game handling thread
+//  game_t = game_thread_handler(NULL);
+  video_thread_handler(NULL); //thsi thread MUST be the video thread
 
   SDL_WaitThread(ev_t, NULL);
-  SDL_WaitThread(rend_t, NULL);
+//  SDL_WaitThread(game_t, NULL);
 
   delete gui;
   return 0;
