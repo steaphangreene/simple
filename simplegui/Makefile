@@ -80,17 +80,23 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o test1 *.win32_o *.exe
+	rm -f deps.mk *.o test1 test2 *.win32_o *.exe
 
-test:	test1
+test:	test1 test2
 
 test1:	test1.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
+
+test2:	test2.o renderer.o audio.o $(OBJS)
+	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o $(OBJS) $(LIBS)
 
 win32:	$(WOBJS)
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
+
+test2.exe:	test2.win32_o renderer.win32_o audio.win32_o $(WOBJS)
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
