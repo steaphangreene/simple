@@ -1,3 +1,5 @@
+#include <SDL/SDL.h>
+
 template <class Tp>
 static void freadLE(Tp &var, FILE *fl) {
   union { Tp v; char c[sizeof(Tp)]; } data;
