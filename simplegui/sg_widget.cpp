@@ -46,6 +46,13 @@ bool SG_Widget::Render(unsigned long cur_time) {
   return 1;
   }
 
+void SG_Widget::Disable() {
+  flags |= SG_WIDGET_FLAGS_DISABLED;
+  }
+
+void SG_Widget::Enable() {
+  flags &= (~SG_WIDGET_FLAGS_DISABLED);
+  }
 
 //  bool SG_Widget::SetDefaultCursor(GL_MODEL *cur);
 //  bool SG_Widget::SetCursor(GL_MODEL *cur)

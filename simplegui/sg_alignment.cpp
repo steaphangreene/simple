@@ -123,6 +123,24 @@ bool SG_Alignment::Render(unsigned long cur_time) {
   return 1;
   }
 
+void SG_Alignment::Disable() {
+  flags |= SG_WIDGET_FLAGS_DISABLED;
+  if(background) background->Disable();
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) (*itrw)->Disable();
+    }
+  }
+
+void SG_Alignment::Enable() {
+  flags &= (~SG_WIDGET_FLAGS_DISABLED);
+  if(background) background->Enable();
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) (*itrw)->Enable();
+    }
+  }
+
 bool SG_Alignment::AddWidget(SG_Widget *wid) {
   if(widgets.size() > 0) {
     fprintf(stderr, "Warning: Alignment Widget Already Full!\n");
