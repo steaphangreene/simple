@@ -73,11 +73,15 @@ const string &SG_TextArea::Text() {
   return message;
   }
 
-int nextpoweroftwo(int x)
-{
-        double logbase2 = log(x) / log(2);
-        return int(round(pow(2,ceil(logbase2))));
-}
+int nextpoweroftwo(int x) {
+  if(x <= 2) return 2;
+
+  --x;          //Hitch it down in case it's exactly a power of 2
+  int p = 1;
+  for(; x != 1; ++p, x>>=1);
+  x <<= p;
+  return x;
+  }
 
 void SG_TextArea::BuildTexture(int st) {
   if(message.length() < 1) {
