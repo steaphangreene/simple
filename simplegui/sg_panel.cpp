@@ -115,6 +115,7 @@ bool SG_Panel::Render(unsigned long cur_time) {
   if(texture[state].type == SG_TEXTURE_TRANS
 	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
     glEnable(GL_BLEND);
+    glFlush();
     }
 
   glEnable(GL_TEXTURE_2D);
@@ -138,6 +139,7 @@ bool SG_Panel::Render(unsigned long cur_time) {
 
   if(texture[state].type == SG_TEXTURE_TRANS
 	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
+    glFlush();
     glDisable(GL_BLEND);
     }
 
