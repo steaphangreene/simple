@@ -27,6 +27,7 @@
 #define SG_WIDGET_FLAGS_HIDDEN		1
 #define SG_WIDGET_FLAGS_DISABLED	2
 #define SG_WIDGET_FLAGS_PRESSED		4
+#define SG_WIDGET_FLAGS_ON		8
 
 class SG_Widget {
 public:

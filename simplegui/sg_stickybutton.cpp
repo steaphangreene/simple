@@ -29,7 +29,6 @@ SG_StickyButton::SG_StickyButton(string mes, SG_Texture c,
 		SG_Texture cc, SG_Texture pc)
 	: SG_Button(mes, c, cc) {
   texture.push_back(pc);
-  on = 0;
   }
 
 SG_StickyButton::~SG_StickyButton() {
@@ -41,11 +40,11 @@ bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     flags |= SG_WIDGET_FLAGS_PRESSED;
+    flags ^= SG_WIDGET_FLAGS_ON;
     state = 1;
-    on = !on;
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
-    event->user.code = SG_EVENT_STICKYOFF + on;
+    event->user.code = SG_EVENT_STICKYOFF + ((flags & SG_WIDGET_FLAGS_ON) > 0);
     event->user.data1 = (void*)this;
     event->user.data2 = NULL;
     return 1;
@@ -56,7 +55,7 @@ bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
   else if(event->type == SDL_MOUSEBUTTONUP) {
     current_sg->UnsetCurrentWidget();
     flags &= (~SG_WIDGET_FLAGS_PRESSED);
-    state = 3 * on;
+    state = 3 * ((flags & SG_WIDGET_FLAGS_ON) > 0);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONRELEASE;
     event->user.data1 = (void*)this;

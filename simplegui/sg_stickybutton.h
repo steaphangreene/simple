@@ -31,11 +31,10 @@ public:
   virtual ~SG_StickyButton();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  bool IsOn() { return on; };
+  bool IsOn() { return ((flags & SG_WIDGET_FLAGS_ON) > 0); };
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  bool on;
   };
 
 #endif // SG_STICKYBUTTON_H
