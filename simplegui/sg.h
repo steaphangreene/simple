@@ -25,6 +25,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 
+#include <map>
 #include <vector>
 using namespace std;
 
@@ -64,10 +65,10 @@ public:
   void UnsetFocusWidget() { SetFocusWidget(NULL); };
   SG_Widget *FocusWidget() { return focus_widget; };
 
-  void LoadFont(const char *fontfn, int ptsz = 20);
+  void LoadFont(const char *fontfn, int pxsz = 20);
   void SetFont(TTF_Font *f);
   void UnsetFont() { SetFont(NULL); };
-  TTF_Font *Font() { return cur_font; };
+  TTF_Font *Font(int pxsz = -1);
 
   float Red(int c);
   float Green(int c);
@@ -103,7 +104,9 @@ protected:
 
   unsigned long mb_state;	// Bit Vector of Mouse Button States
 				// Can't handle more than 32 Buttons
-  TTF_Font *cur_font;
+  map<int, TTF_Font *> cur_font;
+  int default_pxsize;
+  float fontyratio;
   char *fontfile;
 
   vector<SDL_Color> col;

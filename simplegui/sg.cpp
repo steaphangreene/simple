@@ -95,8 +95,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   col[SG_COL_HIGH*2 + 0].b = 150;
   col[SG_COL_HIGH*2 + 1] = text_col;
 
-  cur_font = NULL;
   fontfile = NULL;
+  fontyratio = 1.0;
   }
 
 SimpleGUI::~SimpleGUI() {
@@ -107,10 +107,15 @@ SimpleGUI::~SimpleGUI() {
   if(popWid) delete popWid;
   popWid = NULL;
 
-  if(cur_font && fontfile) TTF_CloseFont(cur_font);  //Only close if WE opened
-  cur_font = NULL;
-  if(fontfile) delete fontfile;
-  fontfile = NULL;
+  if(fontfile) {		//Only close if WE opened
+    delete fontfile;
+    fontfile = NULL;
+    map<int, TTF_Font *>::iterator itrf = cur_font.begin();
+    for(; itrf != cur_font.end(); ++itrf) {
+      TTF_CloseFont(itrf->second);
+      }
+    }
+  cur_font.clear();
   }
 
 bool SimpleGUI::Render(unsigned long cur_time) {
@@ -324,29 +329,66 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
   }
 
 void SimpleGUI::SetFont(TTF_Font *font) {
-  if(fontfile) delete fontfile;
-  fontfile = NULL;
-  cur_font = font;
-  }
-
-void SimpleGUI::LoadFont(const char *fontfn, int ptsize) {
-  if(fontfile) delete fontfile;
-  fontfile = new char[strlen(fontfn)+1];
-  strcpy(fontfile, fontfn);
-  if(!cur_font) {
+  if(!TTF_WasInit()) {
     if(TTF_Init()) {
       fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
 	fontfile, TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
+    }
 
-    cur_font = TTF_OpenFont(fontfile, ptsize);
-    if(!cur_font) {
-      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
+  if(fontfile) delete fontfile;
+  fontfile = NULL;
+  cur_font[0] = font;
+  fontyratio = 1.0;
+  default_pxsize = 0;
+  }
+
+void SimpleGUI::LoadFont(const char *fontfn, int pxsz) {
+  if(fontfile) delete fontfile;
+  fontfile = new char[strlen(fontfn)+1];
+  strcpy(fontfile, fontfn);
+
+  fontyratio = 1.0;
+  default_pxsize = pxsz;
+  Font(); //Initialize default font - to generate error now, not later
+  int act_height = TTF_FontHeight(cur_font[pxsz]);
+  if(act_height != pxsz) { //Non-true-pixel font
+    cur_font[act_height] = cur_font[pxsz];
+    cur_font.erase(pxsz);
+    fontyratio = (float)(pxsz) / (float)(act_height);
+    Font(); //Create the REAL default font size
+//    fprintf(stderr, "FontYRatio = %f\n", fontyratio);
+    }
+  }
+
+TTF_Font *SimpleGUI::Font(int pxsz) {
+  if(pxsz < 1) pxsz = default_pxsize;
+  if(cur_font.count(pxsz)) return cur_font[pxsz];
+  else if(!fontfile) {
+//    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
+    return NULL;
+    }
+
+  if(!TTF_WasInit()) {
+    if(TTF_Init()) {
+      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
+	fontfile, TTF_GetError());
       exit(1);
       }
+    atexit(TTF_Quit);
     }
+
+  int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);	//Scale to real ptsize
+
+  cur_font[pxsz] = TTF_OpenFont(fontfile, ptsz);
+  if(!cur_font[pxsz]) {
+    fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
+    exit(1);
+    }
+
+  return cur_font[pxsz];
   }
 
 float SimpleGUI::Red(int c) {

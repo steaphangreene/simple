@@ -31,6 +31,7 @@
 SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
+  lines_visible = 1;
   message = mes;
   xmargin = mx;
   ymargin = my;
@@ -81,14 +82,50 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   SDL_Surface *tmp_text = NULL;
-  int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
+  int xsize = 0, ysize = 0, xoff = 0, yoff = 0, fontsz = -1;
 
   vector<string> line;
   int maxx = 80, maxy = 40;
-  while(1) { 
+
+  { int pos = 0, lpos=0;
+    while(lpos < int(message.length()) && int(line.size()) < maxy) {
+      pos = message.find('\n', lpos);
+      if(pos <= lpos) pos = message.length();
+      line.push_back(message.substr(lpos, pos - lpos));
+      lpos = pos+1;
+      }
+    }
+
+  if(texture[st].type == SG_TEXTURE_DEFINED) {
+    int bxsize = texture[st].src->w;
+    int bysize = texture[st].src->h;
+
+			//Used temporarilly - not final values
+    xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
+    ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
+
+    fontsz = ysize / lines_visible;
+    if(current_sg->Font(fontsz) == NULL) {
+      fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", fontsz);
+      SG_Panel::BuildTexture(st);
+      return;
+      }
+
+    xoff = (bxsize-xsize)/2;
+    yoff = (bysize-ysize)/2;
+
+    //OpenGL Needs a power of two size - grow to next
+    xsize = nextpoweroftwo(bxsize);	// Final values
+    ysize = nextpoweroftwo(bysize);
+
+    texture[st].xfact = (float)(bxsize) / (float)(xsize);
+    texture[st].yfact = (float)(bysize) / (float)(ysize);
+    }
+  else while(1) { 
     int bxsize = 0, bysize = 0;
     int pos = 0, lpos=0, tmpx=0, tmpy=0;
 						//FIXME: Scroll?
+    line.clear();
     while(lpos < int(message.length()) && int(line.size()) < maxy) {
       pos = message.find('\n', lpos);
       if(pos <= lpos) pos = message.length();
@@ -99,7 +136,7 @@ void SG_TextArea::BuildTexture(int st) {
 	line.back() = line.back().substr(0, maxx);
 
       lpos = pos+1;
-      TTF_SizeText(current_sg->Font(), line.back().c_str(), &tmpx, &tmpy);
+      TTF_SizeText(current_sg->Font(fontsz), line.back().c_str(), &tmpx, &tmpy);
       if(bxsize < tmpx) bxsize = tmpx;
       bysize += tmpy;
       }
@@ -125,10 +162,6 @@ void SG_TextArea::BuildTexture(int st) {
     else if(xsize > max) { --maxx; }
     else if(ysize > max) { --maxy; }
     else break;
-
-    line.clear();
-
-//    fprintf(stderr, "%dx%d %dx%d\n", xsize, ysize, max, max);
     }
 
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
@@ -146,18 +179,19 @@ void SG_TextArea::BuildTexture(int st) {
     //FIXME: Implement this for real!
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
 	SG_SDL_RGBA_COLFIELDS);
+    SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
 
   SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
   for(int ln = 0; ln < int(line.size()); ++ln) {
-//    fprintf(stderr, "Render: '%s'\n", line[ln].c_str());
     tmp_text =
-	TTF_RenderText_Blended(current_sg->Font(), line[ln].c_str(),
+	TTF_RenderText_Blended(current_sg->Font(fontsz), line[ln].c_str(),
 		texture[st].fg);
     if(!tmp_text) {
       fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
       exit(1);
       }
+
     srec.w = tmp_text->w;
     srec.h = tmp_text->h;
     SDL_BlitSurface(tmp_text, &srec, texture[st].cur, &drec);

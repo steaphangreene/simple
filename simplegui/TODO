@@ -4,10 +4,12 @@ Need a way to handle sounds for compounds' buttons
 -=TODO=-
 
 -=To Flush Out=-
-Finish dynamically resizeable fonts
 Fix all the in-code "FIXME"s
 Implement actual mouse cursors
 Disabled state textures
+Fixed ratio of text on widgets
+Alignment of text on widgets
+Scrolling of text on widgets
 Implement Scrollable
 Implement ProgressBar
 Implement FileBrowser

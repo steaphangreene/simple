@@ -45,6 +45,7 @@ protected:
   virtual void BuildTexture(int st);
 
   float xmargin, ymargin;
+  int lines_visible;
   string message;
   };
 
