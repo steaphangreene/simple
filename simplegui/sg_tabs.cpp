@@ -79,3 +79,56 @@ void SG_Tabs::Set(int which) {
   cur_on = which;
   }
 
+void SG_Tabs::Next(bool wrap) {
+  ++cur_on;
+  if(cur_on >= xsize*ysize) {
+    if(wrap) cur_on = 0;
+    else cur_on = xsize*ysize-1;
+    }
+  Set(cur_on);
+  }
+
+void SG_Tabs::Prev(bool wrap) {
+  --cur_on;
+  if(cur_on < 0) {
+    if(wrap) cur_on = xsize*ysize-1;
+    else cur_on = 0;
+    }
+  Set(cur_on);
+  }
+
+void SG_Tabs::Right(bool wrap) {
+  ++cur_on;
+  if(cur_on % xsize == 0) {
+    if(wrap) cur_on -= xsize;
+    else --cur_on;
+    }
+  Set(cur_on);
+  }
+
+void SG_Tabs::Left(bool wrap) {
+  --cur_on;
+  if(cur_on < 0 || cur_on % xsize == (xsize-1)) {
+    if(wrap) cur_on += xsize;
+    else ++cur_on;
+    }
+  Set(cur_on);
+  }
+
+void SG_Tabs::Up(bool wrap) {
+  cur_on += xsize;
+  if(cur_on >= xsize*ysize) {
+    if(wrap) cur_on -= xsize*ysize;
+    else cur_on -= xsize;
+    }
+  Set(cur_on);
+  }
+
+void SG_Tabs::Down(bool wrap) {
+  cur_on -= xsize;
+  if(cur_on < 0) {
+    if(wrap) cur_on += xsize*ysize;
+    else cur_on += xsize;
+    }
+  Set(cur_on);
+  }

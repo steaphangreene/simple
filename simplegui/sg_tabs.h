@@ -49,6 +49,12 @@ public:
   virtual bool ChildEvent(SDL_Event *event);
   int Which() { return cur_on; }
   void Set(int which);
+  void Next(bool wrap = false);
+  void Prev(bool wrap = false);
+  void Right(bool wrap = false);
+  void Left(bool wrap = false);
+  void Up(bool wrap = false);
+  void Down(bool wrap = false);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
