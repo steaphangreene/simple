@@ -8,7 +8,6 @@ Menus
 Pop-Ups/Dialogs
 Implement Actual Mouse Cursors
 Scrollable
-TransLabel
 ProgressBar
 Editable (Framework)
 StickyButton
@@ -16,4 +15,5 @@ Menu
 Compound Widgets!
 
 -=Wishlist=-
+Event Forwarding/Returning?
 Drag and Drop Boxes?

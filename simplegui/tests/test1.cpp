@@ -65,8 +65,9 @@ int main(int argc, char **argv) {
   SG_Alignment *align[2];
   SG_PassThrough *pass[2];
   SG_TextArea *text;
+  SG_TransLabel *trans;
 
-  tab[0] = new SG_Table(4, 1);
+  tab[0] = new SG_Table(4, 12);
   tab[1] = new SG_Table(2, 12);
 
   align[0] = new SG_Alignment();
@@ -83,8 +84,8 @@ int main(int argc, char **argv) {
   gui->MasterWidget()->AddWidget(tab[0]);
   gui->MasterWidget()->RemoveWidget(tab[0]);	//Just to be sure it works!
   gui->MasterWidget()->AddWidget(tab[0]);
-  tab[0]->AddWidget(pass[0], 0, 0, 3, 1);
-  tab[0]->AddWidget(tab[1], 3, 0);
+  tab[0]->AddWidget(pass[0], 0, 0, 3, 12);
+  tab[0]->AddWidget(tab[1], 3, 0, 1, 12);
   tab[1]->AddWidget(align[0], 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
 
@@ -128,6 +129,10 @@ int main(int argc, char **argv) {
   text = new SG_TextArea("Text Area Is Here", 0.6, 0.4, 0.3, 0.0, 0.0, 0.0);
   text->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(text, 0, 4, 2, 1);
+
+  trans = new SG_TransLabel("TransLabel Is Here", 0.6, 0.4, 0.3);
+  trans->SetMargins(0.2, 0.2);
+  tab[0]->AddWidget(trans, 1, 3, 1, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
 
@@ -229,6 +234,8 @@ int main(int argc, char **argv) {
     gui->Render(SDL_GetTicks());
     finish_scene(0);
     }
+
+  delete tab[0]; //Will delete all children
 
   return 0;
   }

@@ -24,7 +24,7 @@
 #include "sg_textarea.h"
 
 #include <SDL/SDL_ttf.h>
-static TTF_Font *font = NULL;
+TTF_Font *font = NULL;
 
 
 #include <math.h>
@@ -113,7 +113,7 @@ SG_TextArea::SG_TextArea(string mes,
   }
 
 SG_TextArea::~SG_TextArea() {
-  TTF_CloseFont(font);
+  if(font) TTF_CloseFont(font);
   font = NULL;
 
   glFinish();	//Be sure we don't pull the rug out from under GL

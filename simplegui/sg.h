@@ -66,11 +66,12 @@ protected:
 #include "sg_events.h"
 #include "sg_widget.h"
 #include "sg_alignment.h"
+#include "sg_table.h"
 #include "sg_button.h"
 #include "sg_panel.h"
 #include "sg_passthrough.h"
 #include "sg_textarea.h"
-#include "sg_table.h"
+#include "sg_translabel.h"
 
 #endif	//SIMPLEGUI_H
 
