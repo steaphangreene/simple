@@ -41,7 +41,7 @@ bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     flags |= SG_WIDGET_FLAGS_PRESSED;
     flags ^= SG_WIDGET_FLAGS_ON;
-    state = 1;
+    state = 2;
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_STICKYOFF + ((flags & SG_WIDGET_FLAGS_ON) > 0);

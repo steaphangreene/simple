@@ -25,10 +25,9 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Button::SG_Button(string mes, SG_Texture c, SG_Texture cc)
-	: SG_TextArea(mes, c) {
-  texture.push_back(cc);
-  texture.push_back(cc);	//FIXME: Disabled Texture!
+SG_Button::SG_Button(string mes, SG_Texture tex, SG_Texture dis_tex,
+	SG_Texture click_tex) : SG_TextArea(mes, tex, dis_tex) {
+  texture.push_back(click_tex);
   }
 
 SG_Button::~SG_Button() {
@@ -40,7 +39,7 @@ bool SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     flags |= SG_WIDGET_FLAGS_PRESSED;
-    state = 1;
+    state = 2;
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONPRESS;

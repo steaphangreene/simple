@@ -40,10 +40,14 @@ public:
   virtual bool Render(unsigned long cur_time);
   void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
+
   virtual void Disable();
   virtual void Enable();
+
   virtual void TurnOn();
   virtual void TurnOff();
+  bool IsOn() { return ((flags & SG_WIDGET_FLAGS_ON) > 0); };
+
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 //  bool SetCursor(GL_MODEL *cur)
 //  bool UnsetCursor()

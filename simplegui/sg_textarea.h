@@ -31,7 +31,7 @@ using namespace std;
 class SG_TextArea : public SG_Panel {
 public:
   SG_TextArea(string mes, SG_Texture tex = SG_COL_BG,
-	float mx = 0.125, float my = 0.125);
+	SG_Texture dis_tex = SG_COL_BG, float mx = 0.125, float my = 0.125);
   virtual ~SG_TextArea();
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
