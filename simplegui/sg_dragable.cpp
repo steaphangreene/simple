@@ -79,7 +79,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
       if(off_y > max_y) off_y = max_y;
       if(off_y < min_y) off_y = min_y;
       event_data.f[0] = off_x;
-      event_data.f[1] = off_x;
+      event_data.f[1] = off_y;
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_DRAGMOVE;
@@ -97,7 +97,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     if(off_y > max_y) off_y = max_y;
     if(off_y < min_y) off_y = min_y;
     event_data.f[0] = off_x;
-    event_data.f[1] = off_x;
+    event_data.f[1] = off_y;
 
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;

@@ -265,15 +265,27 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousey = float(event->motion.y);
     ScreenToRelative(mousex, mousey);
 
-    if(current_widget)
-      return mWid->HandEventTo(current_widget, event, mousex, mousey);
-
-    if(popWid && mousex < popx && mousey < popy
-	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleEvent(event, mousex/popx, mousey/popy);
+    int ret = 0;
+    if(current_widget) {
+      ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
+      if(popWid && ret && event->type != SDL_SG_EVENT) {
+	ret = popWid->HandEventTo(current_widget, event,
+		mousex/popx, mousey/popy);
+	}
+      if(current_widget && ret && event->type != SDL_SG_EVENT) {
+	ret = current_widget->HandleEvent(event, 0.0, 0.0);
+	}
       }
 
-    return mWid->HandleEvent(event, mousex, mousey);
+    if(popWid && ret && event->type != SDL_SG_EVENT
+	&& mousex < popx && mousey < popy
+	&& mousex > -popx && mousey > -popy) {
+      ret = popWid->HandleEvent(event, mousex/popx, mousey/popy);
+      }
+
+    if(ret && event->type != SDL_SG_EVENT)
+      ret = mWid->HandleEvent(event, mousex, mousey);
+    return ret;
     }
 
   else if(event->type == SDL_KEYDOWN) {
@@ -299,11 +311,13 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
     return 0;
     }
 
+  int ret = 1;
+
   x -= (float)(xunused/2);
   y -= (float)(yunused/2);
 
   if(x < 0.0 || y < 0.0 || x >= (float)(xsize) || y >= (float)(ysize)) {
-    return 0;
+    ret = 0;
     }
 
   x += 0.5;
@@ -325,7 +339,7 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
     y /= aspect_actual;
     }
 
-  return 1;
+  return ret;
   }
 
 void SimpleGUI::SetFont(TTF_Font *font) {
