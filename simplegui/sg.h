@@ -63,8 +63,8 @@ public:
   SG_Widget *FocusWidget() { return focus_widget; };
 
   void LoadFont(const char *fontfn, int ptsz = 20);
-  void SetFont(TTF_Font *f) { cur_font = f; };
-  void UnsetFont() { cur_font = NULL; };
+  void SetFont(TTF_Font *f);
+  void UnsetFont() { SetFont(NULL); };
   TTF_Font *Font() { return cur_font; };
 
   float Red(int c);
@@ -103,6 +103,7 @@ protected:
   unsigned long mb_state;	// Bit Vector of Mouse Button States
 				// Can't handle more than 32 Buttons
   TTF_Font *cur_font;
+  char *fontfile;
 
   vector<SDL_Color> col;
   SDL_Color text_col;

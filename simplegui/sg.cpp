@@ -91,6 +91,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   col[SG_COL_HIGH*2 + 1] = text_col;
 
   cur_font = NULL;
+  fontfile = NULL;
   }
 
 SimpleGUI::~SimpleGUI() {
@@ -99,8 +100,10 @@ SimpleGUI::~SimpleGUI() {
   if(popWid) delete popWid;
   popWid = NULL;
 
-  if(cur_font) TTF_CloseFont(cur_font);
+  if(cur_font && fontfile) TTF_CloseFont(cur_font);  //Only close if WE opened
   cur_font = NULL;
+  if(fontfile) delete fontfile;
+  fontfile = NULL;
   }
 
 bool SimpleGUI::Render(unsigned long cur_time) {
@@ -285,18 +288,27 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
   return 1;
   }
 
+void SimpleGUI::SetFont(TTF_Font *font) {
+  if(fontfile) delete fontfile;
+  fontfile = NULL;
+  cur_font = font;
+  }
+
 void SimpleGUI::LoadFont(const char *fontfn, int ptsize) {
+  if(fontfile) delete fontfile;
+  fontfile = new char[strlen(fontfn)+1];
+  strcpy(fontfile, fontfn);
   if(!cur_font) {
     if(TTF_Init()) {
       fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
-	fontfn, TTF_GetError());
+	fontfile, TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
 
-    cur_font = TTF_OpenFont(fontfn, ptsize);
+    cur_font = TTF_OpenFont(fontfile, ptsize);
     if(!cur_font) {
-      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfn);
+      fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
       exit(1);
       }
     }
