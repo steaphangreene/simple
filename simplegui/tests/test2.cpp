@@ -35,7 +35,6 @@ using namespace std;
 #include "audio.h"
 
 #include "click.h"
-#include "bong.h"
 
 int user_quit = 0;	//Don't need to mutex this one - no race condition
 static SimpleGUI *gui;
@@ -43,7 +42,6 @@ SDL_mutex *gui_mutex;
 
 int event_thread_handler(void *arg) {
   int click = audio_buildsound(click_data, sizeof(click_data));
-//  int bong = audio_buildsound(bong_data, sizeof(bong_data));
 
   SDL_Event event;
 
@@ -57,35 +55,16 @@ int event_thread_handler(void *arg) {
       if(!have_event) continue;
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONPRESS) {
-	  printf("Received SG_EVENT_BUTTONPRESS from a button.\n");
 	  audio_play(click, 8, 8);
 	  }
-	else {
-	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);
-	  }
-	}
-      else if(event.type == SDL_MOUSEBUTTONDOWN) {
-	printf("Received unintercepted mouse button press.\n");
-	}
-      else if(event.type == SDL_MOUSEBUTTONUP) {
-//	printf("Received unintercepted mouse button release.\n");
-	}
-      else if(event.type == SDL_MOUSEMOTION) {
-//	printf("Received unintercepted mouse motion.\n");
 	}
       else if(event.type == SDL_KEYDOWN) {
 	if(event.key.keysym.sym == SDLK_ESCAPE) {
 	  user_quit = 1;
 	  }
-	else {
-//	  printf("Received unintercepted key press.\n");
-	  }
 	}
       else if(event.type == SDL_QUIT) {
 	user_quit = 1;
-	}
-      else if(event.type == SDL_KEYUP) {
-//	printf("Received unintercepted key release.\n");
 	}
       }
     }
@@ -113,10 +92,12 @@ int video_thread_handler(void *arg) {
 
 int game_thread_handler(void *arg) {
   while(!user_quit) {
+
 //  Do game stuff - carfully coordinated with input from events
 //  and output to renderers
 
 //  This would just busy-wait as it's called now, so I don't really call it
+
     }
   return 0;
   }
