@@ -86,6 +86,8 @@ public:
   void SetDefaultTextColor(float tr, float tg, float tb);
   const SDL_Color *DefaultTextColor();
 
+  void GetMousePos(float &mx, float &my) { mx = mousex; my = mousey; };
+
 protected:
   SG_Alignment *mWid, *popWid;
   float popx, popy;

@@ -28,6 +28,7 @@
 #include "sg_panel.h"
 #include "sg_button.h"
 #include "sg_events.h"
+#include "sg_globals.h"
 
 SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
 	: SG_Compound(xsz, ysz, 0.0, 0.0) {
@@ -122,6 +123,7 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
                                                                                 
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
+    current_sg->GetMousePos(cur_offx, cur_offy);
     }
   return 0; // Silence children doing other things
   }
@@ -173,4 +175,3 @@ void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys) {
       }
     }
   }
-
