@@ -71,7 +71,9 @@ public:
   virtual bool Load(const string &filenm,
 	const string &filenm, const string &skinnm = "");
 
-  virtual bool Render(Uint32 cur_time, const vector<int> &anim = vector<int>(), Uint32 start_time = 0);
+  virtual bool Render(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>());
   bool MoveToTag(unsigned long tag);
 
   unsigned long TagNameToIndex(const string &tagname);
