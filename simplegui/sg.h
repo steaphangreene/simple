@@ -86,7 +86,6 @@ public:
   const SDL_Color *DefaultTextColor();
 
 protected:
-  bool Resize(float asp);
   SG_Alignment *mWid, *popWid;
   float popx, popy;
   int aspect_method;
