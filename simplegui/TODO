@@ -28,3 +28,4 @@ Modality of popup?
 Event pass-through and transparency?
 Add "INTANGIBLE" flag?
 Add time offset to AnimatedPanel widget?
+Catch deletion of current_widget?
