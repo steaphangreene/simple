@@ -1,3 +1,4 @@
+// *************************************************************************
 //  This file is part of the SimpleGUI Example Module by Steaphan Greene
 //
 //  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
@@ -16,6 +17,7 @@
 //  along with SimpleGUI (see the file named "COPYING");
 //  if not, write to the the Free Software Foundation, Inc.,
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// *************************************************************************
 
 #ifndef SG_BUTTON_H
 #define SG_BUTTON_H
