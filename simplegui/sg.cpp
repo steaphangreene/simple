@@ -111,6 +111,24 @@ SimpleGUI::~SimpleGUI() {
   }
 
 bool SimpleGUI::Render(unsigned long cur_time) {
+  if(!RenderStart(cur_time)) return 0;
+  return RenderFinish(cur_time);
+  }
+
+bool SimpleGUI::RenderStart(unsigned long cur_time) {
+  static int my_xoffset = 0, my_yoffset = 0, my_xsize = 0, my_ysize = 0;
+  if(my_xoffset != xoffset || my_yoffset != yoffset
+	|| my_xsize != xsize || my_ysize != ysize) {
+    glViewport(xoffset, yoffset, xsize, ysize);
+    my_xoffset = xoffset;
+    my_yoffset = yoffset;
+    my_xsize = xsize;
+    my_ysize = ysize;
+    }
+  return 1;
+  }
+
+bool SimpleGUI::RenderFinish(unsigned long cur_time) {
   //This basically leverages the perspective to flat 2D
   //with a -1.0 to 1.0 centered coord system
   glMatrixMode(GL_PROJECTION);
@@ -188,7 +206,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       }
 
     aspect_actual = asp / aspect;
-    glViewport(xoffset, yoffset, xsize, ysize);
 
     return 0; //Event Handled
     }
