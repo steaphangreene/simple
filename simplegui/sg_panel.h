@@ -64,4 +64,3 @@ protected:
   };
 
 #endif // SG_PANEL_H
-

@@ -91,25 +91,46 @@ void SG_TransLabel::BuildTransTexture() {
     return;
     }
 
-  SDL_Surface *tmp_text;
-  int xsize, ysize;
+  SDL_Surface *tmp_text = NULL;
+  int bxsize = 0, bysize = 0;
+  int xsize = 0, ysize = 0;
 
-  tmp_text = TTF_RenderText_Blended(current_sg->Font(), message.c_str(), fg);
-  if(!tmp_text) {
-    fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
-    exit(1);
+  vector<string> line;
+  { int pos = 0, lpos=0, tmpx=0, tmpy=0;
+    while(lpos < int(message.length())) {
+      pos = message.find('\n', lpos);
+      if(pos <= lpos) pos = message.length();
+      line.push_back(message.substr(lpos, pos - lpos));
+      lpos = pos+1;
+      TTF_SizeText(current_sg->Font(), line.back().c_str(), &tmpx, &tmpy);
+      if(bxsize < tmpx) bxsize = tmpx;
+      bysize += tmpy;
+      }
     }
 
   //OpenGL Needs a power of two size - grow to next
-  xsize = nextpoweroftwo(tmp_text->w);
-  ysize = nextpoweroftwo(tmp_text->h);
+  xsize = nextpoweroftwo(bxsize);
+  ysize = nextpoweroftwo(bysize);
 
   cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
                         0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 //  SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format,
 //        col.r, col.g, col.b));
 
-  SDL_BlitSurface(tmp_text, 0, cur, 0);
+  SDL_Rect srec = { 0, 0, 0, 0}, drec = { 0, 0, 0, 0 };
+  for(int ln = 0; ln < int(line.size()); ++ln) {
+    tmp_text = TTF_RenderText_Blended(current_sg->Font(), line[ln].c_str(), fg);
+    if(!tmp_text) {
+      fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
+      exit(1);
+      }
+    srec.w = tmp_text->w;
+    srec.h = tmp_text->h;
+    SDL_BlitSurface(tmp_text, &srec, cur, &drec);
+    SDL_FreeSurface(tmp_text);
+    drec.y += srec.h;
+    }
+
 
   glGenTextures(1, &(texture));
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -122,10 +143,8 @@ void SG_TransLabel::BuildTransTexture() {
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  xfact = (float)(tmp_text->w) / (float)(xsize);
-  yfact = (float)(tmp_text->h) / (float)(ysize);
-
-  SDL_FreeSurface(tmp_text);
+  xfact = (float)(bxsize) / (float)(xsize);
+  yfact = (float)(bysize) / (float)(ysize);
 
 // FIXME - implement new version of this.
 //  glTranslatef(0.0, 0.0, 0.0625);             //Advance to next "layer"

@@ -83,7 +83,8 @@ int main(int argc, char **argv) {
 
   map<SG_Widget *, string> name;
 
-  SG_Table *tab[3];
+  SG_Table *popup;
+  SG_Table *tab[2];
   SG_Widget *panel[3];
   SG_Button *button[6];
   SG_Alignment *align;
@@ -117,9 +118,10 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(scroll, 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
 
-  trans = new SG_TransLabel("TransLabel Is Here", gui->NewColor(0.6, 0.4, 0.3));
+  trans = new SG_TransLabel("TransLabel Widget\nIs Right Here",
+	gui->NewColor(0.6, 0.4, 0.3));
   trans->SetMargins(0.2, 0.2);
-  tab[0]->AddWidget(trans, 1, 3, 1, 1);
+  tab[0]->AddWidget(trans, 1, 2, 1, 2);
 
   panel[1] = new SG_Panel(white);
   panel[2] = new SG_Panel(black);
@@ -173,11 +175,9 @@ int main(int argc, char **argv) {
 
   tab[1]->SetBorder(0.0625, 0.125);
 
-
-  tab[2] = new SG_Table(6, 5);
-  tab[2]->SetBackground(new SG_Panel());
-  tab[2]->AddWidget(new SG_TextArea("Popup!"), 1, 2, 4, 1);
-  gui->SetPopupWidget(tab[2], 0.3, 0.3); 
+  popup = new SG_Table(6, 6);
+  popup->SetBackground(new SG_Panel());
+  popup->AddWidget(new SG_TextArea("Popup!\nHere!"), 1, 1, 4, 4);
 
   SDL_Event event;
   int user_quit = 0;
@@ -194,11 +194,15 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EVENT_STICKYON from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
+	  if(event.user.data1 == (void*)button[5])
+	    gui->SetPopupWidget(popup, 0.3, 0.3); 
 	  }
 	else if(event.user.code == SG_EVENT_STICKYOFF) {
 	  printf("Received SG_EVENT_STICKYOFF from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
+	  if(event.user.data1 == (void*)button[5])
+	    gui->UnsetPopupWidget(); 
 	  }
 	else if(event.user.code == SG_EVENT_BUTTONRELEASE) {
 	  printf("Received SG_EVENT_BUTTONRELEASE from %s button.\n",
@@ -297,6 +301,8 @@ int main(int argc, char **argv) {
     finish_scene(0);
     }
 
+  gui->UnsetPopupWidget(); 
+  delete popup; //Will delete all children
   delete tab[0]; //Will delete all children
 
   return 0;

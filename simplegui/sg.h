@@ -51,7 +51,7 @@ public:
   //Popup Widgets MUST have solid backgrounds!
   SG_Alignment *PopupWidget() { return mWid; };
   void SetPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5);
-  void UnsetPopupWidget() { mWid = NULL; };
+  void UnsetPopupWidget() { popWid = NULL; };
 
   void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
   void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
