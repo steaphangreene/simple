@@ -47,6 +47,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   popWid = NULL;
   popx = 0.5, popy = 0.5;
   popxpos = 0.0, popypos = 0.0;
+  pop_modal = false;
+
   aspect = asp;
   aspect_actual = 1.0;
   aspect_method = aspmeth;
@@ -266,6 +268,9 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 	&& mousex > -popx && mousey > -popy) {
       return popWid->HandleEvent(event, mousex/popx, mousey/popy);
       }
+    else if(popWid && pop_modal) {
+      return 0;	//Eat button events that miss a modal popup
+      }
 
     return mWid->HandleEvent(event, mousex, mousey);
     }
@@ -316,7 +321,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       ret = popWid->HandleEvent(event, mousex/popx, mousey/popy);
       }
 
-    if(ret && event->type != SDL_SG_EVENT)
+    if(ret && event->type != SDL_SG_EVENT && ((!popWid) || (!pop_modal)))
       ret = mWid->HandleEvent(event, mousex, mousey);
     return ret;
     }
@@ -520,12 +525,20 @@ int SimpleGUI::NewColor(float r, float g, float b,
   return ret;
   }
 
-void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py, float posx, float posy) {
+void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
+	float posx, float posy) {
   popWid = wid;
   popxpos = posx;
   popypos = posy;
   popx = px;
   popy = py;
+  pop_modal = false;
+  }
+  
+void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,
+	float posx, float posy) {
+  SetPopupWidget(wid, px, py, posx, posy);
+  pop_modal = true;
   }
   
 extern int nextpoweroftwo(int);

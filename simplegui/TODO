@@ -8,6 +8,7 @@ Fix positioning of events on offset popups.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s
+Better handle modal popups and text focus of widgets.
 Implement actual mouse cursors, including adjustable focus points
 Fixed ratio of text on widgets
 Alignment of text on widgets
@@ -27,7 +28,6 @@ Implement Menu
 Sharing like textures?
 Composite textures?
 Widget-specific fonts?
-Modality of popup?
 Add time offset to AnimatedPanel widget?
 Allow SG_Table to be resizable?
 Console widget?

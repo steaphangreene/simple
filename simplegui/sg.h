@@ -58,8 +58,11 @@ public:
 
   //Popup Widgets MUST have solid backgrounds!
   SG_Alignment *PopupWidget() { return mWid; };
-  void SetPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5, float posx = 0.0, float posy = 0.0);
-  void UnsetPopupWidget() { popWid = NULL; };
+  void SetPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5,
+	float posx = 0.0, float posy = 0.0);
+  void SetModalPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5,
+	float posx = 0.0, float posy = 0.0);
+  void UnsetPopupWidget() { SetPopupWidget(NULL); };
 
   void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
   void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
@@ -98,6 +101,8 @@ protected:
   SG_Alignment *mWid, *popWid;
   float popx, popy;
   float popxpos, popypos;
+  bool pop_modal;
+
   int aspect_method;
   float aspect;
   float aspect_actual;
