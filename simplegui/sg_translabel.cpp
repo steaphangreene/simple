@@ -26,12 +26,10 @@
 
 #include <SDL/SDL_ttf.h>
 
-SG_TransLabel::SG_TransLabel(string mes, float red, float green, float blue)
+SG_TransLabel::SG_TransLabel(string mes, int c)
 	: SG_Widget() {
   message = mes;
-  fg.r = (Uint8)(red*255.0f);
-  fg.g = (Uint8)(green*255.0f);
-  fg.b = (Uint8)(blue*255.0f);
+  fg = *(current_sg->Color(c));
   cur = NULL;
 
   BuildTransTexture();

@@ -16,7 +16,6 @@ SliderBar
 ScrollingArea
 
 -=To Flush Out=-
-Implement global colors, remove color initializers
 Implement Actual Mouse Cursors
 Implement ProgressBar
 Implement FileBrowser

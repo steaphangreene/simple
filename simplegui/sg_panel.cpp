@@ -21,6 +21,8 @@
 
 #include <GL/gl.h>
 
+#include "sg_globals.h"
+#include "sg_colors.h"
 #include "sg_panel.h"
 
 void BuildTexture(SG_Texture &tex) {
@@ -40,12 +42,10 @@ void BuildTexture(SG_Texture &tex) {
   glBindTexture(GL_TEXTURE_2D, 0);
   }
 
-SG_Panel::SG_Panel(float red, float green, float blue) : SG_Widget() {
+SG_Panel::SG_Panel(int c) : SG_Widget() {
   texture.resize(1);
   texture[0].type = SG_TEXTURE_COLOR;
-  texture[0].col.r = (Uint8)(red*255.0f);
-  texture[0].col.g = (Uint8)(green*255.0f);
-  texture[0].col.b = (Uint8)(blue*255.0f);
+  texture[0].col = *(current_sg->Color(c));
   texture[0].src = NULL;
   texture[0].texture = 0;
   texture[0].xfact = 1.0;

@@ -22,17 +22,14 @@
 #include <GL/gl.h>
 
 #include "sg_progressbar.h"
+#include "sg_globals.h"
 #include "sg_events.h"
 
-SG_ProgressBar::SG_ProgressBar(string mes, float red, float green, float blue,
-	float tred, float tgreen, float tblue,
-	float dred, float dgreen, float dblue)
-		: SG_TextArea(mes, red, green, blue, tred, tgreen, tblue) {
+SG_ProgressBar::SG_ProgressBar(string mes, int c, int tc, int dc)
+		: SG_TextArea(mes, c, tc) {
   texture.resize(2);
   texture[1] = texture[0];
-  texture[1].col.r = (Uint8)(dred*255.0f);
-  texture[1].col.g = (Uint8)(dgreen*255.0f);
-  texture[1].col.b = (Uint8)(dblue*255.0f);
+  texture[1].col = *(current_sg->Color(dc));
   BuildTexture(texture[1], message, 0.0, 0.0);
   }
 

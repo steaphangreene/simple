@@ -28,6 +28,7 @@
 
 using namespace std;
 
+#include "sg_colors.h"
 #include "sg_widget.h"
 
 enum SG_TextureType {
@@ -50,7 +51,7 @@ void BuildTexture(SG_Texture &tex);
 
 class SG_Panel : public SG_Widget {
 public:
-  SG_Panel(float red, float green, float blue);
+  SG_Panel(int c = SG_COL_BG);
   virtual ~SG_Panel();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
   virtual bool Render();

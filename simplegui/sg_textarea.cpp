@@ -87,13 +87,8 @@ void BuildTexture(SG_Texture &tex, string mes, float mx, float my) {
 //  glScalef(1.0-xmargin, 1.0-ymargin, 1.0);	//Scale for margins
   }
 
-SG_TextArea::SG_TextArea(string mes,
-	float red, float green, float blue,
-	float tred, float tgreen, float tblue)
-		: SG_Panel(red, green, blue) {
-  texture[0].fg.r = (Uint8)(tred*255.0f);
-  texture[0].fg.g = (Uint8)(tgreen*255.0f);
-  texture[0].fg.b = (Uint8)(tblue*255.0f);
+SG_TextArea::SG_TextArea(string mes, int c, int tc) : SG_Panel(c) {
+  texture[0].fg = *(current_sg->Color(tc));
   message = mes;
   xmargin = 0.0;
   ymargin = 0.0;

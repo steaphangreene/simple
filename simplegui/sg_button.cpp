@@ -25,15 +25,11 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Button::SG_Button(string mes, float red, float green, float blue,
-	float tred, float tgreen, float tblue,
-	float cred, float cgreen, float cblue)
-		: SG_TextArea(mes, red, green, blue, tred, tgreen, tblue) {
+SG_Button::SG_Button(string mes, int c, int tc, int cc)
+	: SG_TextArea(mes, c, tc) {
   texture.resize(3);
   texture[1] = texture[0];
-  texture[1].col.r = (Uint8)(cred*255.0f);
-  texture[1].col.g = (Uint8)(cgreen*255.0f);
-  texture[1].col.b = (Uint8)(cblue*255.0f);
+  texture[1].col = *(current_sg->Color(cc));
   BuildTexture(texture[1], message, 0.0, 0.0);
   }
 

@@ -25,11 +25,16 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 
+#include <vector>
+using namespace std;
+
 #define ASPECT_NO_SUPPORT	0
 #define ASPECT_EXPANDING_X	1
 #define ASPECT_EXPANDING_Y	2
 #define ASPECT_FIXED_X		4
 #define ASPECT_FIXED_Y		8
+
+#include "sg_colors.h"
 
 class SG_Widget;
 class SG_Alignment;
@@ -50,6 +55,14 @@ public:
   void UnsetFont() { cur_font = NULL; };
   TTF_Font *Font() { return cur_font; };
 
+  float Red(int c);
+  float Green(int c);
+  float Blue(int c);
+  const SDL_Color *Color(int c);
+  void SetColor(int c, float r, float g, float b);
+  int NewColor();
+  int NewColor(float r, float g, float b);
+
 protected:
   bool Resize(float asp);
   SG_Alignment *mWid;
@@ -69,6 +82,8 @@ protected:
   unsigned long mb_state;	// Bit Vector of Mouse Button States
 				// Can't handle more than 32 Buttons
   TTF_Font *cur_font;
+
+  vector<SDL_Color> col;
   };
 
 #include "sg_events.h"

@@ -19,6 +19,13 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+#ifndef SG_GLOBALS_H
+#define SG_GLOBALS_H
+
+#include "sg_colors.h"
 #include "simplegui.h"
 
 extern SimpleGUI *current_sg;
+
+#endif // SG_GLOBALS_H
+

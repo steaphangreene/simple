@@ -28,6 +28,7 @@ using namespace std;
 #include "sg_compound.h"
 
 class SG_Button;
+class SG_TextArea;
 
 class SG_FileBrowser : public SG_Compound {
 public:
@@ -40,6 +41,7 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   string filter;
   SG_Button *openb;
+  SG_TextArea *nameb;
   };
 
 #endif // SG_FILEBROWSER_H

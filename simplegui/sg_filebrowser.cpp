@@ -29,9 +29,11 @@
 SG_FileBrowser::SG_FileBrowser(const string &filt)
 	: SG_Compound(8, 5, 0.1, 0.1) {
   filter = filt;
-  background = new SG_Panel(0.2, 0.4, 0.2);
-  openb = new SG_Button("Open", 0.3, 0.6, 0.3, 0.0, 0.0, 0.0, 0.1, 0.2, 0.1);
+  background = new SG_Panel(SG_COL_FG);
+  openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_TEXT, SG_COL_LOW);
   AddWidget(openb, 6, 4, 2, 1);
+  nameb = new SG_TextArea("file.txt", SG_COL_LOW, SG_COL_TEXT);
+  AddWidget(nameb, 1, 2, 6, 1);
   }
 
 SG_FileBrowser::~SG_FileBrowser() {	//Even Need this?

@@ -78,6 +78,9 @@ int main(int argc, char **argv) {
 
   gui->LoadFont(fontfn);
 
+  int black = gui->NewColor(0.0, 0.0, 0.0);
+  int white = gui->NewColor(1.0, 1.0, 1.0);
+
   map<SG_Widget *, string> name;
 
   SG_Table *tab[2];
@@ -99,7 +102,7 @@ int main(int argc, char **argv) {
   align[1] = new SG_Alignment();
   align[1]->SetBorder(0.0, 0.0);
 
-  panel[0] = new SG_Panel(0.2, 0.2, 0.2);
+  panel[0] = new SG_Panel(gui->NewColor(0.2, 0.2, 0.2));
 
   pass[0] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
   pass[1] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
@@ -112,12 +115,12 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(align[0], 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
 
-  trans = new SG_TransLabel("TransLabel Is Here", 0.6, 0.4, 0.3);
+  trans = new SG_TransLabel("TransLabel Is Here", gui->NewColor(0.6, 0.4, 0.3));
   trans->SetMargins(0.2, 0.2);
   tab[0]->AddWidget(trans, 1, 3, 1, 1);
 
-  panel[1] = new SG_Panel(1.0, 1.0, 1.0);
-  panel[2] = new SG_Panel(0.0, 0.0, 0.0);
+  panel[1] = new SG_Panel(white);
+  panel[2] = new SG_Panel(black);
 
   align[0]->SetBackground(panel[1]);
   align[0]->AddWidget(align[1]);
@@ -125,17 +128,17 @@ int main(int argc, char **argv) {
   align[1]->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
-		1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.5, 0.5);
+	gui->NewColor(1.0, 0.0, 0.0), black, gui->NewColor(1.0, 0.5, 0.5));
   button[1] = new SG_Button("Green",
-		0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 0.5);
+	gui->NewColor(0.0, 1.0, 0.0), black, gui->NewColor(0.5, 1.0, 0.5));
   button[2] = new SG_Button("Blue",
-		0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.5, 1.0);
+	gui->NewColor(0.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.5, 1.0));
   button[3] = new SG_Button("Yellow",
-		1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.0);
+	gui->NewColor(1.0, 1.0, 0.0), black, gui->NewColor(0.5, 0.5, 0.0));
   button[4] = new SG_Button("Cyan",
-		0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5);
+	gui->NewColor(0.0, 1.0, 1.0), black, gui->NewColor(0.0, 0.5, 0.5));
   button[5] = new SG_Button("", //Blank!
-		1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5);
+	gui->NewColor(1.0, 0.0, 1.0), black, gui->NewColor(0.5, 0.0, 0.5));
 
   name[button[0]] = "red";
   name[button[1]] = "green";
@@ -153,12 +156,13 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(button[4], 1, 6);
   tab[1]->AddWidget(button[5], 1, 7);
 
-  text = new SG_TextArea("Text Area Is Here", 0.6, 0.4, 0.3, 0.0, 0.0, 0.0);
+  text = new SG_TextArea(
+	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3), black);
   text->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(text, 0, 4, 2, 1);
 
   prog = new SG_ProgressBar("Progress",
-	0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0);
+	gui->NewColor(0.3, 0.3, 0.3), black, gui->NewColor(0.6, 0.0, 0.0));
   prog->SetMargins(0.2, 0.2);
   tab[1]->AddWidget(prog, 0, 8, 2, 1);
 

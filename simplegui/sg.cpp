@@ -55,6 +55,32 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   current_sg = this;
   current_widget = NULL;
 
+  col.resize(SG_COL_MAX);
+
+  col[SG_COL_BG].r = 60;
+  col[SG_COL_BG].g = 60;
+  col[SG_COL_BG].b = 60;
+
+  col[SG_COL_FG].r = 90;
+  col[SG_COL_FG].g = 90;
+  col[SG_COL_FG].b = 90;
+
+  col[SG_COL_RAISED].r = 150;
+  col[SG_COL_RAISED].g = 150;
+  col[SG_COL_RAISED].b = 150;
+
+  col[SG_COL_LOW].r = 30;
+  col[SG_COL_LOW].g = 30;
+  col[SG_COL_LOW].b = 30;
+
+  col[SG_COL_HIGH].r = 90;
+  col[SG_COL_HIGH].g = 90;
+  col[SG_COL_HIGH].b = 150;
+
+  col[SG_COL_TEXT].r = 0;
+  col[SG_COL_TEXT].g = 0;
+  col[SG_COL_TEXT].b = 0;
+
   cur_font = NULL;
   }
 
@@ -230,4 +256,38 @@ void SimpleGUI::LoadFont(const char *fontfn) {
       exit(1);
       }
     }
+  }
+
+float SimpleGUI::Red(int c) {
+  return col[c].r / 255.0f;
+  }
+
+float SimpleGUI::Green(int c) {
+  return col[c].g / 255.0f;
+  }
+
+float SimpleGUI::Blue(int c) {
+  return col[c].b / 255.0f;
+  }
+
+const SDL_Color *SimpleGUI::Color(int c) {
+  return &col[c];
+  }
+
+void SimpleGUI::SetColor(int c, float r, float g, float b) {
+  col[c].r = (Uint8)(r*255.0f);
+  col[c].g = (Uint8)(g*255.0f);
+  col[c].b = (Uint8)(b*255.0f);
+  };
+
+int SimpleGUI::NewColor() {
+  int ret = col.size();
+  col.resize(ret+1);
+  return ret;
+  }
+
+int SimpleGUI::NewColor(float r, float g, float b) {
+  int ret = NewColor();
+  SetColor(ret, r, g, b);
+  return ret;
   }

@@ -32,7 +32,7 @@ using namespace std;
 
 class SG_TransLabel : public SG_Widget {
 public:
-  SG_TransLabel(string mes, float red, float green, float blue);
+  SG_TransLabel(string mes, int c);
   virtual ~SG_TransLabel();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
   virtual bool Render();
