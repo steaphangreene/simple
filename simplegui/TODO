@@ -6,7 +6,7 @@ Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s
-Implement actual mouse cursors
+Implement actual mouse cursors, including adjustable focus points
 Fixed ratio of text on widgets
 Alignment of text on widgets
 Scrolling of text on widgets
