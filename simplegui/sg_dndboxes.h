@@ -27,20 +27,30 @@
 
 #include "sg_compound.h"
 
-class SG_Button;
-class SG_TextArea;
+#include <vector>
+using namespace std;
+
+class SG_TransLabel;
 
 class SG_DNDBoxes : public SG_Compound {
 public:
   SG_DNDBoxes(int xsz, int ysz);
   virtual ~SG_DNDBoxes();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool Render(unsigned long cur_time);
   virtual bool ChildEvent(SDL_Event *event);
-  void TakeOut(int xp, int yp);
-  void PutIn(int xp, int yp);
+  void Exclude(int xp, int yp, int xsz = 1, int ysz = 1);
+  void Include(int xp, int yp, int xsz = 1, int ysz = 1);
+  bool AddItem(SG_TransLabel *wid, int x1, int y1, int xs=1, int ys=1);
+
+  //Handle all these to disable them!
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
+  virtual bool AddWidget(SG_Widget *wid);
+  virtual void RemoveWidget(SG_Widget *wid);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+  vector<bool> present;
   };
 
 #endif // SG_DNDBOXES_H

@@ -40,6 +40,7 @@
 #include "sg_compound.h"
 #include "sg_filebrowser.h"
 #include "sg_combobox.h"
+#include "sg_dndboxes.h"
 #include "sg_editable.h"
 #include "sg_listbox.h"
 #include "sg_multitab.h"
