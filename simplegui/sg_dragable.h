@@ -19,40 +19,26 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
+#ifndef SG_DRAGABLE_H
+#define SG_DRAGABLE_H
 
-//Basic Actions
-#define	SG_EVENT_BUTTONCLICK	100
-#define	SG_EVENT_BUTTONPRESS	101
-#define	SG_EVENT_BUTTONRELEASE	102
-#define	SG_EVENT_STICKYOFF	103
-#define	SG_EVENT_STICKYON	104
+#include "sg_panel.h"
 
-#define	SG_EVENT_DRAGGRAB	110
-#define	SG_EVENT_DRAGMOVE	111
-#define	SG_EVENT_DRAGRELEASE	112
+class SG_Dragable : public SG_Panel {
+public:
+  SG_Dragable(SG_Texture tex = SG_COL_RAISED);
+  virtual ~SG_Dragable();
+  void SetLimits(float mnx, float mny, float mxx, float mxy);
+  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual bool Render(unsigned long cur_time);
+//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  
+protected:
+//  static GL_MODEL Default_Mouse_Cursor;
+  float base_x, base_y;
+  float off_x, off_y;
+  float max_x, min_x, max_y, min_y;
+  };
 
-#define	SG_EVENT_EDIT		200
-#define	SG_EVENT_EDITCOMPLETE	201
-#define	SG_EVENT_EDITABORT	202
-
-//Passthrough Actions
-#define	SG_EVENT_CLICK		1000
-#define	SG_EVENT_LEFTCLICK	1001
-#define	SG_EVENT_MIDDLECLICK	1002
-#define	SG_EVENT_RIGHTCLICK	1003
-#define	SG_EVENT_SCROLLUP	1004
-#define	SG_EVENT_SCROLLDOWN	1005
-#define	SG_EVENT_CLICKMAX	1032	//Max of 31 mouse buttons!
-
-#define	SG_EVENT_BOX		1032
-#define	SG_EVENT_LEFTBOX	1033
-#define	SG_EVENT_MIDDLEBOX	1034
-#define	SG_EVENT_RIGHTBOX	1035
-#define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
-
-//Compound Actions
-#define	SG_EVENT_OK		2000
-#define	SG_EVENT_FILEOPEN	2001
-#define	SG_EVENT_SELECT		2002
+#endif // SG_DRAGABLE_H
 

@@ -26,7 +26,7 @@
 
 #include "sg_dndboxes.h"
 #include "sg_panel.h"
-#include "sg_button.h"
+#include "sg_dragable.h"
 #include "sg_events.h"
 #include "sg_globals.h"
 
@@ -85,6 +85,11 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
     if(*itrw) {
       glPushMatrix();
       CalcGeometry(itrg);
+//      if((*itrw) == current_sg->CurrentWidget()) {
+//	float x, y;
+//	current_sg->GetMousePos(x, y);
+//	glTranslatef(x - cur_offx, y - cur_offy, 0.0); //FIXME: Scale is WRONG!
+//	}
       glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
       (*itrw)->Render(cur_time);
@@ -104,8 +109,8 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
     return 0;
     }
 
-  for(int x = x1; x <= x1+xs; ++x) {
-    for(int y = y1; y <= y1+ys; ++y) {
+  for(int x = x1; x < x1+xs; ++x) {
+    for(int y = y1; y < y1+ys; ++y) {
       if(!present[y*xsize + x]) {
 	fprintf(stderr, "Illegal DND add, cell (%d,%d) not present.\n", x, y);
 	return 0;
@@ -113,11 +118,17 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
       }
     }
 
-  SG_TableGeometry geom = { x1, y1, xs, ys };
-  SG_Button *but = new SG_Button("", icon, icon, icon);
+  float mnx, mny, mxx, mxy;	//Limits
+  mnx = -(float)(x1) * 2.0 / (float)(xs);
+  mny = -(float)(ysize-(y1+ys)) * 2.0 / (float)(ys);
+  mxx = (float)(xsize-(x1+xs)) * 2.0 / (float)(xs);
+  mxy = (float)(y1) * 2.0 / (float)(ys);
+
+  SG_Dragable *but = new SG_Dragable(icon);
+  but->SetLimits(mnx, mny, mxx, mxy);
   but->SetTransparent();
-  widgets.push_back(but);
-  wgeom.push_back(geom);
+
+  SG_Table::AddWidget(but, x1, y1, xs, ys);
   return 0;
   }
                                                                                 

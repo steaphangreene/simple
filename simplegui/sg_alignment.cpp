@@ -163,7 +163,7 @@ void SG_Alignment::TurnOff() {
 
 bool SG_Alignment::AddWidget(SG_Widget *wid) {
   if(widgets.size() > 0) {
-    fprintf(stderr, "Warning: Alignment Widget Already Full!\n");
+    fprintf(stderr, "WARNING: Alignment Widget Already Full!\n");
     return 0;
     }
   widgets.push_back(wid);

@@ -51,7 +51,7 @@ OBJS:=	sg.o sg_widget.o sg_texture.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
 	sg_panel.o sg_animatedpanel.o \
 	sg_textarea.o sg_progressbar.o sg_editable.o \
-	sg_button.o sg_stickybutton.o sg_menu.o \
+	sg_button.o sg_stickybutton.o sg_menu.o sg_dragable.o \
 	sg_compound.o sg_filebrowser.o sg_multitab.o sg_listbox.o \
 	sg_radiobuttons.o sg_combobox.o sg_pulldown.o sg_sliderbar.o \
 	sg_scrollingarea.o sg_dndboxes.o sg_tabs.o \
@@ -66,7 +66,7 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
 	sg_alignment.win32_o sg_table.win32_o sg_scrollable.win32_o \
 	sg_panel.win32_o sg_animatedpanel.win32_o \
 	sg_textarea.win32_o sg_progressbar.win32_o sg_editable.win32_o \
-	sg_button.win32_o sg_stickybutton.win32_o sg_menu.win32_o \
+	sg_button.win32_o sg_stickybutton.win32_o sg_menu.win32_o sg_dragable.win32_o\
 	sg_compound.win32_o sg_filebrowser.win32_o sg_multitab.win32_o sg_listbox.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \

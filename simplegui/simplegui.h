@@ -29,6 +29,7 @@
 #include "sg_table.h"
 #include "sg_scrollable.h"
 #include "sg_button.h"
+#include "sg_dragable.h"
 #include "sg_stickybutton.h"
 #include "sg_menu.h"
 #include "sg_panel.h"

@@ -90,8 +90,8 @@ void SG_Panel::BuildTexture(int st) {
 	SG_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
-    texture[st].xfact = (float)(xsize) / (float)(texture[st].src->w);
-    texture[st].yfact = (float)(ysize) / (float)(texture[st].src->h);
+    texture[st].xfact = (float)(texture[st].src->w) / (float)(xsize);
+    texture[st].yfact = (float)(texture[st].src->h) / (float)(ysize);
     }
 
   if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
