@@ -135,12 +135,12 @@ void SimpleModel_Q3Dir::SetAnimation(int anim) {
     }
   else if(anim < TORSO_MAX) {
     torso->SetAnimation(anim);
-    if(legs->GetAnimation() < 6) legs->SetAnimation(9);
+    if(legs->GetAnimation() < 6) legs->SetAnimation(LEGS_IDLE);
     }
   else if(anim < LEGS_MAX) {
     anim -= (LEGS_START - TORSO_START);
     legs->SetAnimation(anim);
-    if(torso->GetAnimation() < 6) torso->SetAnimation(5);
+    if(torso->GetAnimation() < 6) torso->SetAnimation(TORSO_STAND);
     }
   }
 
