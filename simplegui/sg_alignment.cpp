@@ -35,6 +35,8 @@ SG_Alignment::~SG_Alignment() {
   for(; itrw != tmp.end(); ++itrw) {
     if(*itrw) delete (*itrw);
     }
+  if(background) delete background;
+  background = NULL;
   }
 
 bool SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
