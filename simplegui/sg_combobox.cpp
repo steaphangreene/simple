@@ -36,7 +36,7 @@ SG_ComboBox::SG_ComboBox(vector<string> options, int binvpro,
   opb = new SG_Button("v", btex, btex_dis, btex_click);
   AddWidget(opb, binvpro-1, 0, 1, 1);
   SG_Widget *labelb =
-	new SG_TextArea(options[0], SG_COL_LOW);
+	new SG_TextArea(options[0], ttex, ttex_dis);
   AddWidget(labelb, 0, 0, binvpro-1, 1);
   }
 
