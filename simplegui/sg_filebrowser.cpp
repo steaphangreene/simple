@@ -60,8 +60,6 @@ SG_FileBrowser::SG_FileBrowser(const string &filter)
 
   string reg = filter.substr(pos);
 
-  printf("Dir = %s, Reg = %s\n", path.c_str(), reg.c_str());
-
   dirb->SetText(path);
 
   unsigned int astpos = reg.find('*');
