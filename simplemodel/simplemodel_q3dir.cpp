@@ -105,7 +105,7 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
   return true;
   }
 
-bool SimpleModel_Q3Dir::Render(Uint32 cur_time) {
+bool SimpleModel_Q3Dir::Render(Uint32 cur_time, int anim, Uint32 start_time) {
   //FIXME: Interpolate Models Using Animations
   //FIXME: Interpolate Tags
   if(legs) {

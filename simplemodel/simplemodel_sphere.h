@@ -33,7 +33,7 @@ public:
 
   virtual bool Load(const string &filenm);
 
-  virtual bool Render(Uint32 cur_time);
+  virtual bool Render(Uint32 cur_time, int anim = 0, Uint32 start_time = 0);
 
   virtual void SetAnimation(int part);
 

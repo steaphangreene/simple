@@ -231,7 +231,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   return false;
   }
 
-bool SimpleModel_MD3::Render(Uint32 cur_time) {
+bool SimpleModel_MD3::Render(Uint32 cur_time, int anim, Uint32 start_time) {
   glCullFace(GL_FRONT);	//MD3 models use front face culling
 
   int start = 0, end = 1;
