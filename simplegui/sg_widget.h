@@ -37,7 +37,7 @@ public:
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
-  virtual bool Render();
+  virtual bool Render(unsigned long cur_time);
   void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
   void Disable() { flags |= SG_WIDGET_FLAGS_DISABLED; };

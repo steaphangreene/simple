@@ -74,7 +74,7 @@ void SG_Panel::BuildTexture(int st) {
   texture[st].dirty = 0;
   }
 
-bool SG_Panel::Render() {
+bool SG_Panel::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;

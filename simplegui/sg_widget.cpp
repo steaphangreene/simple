@@ -46,7 +46,7 @@ bool SG_Widget::HasWidget(SG_Widget *targ) {
   return this == targ;
   }
 
-bool SG_Widget::Render() {
+bool SG_Widget::Render(unsigned long cur_time) {
   return 1;
   }
 

@@ -80,15 +80,15 @@ bool SG_Scrollable::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
   return 1;
   }
 
-bool SG_Scrollable::Render() {
+bool SG_Scrollable::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Scrollable %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
 
   glPushMatrix();
 
-  if(background) background->Render();	//Same "layer" as parent
-  glTranslatef(0.0, 0.0, 0.0625);	//Advance to next "layer"
+  if(background) background->Render(cur_time);	//Same "layer" as parent
+  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   for(; itrw != widgets.end(); ++itrw) {
@@ -96,7 +96,7 @@ bool SG_Scrollable::Render() {
       glPushMatrix();
       CalcGeometry();
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
-      (*itrw)->Render();
+      (*itrw)->Render(cur_time);
       glPopMatrix();
       }
     }

@@ -39,7 +39,7 @@ public:
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
-  virtual bool Render();
+  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:

@@ -19,34 +19,28 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_PANEL_H
-#define SG_PANEL_H
-
 #include <GL/gl.h>
 
-#include <vector>
+#include "sg_globals.h"
+#include "sg_animatedpanel.h"
 
-using namespace std;
+#include <SDL/SDL_ttf.h>
 
-#include "sg_colors.h"
-#include "sg_texture.h"
-#include "sg_widget.h"
+SG_AnimatedPanel::SG_AnimatedPanel(const vector<int> &txtrs, float mspf)
+	: SG_Panel(txtrs[0]) {
+  for(int tx=1; tx < int(txtrs.size()); ++tx) {
+    texture.push_back(txtrs[tx]);
+    }
+  speed = mspf;
+  }
 
-class SG_Panel : public SG_Widget {
-public:
-  SG_Panel(int c = SG_COL_BG);
-  virtual ~SG_Panel();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render(unsigned long cur_time);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+SG_AnimatedPanel::~SG_AnimatedPanel() {
+  }
+
+bool SG_AnimatedPanel::Render(unsigned long cur_time) {
+  state = int((float)(cur_time) / speed + 0.5) % texture.size();
+  return SG_Panel::Render(cur_time);
+  }
+//  bool SG_AnimatedPanel::SetDefaultCursor(GL_MODEL *cur);
   
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-
-  virtual void BuildTexture(int st);
-
-  vector<SG_Texture> texture;
-  int state; //Which texture to use - for multi-state support
-  };
-
-#endif // SG_PANEL_H
+//  static GL_MODEL SG_AnimatedPanel::Default_Mouse_Cursor = NULL;

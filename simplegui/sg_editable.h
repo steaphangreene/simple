@@ -31,7 +31,7 @@ public:
   virtual ~SG_Editable();
   virtual bool HandleKeyboardEvent(SDL_Event *event);
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
-  virtual bool Render();
+  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:

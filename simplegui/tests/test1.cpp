@@ -86,7 +86,8 @@ int main(int argc, char **argv) {
 
   SG_Table *popup;
   SG_Table *tab[2];
-  SG_Widget *panel[3];
+  SG_Panel *panel[2];
+  SG_AnimatedPanel *anim;
   SG_Button *button[6];
   SG_Alignment *align;
   SG_Scrollable *scroll;
@@ -125,11 +126,21 @@ int main(int argc, char **argv) {
   tab[0]->AddWidget(trans, 1, 2, 1, 2);
 
   panel[1] = new SG_Panel(white);
-  panel[2] = new SG_Panel(black);
+
+  vector<int> cols;
+  cols.push_back(black);
+  cols.push_back(black);
+  cols.push_back(black);
+  cols.push_back(black);
+  cols.push_back(black);
+  cols.push_back(white);
+  cols.push_back(black);
+  cols.push_back(white);
+  anim = new SG_AnimatedPanel(cols, 125.0f);
 
   scroll->SetBackground(panel[1]);
   scroll->AddWidget(align);
-  align->SetBackground(panel[2]);
+  align->SetBackground(anim);
   align->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",

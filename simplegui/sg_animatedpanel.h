@@ -19,34 +19,27 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_PANEL_H
-#define SG_PANEL_H
+#ifndef SG_ANIMATEDPANEL_H
+#define SG_ANIMATEDPANEL_H
 
 #include <GL/gl.h>
 
-#include <vector>
+#include <string>
 
 using namespace std;
 
-#include "sg_colors.h"
-#include "sg_texture.h"
-#include "sg_widget.h"
+#include "sg_panel.h"
 
-class SG_Panel : public SG_Widget {
+class SG_AnimatedPanel : public SG_Panel {
 public:
-  SG_Panel(int c = SG_COL_BG);
-  virtual ~SG_Panel();
-  virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
+  SG_AnimatedPanel(const vector<int> &txtrs, float mspf);
+  virtual ~SG_AnimatedPanel();
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-
-  virtual void BuildTexture(int st);
-
-  vector<SG_Texture> texture;
-  int state; //Which texture to use - for multi-state support
+  float speed;
   };
 
-#endif // SG_PANEL_H
+#endif // SG_ANIMATEDPANEL_H

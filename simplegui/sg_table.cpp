@@ -94,15 +94,15 @@ bool SG_Table::HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
   return 1;
   }
 
-bool SG_Table::Render() {
+bool SG_Table::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Table %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
 
   glPushMatrix();
 
-  if(background) background->Render();  //Same "layer" as parent
-  glTranslatef(0.0, 0.0, 0.0625);       //Advance to next "layer"
+  if(background) background->Render(cur_time);	//Same "layer" as parent
+  glTranslatef(0.0, 0.0, 0.0625);		//Advance to next "layer"
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
@@ -112,7 +112,7 @@ bool SG_Table::Render() {
       CalcGeometry(itrg);
       glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
-      (*itrw)->Render();
+      (*itrw)->Render(cur_time);
       glPopMatrix();
       }
     }

@@ -3,7 +3,6 @@ Need a way to handle sounds for compound's buttons
 Allow compounds to intercept KB events too
 
 -=TODO=-
-AnimatedPanel
 Arrows in text objects ("Indicator Arrows")
 
 -=To Flush Out=-
@@ -23,6 +22,7 @@ Implement ScrollingArea
 Implement Menu
 
 -=Wishlist=-
+Dynamically resizeable font?
 Separate public simplegui.h from internal defs?
 Widget-specific fonts?
 Drag and drop boxes?

@@ -121,14 +121,14 @@ bool SimpleGUI::Render(unsigned long cur_time) {
     glScalef(1.0, aspect_actual, 1.0);
     }
 
-  mWid->Render();
+  mWid->Render(cur_time);
 
   glTranslatef(0.0, 0.0, 0.5);		//Move out in front
 
   if(popWid) {
     glPushMatrix();
     glScalef(popx, popy, 1.0);
-    popWid->Render();
+    popWid->Render(cur_time);
     glPopMatrix();
     }
 

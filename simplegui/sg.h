@@ -44,7 +44,7 @@ class SimpleGUI {
 public:
   SimpleGUI(int aspmeth, float asp);
   ~SimpleGUI();
-  bool Render(unsigned long cur_time = 0);
+  bool Render(unsigned long cur_time);
   bool ProcessEvent(SDL_Event *event);
 
   SG_Alignment *MasterWidget() { return mWid; };
@@ -117,6 +117,7 @@ protected:
 #include "sg_stickybutton.h"
 #include "sg_menu.h"
 #include "sg_panel.h"
+#include "sg_animatedpanel.h"
 #include "sg_progressbar.h"
 #include "sg_passthrough.h"
 #include "sg_textarea.h"

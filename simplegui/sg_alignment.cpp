@@ -95,14 +95,14 @@ void SG_Alignment::SetBorder(float xbor, float ybor) {
   yborder = ybor;
   }
 
-bool SG_Alignment::Render() {
+bool SG_Alignment::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Alignment %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
 
   glPushMatrix();
 
-  if(background) background->Render();	//Same "layer" as parent
+  if(background) background->Render(cur_time);	//Same "layer" as parent
   glTranslatef(0.0, 0.0, 0.0625);	//Advance to next "layer"
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
@@ -111,7 +111,7 @@ bool SG_Alignment::Render() {
       glPushMatrix();
       CalcGeometry();
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
-      (*itrw)->Render();
+      (*itrw)->Render(cur_time);
       glPopMatrix();
       }
     }
