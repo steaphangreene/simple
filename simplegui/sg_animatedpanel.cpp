@@ -19,12 +19,12 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL_opengl.h>
+#include "SDL_opengl.h"
 
 #include "sg_globals.h"
 #include "sg_animatedpanel.h"
 
-#include <SDL/SDL_ttf.h>
+#include "SDL_ttf.h"
 
 SG_AnimatedPanel::SG_AnimatedPanel(const vector<SG_Texture> &txtrs, float mspf)
 	: SG_Panel(txtrs[0]) {

@@ -19,7 +19,7 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL_opengl.h>
+#include "SDL_opengl.h"
 
 // Posix REGEX not present in all environments (Windows), can't use it?
 // #include <regex.h>

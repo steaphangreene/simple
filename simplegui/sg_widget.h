@@ -22,7 +22,7 @@
 #ifndef SG_WIDGET_H
 #define SG_WIDGET_H
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 #define SG_WIDGET_FLAGS_HIDDEN		1
 #define SG_WIDGET_FLAGS_DISABLED	2

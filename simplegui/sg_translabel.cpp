@@ -19,12 +19,12 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL_opengl.h>
+#include "SDL_opengl.h"
 
 #include "sg_globals.h"
 #include "sg_translabel.h"
 
-#include <SDL/SDL_ttf.h>
+#include "SDL_ttf.h"
 
 SG_TransLabel::SG_TransLabel(string mes, int col, float mx, float my)
 	: SG_TextArea(mes,

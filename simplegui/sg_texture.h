@@ -26,7 +26,7 @@
 #include <set>
 using namespace std;
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 enum SG_TextureType {
    SG_TEXTURE_NONE = 0,

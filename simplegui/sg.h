@@ -22,8 +22,8 @@
 #ifndef	SG_H
 #define	SG_H
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include "SDL.h"
+#include "SDL_ttf.h"
 
 #include <map>
 #include <vector>
