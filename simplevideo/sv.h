@@ -27,13 +27,14 @@
 
 class SimpleVideo {	//Abstract Class, no polymorphsim, use only the derrived
 public:
-  SimpleVideo(int xs, int ys);
   ~SimpleVideo();
   bool StartScene(double zoom = 4.0, double x = 0.0, double y = 0.0);
   bool FinishScene();
   bool ToggleFullscreen();
   bool Resize(int, int);
 protected:
+  SimpleVideo(int xs, int ys);	//You're not supposed to use this class itself
+
   SDL_Surface *surface;
   int videoFlags;
 
