@@ -58,13 +58,12 @@ static unsigned long fread_ulongLE(FILE *fl) {
   }
 
 static short fread_shortLE(FILE *fl) {
-  union { short s; char c[4]; } data;
+  union { short s; char c[2]; } data;
 
   fread(&data.s, 1, sizeof(short), fl);
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  swap(data.c[3], data.c[0]);
-  swap(data.c[2], data.c[1]);
+  swap(data.c[1], data.c[0]);
 #endif
 
   return data.s;
