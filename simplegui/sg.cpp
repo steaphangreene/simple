@@ -33,6 +33,14 @@ using namespace std;
 SimpleGUI *current_sg = NULL;
 
 SimpleGUI::SimpleGUI(int aspmeth, float asp) {
+  if(current_sg) {
+    fprintf(stderr, "ERROR: Attempted to create multiple SimpleGUI instances.\n");
+    exit(1);
+    }
+  current_sg = this;
+  current_widget = NULL;
+  focus_widget = NULL;
+
   mWid = new SG_Alignment();
   popWid = NULL;
   popx = 0.5, popy = 0.5;
@@ -54,10 +62,6 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   mousex = -100.0;	// So system knows not to draw cursor until it moves
   mousey = -100.0;
-
-  current_sg = this;
-  current_widget = NULL;
-  focus_widget = NULL;
 
   col.resize(SG_COL_MAX * 2);
 
