@@ -45,7 +45,13 @@ public:
   ~SimpleGUI();
   bool Render(unsigned long cur_time = 0);
   bool ProcessEvent(SDL_Event *event);
+
   SG_Alignment *MasterWidget() { return mWid; };
+
+  //Popup Widgets MUST have solid backgrounds!
+  SG_Alignment *PopupWidget() { return mWid; };
+  void SetPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5);
+  void UnsetPopupWidget() { mWid = NULL; };
 
   void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
   void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
@@ -65,7 +71,8 @@ public:
 
 protected:
   bool Resize(float asp);
-  SG_Alignment *mWid;
+  SG_Alignment *mWid, *popWid;
+  float popx, popy;
   int aspect_method;
   float aspect;
   float aspect_actual;

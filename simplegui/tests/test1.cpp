@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 
   map<SG_Widget *, string> name;
 
-  SG_Table *tab[2];
+  SG_Table *tab[3];
   SG_Widget *panel[3];
   SG_Button *button[6];
   SG_Alignment *align;
@@ -172,6 +172,12 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(fileb, 0, 9, 2, 3);
 
   tab[1]->SetBorder(0.0625, 0.125);
+
+
+  tab[2] = new SG_Table(6, 5);
+  tab[2]->SetBackground(new SG_Panel());
+  tab[2]->AddWidget(new SG_TextArea("Popup!"), 1, 2, 4, 1);
+  gui->SetPopupWidget(tab[2], 0.3, 0.3); 
 
   SDL_Event event;
   int user_quit = 0;

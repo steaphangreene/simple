@@ -34,6 +34,8 @@ SimpleGUI *current_sg = NULL;
 
 SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   mWid = new SG_Alignment();
+  popWid = NULL;
+  popx = 0.5, popy = 0.5;
   aspect = asp;
   aspect_actual = 1.0;
   aspect_method = aspmeth;
@@ -87,6 +89,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 SimpleGUI::~SimpleGUI() {
   delete mWid;
   mWid = NULL;
+  if(popWid) delete popWid;
+  popWid = NULL;
 
   if(cur_font) TTF_CloseFont(cur_font);
   cur_font = NULL;
@@ -111,6 +115,15 @@ bool SimpleGUI::Render(unsigned long cur_time) {
     }
 
   mWid->Render();
+
+  glTranslatef(0.0, 0.0, 0.5);		//Move out in front
+
+  if(popWid) {
+    glPushMatrix();
+    glScalef(popx, popy, 1.0);
+    popWid->Render();
+    glPopMatrix();
+    }
 
   //Now we draw the mouse cursor (if at least one axis is within coord system)
   if((mousex >= -1.0 && mousex <= 1.0) || (mousey >= -1.0 && mousey <= 1.0)) {
@@ -174,6 +187,11 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousey = float(event->button.y);
     ScreenToRelative(mousex, mousey);
 
+    if(popWid && mousex < popx && mousey < popy
+	&& mousex > -popx && mousey > -popy) {
+      return popWid->HandleMouseEvent(event, mousex*popx, mousey*popy);
+      }
+
     return mWid->HandleMouseEvent(event, mousex, mousey);
     }
 
@@ -197,8 +215,13 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(current_widget)
       return mWid->HandMouseEventTo(current_widget, event, mousex, mousey);
-    else
-      return mWid->HandleMouseEvent(event, mousex, mousey);
+
+    if(popWid && mousex < popx && mousey < popy
+	&& mousex > -popx && mousey > -popy) {
+      return popWid->HandleMouseEvent(event, mousex*popx, mousey*popy);
+      }
+
+    return mWid->HandleMouseEvent(event, mousex, mousey);
     }
 
   return 1;
@@ -290,4 +313,10 @@ int SimpleGUI::NewColor(float r, float g, float b) {
   int ret = NewColor();
   SetColor(ret, r, g, b);
   return ret;
+  }
+
+void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py) {
+  popWid = wid;
+  popx = px;
+  popy = py;
   }

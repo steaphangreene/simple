@@ -1,7 +1,6 @@
 -=To FIX=-
 
 -=TODO=-
-Pop-Ups/Dialogs
 
 -=To Flush Out=-
 Multi-line Text Areas (Needed for Menus too)
@@ -25,3 +24,4 @@ Need a way to handle sounds for compound's buttons
 Separate public simplegui.h from internal defs?
 Widget-Specific Fonts?
 Drag and Drop Boxes?
+Modality of popup?
