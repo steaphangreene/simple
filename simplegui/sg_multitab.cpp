@@ -48,6 +48,13 @@ SG_MultiTab::SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
   }
 
 SG_MultiTab::~SG_MultiTab() {
+  RemoveWidget(widgets[1]);
+  vector<SG_Alignment *> tmp = subscreens;
+  vector<SG_Alignment *>::iterator itrw = tmp.begin();
+  subscreens.clear();
+  for(; itrw != tmp.end(); ++itrw) {
+    if(*itrw) delete (*itrw);
+    }
   }
 
 void SG_MultiTab::Set(int which) {
