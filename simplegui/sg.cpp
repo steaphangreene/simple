@@ -162,6 +162,9 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
   glPushMatrix();
   glLoadIdentity();
 
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+
   //This makes sure the needed functions are setup right for the widgets.
   glBlendFunc(GL_SRC_ALPHA,  GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_BLEND);

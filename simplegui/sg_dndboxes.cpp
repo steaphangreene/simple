@@ -41,6 +41,10 @@ SG_DNDBoxes::~SG_DNDBoxes() {
 bool SG_DNDBoxes::Render(unsigned long cur_time) {
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
 
+  if(background) background->Render(cur_time);
+  SG_Widget *tmpback = background;
+  background = NULL;
+
   glPushMatrix();
 
   glTranslatef(0.0, 0.0, 0.03125);		//Advance to next half "layer"
@@ -87,7 +91,9 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 
   glPopMatrix();
 
-  return SG_Table::Render(cur_time);
+  int ret = SG_Table::Render(cur_time);
+  background = tmpback;
+  return ret;
   }
 
 bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
