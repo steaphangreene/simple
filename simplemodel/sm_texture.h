@@ -27,7 +27,7 @@
 #include <string>
 using namespace std;
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 enum SM_TextureType {
    SM_TEXTURE_NONE = 0,

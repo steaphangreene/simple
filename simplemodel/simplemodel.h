@@ -26,8 +26,8 @@
 #include <vector>
 using namespace std;
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include "SDL.h"
+#include "SDL_opengl.h"
 
 #include "sm_texture.h"
 
