@@ -44,7 +44,9 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 OBJS:=	simplegui.o sg_widget.o sg_alignment.o sg_table.o \
 	sg_panel.o sg_textarea.o sg_button.o sg_progressbar.o \
-	sg_compound.o sg_filebrowser.o \
+	sg_compound.o sg_filebrowser.o sg_multitab.o sg_listbox.o \
+	sg_radiobuttons.o sg_combobox.o sg_pulldown.o sg_sliderbar.o \
+	sg_scrollingarea.o \
 	sg_passthrough.o sg_translabel.o
 
 all: $(OBJS)
