@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   int xs=640, ys=480;
 
   if(argc != 2) {
-    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir>\n");
+    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir>\n", argv[0]);
     exit(1);
     }
 
