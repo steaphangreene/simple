@@ -1,12 +1,12 @@
 -=To FIX=-
 Need a way to handle sounds for compound's buttons
-Clean up of textures on widget deletion
+Verify clean up of textures on widget deletion
 
 -=TODO=-
 
 -=To Flush Out=-
-Implement Actual Mouse Cursors
-Disabled State Textures
+Implement actual mouse cursors
+Disabled state textures
 Implement Scrollable
 Implement ProgressBar
 Implement FileBrowser
@@ -19,10 +19,11 @@ Implement SliderBar
 Implement ScrollingArea
 Implement Menu
 Implement Editable
+Add passed-in texture support
 
 -=Wishlist=-
 Separate public simplegui.h from internal defs?
-Widget-Specific Fonts?
-Drag and Drop Boxes?
+Widget-specific fonts?
+Drag and drop boxes?
 Modality of popup?
 Event pass-through and transparency?
