@@ -1,18 +1,20 @@
 -=To FIX=-
 
--=TODO=-
+-=To Flush Out=-
+Implement ProgressBar
 Replace color parts with color object
 Multi-line Text Areas
 Disabled State Textures
+
+-=TODO=-
 Menus
 Pop-Ups/Dialogs
 Implement Actual Mouse Cursors
 Scrollable
-ProgressBar
-Editable (Framework)
+Editable
 StickyButton
 Menu
-Compound Widgets!
+Compound Widgets
 
 -=Wishlist=-
 Widget-Specific Fonts?
