@@ -147,4 +147,3 @@ void SimpleModel_Q3Dir::SetAnimation(int anim) {
 int SimpleModel_Q3Dir::GetAnimation() {
   return 0;
   }
-
