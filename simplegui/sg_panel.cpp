@@ -56,14 +56,27 @@ void SG_Panel::BuildTexture(int st) {
     glFinish();
     SDL_FreeSurface(texture[st].cur);
     }
-  texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
+  if(texture[st].type == SG_TEXTURE_COLOR) {
+    texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
 	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-  SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
+    SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
+    }
+  else if(texture[st].type == SG_TEXTURE_TRANS) {
+    texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
+	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    }
+  else if(texture[st].type == SG_TEXTURE_DEFINED) {
+    texture[st].cur = SDL_CreateRGBSurface(0,
+	texture[st].src->w, texture[st].src->h, 32,
+	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
+    }
 
   if(!texture[st].texture) glGenTextures(1, &(texture[st].texture));
   glBindTexture(GL_TEXTURE_2D, texture[st].texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_BGRA,
+  glTexImage2D(GL_TEXTURE_2D, 0, 4,
+		texture[st].cur->w, texture[st].cur->h, 0, GL_BGRA,
                 GL_UNSIGNED_BYTE, texture[st].cur->pixels );
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

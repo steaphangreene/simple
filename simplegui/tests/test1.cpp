@@ -19,6 +19,9 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+int NUM_FRAMES = 32;	//Not #defines so they can be capped later.
+int FRAME_DIM = 128;
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_keysym.h>
@@ -79,7 +82,6 @@ int main(int argc, char **argv) {
   gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
-  int black = gui->NewColor(0.0, 0.0, 0.0);
   int white = gui->NewColor(1.0, 1.0, 1.0);
 
   map<SG_Widget *, string> name;
@@ -127,7 +129,27 @@ int main(int argc, char **argv) {
 
   panel[1] = new SG_Panel(white);
 
+  int maxdim;	// Cap the texture to maximum size for target hardware!
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxdim);
+  if(FRAME_DIM > maxdim) FRAME_DIM = maxdim;
+
   vector<SG_Texture> cols;
+  cols.resize(NUM_FRAMES, (SDL_Surface *)(NULL));
+  for(int tx=0; tx < NUM_FRAMES; ++tx) {  //Create NUM_FRAMES actual textures
+    cols[tx].src = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
+	0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    SDL_FillRect(cols[tx].src, NULL, SDL_MapRGB(cols[tx].src->format, 0, 0, 0));
+    unsigned long colwht = SDL_MapRGB(cols[tx].src->format, 255, 255, 255);
+    for(int x=0; x < FRAME_DIM; ++x) {
+      for(int y=0; y < FRAME_DIM; ++y) {
+	if(rand()&32) {
+	  ((unsigned long *)(cols[tx].src->pixels))[y*FRAME_DIM+x] = colwht;
+	  }
+	}
+      }
+    }
+/*
+  int black = gui->NewColor(0.0, 0.0, 0.0);
   cols.push_back(SG_Texture(black));
   cols.push_back(SG_Texture(black));
   cols.push_back(SG_Texture(black));
@@ -136,7 +158,8 @@ int main(int argc, char **argv) {
   cols.push_back(SG_Texture(white));
   cols.push_back(SG_Texture(black));
   cols.push_back(SG_Texture(white));
-  anim = new SG_AnimatedPanel(cols, 125.0f);
+*/
+  anim = new SG_AnimatedPanel(cols, 12.5f);
 
   scroll->SetBackground(panel[1]);
   scroll->AddWidget(align);
