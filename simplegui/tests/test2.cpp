@@ -82,20 +82,12 @@ int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
 
     SDL_PumpEvents();
     SDL_mutexP(gui_mutex);
-
-    SDL_PumpEvents();
     gui->RenderStart(cur_time);
-
-    SDL_PumpEvents();
     SDL_mutexV(gui_mutex);
 
     SDL_PumpEvents();
     SDL_mutexP(gui_mutex);
-
-    SDL_PumpEvents();
     gui->Render(cur_time);
-
-    SDL_PumpEvents();
     SDL_mutexV(gui_mutex);
 
     SDL_PumpEvents();
