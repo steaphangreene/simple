@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
   if(!init_renderer(xs, ys)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
     }
-  audio_init(256);
+  audio_init(2048);
 
   int click = audio_buildsound(click_data, sizeof(click_data));
   int bong = audio_buildsound(bong_data, sizeof(bong_data));
