@@ -23,12 +23,8 @@ Implement ScrollingArea
 Implement Menu
 
 -=Wishlist=-
-Icon objects ("Indicator Arrows")?
 Widget-specific fonts?
-Drag and drop boxes?
 Modality of popup?
-Event pass-through and transparency?
-Add "INTANGIBLE" flag?
 Add time offset to AnimatedPanel widget?
 Allow SG_Table to be resizable?
 Console widget?

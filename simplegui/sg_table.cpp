@@ -45,11 +45,14 @@ SG_Table::~SG_Table() {
     }
   }
 
-bool SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Table/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  int ret = 1;
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
@@ -57,17 +60,25 @@ bool SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
     CalcGeometry(itrg);
     if(x >= cur_geom.xp-cur_geom.xs && x <= cur_geom.xp+cur_geom.xs
 	&& y >= cur_geom.yp-cur_geom.ys && y <= cur_geom.yp+cur_geom.ys) {
+      float back_x = x, back_y = y;
+
       x -= cur_geom.xp;	//Scale the coordinates to widget's relative coords
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return (*itrw)->HandleEvent(event, x, y);
+      ret = (*itrw)->HandleEvent(event, x, y);
+      if(ret != -1) return ret;
+
+      x = back_x; y = back_y;
       }
     }
 
-  if(background) return background->HandleEvent(event, x, y);
+  if(background) {
+    ret = background->HandleEvent(event, x, y);
+    if(ret != -1) return ret;
+    }
 
-  return 1;
+  return ret;
   }
 
 bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,

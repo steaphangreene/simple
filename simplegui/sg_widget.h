@@ -28,18 +28,23 @@
 #define SG_WIDGET_FLAGS_DISABLED	2
 #define SG_WIDGET_FLAGS_PRESSED		4
 #define SG_WIDGET_FLAGS_ON		8
+#define SG_WIDGET_FLAGS_IGNORE		16
 
 class SG_Widget {
 public:
   SG_Widget();
   virtual ~SG_Widget();
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
   virtual bool Render(unsigned long cur_time);
+
   void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
+
+  void Ignore() { flags |= SG_WIDGET_FLAGS_IGNORE; };
+  void Listen() { flags &= (~SG_WIDGET_FLAGS_IGNORE); };
 
   virtual void Disable();
   virtual void Enable();

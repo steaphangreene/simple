@@ -27,7 +27,10 @@
 #include <SDL/SDL_ttf.h>
 
 SG_TransLabel::SG_TransLabel(string mes, int col, float mx, float my)
-	: SG_TextArea(mes, col, col, mx, my) {
+	: SG_TextArea(mes,
+	(col == -1) ? current_sg->NewColor(0.0, 0.0, 0.0) : col,
+	(col == -1) ? current_sg->NewColor(0.0, 0.0, 0.0) : col,
+	mx, my) {
   SetTransparent(true);
   }
 

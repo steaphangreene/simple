@@ -35,10 +35,11 @@ SG_Editable::SG_Editable(string mes, SG_Texture c,
 SG_Editable::~SG_Editable() {
   }
 
-bool SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Editable/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {

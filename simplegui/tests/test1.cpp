@@ -225,6 +225,14 @@ int main(int argc, char **argv) {
   combob = new SG_ComboBox(opts);
   tab[1]->AddWidget(combob, 0, 9, 2, 1);
 
+  SG_Alignment *stack1 = new SG_Alignment(0.0, 0.0);
+  SG_Button *stack2 = new SG_Button("Click Me");
+  SG_TransLabel *stack3 = new SG_TransLabel("Not Me");
+  stack1->SetBackground(stack2);
+  stack1->AddWidget(stack3);
+  tab[1]->AddWidget(stack1, 0, 10, 1, 1);
+  stack3->Ignore();
+
   tab[1]->SetBorder(0.0625, 0.125);
 
   popup = new SG_Table(6, 6);

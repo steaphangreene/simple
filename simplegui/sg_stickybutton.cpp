@@ -34,10 +34,11 @@ SG_StickyButton::SG_StickyButton(string mes, SG_Texture tex,
 SG_StickyButton::~SG_StickyButton() {
   }
 
-bool SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "StickyButton/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
   if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {

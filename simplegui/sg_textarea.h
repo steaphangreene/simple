@@ -33,7 +33,7 @@ public:
   SG_TextArea(string mes, SG_Texture tex = SG_COL_BG,
 	SG_Texture dis_tex = SG_COL_BG, float mx = 0.125, float my = 0.125);
   virtual ~SG_TextArea();
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
   void SetText(const string &mes);

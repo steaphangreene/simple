@@ -36,7 +36,7 @@ class SG_Panel : public SG_Widget {
 public:
   SG_Panel(SG_Texture tex = SG_COL_BG);
   virtual ~SG_Panel();
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);

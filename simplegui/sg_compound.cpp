@@ -31,14 +31,15 @@ SG_Compound::SG_Compound(int xsz, int ysz, float xbor, float ybor)
 SG_Compound::~SG_Compound() {
   }
 
-bool SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Compound/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
   int ret = SG_Table::HandleEvent(event, x, y);
-  if(ret && event->type == SDL_SG_EVENT) {
+  if(ret > 0 && event->type == SDL_SG_EVENT) {
     return ChildEvent(event);
     }
   return ret;

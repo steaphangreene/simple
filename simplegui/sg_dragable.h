@@ -29,7 +29,7 @@ public:
   SG_Dragable(SG_Texture tex = SG_COL_RAISED);
   virtual ~SG_Dragable();
   void SetLimits(float mnx, float mny, float mxx, float mxy);
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   

@@ -46,10 +46,11 @@ void SG_Dragable::SetLimits(float mnx, float mny, float mxx, float mxy) {
   max_y = mxy;
   }
 
-bool SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Dragable/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
   static float event_data[2];

@@ -32,7 +32,8 @@ SG_Widget::~SG_Widget() {
   if(current_sg->PopupWidget() == this) current_sg->UnsetPopupWidget();
   }
 
-bool SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
   return 1;
   }

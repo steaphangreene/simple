@@ -30,7 +30,7 @@ public:
 	SG_Texture dis_tex = SG_COL_LOW, SG_Texture click_tex = SG_COL_LOW,
 	SG_Texture down_tex = SG_COL_HIGH );
   virtual ~SG_StickyButton();
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual void TurnOn();
   virtual void TurnOff();

@@ -37,21 +37,29 @@ SG_PassThrough::SG_PassThrough(int lact, int mact, int ract)
 SG_PassThrough::~SG_PassThrough() {
   }
 
-bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
+int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 //  if(event->type == SDL_MOUSEBUTTONDOWN)
 //    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
 
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  int ret = 1;
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();
     if(x >= cur_geom.xp-cur_geom.xs && x <= cur_geom.xp+cur_geom.xs
         && y >= cur_geom.yp-cur_geom.ys && y <= cur_geom.yp+cur_geom.ys) {
+      float back_x = x, back_y = y;
+
       x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return widgets[0]->HandleEvent(event, x, y);
+      ret = widgets[0]->HandleEvent(event, x, y);
+      if(ret != -1) return ret;
+
+      x = back_x; y = back_y;
       }
     }
 
@@ -71,7 +79,7 @@ bool SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       return 1;
       }
     else if(button_action[event->button.button - 1] == SG_PT_IGNORE) {
-      return 1;
+      return -1;
       }
     else if(button_action[event->button.button - 1] == SG_PT_BLOCK) {
       return 0;

@@ -37,7 +37,7 @@ public:
   SG_Alignment(float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Alignment();
   void SetBorder(float xbor, float ybor);
-  virtual bool HandleEvent(SDL_Event *event, float x, float y);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
