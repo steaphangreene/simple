@@ -28,7 +28,7 @@
 
 SG_TransLabel::SG_TransLabel(string mes, int col, float mx, float my)
 	: SG_TextArea(mes, col, col, mx, my) {
-  texture[0].type = SG_TEXTURE_TRANS;
+  SetTransparent(true);
   }
 
 SG_TransLabel::~SG_TransLabel() {

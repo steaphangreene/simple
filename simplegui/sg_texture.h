@@ -27,8 +27,9 @@
 enum SG_TextureType {
    SG_TEXTURE_NONE = 0,
    SG_TEXTURE_COLOR,
+   SG_TEXTURE_TRANSCOLOR,
+   SG_TEXTURE_DEFINED,
    SG_TEXTURE_TRANS,
-   SG_TEXTURE_DEFINED
    };
 
 class SG_Texture {

@@ -95,8 +95,15 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
   return 1;
   }
 
-bool SG_DNDBoxes::AddItem(SG_TransLabel *wid, int x1, int y1, int xs, int ys) {
-  fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
+bool SG_DNDBoxes::AddItem(SG_Panel *wid, int x1, int y1, int xs, int ys) {
+  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
+        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
+    fprintf(stderr, "Illegal DND placement, (%d,%d)/%dx%d in (%dx%d)\n",
+        x1, y1, xs, ys, xsize, ysize);
+    }
+  SG_TableGeometry geom = { x1, y1, xs, ys };
+  widgets.push_back(wid);
+  wgeom.push_back(geom);
   return 0;
   }
                                                                                 

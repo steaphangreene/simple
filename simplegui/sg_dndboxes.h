@@ -30,7 +30,7 @@
 #include <vector>
 using namespace std;
 
-class SG_TransLabel;
+class SG_Panel;
 
 class SG_DNDBoxes : public SG_Compound {
 public:
@@ -41,7 +41,7 @@ public:
   virtual bool ChildEvent(SDL_Event *event);
   void Exclude(int xp, int yp, int xsz = 1, int ysz = 1);
   void Include(int xp, int yp, int xsz = 1, int ysz = 1);
-  bool AddItem(SG_TransLabel *wid, int x1, int y1, int xs=1, int ys=1);
+  bool AddItem(SG_Panel *wid, int x1, int y1, int xs=1, int ys=1);
 
   //Handle all these to disable them!
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);

@@ -39,6 +39,7 @@ public:
   virtual bool HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  void SetTransparent(bool val = true);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

@@ -36,14 +36,9 @@ SG_Texture::SG_Texture(SDL_Surface *tex) {
   }
 
 SG_Texture::SG_Texture(int sg_cols) {
-  if(sg_cols > 0) {
-    type = SG_TEXTURE_COLOR;
-    col = *(current_sg->BGColor(sg_cols));
-    fg = *(current_sg->TextColor(sg_cols));
-    }
-  else {
-    type = SG_TEXTURE_TRANS;
-    }
+  type = SG_TEXTURE_COLOR;
+  col = *(current_sg->BGColor(sg_cols));
+  fg = *(current_sg->TextColor(sg_cols));
   texture = 0;
   cur = NULL;
   src = NULL;

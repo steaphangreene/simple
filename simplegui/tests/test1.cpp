@@ -88,10 +88,10 @@ int main(int argc, char **argv) {
 
   SG_Table *popup;
   SG_Table *tab[2];
-  SG_Panel *panel[2];
+  SG_Panel *panel[3];
   SG_AnimatedPanel *anim;
   SG_Button *button[6];
-  SG_Alignment *align;
+  SG_Alignment *align[2];
   SG_Scrollable *scroll;
   SG_PassThrough *pass[2];
   SG_TextArea *text;
@@ -105,8 +105,11 @@ int main(int argc, char **argv) {
   scroll = new SG_Scrollable(2.0, 2.0);
   scroll->SetBorder(0.125, 0.125);
 
-  align = new SG_Alignment();
-  align->SetBorder(0.0, 0.0);
+  align[0] = new SG_Alignment();
+  align[0]->SetBorder(0.0, 0.0);
+
+  align[1] = new SG_Alignment();
+  align[1]->SetBorder(0.0, 0.0);
 
   panel[0] = new SG_Panel(gui->NewColor(0.2, 0.2, 0.2));
 
@@ -122,10 +125,15 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(scroll, 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
 
+  tab[0]->AddWidget(align[1], 1, 2, 1, 2);
+
   trans = new SG_TransLabel("TransLabel Widget\nIs Right Here",
 	gui->NewColor(0.0, 0.0, 0.0, 0.6, 0.4, 0.3));
   trans->SetMargins(0.2, 0.2);
-  tab[0]->AddWidget(trans, 1, 2, 1, 2);
+  align[1]->AddWidget(trans);
+
+  panel[2] = new SG_Panel(gui->NewColor(0.0, 0.5, 1.0));
+  align[1]->SetBackground(panel[2]);
 
   panel[1] = new SG_Panel(white);
 
@@ -162,9 +170,9 @@ int main(int argc, char **argv) {
   anim = new SG_AnimatedPanel(cols, 12.5f);
 
   scroll->SetBackground(panel[1]);
-  scroll->AddWidget(align);
-  align->SetBackground(anim);
-  align->AddWidget(pass[1]);
+  scroll->AddWidget(align[0]);
+  align[0]->SetBackground(anim);
+  align[0]->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
 	gui->NewColor(1.0, 0.0, 0.0), gui->NewColor(1.0, 0.5, 0.5));

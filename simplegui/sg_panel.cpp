@@ -51,25 +51,41 @@ bool SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
   return 0;	// This widget eats all mouse events all the time
   }
 
+extern int nextpoweroftwo(int);
+
 void SG_Panel::BuildTexture(int st) {
   if(texture[st].cur) {
     glFinish();
     SDL_FreeSurface(texture[st].cur);
     }
+
+  int xsize = 16, ysize = 16;
+
   if(texture[st].type == SG_TEXTURE_COLOR) {
-    texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
     SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
     }
-  else if(texture[st].type == SG_TEXTURE_TRANS) {
-    texture[st].cur = SDL_CreateRGBSurface(0, 16, 16, 32,
+  else if(texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+    //A TRANSCOLOR widget with no text is totally invisible.
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
     }
   else if(texture[st].type == SG_TEXTURE_DEFINED) {
-    texture[st].cur = SDL_CreateRGBSurface(0,
-	texture[st].src->w, texture[st].src->h, 32,
+    xsize = nextpoweroftwo(texture[st].src->w);
+    ysize = nextpoweroftwo(texture[st].src->h);
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
+    SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_OPAQUE);
+    SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
+    }
+  else if(texture[st].type == SG_TEXTURE_TRANS) {
+    xsize = nextpoweroftwo(texture[st].src->w);
+    ysize = nextpoweroftwo(texture[st].src->h);
+    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
+	SG_SDL_RGBA_COLFIELDS);
+    SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
 
@@ -96,9 +112,15 @@ bool SG_Panel::Render(unsigned long cur_time) {
 
   glPushMatrix();
 
+  if(texture[state].type == SG_TEXTURE_TRANS
+	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
+    glEnable(GL_BLEND);
+    }
+
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texture[state].texture);
   glColor3f(1.0f, 1.0f, 1.0f);
+
 
   glBegin(GL_QUADS);
   glTexCoord2f(0.0, texture[state].yfact);
@@ -114,10 +136,28 @@ bool SG_Panel::Render(unsigned long cur_time) {
   glBindTexture(GL_TEXTURE_2D, 0);
   glDisable(GL_TEXTURE_2D);
 
+  if(texture[state].type == SG_TEXTURE_TRANS
+	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
+    glDisable(GL_BLEND);
+    }
+
   glPopMatrix();
+
   return 1;
   }
 
+void SG_Panel::SetTransparent(bool val) {
+  for(int tx = 0; tx < int(texture.size()); ++tx) {
+    if(texture[tx].type == SG_TEXTURE_COLOR
+	&& texture[tx].type != SG_TEXTURE_TRANSCOLOR) {
+      texture[tx].type = (val) ? SG_TEXTURE_TRANSCOLOR : SG_TEXTURE_COLOR;
+      }
+    else if(texture[tx].type == SG_TEXTURE_TRANS
+	&& texture[tx].type != SG_TEXTURE_DEFINED) {
+      texture[tx].type = (val) ? SG_TEXTURE_TRANS : SG_TEXTURE_DEFINED;
+      }
+    }
+  }
 
 //  bool SG_Panel::SetDefaultCursor(GL_MODEL *cur);
   
