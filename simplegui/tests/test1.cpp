@@ -86,7 +86,8 @@ int main(int argc, char **argv) {
   SG_Table *tab[2];
   SG_Widget *panel[3];
   SG_Button *button[6];
-  SG_Alignment *align[2];
+  SG_Alignment *align;
+  SG_Scrollable *scroll;
   SG_PassThrough *pass[2];
   SG_TextArea *text;
   SG_TransLabel *trans;
@@ -96,11 +97,11 @@ int main(int argc, char **argv) {
   tab[0] = new SG_Table(4, 12);
   tab[1] = new SG_Table(2, 12);
 
-  align[0] = new SG_Alignment();
-  align[0]->SetBorder(0.125, 0.125);
+  scroll = new SG_Scrollable(2.0, 2.0);
+  scroll->SetBorder(0.125, 0.125);
 
-  align[1] = new SG_Alignment();
-  align[1]->SetBorder(0.0, 0.0);
+  align = new SG_Alignment();
+  align->SetBorder(0.0, 0.0);
 
   panel[0] = new SG_Panel(gui->NewColor(0.2, 0.2, 0.2));
 
@@ -113,7 +114,7 @@ int main(int argc, char **argv) {
 
   tab[0]->AddWidget(pass[0], 0, 0, 3, 12);
   tab[0]->AddWidget(tab[1], 3, 0, 1, 12);
-  tab[1]->AddWidget(align[0], 0, 0, 2, 4);
+  tab[1]->AddWidget(scroll, 0, 0, 2, 4);
   tab[1]->SetBackground(panel[0]);
 
   trans = new SG_TransLabel("TransLabel Is Here", gui->NewColor(0.6, 0.4, 0.3));
@@ -123,10 +124,10 @@ int main(int argc, char **argv) {
   panel[1] = new SG_Panel(white);
   panel[2] = new SG_Panel(black);
 
-  align[0]->SetBackground(panel[1]);
-  align[0]->AddWidget(align[1]);
-  align[1]->SetBackground(panel[2]);
-  align[1]->AddWidget(pass[1]);
+  scroll->SetBackground(panel[1]);
+  scroll->AddWidget(align);
+  align->SetBackground(panel[2]);
+  align->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
 	gui->NewColor(1.0, 0.0, 0.0), black, gui->NewColor(1.0, 0.5, 0.5));

@@ -19,44 +19,36 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_ALIGNMENT_H
-#define SG_ALIGNMENT_H
+#ifndef SG_SCROLLABLE_H
+#define SG_SCROLLABLE_H
 
-#include "sg_widget.h"
+#include "sg_alignment.h"
 
 #include <vector>
 using namespace std;
 
-struct SG_AlignmentGeometry {
+struct SG_ScrollableGeometry {
   float xp, yp; //Relative Position (Center)
   float xs, ys; //Relative Size (From Center)
   };
 
-class SG_Alignment : public SG_Widget {
+class SG_Scrollable : public SG_Alignment {
 public:
-  SG_Alignment(float xbor = 0.0, float ybor = 0.0);
-  virtual ~SG_Alignment();
-  void SetBorder(float xbor, float ybor);
+  SG_Scrollable(float xfac, float yfac);
+  virtual ~SG_Scrollable();
   virtual bool HandleMouseEvent(SDL_Event *event, float x, float y);
   virtual bool HandMouseEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
-  virtual bool HasWidget(SG_Widget *targ);
   virtual bool Render();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool AddWidget(SG_Widget *wid);
-  virtual void RemoveWidget(SG_Widget *wid);
-  void SetBackground(SG_Widget *wid) { background = wid; };
-  void UnsetBackground() { background = NULL; };
   
 protected:
   void CalcGeometry();
-  SG_AlignmentGeometry cur_geom;
+  SG_ScrollableGeometry cur_geom;
 
 //  static GL_MODEL Default_Mouse_Cursor;
-  vector<SG_Widget *> widgets;
-  SG_Widget *background;
-  float xborder, yborder;
+  float xfactor, yfactor;
   };
 
-#endif // SG_ALIGNMENT_H
+#endif // SG_SCROLLABLE_H
 

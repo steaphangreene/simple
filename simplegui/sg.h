@@ -90,6 +90,7 @@ protected:
 #include "sg_widget.h"
 #include "sg_alignment.h"
 #include "sg_table.h"
+#include "sg_scrollable.h"
 #include "sg_button.h"
 #include "sg_stickybutton.h"
 #include "sg_menu.h"
