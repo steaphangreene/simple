@@ -78,7 +78,6 @@ void SG_Panel::BuildTexture(int st) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
     memset(texture[st].cur->pixels, 0, xsize*ysize*4);
-    SDL_SetAlpha(texture[st].cur, 0, SDL_ALPHA_OPAQUE);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
@@ -87,8 +86,6 @@ void SG_Panel::BuildTexture(int st) {
     ysize = nextpoweroftwo(texture[st].src->h);
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
-    memset(texture[st].cur->pixels, 0, xsize*ysize*4);
-    SDL_SetAlpha(texture[st].cur, 0, SDL_ALPHA_TRANSPARENT);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
@@ -153,11 +150,11 @@ bool SG_Panel::Render(unsigned long cur_time) {
 void SG_Panel::SetTransparent(bool val) {
   for(int tx = 0; tx < int(texture.size()); ++tx) {
     if(texture[tx].type == SG_TEXTURE_COLOR
-	&& texture[tx].type != SG_TEXTURE_TRANSCOLOR) {
+	|| texture[tx].type == SG_TEXTURE_TRANSCOLOR) {
       texture[tx].type = (val) ? SG_TEXTURE_TRANSCOLOR : SG_TEXTURE_COLOR;
       }
     else if(texture[tx].type == SG_TEXTURE_TRANS
-	&& texture[tx].type != SG_TEXTURE_DEFINED) {
+	|| texture[tx].type == SG_TEXTURE_DEFINED) {
       texture[tx].type = (val) ? SG_TEXTURE_TRANS : SG_TEXTURE_DEFINED;
       }
     }
