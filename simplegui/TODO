@@ -2,13 +2,12 @@
 
 -=TODO=-
 Pop-Ups/Dialogs
-Menu
 Scrollable
 Editable
 StickyButton
-Menu
 
 -=To Flush Out=-
+Multi-line Text Areas (Needed for Menus too)
 Implement Actual Mouse Cursors
 Implement ProgressBar
 Implement FileBrowser
@@ -19,7 +18,7 @@ Implement ComboBox
 Implement PullDown
 Implement SliderBar
 Implement ScrollingArea
-Multi-line Text Areas
+Implement Menu
 Disabled State Textures
 Need a way to handle sounds for compound's buttons
 
