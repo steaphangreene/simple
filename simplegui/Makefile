@@ -74,7 +74,8 @@ tar:
 	cd .. ; tar chvf simplegui/simplegui.$(TSTR).tar \
 		simplegui/Makefile simplegui/TODO simplegui/COPYING \
 		simplegui/*.cpp simplegui/*.h \
-		simplegui/tests/*.cpp simplegui/tests/*.h
+		simplegui/tests/*.cpp simplegui/tests/*.h \
+		simplegui/scripts/*.* simplegui/deps.mk
 	gzip -9 simplegui.$(TSTR).tar
 
 include deps.mk
