@@ -54,11 +54,11 @@ SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
 
 bool SimpleModel_Q3Dir::Load(const string &filenm) {
   filename = filenm;
-  head = new SimpleModel_Md3(
+  head = new SimpleModel_MD3(
 	filename, filename + "/head.md3", filename + "/head_default.skin");
-  torso = new SimpleModel_Md3(
+  torso = new SimpleModel_MD3(
 	filename, filename + "/upper.md3", filename + "/upper_default.skin");
-  legs = new SimpleModel_Md3(
+  legs = new SimpleModel_MD3(
 	filename, filename + "/lower.md3", filename + "/lower_default.skin");
 
   if(!LoadCFG(filename + "/animation.cfg")) return false;
@@ -150,6 +150,6 @@ int SimpleModel_Q3Dir::GetAnimation() {
   return 0;
   }
 
-void SimpleModel_Q3Dir::SetWeapon(SimpleModel_Md3 *weap) {
+void SimpleModel_Q3Dir::SetWeapon(SimpleModel_MD3 *weap) {
   weapon = weap;
   }

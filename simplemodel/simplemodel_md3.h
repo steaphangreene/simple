@@ -29,44 +29,44 @@ struct Quaternion {
   float data[16];
   };
 
-struct Md3AnimationData {
+struct MD3AnimationData {
   long start;
   long end;
   long loop; // Number of frames that should be looped, I ignore this (for now)
   long fps;
   };
 
-struct Md3Tag {
+struct MD3Tag {
   char name[64];
   Quaternion pos;
   };
 
-struct Md3Face {
+struct MD3Face {
   long vertices[3];
   };
 
-struct Md3TexCoord {
+struct MD3TexCoord {
   float coord[2];
   };
 
-struct Md3Triangle {
+struct MD3Triangle {
   float vertex[3];
   unsigned char normal[2];	// FIXME: Don't know how these work yet.
   };
 
-struct Md3Mesh {
+struct MD3Mesh {
   char name[68];
-  vector<Md3Face> faces;
-  vector<Md3TexCoord> coords;
-  vector<Md3Triangle> triangles;
+  vector<MD3Face> faces;
+  vector<MD3TexCoord> coords;
+  vector<MD3Triangle> triangles;
   SM_Texture *texture;
   };
 
-class SimpleModel_Md3 : public SimpleModel {
+class SimpleModel_MD3 : public SimpleModel {
 public:
-  SimpleModel_Md3(const string &filenm,
+  SimpleModel_MD3(const string &filenm,
 	const string &modelnm, const string &skinnm = "");
-  virtual ~SimpleModel_Md3();
+  virtual ~SimpleModel_MD3();
 
   virtual bool Load(const string &filenm,
 	const string &filenm, const string &skinnm = "");
@@ -86,13 +86,13 @@ public:
   int AddAnimation(int start, int end, int loop, int fps);
 
 protected:
-  SimpleModel_Md3();
+  SimpleModel_MD3();
   string modelname, skinname;
 
   unsigned long num_tags;	// Number of tags PER FRAME
-  vector<Md3Tag> pTags;		// Holds ALL tags for ALL frames
-  vector<Md3Mesh> meshes;
-  vector<Md3AnimationData> animations;
+  vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames
+  vector<MD3Mesh> meshes;
+  vector<MD3AnimationData> animations;
 
 	//Temporary - these should not be here for static models
   int current_anim;

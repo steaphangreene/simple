@@ -32,7 +32,7 @@ using namespace std;
 #include "simplemodel_q3dir.h"
 #include "saferead.h"
 
-SimpleModel_Md3::SimpleModel_Md3(const string &filenm,
+SimpleModel_MD3::SimpleModel_MD3(const string &filenm,
 	const string &modelnm, const string &skinnm) {
   current_anim = 0;
   current_frame = 0;
@@ -41,16 +41,16 @@ SimpleModel_Md3::SimpleModel_Md3(const string &filenm,
   Load(filenm, modelnm, skinnm);
   }
 
-SimpleModel_Md3::SimpleModel_Md3() {
+SimpleModel_MD3::SimpleModel_MD3() {
   current_anim = 0;
   current_frame = 0;
   last_time = 0;
   }
 
-SimpleModel_Md3::~SimpleModel_Md3() {
+SimpleModel_MD3::~SimpleModel_MD3() {
   }
 
-bool SimpleModel_Md3::Load(const string &filenm,
+bool SimpleModel_MD3::Load(const string &filenm,
 	const string &modelnm, const string &skinnm) {
   filename = filenm;
   modelname = modelnm;
@@ -231,8 +231,8 @@ bool SimpleModel_Md3::Load(const string &filenm,
   return false;
   }
 
-bool SimpleModel_Md3::Render(Uint32 cur_time) {
-  glCullFace(GL_FRONT);	//Md3 models use front face culling
+bool SimpleModel_MD3::Render(Uint32 cur_time) {
+  glCullFace(GL_FRONT);	//MD3 models use front face culling
 
   int start = 0, end = 1;
 
@@ -283,7 +283,7 @@ bool SimpleModel_Md3::Render(Uint32 cur_time) {
   return false;
   }
 
-void SimpleModel_Md3::SetAnimation(int anim) {
+void SimpleModel_MD3::SetAnimation(int anim) {
   if(animations.size() > 0 && (int)(animations.size()) > anim) {
     current_anim = anim;
     current_frame = animations[current_anim].start;
@@ -291,8 +291,8 @@ void SimpleModel_Md3::SetAnimation(int anim) {
     }
   }
 
-int SimpleModel_Md3::AddAnimation(int start, int end, int loop, int fps) {
-  Md3AnimationData anim;
+int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
+  MD3AnimationData anim;
 
   anim.start = start;
   anim.end = end;
@@ -303,11 +303,11 @@ int SimpleModel_Md3::AddAnimation(int start, int end, int loop, int fps) {
   return animations.size() - 1;
   }
 
-int SimpleModel_Md3::GetAnimation() {
+int SimpleModel_MD3::GetAnimation() {
   return current_anim;
   }
 
-unsigned long SimpleModel_Md3::TagNameToIndex(const string &tagname) {
+unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) {
   unsigned int tag = 0;
   for(; tag < num_tags; ++tag) {
     if(!strcasecmp(pTags[tag].name, tagname.c_str())) break;
@@ -316,7 +316,7 @@ unsigned long SimpleModel_Md3::TagNameToIndex(const string &tagname) {
   else return tag;
   }
 
-bool SimpleModel_Md3::MoveToTag(unsigned long tag) {
+bool SimpleModel_MD3::MoveToTag(unsigned long tag) {
   if(tag >= num_tags) return false;
 
   //FIXME: Do Interpolation!

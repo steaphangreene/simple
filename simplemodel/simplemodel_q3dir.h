@@ -38,13 +38,13 @@ public:
 
   virtual int GetAnimation();
 
-  void SetWeapon(SimpleModel_Md3 *weap);
+  void SetWeapon(SimpleModel_MD3 *weap);
 
 protected:
   bool LoadCFG(const string &filenm);
 
   SimpleModel_Q3Dir();
-  SimpleModel_Md3 *head, *torso, *legs, *weapon;
+  SimpleModel_MD3 *head, *torso, *legs, *weapon;
   };
 
 #endif	//SIMPLEMODEL_Q3DIR_H

@@ -35,7 +35,8 @@ SimpleModel *SM_LoadModel(const string &filename) {
     fclose(cfg);
     return new SimpleModel_Q3Dir(filename);
     }
-  fprintf(stderr, "WARNING: Failed to detect model type of '%s',\n",
+  fprintf(stderr,
+	"WARNING: Failed to detect model type of '%s' - using sphere.\n",
 	filename.c_str());
   return new SimpleModel_Sphere();
   }
