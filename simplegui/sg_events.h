@@ -62,6 +62,9 @@
 #define	SG_EVENT_FILEOPEN	2001
 #define	SG_EVENT_SELECT		2002
 
+#define SG_EVENT_SELECT_ITEM	3000
+#define SG_EVENT_UNSELECT_ITEM	3001
+
 union SG_Event_DataType {	//Pointer to this static is wgat is put in event.data2
   float f[8];
   int i[8];

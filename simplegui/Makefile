@@ -95,7 +95,7 @@ deps.mk:	*.cpp *.h
 clean:
 	rm -f deps.mk *.o test1 test2 *.win32_o *.exe
 
-test:	test1 test2
+test:	test1 test2 test3
 
 test1:	test1.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(OBJS) $(LIBS)
@@ -103,9 +103,12 @@ test1:	test1.o renderer.o audio.o $(OBJS)
 test2:	test2.o renderer.o audio.o $(OBJS)
 	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o $(OBJS) $(LIBS)
 
+test3:  test3.o renderer.o audio.o $(OBJS)
+	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o $(OBJS) $(LIBS)
+	
 win32:	$(WOBJS)
 
-wintest:	test1.exe test2.exe
+wintest:	test1.exe test2.exe test3.exe
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
@@ -113,6 +116,9 @@ test1.exe:	test1.win32_o renderer.win32_o audio.win32_o $(WOBJS)
 test2.exe:	test2.win32_o renderer.win32_o audio.win32_o $(WOBJS)
 	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
 
+test3.exe:	test3.win32_o renderer.win32_o audio.win32_o $(WOBJS)
+	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o $(WOBJS) $(WLIBS)
+	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
 tar:

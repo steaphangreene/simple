@@ -19,27 +19,52 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-// This file was created from (or actually IS) a basic compound widget
-// def, so it's not defined and is really just a place-holder for now.
+// Rob W. Brooks (rob@atomicpenguin.net) is to be blamed for any problems
+// with this module in its mature state.
 
 #ifndef SG_LISTBOX_H
 #define SG_LISTBOX_H
 
+#include <set>
+#include <deque>
+#include <map>
+using namespace std;
+
 #include "sg_compound.h"
+#include "sg_texture.h"
+#include "sg_panel.h"
+#include "sg_stickybutton.h"
 
 class SG_Button;
 class SG_TextArea;
 
 class SG_ListBox : public SG_Compound {
 public:
-  SG_ListBox();
+  SG_ListBox(const vector<SG_Widget*>& items, SG_Texture desel, 
+		  SG_Texture sel, SG_Texture click, SG_Texture disable, 
+		  unsigned int min=1, unsigned int max=1,
+		  bool vert=true, float border=0.1);
   virtual ~SG_ListBox();
+
+  bool SetSelection(const set<int>& toselect);
+  
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+
   
+ 
 protected:
+  void Select(int ind);
+  bool Deselect(bool override=false, int ind=-1);
+
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  bool vertical;
+  unsigned int listsize;
+  unsigned int minsel,maxsel;
+  deque<int> selhistory;
+  vector<SG_StickyButton*> stickies;
+  vector<SG_Alignment*> aligns;
+  map<SG_StickyButton*, int> ptr2pos; 
   };
 
 #endif // SG_LISTBOX_H
