@@ -32,7 +32,6 @@
 
 using namespace std;
 
-//#include "settings.h"
 #include "renderer.h"
 
 static SDL_Surface *surface = NULL;
@@ -43,7 +42,13 @@ static int hgap=0, vgap=0;
 
 int fullscreen_mode = 0;
 
-//int settings_window_open = 0;
+typedef struct _viewport {
+  double xoff, yoff;
+  double xtarg, ytarg;
+  int movet, move;
+  long long data;
+  double spread;
+  } viewport;
 
 viewport cview = {0.0, 0.0, 0.0, 0.0, 0, 0, 0, 1.0};
 
@@ -51,6 +56,9 @@ int phase = 0;
 
 void load_textures(void) {
   }
+
+// For use internally by renderer only!
+void load_xpm_texture(unsigned int tex, char *xpm[]);
 
 int init_renderer(int xs, int ys) {
   const SDL_VideoInfo *videoInfo;
@@ -74,11 +82,11 @@ int init_renderer(int xs, int ys) {
   if(fullscreen_mode)
     videoFlags |= SDL_FULLSCREEN;
 
-  /* Use HW Surfaces if possible */
+  // Use HW Surfaces if possible
   if(videoInfo->hw_available) videoFlags |= SDL_HWSURFACE;
   else videoFlags |= SDL_SWSURFACE;
 
-  /* Use HW Blits if possible */
+  // Use HW Blits if possible
   if(videoInfo->blit_hw) videoFlags|=SDL_HWACCEL;
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -90,8 +98,8 @@ int init_renderer(int xs, int ys) {
     return 0;
     }
 
-  /* Set a window title. */
-  SDL_WM_SetCaption("Insomnia's Renderer", "Insomnia's Renderer");
+  // Set a window title.
+  SDL_WM_SetCaption("Example Renderer", "Example Renderer");
 
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -103,7 +111,7 @@ int init_renderer(int xs, int ys) {
   // Set the polygon mode to fill
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-//  // Fuck with Alpha shit
+//  // Messing with Alpha channel
 //  glDepthFunc(GL_LEQUAL);
   glDepthFunc(GL_LESS);
 
@@ -114,6 +122,7 @@ int init_renderer(int xs, int ys) {
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
 
+  //Other settings to tinker with
 //  glEnable (GL_POLYGON_SMOOTH);
 //  if(glError());
 //  glHint(GL_POLYGON_SMOOTH,GL_FASTEST);
@@ -136,7 +145,6 @@ int init_renderer(int xs, int ys) {
   glEnable(GL_COLOR_MATERIAL);
 
   // Create a Directional Light Source
-  
   glLightfv(GL_LIGHT0, GL_POSITION, light1_pos);
   glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
   glEnable(GL_LIGHT0);
@@ -175,6 +183,7 @@ int start_scene(int player) {
 
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
+  //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(-0.5, -0.5+((GLdouble)xsize)/((GLdouble)ysize), -0.5, 0.5, 1.5, 6.0);
@@ -205,10 +214,6 @@ void resize_display(int xs, int ys) {
   }
 
 static int oldmodex = 0, oldmodey = 0;
-
-//void toggle_settings_window(void) {
-//  settings_window_open = !settings_window_open;
-//  }
 
 void toggle_fullscreen(void) {
   char drv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -259,6 +264,7 @@ void toggle_fullscreen(void) {
   fullscreen_mode = (videoFlags & SDL_FULLSCREEN) != 0;
   }
 
+//This doesn't work like you might think.
 void pixels_to_location(double *x, double *y) {
   (*x) -= (double)hgap;
   (*y) -= (double)vgap;

@@ -27,18 +27,5 @@ int start_scene(int);
 int finish_scene(int);
 void toggle_fullscreen(void);
 void resize_display(int, int);
-void pixels_to_location(double *, double *);
-void toggle_settings_window(void);
 
-typedef struct _viewport {
-  double xoff, yoff;
-  double xtarg, ytarg;
-  int movet, move;
-  long long data;
-  double spread;
-  } viewport;
-
-/* For use internally by renderer only! */
-void load_xpm_texture(unsigned int tex, char *xpm[]);
-
-#endif /* RENDERER_H */
+#endif // RENDERER_H
