@@ -54,6 +54,14 @@ void SG_Widget::Enable() {
   flags &= (~SG_WIDGET_FLAGS_DISABLED);
   }
 
+void SG_Widget::TurnOn() {
+  flags |= SG_WIDGET_FLAGS_ON;
+  }
+
+void SG_Widget::TurnOff() {
+  flags &= (~SG_WIDGET_FLAGS_ON);
+  }
+
 //  bool SG_Widget::SetDefaultCursor(GL_MODEL *cur);
 //  bool SG_Widget::SetCursor(GL_MODEL *cur)
 //  bool SG_Widget::UnsetCursor()

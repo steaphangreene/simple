@@ -1,7 +1,5 @@
 -=To FIX=-
 Need a way to handle sounds for compounds' buttons
-Handler for Widget::Disable() needed in SG_Alignment
-Include Widget::TurnOn/Off() in Widget
 
 -=TODO=-
 
@@ -31,3 +29,4 @@ Event pass-through and transparency?
 Add "INTANGIBLE" flag?
 Add time offset to AnimatedPanel widget?
 Catch deletion of current_widget?
+Allow SG_Table to be resizable?

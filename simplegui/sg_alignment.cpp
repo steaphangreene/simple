@@ -141,6 +141,24 @@ void SG_Alignment::Enable() {
     }
   }
 
+void SG_Alignment::TurnOn() {
+  flags |= SG_WIDGET_FLAGS_ON;
+  if(background) background->TurnOn();
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) (*itrw)->TurnOn();
+    }
+  }
+
+void SG_Alignment::TurnOff() {
+  flags &= (~SG_WIDGET_FLAGS_ON);
+  if(background) background->TurnOff();
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(*itrw) (*itrw)->TurnOff();
+    }
+  }
+
 bool SG_Alignment::AddWidget(SG_Widget *wid) {
   if(widgets.size() > 0) {
     fprintf(stderr, "Warning: Alignment Widget Already Full!\n");

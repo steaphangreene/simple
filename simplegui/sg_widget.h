@@ -42,6 +42,8 @@ public:
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
   virtual void Disable();
   virtual void Enable();
+  virtual void TurnOn();
+  virtual void TurnOff();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 //  bool SetCursor(GL_MODEL *cur)
 //  bool UnsetCursor()
