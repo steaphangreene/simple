@@ -22,7 +22,6 @@ Implement Menu
 -=Wishlist=-
 Icon objects ("Indicator Arrows")?
 Dynamically resizeable font?
-Separate public simplegui.h from internal defs?
 Widget-specific fonts?
 Drag and drop boxes?
 Modality of popup?

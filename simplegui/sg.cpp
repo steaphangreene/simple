@@ -27,7 +27,7 @@
 
 using namespace std;
 
-#include "simplegui.h"
+#include "sg.h"
 #include "sg_alignment.h"
 
 SimpleGUI *current_sg = NULL;

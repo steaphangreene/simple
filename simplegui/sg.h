@@ -19,8 +19,8 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+#ifndef	SG_H
+#define	SG_H
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
@@ -108,30 +108,5 @@ protected:
   SDL_Color text_col;
   };
 
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
-#include "sg_table.h"
-#include "sg_scrollable.h"
-#include "sg_button.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
-#include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
-
-#endif	//SIMPLEGUI_H
+#endif	//SG_H
 
