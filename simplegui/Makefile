@@ -74,6 +74,9 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
 
 all: $(OBJS)
 
+ChangeLog:	*.cpp *.h TODO Makefile scripts/[a-z]* tests/[a-z]*
+	cvs2cl.pl --hide-filenames --no-wrap --stdout | tr '\t' '@' | sed 's-^@-@* -g' | tr '@' '\t' | sed 's-stea-sgreene-g' > ChangeLog
+
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
