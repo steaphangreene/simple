@@ -31,8 +31,8 @@
 SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SG_Texture tex,
 	SG_Texture dis_tex, SG_Texture click_tex, SG_Texture down_tex)
 	: SG_Compound(
-		(x<0) ? items.size(): 1,
-		(y<0) ? items.size(): 1,
+		(x<=0) ? items.size(): x,
+		(y<=0) ? items.size(): y,
 		0.0, 0.0) {
   for(int n=0; n < (int)(items.size()); ++n) {
     SG_StickyButton * sb =
