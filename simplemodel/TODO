@@ -2,6 +2,7 @@
 Unify SM_Texture and SG_Texture
 
 -=TODO=-
+Implement Q3 Model Frame Interpolation
 Finish Q3Dir Support
 Add Q3PK3 Support
 Take care of all FIXMEs in code
