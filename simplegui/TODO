@@ -2,6 +2,7 @@
 Need a way to handle sounds for compounds' buttons
 Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
+Fix positioning of events on offset popups.
 
 -=TODO=-
 
