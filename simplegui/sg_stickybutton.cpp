@@ -25,10 +25,10 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_StickyButton::SG_StickyButton(string mes, SG_Texture c,
-		SG_Texture cc, SG_Texture pc)
-	: SG_Button(mes, c, cc) {
-  texture.push_back(pc);
+SG_StickyButton::SG_StickyButton(string mes, SG_Texture tex,
+	SG_Texture dis_tex, SG_Texture click_tex, SG_Texture down_tex)
+	: SG_Button(mes, tex, dis_tex, click_tex) {
+  texture.push_back(down_tex);
   }
 
 SG_StickyButton::~SG_StickyButton() {
