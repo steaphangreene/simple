@@ -41,7 +41,7 @@ public:
 		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool AddWidget(SG_Widget *wid, int c1, int r1, int cs=1, int rs=1);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
   
