@@ -19,6 +19,9 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+// This file was created from (or actually IS) a basic compound widget
+// def, so it's not defined and is really just a place-holder for now.
+
 #ifndef SG_BASICCOMPOUND_H
 #define SG_BASICCOMPOUND_H
 
