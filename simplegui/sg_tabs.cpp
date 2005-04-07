@@ -22,7 +22,7 @@
 // This file was created from (or actually IS) a basic compound widget
 // def, so it's not defined and is really just a place-holder for now.
 
-#include "SDL_opengl.h"
+#include <GL/glew.h>
 
 #include "sg_tabs.h"
 #include "sg_stickybutton.h"

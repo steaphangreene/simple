@@ -22,7 +22,7 @@
 #ifndef SG_PANEL_H
 #define SG_PANEL_H
 
-#include "SDL_opengl.h"
+#include <GL/glew.h>
 
 #include <vector>
 

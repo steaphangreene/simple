@@ -22,7 +22,7 @@
 #ifndef SG_TRANSLABEL_H
 #define SG_TRANSLABEL_H
 
-#include "SDL_opengl.h"
+#include <GL/glew.h>
 
 #include <string>
 
