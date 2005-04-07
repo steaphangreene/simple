@@ -25,15 +25,21 @@
 #include <GL/glew.h>
 #include "SDL.h"
 
-class SimpleVideo {	//Abstract Class, no polymorphsim, use only the derrived
+#define SV_ORTHO	1	// If not present, it's perspective mode
+
+class SimpleVideo {
 public:
+  SimpleVideo(int xs, int ys, unsigned int flgs, double asp);
   ~SimpleVideo();
   bool StartScene(double zoom = 4.0, double x = 0.0, double y = 0.0);
   bool FinishScene();
   bool ToggleFullscreen();
   bool Resize(int, int);
+
+  static SimpleVideo *CurrentVideo() { return current; }
+
 protected:
-  SimpleVideo(int xs, int ys);	//You're not supposed to use this class itself
+  static SimpleVideo *current;
 
   SDL_Surface *surface;
   int videoFlags;
@@ -42,6 +48,9 @@ protected:
   int hgap, vgap;
 
   int fullscreen_mode;
+  unsigned int flags;
+
+  double aspect;
   };
 
 #endif // SV_H

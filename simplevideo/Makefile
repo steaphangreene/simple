@@ -54,14 +54,14 @@ LIBS=	`sdl-config --libs` -lSDL_image -lGLEW
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lSDL_image -lGLEW
 
-OBJS:=	sv.o sv_ortho.o sv_perspective.o
+OBJS:=	sv.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
-WOBJS:=	sv.win32_o sv_ortho.win32_o sv_perspective.win32_o
+WOBJS:=	sv.win32_o
 
 libsimplevideo.a:	$(OBJS)
 	ar rcs libsimplevideo.a $(OBJS)

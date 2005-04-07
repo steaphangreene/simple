@@ -23,7 +23,5 @@
 #define SIMPLEVIDEO_H
 
 #include "sv.h"
-#include "sv_ortho.h"
-#include "sv_perspective.h"
 
 #endif  //SIMPLEVIDEO_H

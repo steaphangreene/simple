@@ -32,7 +32,18 @@ using namespace std;
 
 #include "sv.h"
 
-SimpleVideo::SimpleVideo(int xs, int ys) {
+SimpleVideo *SimpleVideo::current = NULL;
+
+SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
+  if(current) {
+    fprintf(stderr, "ERROR: Created mulitple SimpleVideo instances!\n");
+    exit(1);
+    }
+  current = this;
+
+  aspect = asp;
+  flags = flgs;
+
   surface = NULL;
   videoFlags = 0;
   xsize=0; ysize=0;
@@ -160,14 +171,22 @@ bool SimpleVideo::StartScene(double zoom, double x, double y) {
   //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-//  glFrustum(-0.5, -0.5+((GLdouble)xsize)/((GLdouble)ysize), -0.5, 0.5, 1.5, 6.0);
-//  glFrustum(-0.8, 0.8, 0.6, -0.6, 5.0, 20.0);
-//  glTranslatef(0.0, 0.0, -4.0);
-//  glFrustum(1.0, -1.0, -1.0, 1.0, 1.0, 8.0);
-  gluPerspective(45.0, 16.0/9.0, 1.0, 64.0);
+  if(flags & SV_ORTHO) {
+    glOrtho(-16.0/9.0*zoom*4, 16.0/9.0*zoom*4,
+	-1.0*zoom*4, 1.0*zoom*4,
+	1.0, 64.0);
+    }
+  else {
+    gluPerspective(45.0, 16.0/9.0, 1.0, 64.0);
+    }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
+  if(flags & SV_ORTHO) {
+    gluLookAt(zoom*4*2+x, zoom*4*2+y, zoom*4, x, y, 0.0, -zoom, -zoom, 0.0);
+    }
+  else {
+    gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
+    }
   return true;
   }
 
