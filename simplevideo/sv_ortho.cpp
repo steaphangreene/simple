@@ -36,3 +36,5 @@ bool SV_Ortho::StartScene(double zoom, double x, double y) {
   gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
   return true;
   }
+
+SV_Ortho *SV_Ortho::current = NULL;

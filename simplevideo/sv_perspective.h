@@ -28,6 +28,10 @@ class SV_Perspective : public SimpleVideo {
 public:
   SV_Perspective(int xs, int ys);
   bool StartScene(double zoom = 4.0, double x = 0.0, double y = 0.0);
+  static SV_Perspective *CurrentVideo() { return current; }
+
+protected:
+  static SV_Perspective *current;
   };
 
 #endif // SV_PERSPECTIVE_H

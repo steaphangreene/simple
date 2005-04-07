@@ -28,6 +28,10 @@ class SV_Ortho : public SimpleVideo {
 public:
   SV_Ortho(int xs, int ys);
   bool StartScene(double zoom = 4.0, double x = 0.0, double y = 0.0);
+  static SV_Ortho *CurrentVideo() { return current; }
+
+protected:
+  static SV_Ortho *current;
   };
 
 #endif // SV_ORTHO_H

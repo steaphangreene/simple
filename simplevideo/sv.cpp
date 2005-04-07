@@ -23,8 +23,6 @@
 #define SDL_DEBUG	0	// options to SDL_Init()
 #endif	//SDL_DEBUG		// such as SDL_NO_PARACHUTE
 
-#include "SDL.h"
-#include "SDL_opengl.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -46,6 +44,16 @@ SimpleVideo::SimpleVideo(int xs, int ys) {
   GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
 
   xsize = xs;   ysize = ys;
+
+  SDL_GL_LoadLibrary(NULL); //Load up OpenGL Dynamically
+
+//  GLenum err = glewInit();	//Don't need this, not using extensions
+//
+//  if(err != GLEW_OK) {
+//    fprintf(stderr, "ERROR: GLEW did not initialize!\n");
+//    fprintf(stderr, "ERROR: %s\n", glewGetErrorString(err));
+//    exit(0);
+//    }
 
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_DEBUG) != 0) {
     fprintf(stderr, "Error: %s\n", SDL_GetError());

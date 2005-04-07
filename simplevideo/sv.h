@@ -22,8 +22,8 @@
 #ifndef SV_H
 #define SV_H
 
+#include <GL/glew.h>
 #include "SDL.h"
-#include "SDL_opengl.h"
 
 class SimpleVideo {	//Abstract Class, no polymorphsim, use only the derrived
 public:
