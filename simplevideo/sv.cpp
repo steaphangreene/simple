@@ -45,7 +45,8 @@ SimpleVideo::SimpleVideo(int xs, int ys) {
 
   xsize = xs;   ysize = ys;
 
-  SDL_GL_LoadLibrary(NULL); //Load up OpenGL Dynamically
+  SDL_GL_LoadLibrary(NULL);	// Load up OpenGL Dynamically
+				// (Is this loaded version really being used?)
 
 //  GLenum err = glewInit();	//Don't need this, not using extensions
 //

@@ -33,7 +33,7 @@ bool SV_Ortho::StartScene(double zoom, double x, double y) {
   glOrtho(-16.0/9.0*zoom*4, 16.0/9.0*zoom*4, -1.0*zoom*4, 1.0*zoom*4, 1.0, 64.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
+  gluLookAt(zoom*4*2+x, zoom*4*2+y, zoom*4, x, y, 0.0, -zoom, -zoom, 0.0);
   return true;
   }
 
