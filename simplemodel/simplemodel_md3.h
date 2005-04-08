@@ -30,19 +30,19 @@ struct Quaternion {
   };
 
 struct MD3AnimationData {
-  long start;
-  long end;
-  long loop; // Number of frames that should be looped, I ignore this (for now)
-  long fps;
+  Sint32 start;
+  Sint32 end;
+  Sint32 loop; // Number of frames that should be looped, I ignore this (for now)
+  Sint32 fps;
   };
 
 struct MD3Tag {
-  char name[64];
+  Sint8 name[64];
   Quaternion pos;
   };
 
 struct MD3Face {
-  long vertices[3];
+  Sint32 vertices[3];
   };
 
 struct MD3TexCoord {
@@ -51,11 +51,11 @@ struct MD3TexCoord {
 
 struct MD3Triangle {
   float vertex[3];
-  unsigned char normal[2];	// FIXME: Don't know how these work yet.
+  Uint8 normal[2];	// FIXME: Don't know how these work yet.
   };
 
 struct MD3Mesh {
-  char name[68];
+  Sint8 name[68];
   vector<MD3Face> faces;
   vector<MD3TexCoord> coords;
   vector<MD3Triangle> triangles;
@@ -98,7 +98,7 @@ protected:
   int CalcFrame(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const;
 
-  unsigned long num_tags;	// Number of tags PER FRAME
+  Uint32 num_tags;	// Number of tags PER FRAME
   vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames
   vector<MD3Mesh> meshes;
   vector<MD3AnimationData> animations;

@@ -59,13 +59,13 @@ bool SimpleModel_MD3::Load(const string &filenm,
     }
 
   //These are the parts of the header we're actually reading.
-  char magic[4];
-  long filever;
-  unsigned long num_frames;
+  Sint8 magic[4];
+  Sint32 filever;
+  Uint32 num_frames;
 
   //Read parts of the header of the MD3 file
   fread(&magic, 1, sizeof(magic), model);
-  if(strncmp((char*)(&magic), "IDP3", 4)) {
+  if(strncmp((char *)magic, "IDP3", 4)) {
     fprintf(stderr, "WARNING: File '%s' is not an MD3 file!\n",
 	skinname.c_str());
     return false;
@@ -80,7 +80,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
 
   freadLE(num_frames, model);
   freadLE(num_tags, model);
-  unsigned long num_meshes;
+  Uint32 num_meshes;
   freadLE(num_meshes, model);
   meshes.resize(num_meshes);
 
@@ -122,29 +122,29 @@ bool SimpleModel_MD3::Load(const string &filenm,
 
     fread(meshes[meshnum].name, 68, 1, model);
 
-    unsigned long num_mframes;
+    Uint32 num_mframes;
     freadLE(num_mframes, model);
 
     fseek(model, 4, SEEK_CUR);		//I'm skipping the number of skins here
 
-    unsigned long num_vertices;
+    Uint32 num_vertices;
     freadLE(num_vertices, model);
 
-    unsigned long num_faces;
+    Uint32 num_faces;
     freadLE(num_faces, model);
 
-    long face_offset;
+    Sint32 face_offset;
     freadLE(face_offset, model);
 
     fseek(model, 4, SEEK_CUR);		//I'm skipping the header size here
 
-    long uv_offset;
+    Sint32 uv_offset;
     freadLE(uv_offset, model);
 
-    long vertex_offset;
+    Sint32 vertex_offset;
     freadLE(vertex_offset, model);
 
-    long mesh_size;
+    Sint32 mesh_size;
     freadLE(mesh_size, model);
 
     meshes[meshnum].faces.resize(num_faces);
@@ -171,7 +171,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
 	// Seek to the start of the triangle information, then read it in.
     fseek(model, offset + vertex_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].triangles.size(); ++vert) {
-      short tmp;
+      Sint16 tmp;
       freadLE(tmp, model);
       meshes[meshnum].triangles[vert].vertex[0] = float(tmp) / 64.0F;
       freadLE(tmp, model);
@@ -197,7 +197,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
     return false;
     }
 
-  char obj[256] = {0}, tex[256] = {0};
+  Sint8 obj[256] = {0}, tex[256] = {0};
   while(1) {
     int num = fscanf(skin, " %[^ \n\t\r,],%[^ \n\t\r]\n", obj, tex);
     if(num < 1) break;
@@ -206,8 +206,8 @@ bool SimpleModel_MD3::Load(const string &filenm,
       }
     else {
       for(unsigned int i = 0; i < meshes.size(); i++) {
-	if(!strcasecmp(obj, meshes[i].name)) {
-	  SM_Texture *tmptex = new SM_Texture(tex);
+	if(!strcasecmp((char*)obj, (char*)meshes[i].name)) {
+	  SM_Texture *tmptex = new SM_Texture((char*)tex);
 	  texture.push_back(tmptex);
 
           tmptex->Update();
@@ -216,8 +216,8 @@ bool SimpleModel_MD3::Load(const string &filenm,
 	  }
 	}
       }
-    memset(obj, 0, 256);
-    memset(tex, 0, 256);
+    memset((char*)obj, 0, 256);
+    memset((char*)tex, 0, 256);
     }
   fclose(skin);
 
@@ -283,7 +283,7 @@ int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
 unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) const {
   unsigned int tag = 0;
   for(; tag < num_tags; ++tag) {
-    if(!strcasecmp(pTags[tag].name, tagname.c_str())) break;
+    if(!strcasecmp((char*)pTags[tag].name, tagname.c_str())) break;
     }
   if(tag == num_tags) return ULONG_MAX;
   else return tag;
