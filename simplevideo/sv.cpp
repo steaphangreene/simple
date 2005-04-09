@@ -65,14 +65,6 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
   SDL_GL_LoadLibrary(NULL);	// Load up OpenGL Dynamically
 				// (Is this loaded version really being used?)
 
-//  GLenum err = glewInit();	//Don't need this, not using extensions
-//
-//  if(err != GLEW_OK) {
-//    fprintf(stderr, "ERROR: GLEW did not initialize!\n");
-//    fprintf(stderr, "ERROR: %s\n", glewGetErrorString(err));
-//    exit(0);
-//    }
-
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_DEBUG) != 0) {
     fprintf(stderr, "Error: %s\n", SDL_GetError());
     exit(0);
@@ -98,6 +90,14 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
 
   // Set a window title.
   SDL_WM_SetCaption("SimpleVideo Renderer", "SimpleVideo Renderer");
+
+  GLenum err = glewInit();
+
+  if(err != GLEW_OK) {
+    fprintf(stderr, "ERROR: GLEW did not initialize!\n");
+    fprintf(stderr, "ERROR: %s\n", glewGetErrorString(err));
+    exit(0);
+    }
 
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
