@@ -213,29 +213,26 @@ bool SimpleVideo::StartScene() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   if(flags & SV_ORTHO) {
-    glOrtho(-16.0/9.0*zm*4, 16.0/9.0*zm*4, -1.0*zm*4, 1.0*zm*4, 1.0, 64.0);
+    glOrtho(-aspect*zm*4, aspect*zm*4, -1.0*zm*4, 1.0*zm*4, 1.0, 64.0);
     }
   else {
-    gluPerspective(45.0, 16.0/9.0, 1.0, 64.0);
+    gluPerspective(45.0, aspect, 1.0, 64.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
   double vdist = 8.0;
-  if(flags & SV_ORTHO) {
-    double xvp, yvp, zvp;
-    zvp = vdist * sin(DEG2RAD(down));
-    xvp = vdist * cos(DEG2RAD(down)) * sin(DEG2RAD(ang));
-    yvp = vdist * cos(DEG2RAD(down)) * -cos(DEG2RAD(ang));
 
-    double normx = 0.0, normy = 0.0, normz = 1.0;
-    if(xvp == 0.0 && yvp == 0.0) normy = 1.0;	//Make sure we know where's up.
+  double xvp, yvp, zvp;
+  zvp = vdist * sin(DEG2RAD(down));
+  xvp = vdist * cos(DEG2RAD(down)) * sin(DEG2RAD(ang));
+  yvp = vdist * cos(DEG2RAD(down)) * -cos(DEG2RAD(ang));
 
-    gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, normx, normy, normz);
-    }
-  else {
-    gluLookAt(zm*4+x, zm*4+y, zm*4*2, x, y, 0.0, -zm, -zm, 0.0);
-    }
+  double upx = sin(DEG2RAD(down)) * -sin(DEG2RAD(ang));
+  double upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
+  double upz = cos(DEG2RAD(down));
+
+  gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, upx, upy, upz);
   return true;
   }
 
