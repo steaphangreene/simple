@@ -36,6 +36,8 @@ public:
   bool ToggleFullscreen();
   bool Resize(int, int);
 
+  void SetMove(double dx, double dy);
+
   void SetPosition(double x, double y, Uint32 delay);
   void SetZoom(double zm, Uint32 delay);
   void SetAngle(double ang, Uint32 delay);
@@ -60,6 +62,8 @@ protected:
 
   double xp, yp, targ_xp, targ_yp;
   Uint32 pos_start, pos_delay;
+  double dxp, dyp;
+  Uint32 move_start;
 
   double angle, targ_angle;
   Uint32 angle_start, angle_delay;

@@ -157,6 +157,10 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   pos_start = 0;
   pos_delay = 0;
 
+  dxp = 0.0;
+  dyp = 0.0;
+  move_start = 0;
+
   angle = 45.0;
   targ_angle = angle;
   angle_start = 0;
@@ -183,6 +187,7 @@ bool SimpleVideo::StartScene() {
 
   double x = 0.0, y = 0.0;
   CalcPos(x, y, real_time);
+  SetMove(dxp, dyp); //This will currentize the movement
 
 //Catch up when move is over
   if(real_time >= pos_start + pos_delay) {
@@ -329,6 +334,20 @@ void SimpleVideo::CalcPos(double &x, double &y, Uint32 cur_time) {
       y = (yp*ipart + targ_yp*part);
       }
     }
+  }
+
+void SimpleVideo::SetMove(double dx, double dy) {
+  Uint32 cur_time = SDL_GetTicks();
+  double elapsed = cur_time - move_start;
+
+  xp += dxp * 2.0 * elapsed / 1000.0;
+  yp += dyp * 2.0 * elapsed / 1000.0;
+  targ_xp += dxp * 2.0 * elapsed / 1000.0;
+  targ_yp += dyp * 2.0 * elapsed / 1000.0;
+
+  dxp = dx;
+  dyp = dy;
+  move_start = cur_time;
   }
 
 void SimpleVideo::SetZoom(double zm, Uint32 delay) {
