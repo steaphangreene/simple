@@ -31,13 +31,14 @@ class SimpleVideo {
 public:
   SimpleVideo(int xs, int ys, unsigned int flgs, double asp);
   ~SimpleVideo();
+
   bool StartScene();
   bool FinishScene();
+
   bool ToggleFullscreen();
   bool Resize(int, int);
 
   void SetMove(double dx, double dy);
-
   void SetPosition(double x, double y, Uint32 delay);
   void SetZoom(double zm, Uint32 delay);
   void SetAngle(double ang, Uint32 delay);
