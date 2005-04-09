@@ -31,6 +31,7 @@
 #ifndef M_PI
 #define M_PI		3.14159265358979323846  /* pi */
 #endif
+#define DEG2RAD(d)	((d)*M_PI/180.0)
 
 using namespace std;
 
@@ -161,7 +162,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   dyp = 0.0;
   move_start = 0;
 
-  angle = 45.0;
+  angle = 0.0;
   targ_angle = angle;
   angle_start = 0;
   angle_delay = 0;
@@ -185,9 +186,10 @@ SimpleVideo::~SimpleVideo() {
 bool SimpleVideo::StartScene() {
   Uint32 real_time = SDL_GetTicks();
 
-  double x = 0.0, y = 0.0;
+  double x = 0.0, y = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0;
+  CalcMove(xoff, yoff, real_time);
   CalcPos(x, y, real_time);
-  SetMove(dxp, dyp); //This will currentize the movement
+  CalcAng(ang, real_time);
 
 //Catch up when move is over
   if(real_time >= pos_start + pos_delay) {
@@ -210,8 +212,18 @@ bool SimpleVideo::StartScene() {
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  double vdist = 8.0;
   if(flags & SV_ORTHO) {
-    gluLookAt(zoom*4*2+x, zoom*4*2+y, zoom*4, x, y, 0.0, -zoom, -zoom, 0.0);
+    double xvp, yvp, zvp;
+    zvp = vdist * sin(DEG2RAD(down));
+    xvp = vdist * cos(DEG2RAD(down)) * sin(DEG2RAD(ang));
+    yvp = vdist * cos(DEG2RAD(down)) * -cos(DEG2RAD(ang));
+
+    double normx = 0.0, normy = 0.0, normz = 1.0;
+    if(xvp == 0.0 && yvp == 0.0) normy = 1.0;	//Make sure we know where's up.
+
+    gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, normx, normy, normz);
     }
   else {
     gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
@@ -338,16 +350,28 @@ void SimpleVideo::CalcPos(double &x, double &y, Uint32 cur_time) {
 
 void SimpleVideo::SetMove(double dx, double dy) {
   Uint32 cur_time = SDL_GetTicks();
-  double elapsed = cur_time - move_start;
 
-  xp += dxp * 2.0 * elapsed / 1000.0;
-  yp += dyp * 2.0 * elapsed / 1000.0;
-  targ_xp += dxp * 2.0 * elapsed / 1000.0;
-  targ_yp += dyp * 2.0 * elapsed / 1000.0;
+  double xoff, yoff;
+  CalcMove(xoff, yoff, cur_time);
+
+  xp += xoff;
+  yp += yoff;
+  targ_xp += xoff;
+  targ_yp += yoff;
 
   dxp = dx;
   dyp = dy;
   move_start = cur_time;
+  }
+
+void SimpleVideo::CalcMove(double &xoff, double &yoff, Uint32 cur_time) {
+  double elapsed = cur_time - move_start;
+
+  xoff = (dxp * 2.0 * elapsed / 1000.0) * cos(DEG2RAD(targ_angle));
+  xoff += (dyp * 2.0 * elapsed / 1000.0) * -sin(DEG2RAD(targ_angle));
+
+  yoff = (dxp * 2.0 * elapsed / 1000.0) * sin(DEG2RAD(targ_angle));
+  yoff += (dyp * 2.0 * elapsed / 1000.0) * cos(DEG2RAD(targ_angle));
   }
 
 void SimpleVideo::SetZoom(double zm, Uint32 delay) {
@@ -356,8 +380,35 @@ void SimpleVideo::SetZoom(double zm, Uint32 delay) {
   }
 
 void SimpleVideo::SetAngle(double ang, Uint32 delay) {
-  //FIXME: Smooth Interpolation!
-  angle = ang;
+  SetMove(dxp, dyp); //This will currentize the movement
+
+  Uint32 event_time = SDL_GetTicks();
+
+  //Start from where we are right now
+  double tmpang = 0.0;
+  CalcAng(tmpang, event_time);
+  angle = tmpang;
+
+  targ_angle = ang;
+  angle_start = event_time;
+  angle_delay = delay;
+  }
+
+void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
+  ang = angle;
+
+  if(targ_angle != angle) {
+    if(cur_time >= angle_start + angle_delay) {
+      ang = targ_angle;
+      }
+    else if(cur_time > angle_start) {
+      double frac = (double)(cur_time - angle_start) / (double)(angle_delay);
+      double part = sin(frac * M_PI/2.0);
+      part = part;
+      double ipart = 1.0 - part;
+      ang = (angle*ipart + targ_angle*part);
+      }
+    }
   }
 
 void SimpleVideo::SetDown(double dn, Uint32 delay) {

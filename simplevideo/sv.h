@@ -46,7 +46,9 @@ public:
   static SimpleVideo *CurrentVideo() { return current; }
 
 protected:
+  void CalcMove(double &xoff, double &yoff, Uint32 cur_time);
   void CalcPos(double &x, double &y, Uint32 cur_time);
+  void CalcAng(double &ang, Uint32 cur_time);
   static SimpleVideo *current;
 
   SDL_Surface *surface;
