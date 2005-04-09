@@ -186,15 +186,25 @@ SimpleVideo::~SimpleVideo() {
 bool SimpleVideo::StartScene() {
   Uint32 real_time = SDL_GetTicks();
 
-  double x = 0.0, y = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0;
+  double x = 0.0, y = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
   CalcMove(xoff, yoff, real_time);
+  CalcZoom(zm, real_time);
   CalcPos(x, y, real_time);
   CalcAng(ang, real_time);
 
-//Catch up when move is over
-  if(real_time >= pos_start + pos_delay) {
-    xp = x;
-    yp = y;
+  //Catch up with transitions that are over
+  if((xp != targ_xp || yp != targ_yp) && real_time >= pos_start + pos_delay) {
+    xp = targ_xp;
+    yp = targ_yp;
+    }
+  if(angle != targ_angle && real_time >= angle_start + angle_delay) {
+    angle = targ_angle;
+    }
+  if(down != targ_down && real_time >= down_start + down_delay) {
+    down = targ_down;
+    }
+  if(zoom != targ_zoom && real_time >= zoom_start + zoom_delay) {
+    zoom = targ_zoom;
     }
 
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -203,9 +213,7 @@ bool SimpleVideo::StartScene() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   if(flags & SV_ORTHO) {
-    glOrtho(-16.0/9.0*zoom*4, 16.0/9.0*zoom*4,
-	-1.0*zoom*4, 1.0*zoom*4,
-	1.0, 64.0);
+    glOrtho(-16.0/9.0*zm*4, 16.0/9.0*zm*4, -1.0*zm*4, 1.0*zm*4, 1.0, 64.0);
     }
   else {
     gluPerspective(45.0, 16.0/9.0, 1.0, 64.0);
@@ -226,7 +234,7 @@ bool SimpleVideo::StartScene() {
     gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, normx, normy, normz);
     }
   else {
-    gluLookAt(zoom*4+x, zoom*4+y, zoom*4*2, x, y, 0.0, -zoom, -zoom, 0.0);
+    gluLookAt(zm*4+x, zm*4+y, zm*4*2, x, y, 0.0, -zm, -zm, 0.0);
     }
   return true;
   }
@@ -375,8 +383,33 @@ void SimpleVideo::CalcMove(double &xoff, double &yoff, Uint32 cur_time) {
   }
 
 void SimpleVideo::SetZoom(double zm, Uint32 delay) {
-  //FIXME: Smooth Interpolation!
-  zoom = zm;
+  Uint32 event_time = SDL_GetTicks();
+
+  //Start from where we are right now
+  double tmpzm = 0.0;
+  CalcZoom(tmpzm, event_time);
+  zoom = tmpzm;
+
+  targ_zoom = zm;
+  zoom_start = event_time;
+  zoom_delay = delay;
+  }
+
+void SimpleVideo::CalcZoom(double &zm, Uint32 cur_time) {
+  zm = zoom;
+
+  if(targ_zoom != zoom) {
+    if(cur_time >= zoom_start + zoom_delay) {
+      zm = targ_zoom;
+      }
+    else if(cur_time > zoom_start) {
+      double frac = (double)(cur_time - zoom_start) / (double)(zoom_delay);
+      double part = sin(frac * M_PI/2.0);
+      part = part;
+      double ipart = 1.0 - part;
+      zm = (zoom*ipart + targ_zoom*part);
+      }
+    }
   }
 
 void SimpleVideo::SetAngle(double ang, Uint32 delay) {
@@ -414,4 +447,5 @@ void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
 void SimpleVideo::SetDown(double dn, Uint32 delay) {
   //FIXME: Smooth Interpolation!
   down = dn;
+  targ_down = down;
   }
