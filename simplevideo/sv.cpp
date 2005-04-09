@@ -91,14 +91,6 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
   // Set a window title.
   SDL_WM_SetCaption("SimpleVideo Renderer", "SimpleVideo Renderer");
 
-  GLenum err = glewInit();
-
-  if(err != GLEW_OK) {
-    fprintf(stderr, "ERROR: GLEW did not initialize!\n");
-    fprintf(stderr, "ERROR: %s\n", glewGetErrorString(err));
-    exit(0);
-    }
-
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClearDepth(1.0);

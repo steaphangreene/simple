@@ -27,7 +27,7 @@ win32:	libsimplevideo.win32_a
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
@@ -42,17 +42,17 @@ win32:	libsimplevideo.win32_a
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_image -lGLEW
+LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 
 OBJS:=	sv.o
 

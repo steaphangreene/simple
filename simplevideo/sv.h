@@ -22,8 +22,8 @@
 #ifndef SV_H
 #define SV_H
 
-#include <GL/glew.h>
 #include "SDL.h"
+#include "SDL_opengl.h"
 
 #define SV_ORTHO	1	// If not present, it's perspective mode
 
