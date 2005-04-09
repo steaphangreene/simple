@@ -22,8 +22,6 @@
 #ifndef SG_ANIMATEDPANEL_H
 #define SG_ANIMATEDPANEL_H
 
-#include <GL/glew.h>
-
 #include <string>
 
 using namespace std;

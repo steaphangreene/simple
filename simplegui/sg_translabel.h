@@ -22,8 +22,6 @@
 #ifndef SG_TRANSLABEL_H
 #define SG_TRANSLABEL_H
 
-#include <GL/glew.h>
-
 #include <string>
 
 using namespace std;

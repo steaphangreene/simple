@@ -28,7 +28,7 @@ win32:	libsimplegui.win32_a
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
@@ -38,22 +38,22 @@ win32:	libsimplegui.win32_a
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_ttf -lGLEW
+LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGLEW
+#LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGLEW
+#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 OBJS:=	sg.o sg_widget.o sg_texture.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
@@ -68,7 +68,7 @@ OBJS:=	sg.o sg_widget.o sg_texture.o \
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lGLEW -lglu32 -lopengl32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lglu32 -lopengl32
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
 	sg_alignment.win32_o sg_table.win32_o sg_scrollable.win32_o \
