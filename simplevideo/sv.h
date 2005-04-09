@@ -29,8 +29,11 @@
 
 class SimpleVideo {
 public:
-  SimpleVideo(int xs, int ys, unsigned int flgs, double asp);
+  SimpleVideo(int xs, int ys, double asp);
   ~SimpleVideo();
+
+  void SetOrtho();
+  void SetPerspective(double vert_fov);
 
   bool StartScene();
   bool FinishScene();
@@ -43,6 +46,8 @@ public:
   void SetZoom(double zm, Uint32 delay);
   void SetAngle(double ang, Uint32 delay);
   void SetDown(double dn, Uint32 delay);
+
+  void SetZExtents(double mnz, double mxz);
 
   static SimpleVideo *CurrentVideo() { return current; }
 
@@ -63,6 +68,9 @@ protected:
   unsigned int flags;
 
   double aspect;
+  double yfov; //Used only by perspective
+
+  double minz, maxz;
 
   double xp, yp, targ_xp, targ_yp;
   Uint32 pos_start, pos_delay;

@@ -39,7 +39,7 @@ using namespace std;
 
 SimpleVideo *SimpleVideo::current = NULL;
 
-SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
+SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
   if(current) {
     fprintf(stderr, "ERROR: Created mulitple SimpleVideo instances!\n");
     exit(1);
@@ -47,7 +47,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   current = this;
 
   aspect = asp;
-  flags = flgs;
+  flags = 0;
+  yfov = 45.0;
 
   surface = NULL;
   videoFlags = 0;
@@ -151,6 +152,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   // Enable 2D textures by default
   glEnable(GL_TEXTURE_2D);
 
+  minz = 0.0, maxz = 10.0;
+
   xp = 0.0;
   yp = 0.0;
   targ_xp = xp;
@@ -177,6 +180,21 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   targ_zoom = zoom;
   zoom_start = 0;
   zoom_delay = 0;
+  }
+
+void SimpleVideo::SetOrtho() {
+  flags = SV_ORTHO;
+  }
+
+void SimpleVideo::SetPerspective(double vert_fov) {
+  if(vert_fov > 90.0) vert_fov = 90.0;
+  else if(vert_fov < 0.0) vert_fov = 0.0;
+
+  flags = 0;
+  yfov = vert_fov;
+
+  if(down < 22.5 + (yfov/2.0)) down = 22.5 + (yfov/2.0);
+  if(targ_down < 22.5 + (yfov/2.0)) targ_down = 22.5 + (yfov/2.0);
   }
 
 SimpleVideo::~SimpleVideo() {
@@ -216,12 +234,13 @@ bool SimpleVideo::StartScene() {
     glOrtho(-aspect*zm*4, aspect*zm*4, -1.0*zm*4, 1.0*zm*4, 1.0, 64.0);
     }
   else {
-    gluPerspective(45.0, aspect, 1.0, 64.0);
+    gluPerspective(yfov, aspect, 1.0, 64.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
   double vdist = 8.0;
+  if(!(flags & SV_ORTHO)) vdist *= zm;
 
   double xvp, yvp, zvp;
   zvp = vdist * sin(DEG2RAD(down));
@@ -443,6 +462,17 @@ void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
 
 void SimpleVideo::SetDown(double dn, Uint32 delay) {
   //FIXME: Smooth Interpolation!
+  if(dn > 90.0) dn = 90.0;
+  else if(dn < 22.5) dn = 22.5;
+
   down = dn;
   targ_down = down;
+
+  //Make sure this setting is acceptable for Perspective view
+  if(!(flags & SV_ORTHO)) SetPerspective(yfov);
+  }
+
+void SimpleVideo::SetZExtents(double mnz, double mxz) {
+  minz = mnz;
+  maxz = mxz;
   }
