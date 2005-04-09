@@ -20,7 +20,6 @@
 // *************************************************************************
 
 #include "SDL.h"
-#include <GL/glew.h>
 #include "SDL_image.h"
 
 #include <cstdio>
