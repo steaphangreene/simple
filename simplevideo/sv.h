@@ -31,14 +31,20 @@ class SimpleVideo {
 public:
   SimpleVideo(int xs, int ys, unsigned int flgs, double asp);
   ~SimpleVideo();
-  bool StartScene(double zoom = 4.0, double x = 0.0, double y = 0.0);
+  bool StartScene();
   bool FinishScene();
   bool ToggleFullscreen();
   bool Resize(int, int);
 
+  void SetPosition(double x, double y, Uint32 delay);
+  void SetZoom(double zm, Uint32 delay);
+  void SetAngle(double ang, Uint32 delay);
+  void SetDown(double dn, Uint32 delay);
+
   static SimpleVideo *CurrentVideo() { return current; }
 
 protected:
+  void CalcPos(double &x, double &y, Uint32 cur_time);
   static SimpleVideo *current;
 
   SDL_Surface *surface;
@@ -51,6 +57,18 @@ protected:
   unsigned int flags;
 
   double aspect;
+
+  double xp, yp, targ_xp, targ_yp;
+  Uint32 pos_start, pos_delay;
+
+  double angle, targ_angle;
+  Uint32 angle_start, angle_delay;
+
+  double zoom, targ_zoom;
+  Uint32 zoom_start, zoom_delay;
+
+  double down, targ_down;
+  Uint32 down_start, down_delay;
   };
 
 #endif // SV_H

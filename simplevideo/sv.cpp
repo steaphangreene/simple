@@ -28,6 +28,10 @@
 #include <cstring>
 #include <cmath>
 
+#ifndef M_PI
+#define M_PI		3.14159265358979323846  /* pi */
+#endif
+
 using namespace std;
 
 #include "sv.h"
@@ -51,8 +55,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   fullscreen_mode = 0;
   
   const SDL_VideoInfo *videoInfo;
-  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
-  GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
+//  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
+//  GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
 
   xsize = xs;   ysize = ys;
 
@@ -77,17 +81,9 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
 
   videoFlags = SDL_OPENGL;
   videoFlags |= SDL_GL_DOUBLEBUFFER;
-  videoFlags |= SDL_HWPALETTE;
   videoFlags |= SDL_RESIZABLE;
   if(fullscreen_mode)
     videoFlags |= SDL_FULLSCREEN;
-
-  // Use HW Surfaces if possible
-  if(videoInfo->hw_available) videoFlags |= SDL_HWSURFACE;
-  else videoFlags |= SDL_SWSURFACE;
-
-  // Use HW Blits if possible
-  if(videoInfo->blit_hw) videoFlags|=SDL_HWACCEL;
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -99,7 +95,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
     }
 
   // Set a window title.
-  SDL_WM_SetCaption("Example Renderer", "Example Renderer");
+  SDL_WM_SetCaption("SimpleVideo Renderer", "SimpleVideo Renderer");
 
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -118,6 +114,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
 
   // Enable depth testing for hidden line removal
   glEnable(GL_DEPTH_TEST);
+
+  // Hopefully you don't need this - slows things down quite a bit
 //  glEnable(GL_NORMALIZE);
 
   glCullFace(GL_BACK);
@@ -131,18 +129,9 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
 //  glEnable(GL_POINT_SMOOTH);
 //  glEnable(GL_LINE_SMOOTH);
 
-
+  // Prepare for (but don't currently enable) alpha blending
   glBlendFunc(GL_SRC_ALPHA,  GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_BLEND);
-
-//  glBlendFunc(GL_ONE, GL_ZERO);
-//  glBlendFunc(GL_SRC_ALPHA,  GL_ONE_MINUS_SRC_ALPHA);
-//  glBlendFunc(GL_ONE, GL_ONE);
-//  glEnable(GL_BLEND);
-
-//  glEnable(GL_BLEND);
-//  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//  glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 
   // Set the GL_AMBIENT_AND_DIFFUSE color state variable to be the
   // one referred to by all following calls to glColor
@@ -150,22 +139,57 @@ SimpleVideo::SimpleVideo(int xs, int ys, unsigned int flgs, double asp) {
   glEnable(GL_COLOR_MATERIAL);
 
   // Create a Directional Light Source
-  glLightfv(GL_LIGHT0, GL_POSITION, light1_pos);
-  glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
+//  glLightfv(GL_LIGHT0, GL_POSITION, light1_pos);
+//  glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
+//  glEnable(GL_LIGHT0);
+//  glEnable(GL_LIGHTING);
 
   // Set the new viewport size
   glViewport(0, 0, (GLint)xsize, (GLint)ysize);
 
+  // Enable 2D textures by default
   glEnable(GL_TEXTURE_2D);
+
+  xp = 0.0;
+  yp = 0.0;
+  targ_xp = xp;
+  targ_yp = yp;
+  pos_start = 0;
+  pos_delay = 0;
+
+  angle = 45.0;
+  targ_angle = angle;
+  angle_start = 0;
+  angle_delay = 0;
+
+  down = 60.0;
+  if(flags & SV_ORTHO) down = 30.0;
+  targ_down = down;
+  down_start = 0;
+  down_delay = 0;
+
+  zoom = 4.0;
+  targ_zoom = zoom;
+  zoom_start = 0;
+  zoom_delay = 0;
   }
 
 SimpleVideo::~SimpleVideo() {
   //at_exit handles all this
   }
 
-bool SimpleVideo::StartScene(double zoom, double x, double y) {
+bool SimpleVideo::StartScene() {
+  Uint32 real_time = SDL_GetTicks();
+
+  double x = 0.0, y = 0.0;
+  CalcPos(x, y, real_time);
+
+//Catch up when move is over
+  if(real_time >= pos_start + pos_delay) {
+    xp = x;
+    yp = y;
+    }
+
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   //This is the actual perspective setup
@@ -263,4 +287,61 @@ bool SimpleVideo::ToggleFullscreen(void) {
   fullscreen_mode = (videoFlags & SDL_FULLSCREEN) != 0;
 
   return true;
+  }
+
+void SimpleVideo::SetPosition(double x, double y, Uint32 delay) {
+  Uint32 event_time = SDL_GetTicks();
+
+  //Start from where we are right now
+  double tmpx = 0.0, tmpy = 0.0;
+  CalcPos(tmpx, tmpy, event_time);
+  xp = tmpx;
+  yp = tmpy;
+
+  targ_xp = x;
+  targ_yp = y;
+  pos_start = event_time;
+  pos_delay = delay;
+  }
+
+void SimpleVideo::CalcPos(double &x, double &y, Uint32 cur_time) {
+  x = xp;
+  y = yp;
+
+  if(targ_xp != xp || targ_yp != yp) {
+    if(cur_time >= pos_start + pos_delay) {
+      x = targ_xp;
+      y = targ_yp;
+      }
+    else if(cur_time > pos_start) {
+      //This would be linearly interpolated movement
+      //Uint32 part = cur_time - pos_start;
+      //Uint32 ipart = pos_delay - part;
+      //x = (xp*ipart + targ_xp*part) / pos_delay;
+      //y = (yp*ipart + targ_yp*part) / pos_delay;
+
+      //This is smoother
+      double frac = (double)(cur_time - pos_start) / (double)(pos_delay);
+      double part = sin(frac * M_PI/2.0);
+      part = part;
+      double ipart = 1.0 - part;
+      x = (xp*ipart + targ_xp*part);
+      y = (yp*ipart + targ_yp*part);
+      }
+    }
+  }
+
+void SimpleVideo::SetZoom(double zm, Uint32 delay) {
+  //FIXME: Smooth Interpolation!
+  zoom = zm;
+  }
+
+void SimpleVideo::SetAngle(double ang, Uint32 delay) {
+  //FIXME: Smooth Interpolation!
+  angle = ang;
+  }
+
+void SimpleVideo::SetDown(double dn, Uint32 delay) {
+  //FIXME: Smooth Interpolation!
+  down = dn;
   }
