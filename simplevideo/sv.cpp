@@ -471,11 +471,11 @@ void SimpleVideo::SetZExtents(double mnz, double mxz) {
   maxz = mxz;
   }
 
-void SimpleVideo::ScreenToMap(double &x, double &y) {
+void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
   x = 0.0; y = 0.0;	//FIXME: Implement this for real!
   }
 
-void SimpleVideo::MapToScreen(double &x, double &y) {
+void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
   x = 0.0; y = 0.0;	//FIXME: Implement this for real!
   }
 

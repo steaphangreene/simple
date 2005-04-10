@@ -49,8 +49,8 @@ public:
 
   void SetZExtents(double mnz, double mxz);
 
-  void ScreenToMap(double &x, double &y);
-  void MapToScreen(double &x, double &y);
+  void ScreenToMap(double &x, double &y, const double &z = 0.0);
+  void MapToScreen(double &x, double &y, const double &z = 0.0);
 
   static SimpleVideo *CurrentVideo() { return current; }
 
