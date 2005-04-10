@@ -223,16 +223,18 @@ bool SimpleVideo::StartScene() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   if(flags & SV_ORTHO) {
-    glOrtho(-aspect*zm*4, aspect*zm*4, -1.0*zm*4, 1.0*zm*4, 1.0, 64.0);
+    //FIXME: Calculate ACTUAL near and far clipping limits
+    glOrtho(-aspect*zm/2.0, aspect*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0, 1.0, 64.0);
     }
   else {
+    //FIXME: Calculate ACTUAL near and far clipping limits
     gluPerspective(yfov, aspect, 1.0, 64.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  double vdist = 8.0;
-  if(!(flags & SV_ORTHO)) vdist *= zm;
+  double vdist = 32.0;
+  if(!(flags & SV_ORTHO)) vdist = zm;
 
   double xvp, yvp, zvp;
   zvp = vdist * sin(DEG2RAD(down));
@@ -468,3 +470,12 @@ void SimpleVideo::SetZExtents(double mnz, double mxz) {
   minz = mnz;
   maxz = mxz;
   }
+
+void SimpleVideo::ScreenToMap(double &x, double &y) {
+  x = 0.0; y = 0.0;	//FIXME: Implement this for real!
+  }
+
+void SimpleVideo::MapToScreen(double &x, double &y) {
+  x = 0.0; y = 0.0;	//FIXME: Implement this for real!
+  }
+
