@@ -219,6 +219,12 @@ bool SimpleVideo::StartScene() {
 
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
+  // Enable depth testing for hidden line removal
+  glEnable(GL_DEPTH_TEST);
+
+  // Enable 2D textures by default
+  glEnable(GL_TEXTURE_2D);
+
   //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
