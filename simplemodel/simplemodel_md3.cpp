@@ -49,7 +49,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   if(skinnm.length() >  0) skinname = skinnm;
   else skinname = modelname.substr(0, skinname.length() - 4) + "_default.skin";
 
-  FILE *model = fopen(modelname.c_str(), "r");
+  FILE *model = fopen(modelname.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
 	modelname.c_str());
@@ -238,8 +238,8 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
       int vertindex = frame * meshes[obj].coords.size();
 
       for(unsigned int j = 0; j < meshes[obj].faces.size(); j++) {
-	for(int whichVertex = 0; whichVertex < 3; whichVertex++) {
-	  int index = meshes[obj].faces[j].vertices[whichVertex];
+	for(int vertex = 0; vertex < 3; vertex++) {
+	  int index = meshes[obj].faces[j].vertices[vertex];
 
 	  glTexCoord2f(meshes[obj].coords[index].coord[0],
 		meshes[obj].coords[index].coord[1]);
