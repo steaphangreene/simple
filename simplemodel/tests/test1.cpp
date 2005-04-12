@@ -57,9 +57,14 @@ static void SetAnim(int anim) {
 int main(int argc, char **argv) {
   int xs=640, ys=480;
 
-  if(argc < 2 || argc > 3) {
+  char *modname = "models/players/trooper";
+
+  if(argc > 3) {
     fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
     exit(1);
+    }
+  else if(argc >= 2) {
+    modname = argv[1];
     }
 
   if(!init_renderer(xs, ys)) {
@@ -67,7 +72,7 @@ int main(int argc, char **argv) {
     }
 
   SimpleModel_MD3 *weap = NULL; //Created below
-  SimpleModel *mod = SM_LoadModel(argv[1]);
+  SimpleModel *mod = SM_LoadModel(modname);
   if(!mod) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
