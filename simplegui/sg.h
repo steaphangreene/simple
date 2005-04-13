@@ -77,6 +77,7 @@ public:
   SG_Widget *FocusWidget() { return focus_widget; };
 
   void LoadFont(const char *fontfn, int pxsz = 20);
+  void SetDefaultFontSize(int pxsz);
   void SetFont(TTF_Font *f);
   void UnsetFont() { SetFont(NULL); };
   TTF_Font *Font(int pxsz = -1);

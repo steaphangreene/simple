@@ -473,22 +473,28 @@ void SimpleGUI::SetFont(TTF_Font *font) {
   default_pxsize = 0;
   }
 
+void SimpleGUI::SetDefaultFontSize(int pxsz) {
+  default_pxsize = pxsz;
+  }
+
 void SimpleGUI::LoadFont(const char *fontfn, int pxsz) {
   if(fontfile) delete fontfile;
   fontfile = new char[strlen(fontfn)+1];
   strcpy(fontfile, fontfn);
 
   fontyratio = 1.0;
-  default_pxsize = pxsz;
-  Font(); //Initialize default font - to generate error now, not later
-  int act_height = TTF_FontHeight(cur_font[pxsz]);
-  if(act_height != pxsz) { //Non-true-pixel font
-    cur_font[act_height] = cur_font[pxsz];
-    cur_font.erase(pxsz);
-    fontyratio = (float)(pxsz) / (float)(act_height);
-    Font(); //Create the REAL default font size
+  int load_pxsz = 100;
+  Font(load_pxsz); //Initialize font
+  int act_height = TTF_FontHeight(cur_font[load_pxsz]);
+  if(act_height != load_pxsz) { //Non-true-pixel font
+    cur_font[act_height] = cur_font[load_pxsz];
+    cur_font.erase(load_pxsz);
+    fontyratio = (float)(load_pxsz) / (float)(act_height);
+    Font(load_pxsz); //Create the REAL default font size
 //    fprintf(stderr, "FontYRatio = %f\n", fontyratio);
     }
+
+  SetDefaultFontSize(pxsz);
   }
 
 TTF_Font *SimpleGUI::Font(int pxsz) {
