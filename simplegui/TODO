@@ -25,11 +25,9 @@ Implement ScrollingArea
 Implement Menu
 
 -=Wishlist=-
-Sharing like textures?
 Composite textures?
 Widget-specific fonts?
 Add time offset to AnimatedPanel widget?
-Allow SG_Table to be resizable?
 Console widget?
-Determing state dynamically based on flags and flag changes?
+Determine state dynamically based on flags and flag changes?
 Typecastor for char * (separated by '\n's) to vector<string>?
