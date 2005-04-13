@@ -40,7 +40,12 @@ int SG_Compound::HandleEvent(SDL_Event *event, float x, float y) {
 
   int ret = SG_Table::HandleEvent(event, x, y);
   if(ret > 0 && event->type == SDL_SG_EVENT) {
-    return ChildEvent(event);
+    ret = ChildEvent(event);
+    if(!ret) {
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      ret = 1;
+      }
     }
   return ret;
   }
@@ -54,7 +59,12 @@ bool SG_Compound::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   int ret = SG_Table::HandEventTo(targ, event, x, y);
   if(ret && event->type == SDL_SG_EVENT) {
-    return ChildEvent(event);
+    ret = ChildEvent(event);
+    if(!ret) {
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      ret = 1;
+      }
     }
   return ret;
   }
