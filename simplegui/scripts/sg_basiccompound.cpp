@@ -22,7 +22,7 @@
 // This file was created from (or actually IS) a basic compound widget
 // def, so it's not defined and is really just a place-holder for now.
 
-#include <GL/gl.h>
+#include "SDL_opengl.h"
 
 #include "sg_basiccompound.h"
 #include "sg_panel.h"
