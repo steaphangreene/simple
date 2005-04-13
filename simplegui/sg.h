@@ -52,7 +52,10 @@ public:
   bool RenderStart(unsigned long cur_time);
   bool RenderFinish(unsigned long cur_time);
   bool Render(unsigned long cur_time);
-  bool ProcessEvent(SDL_Event *event);
+
+  bool ProcessEvent(SDL_Event *event);		//Depricated for external use!
+  bool PollEvent(SDL_Event *event, bool ts = false);
+  bool WaitEvent(SDL_Event *event, bool ts = false);
 
   SG_Alignment *MasterWidget() { return mWid; };
 

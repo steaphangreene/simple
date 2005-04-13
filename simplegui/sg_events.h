@@ -21,6 +21,9 @@
 
 #define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
 
+//System Events
+#define	SG_EVENT_NEEDTORENDER	1	//Something changed but no action
+
 //Basic Actions
 #define	SG_EVENT_BUTTONCLICK	100
 #define	SG_EVENT_BUTTONPRESS	101

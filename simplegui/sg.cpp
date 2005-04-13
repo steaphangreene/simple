@@ -238,6 +238,30 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
   return 1;
   }
 
+bool SimpleGUI::PollEvent(SDL_Event *event, bool ts) {
+  if(!ts) SDL_PumpEvents();	//Only pump once!
+  while(SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0) {
+    if(event == NULL) return true;
+    else if(ProcessEvent(event)) return true;
+    }
+  return false;
+  }
+
+bool SimpleGUI::WaitEvent(SDL_Event *event, bool ts) {
+  if(!ts) SDL_PumpEvents();	//Pump once before everything...
+  int res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS);
+  while(res >= 0) {
+    if(res > 0) {	//If there IS an event here or ready
+      if(event == NULL) return true;
+      else if(ProcessEvent(event) != 0) return true;
+      }
+    SDL_Delay(10);
+    if(!ts) SDL_PumpEvents();	//...and pump after each wait.
+    res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS);
+    }
+  return false;
+  }
+
 bool SimpleGUI::ProcessEvent(SDL_Event *event) {
   if(!event) return 0;
 
@@ -329,6 +353,12 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     if(ret && event->type != SDL_SG_EVENT && ((!popWid) || (!pop_modal)))
       ret = mWid->HandleEvent(event, mousex, mousey);
+
+    if(!ret) {	//Mouse DID move, so render is needed
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      ret = 1;
+      }
     return ret;
     }
 
