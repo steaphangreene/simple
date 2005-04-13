@@ -105,9 +105,9 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o *.a test1 test2 test3 *.win32_o *.win32_a *.exe
+	rm -f deps.mk *.o *.a test1 test2 test3 test4 *.win32_o *.win32_a *.exe
 
-test:	test1 test2 test3
+test:	test1 test2 test3 test4
 
 test1:	test1.o renderer.o audio.o libsimplegui.a
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimplegui.a $(LIBS)
@@ -118,7 +118,10 @@ test2:	test2.o renderer.o audio.o libsimplegui.a
 test3:  test3.o renderer.o audio.o libsimplegui.a
 	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o libsimplegui.a $(LIBS)
 	
-win32_test:	test1.exe test2.exe test3.exe
+test4:  test4.o renderer.o audio.o libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o libsimplegui.a $(LIBS)
+	
+win32_test:	test1.exe test2.exe test3.exe test4.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
@@ -129,6 +132,9 @@ test2.exe:	test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
 
 test3.exe:	test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
+	
+test4.exe:	test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

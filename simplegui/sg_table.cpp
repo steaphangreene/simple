@@ -25,7 +25,7 @@
 
 SG_Table::SG_Table(int xsz, int ysz, float xbor, float ybor)
 	: SG_Alignment(xbor, ybor) {
-  if(ysz < 1 || xsz < 1) {
+  if(ysz < 0 || xsz < 0) {
     fprintf(stderr, "Illegal table geometry, (%dx%d)\n", xsz, ysz);
     exit(1);
     }
@@ -51,6 +51,8 @@ int SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  if(xsize <= 0 || ysize <= 0) return -1;
 
   int ret = 1;
 
@@ -88,6 +90,8 @@ bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(targ == this) return HandleEvent(event, x, y);
 
+  if(xsize <= 0 || ysize <= 0) return false;
+
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
@@ -104,13 +108,15 @@ bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
   if(background->HasWidget(targ))
     return background->HandEventTo(targ, event, x, y);
 
-  return 1;
+  return true;
   }
 
 bool SG_Table::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Table %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
+  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
+
+  if(xsize <= 0 || ysize <= 0) return true;
 
   glPushMatrix();
 
@@ -134,7 +140,7 @@ bool SG_Table::Render(unsigned long cur_time) {
 
 //  fprintf(stderr, "  Done.\n\n");
 
-  return 1;
+  return true;
   }
 
 bool SG_Table::AddWidget(SG_Widget *wid) {
@@ -146,7 +152,7 @@ bool SG_Table::AddWidget(SG_Widget *wid) {
     xpos = 0; ++ypos;
     if(ypos >= ysize) ypos = 0;
     }
-  return 1;
+  return true;
   }
 
 bool SG_Table::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
@@ -160,7 +166,7 @@ bool SG_Table::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
   SG_TableGeometry geom = { x1, y1, xs, ys };
   widgets.push_back(wid);
   wgeom.push_back(geom);
-  return 1;
+  return true;
   }
 
 void SG_Table::RemoveWidget(SG_Widget *wid) {
@@ -197,4 +203,110 @@ void SG_Table::CalcGeometry(const vector<SG_TableGeometry>::iterator &geom) {
 
 //  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
 //	cur_geom.xp, cur_geom.yp, cur_geom.xs, cur_geom.ys);
+  }
+
+void SG_Table::Resize(int xsz, int ysz) {
+  if(ysize > ysz || xsize > xsz) {	//Remove widgets that don't fit anymore
+    vector<SG_Widget *>::iterator itrw = widgets.begin();
+    vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+    for(; itrw != widgets.end(); ++itrw, ++itrg) {
+      if(itrg->xpos + itrg->xsize >= xsz || itrg->ypos + itrg->ysize >= ysz) {
+	itrw = widgets.erase(itrw);
+	itrg = wgeom.erase(itrg);
+	--itrw;  // Undo ++itrw from for() loop.
+	--itrg;  // Undo ++itrg from for() loop.
+	}
+      }
+    }
+  xsize = xsz;
+  ysize = ysz;
+  }
+
+void SG_Table::AddCol(int xel) {
+  if(xel > xsize || xel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(xel <= itrg->xpos) {		//Adjust those past it up one
+      ++itrg->xpos;
+      }
+    }
+  ++xsize;
+  }
+
+void SG_Table::AddRow(int yel) {
+  if(yel > ysize || yel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(yel <= itrg->ypos) {		//Adjust those past it up one
+      ++itrg->ypos;
+      }
+    }
+  ++ysize;
+  }
+
+void SG_Table::RemoveCol(int xel) {
+  if(xel >= xsize || xel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(xel >= itrg->xpos && xel < itrg->xpos + itrg->xsize) {
+      itrw = widgets.erase(itrw);	//Remove widgets that get nailed
+      itrg = wgeom.erase(itrg);
+      --itrw;  // Undo ++itrw from for() loop.
+      --itrg;  // Undo ++itrg from for() loop.
+      }
+    else if(xel < itrg->xpos) {		//And adjust those past it back one
+      --itrg->xpos;
+      }
+    }
+  --xsize;
+  }
+
+void SG_Table::RemoveRow(int yel) {
+  if(yel >= ysize || yel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(yel >= itrg->ypos && yel < itrg->ypos + itrg->ysize) {
+      itrw = widgets.erase(itrw);	//Remove widgets that get nailed
+      itrg = wgeom.erase(itrg);
+      --itrw;  // Undo ++itrw from for() loop.
+      --itrg;  // Undo ++itrg from for() loop.
+      }
+    else if(yel < itrg->ypos) {		//And adjust those past it back one
+      --itrg->ypos;
+      }
+    }
+  --ysize;
+  }
+
+void SG_Table::RemoveCols(const vector<int> &xels) {	//FIXME: Do this better!
+  vector<int>::const_iterator itr = xels.begin();
+  for(; itr != xels.end(); ++itr) {
+    RemoveCol(*itr);
+    }
+  }
+
+void SG_Table::RemoveRows(const vector<int> &yels) {	//FIXME: Do this better!
+  vector<int>::const_iterator itr = yels.begin();
+  for(; itr != yels.end(); ++itr) {
+    RemoveRow(*itr);
+    }
+  }
+
+void SG_Table::Substitute(SG_Widget *oldwid, SG_Widget *newwid) {
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if((*itrw) == oldwid) {
+      (*itrw) = newwid;
+      break;
+      }
+    }
   }

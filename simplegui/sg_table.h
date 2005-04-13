@@ -43,6 +43,15 @@ public:
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
+
+  virtual void Resize(int xsz, int ysz);
+  virtual void AddCol(int xel);
+  virtual void AddRow(int yel);
+  virtual void RemoveCol(int xel);
+  virtual void RemoveRow(int yel);
+  virtual void RemoveCols(const vector<int> &xels);
+  virtual void RemoveRows(const vector<int> &yels);
+  virtual void Substitute(SG_Widget *oldwid, SG_Widget *newwid);
   
 protected:
   void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
