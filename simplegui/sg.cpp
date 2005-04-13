@@ -41,6 +41,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   current_sg = this;
   current_widget = NULL;
   focus_widget = NULL;
+  mutex = NULL;
 
   mWid = new SG_Alignment();
   popWid = NULL;
@@ -127,6 +128,9 @@ SimpleGUI::~SimpleGUI() {
       }
     }
   cur_font.clear();
+
+  if(mutex) SDL_DestroyMutex(mutex);
+  mutex = NULL;
   }
 
 bool SimpleGUI::Render(unsigned long cur_time) {
@@ -134,7 +138,8 @@ bool SimpleGUI::Render(unsigned long cur_time) {
   return RenderFinish(cur_time);
   }
 
-bool SimpleGUI::RenderStart(unsigned long cur_time) {
+bool SimpleGUI::RenderStart(unsigned long cur_time, bool ts) {
+  if(ts) SDL_mutexP(Mutex());
   if(newxunused != xunused || newyunused != yunused || newxsize != xsize
 	|| newysize != ysize || newaspect_actual != aspect_actual) {
     xunused = newxunused;
@@ -148,10 +153,13 @@ bool SimpleGUI::RenderStart(unsigned long cur_time) {
 
     glViewport(xunused/2, yunused/2, xsize, ysize);
     }
+  if(ts) SDL_mutexV(Mutex());
   return 1;
   }
 
-bool SimpleGUI::RenderFinish(unsigned long cur_time) {
+bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
+  if(ts) SDL_mutexP(Mutex());
+
   //This basically leverages the perspective to flat 2D
   //with a -1.0 to 1.0 centered coord system
   glMatrixMode(GL_PROJECTION);
@@ -235,6 +243,10 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time) {
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
 
+  if(ts) {
+    SDL_mutexV(Mutex());
+    SDL_PumpEvents();
+    }
   return 1;
   }
 
@@ -242,7 +254,12 @@ bool SimpleGUI::PollEvent(SDL_Event *event, bool ts) {
   if(!ts) SDL_PumpEvents();	//Only pump once!
   while(SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0) {
     if(event == NULL) return true;
-    else if(ProcessEvent(event)) return true;
+    else {
+      if(ts) SDL_mutexP(Mutex());
+      bool res = ProcessEvent(event);
+      if(ts) SDL_mutexV(Mutex());
+      if(res) return true;
+      }
     }
   return false;
   }
@@ -253,7 +270,12 @@ bool SimpleGUI::WaitEvent(SDL_Event *event, bool ts) {
   while(res >= 0) {
     if(res > 0) {	//If there IS an event here or ready
       if(event == NULL) return true;
-      else if(ProcessEvent(event) != 0) return true;
+      else {
+	if(ts) SDL_mutexP(Mutex());
+	bool res = ProcessEvent(event);
+	if(ts) SDL_mutexV(Mutex());
+	if(res) return true;
+	}
       }
     SDL_Delay(10);
     if(!ts) SDL_PumpEvents();	//...and pump after each wait.
@@ -599,4 +621,9 @@ void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
 
 SimpleGUI *SimpleGUI::CurrentGUI() {
   return current_sg;
+  }
+
+SDL_mutex *SimpleGUI::Mutex() {
+  if(!mutex) mutex = SDL_CreateMutex();
+  return mutex;
   }

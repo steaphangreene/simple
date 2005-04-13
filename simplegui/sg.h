@@ -24,6 +24,7 @@
 
 #include "SDL.h"
 #include "SDL_ttf.h"
+#include "SDL_thread.h"
 
 #include <map>
 #include <vector>
@@ -49,11 +50,8 @@ public:
 
   static SimpleGUI *CurrentGUI();
 
-  bool RenderStart(unsigned long cur_time);
-  bool RenderFinish(unsigned long cur_time);
-  bool Render(unsigned long cur_time);
-
-  bool ProcessEvent(SDL_Event *event);		//Depricated for external use!
+  bool RenderStart(unsigned long cur_time, bool ts = false);
+  bool RenderFinish(unsigned long cur_time, bool ts = false);
   bool PollEvent(SDL_Event *event, bool ts = false);
   bool WaitEvent(SDL_Event *event, bool ts = false);
 
@@ -100,6 +98,12 @@ public:
 
   void SetMouseCursor(SDL_Surface *cur, float xsc = 0.0625, float ysc = 0.0625);
 
+  void Lock() { SDL_mutexP(mutex); };		//For multithreaded access
+  void Unlock() { SDL_mutexV(mutex); };		//For multithreaded access
+
+  bool Render(unsigned long cur_time);		//Depricated
+  bool ProcessEvent(SDL_Event *event);		//Depricated for external use!
+
 protected:
   SG_Alignment *mWid, *popWid;
   float popx, popy;
@@ -133,6 +137,9 @@ protected:
 
   vector<SDL_Color> col;
   SDL_Color text_col;
+
+  SDL_mutex *Mutex();
+  SDL_mutex *mutex;
   };
 
 #endif	//SG_H
