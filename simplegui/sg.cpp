@@ -43,6 +43,8 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   focus_widget = NULL;
   mutex = NULL;
 
+  flags = 0;
+
   mWid = new SG_Alignment();
   popWid = NULL;
   popx = 0.5, popy = 0.5;
@@ -196,8 +198,10 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
     glPopMatrix();
     }
 
-  //Now we draw the mouse cursor (if at least one axis is within coord system)
-  if((mousex >= -1.0 && mousex <= 1.0) || (mousey >= -1.0 && mousey <= 1.0)) {
+  //Now we draw the mouse cursor
+  //- if it's enabled and at least one axis is within coord system
+  if(((mousex >= -1.0 && mousex <= 1.0) || (mousey >= -1.0 && mousey <= 1.0))
+	&& (flags & SIMPLEGUI_NOMOUSE) == 0) {
     glTranslatef(mousex, mousey, 0.5);
     glScalef(mouse_xscale/aspect, mouse_yscale, 1.0);
 
@@ -306,7 +310,33 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     return 0; //Event Handled
     }
 
-  else if(event->type == SDL_MOUSEBUTTONDOWN) {
+  else if(event->type == SDL_KEYDOWN) {
+    if(focus_widget) {
+      if(mWid->HasWidget(focus_widget)) {
+	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      if(popWid->HasWidget(focus_widget)) {
+	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
+      }
+    }
+
+  else if(event->type == SDL_KEYUP) {
+    if(focus_widget) {
+      if(mWid->HasWidget(focus_widget)) {
+	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      if(popWid->HasWidget(focus_widget)) {
+	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
+	}
+      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
+      }
+    }
+
+  if(flags & SIMPLEGUI_NOMOUSE) return 1;	//No Mouse Events!
+
+  if(event->type == SDL_MOUSEBUTTONDOWN) {
     mb_state |= SDL_BUTTON(event->button.button);
     if(current_widget) return 0;		// Ignore another press
 
@@ -382,30 +412,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       ret = 1;
       }
     return ret;
-    }
-
-  else if(event->type == SDL_KEYDOWN) {
-    if(focus_widget) {
-      if(mWid->HasWidget(focus_widget)) {
-	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      if(popWid->HasWidget(focus_widget)) {
-	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
-      }
-    }
-
-  else if(event->type == SDL_KEYUP) {
-    if(focus_widget) {
-      if(mWid->HasWidget(focus_widget)) {
-	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      if(popWid->HasWidget(focus_widget)) {
-	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
-      }
     }
 
   return 1;

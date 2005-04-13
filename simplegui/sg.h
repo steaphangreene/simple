@@ -36,6 +36,9 @@ using namespace std;
 #define ASPECT_FIXED_X		4
 #define ASPECT_FIXED_Y		8
 
+//Flags
+#define SIMPLEGUI_NOMOUSE	1
+
 #include "sg_colors.h"
 
 class SG_Widget;
@@ -104,6 +107,9 @@ public:
   bool Render(unsigned long cur_time);		//Depricated
   bool ProcessEvent(SDL_Event *event);		//Depricated for external use!
 
+  void DisableMouse() { flags |= SIMPLEGUI_NOMOUSE; };
+  void EnableMouse() { flags &= (~SIMPLEGUI_NOMOUSE); };
+
 protected:
   SG_Alignment *mWid, *popWid;
   float popx, popy;
@@ -126,6 +132,8 @@ protected:
   int newxunused, newyunused;	//Next Screen Geometry
   int newxsize, newysize;	//Next Screen Geometry
 
+  Uint32 flags;
+
   float mousex, mousey;	//Current Mouse Position
 
   unsigned long mb_state;	// Bit Vector of Mouse Button States
@@ -143,4 +151,3 @@ protected:
   };
 
 #endif	//SG_H
-

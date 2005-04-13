@@ -366,6 +366,8 @@ int main(int argc, char **argv) {
 		((SG_Editable*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
+	else if(event.user.code == SG_EVENT_NEEDTORENDER) {
+	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);
 	  }
@@ -381,6 +383,12 @@ int main(int argc, char **argv) {
 	}
       else if(event.type == SDL_KEYDOWN) {
 	if(event.key.keysym.sym == SDLK_ESCAPE) user_quit = 1;
+	else if(event.key.keysym.sym == SDLK_SPACE) {
+	  static bool mouseon = true;
+	  mouseon = !mouseon;
+	  if(mouseon) gui->EnableMouse();
+	  else gui->DisableMouse();
+	  }
 	else {
 //	  printf("Received unintercepted key press.\n");
 	  }
