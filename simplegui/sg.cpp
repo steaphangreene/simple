@@ -262,6 +262,8 @@ bool SimpleGUI::PollEvent(SDL_Event *event, bool ts) {
       if(ts) SDL_mutexP(Mutex());
       bool res = ProcessEvent(event);
       if(ts) SDL_mutexV(Mutex());
+      if(res && event->type == SDL_SG_EVENT
+		&& event->user.code == SG_EVENT_NEEDTORENDER) res = false;
       if(res) return true;
       }
     }
