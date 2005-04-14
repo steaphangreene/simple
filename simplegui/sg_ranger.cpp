@@ -21,10 +21,10 @@
 
 #include "sg_ranger.h"
 
-SG_Ranger::SG_Ranger(float fac, float off, float mn, float mx) {
+SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx) {
   SetLimits(mn, mx);
-  SetFactor(fac);
-  SetValue(off);
+  SetSpan(spn);
+  SetValue(val);
   }
 
 SG_Ranger::~SG_Ranger() {
@@ -36,18 +36,19 @@ void SG_Ranger::SetLimits(float mn, float mx) {
   max = mx;
   }
 
-void SG_Ranger::SetFactor(float fac) {
-  factor = fac;
+void SG_Ranger::SetSpan(float spn) {
+  span = spn;
+  if(span < 0.0) span = 0.0;
   }
 
-void SG_Ranger::SetValue(float off) {
-  offset = off;
+void SG_Ranger::SetValue(float val) {
+  value = val;
   if(min < max) {
-    if(offset < min) offset = min;
-    if(offset > max) offset = max;
+    if(value < min) value = min;
+    else if(value > max - span) value = max - span;
     }
   else {
-    if(offset > min) offset = min;
-    if(offset < max) offset = max;
+    if(value > min) value = min;
+    else if(value < max + span) value = max + span;
     }
   }

@@ -19,12 +19,17 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+#include <cmath>
+using namespace std;
+
 #include "SDL_opengl.h"
 
 #include "sg_scrollable.h"
 
-SG_Scrollable::SG_Scrollable(float xfac, float yfac, float xoff, float yoff)
-	: SG_Alignment(0.0, 0.0), SG_Ranger2D(xfac, yfac, xoff, yoff) {
+SG_Scrollable::SG_Scrollable(float xspn, float yspn, float xval, float yval,
+	float xmin, float ymin, float xmax, float ymax)
+	: SG_Alignment(0.0, 0.0),
+	  SG_Ranger2D(xspn, yspn, xval, yval, xmin, ymin, xmax, ymax) {
   }
 
 SG_Scrollable::~SG_Scrollable() {
@@ -99,8 +104,6 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
 
-  if(XFactor() <= 0.0 || YFactor() <= 0.0) return true;
-
   glPushMatrix();
 
   if(background) background->Render(cur_time);	//Same "layer" as parent
@@ -167,13 +170,27 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 //  static GL_MODEL SG_Scrollable::Default_Mouse_Cursor = NULL;
 
 void SG_Scrollable::CalcGeometry() {
+//  double xoff = 0.0, yoff = 0.0;
+//
+//  if(XSpan() < fabs(XMax() - XMin())) xoff = XValue() * (XSpan() - 1.0);
+//  if(YSpan() < fabs(YMax() - YMin())) yoff = YValue() * (YSpan() - 1.0);
+
+  double xfac = 1.0, yfac = 1.0;
   double xoff = 0.0, yoff = 0.0;
 
-  if(XFactor() > 1.0) xoff = XValue() * (XFactor() - 1.0);
-  if(YFactor() > 1.0) yoff = YValue() * (YFactor() - 1.0);
+  if(XSpan() > 0.0 && XMax() != XMin()) {
+    xfac = fabs(XMax() - XMin()) / XSpan();
+    xoff = XValue() / (fabs(XMax() - XMin()) - XSpan());
+    }
+  if(YSpan() > 0.0 && YMax() != YMin()) {
+    yfac = fabs(YMax() - YMin()) / YSpan();
+    yoff = XValue() / (fabs(XMax() - XMin()) - XSpan());
+    }
 
-  cur_geom.xp = -xoff + (XFactor() - 1.0);
-  cur_geom.yp = yoff - (YFactor() - 1.0);
-  cur_geom.xs = XFactor() - xborder;
-  cur_geom.ys = YFactor() - yborder;
+//  cur_geom.xp = (-(xfac - 1.0) / 2.0) + xoff;
+//  cur_geom.yp = (-(yfac - 1.0) / 2.0) + yoff;
+  cur_geom.xp = xoff;
+  cur_geom.yp = yoff;
+  cur_geom.xs = xfac - xborder;
+  cur_geom.ys = yfac - yborder;
   }

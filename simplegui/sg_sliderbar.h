@@ -36,7 +36,7 @@ class SG_Dragable;
 
 class SG_SliderBar : public SG_Compound, public SG_Ranger {
 public:
-  SG_SliderBar(bool vert = false, double fac = 1.0, double off = 0.0,
+  SG_SliderBar(bool vert = false,
         SG_Texture b1tex = SG_COL_RAISED, SG_Texture b1tex_dis = SG_COL_LOW,
         SG_Texture b1tex_click = SG_COL_LOW,
         SG_Texture b2tex = SG_COL_RAISED, SG_Texture b2tex_dis = SG_COL_LOW,

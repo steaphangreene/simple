@@ -26,7 +26,7 @@
 #include "sg_globals.h"
 
 SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex),
-	SG_Ranger2D(1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
+	SG_Ranger2D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
   SetDisplayLimits(0.0, 0.0, 0.0, 0.0);
   }
 
@@ -135,6 +135,7 @@ void SG_Dragable::Disp2Limits(float &x, float &y) {
   if(min_dy != max_dy && YMin() != YMax()) {
     y -= min_dy;
     y /= (max_dy - min_dy);
+    y = -y;
     y *= (YMax() - YMin());
     y += YMin();
     }
@@ -153,6 +154,7 @@ void SG_Dragable::Limits2Disp(float &x, float &y) {
   if(min_dy != max_dy && YMin() != YMax()) {
     y -= YMin();
     y /= (YMax() - YMin());
+    y = -y;
     y *= (max_dy - min_dy);
     y += min_dy;
     }

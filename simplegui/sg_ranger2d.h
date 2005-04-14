@@ -26,21 +26,23 @@
 
 class SG_Ranger2D {
 public:
-  SG_Ranger2D(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0,
-	float xmin = 0.0, float ymin = 0.0, float xmax = 1.0, float ymax = 1.0);
+  SG_Ranger2D(float xspn = 0.0, float yspn = 0.0,
+	float xval = 0.0, float yval = 0.0,
+	float xmin = 0.0, float ymin = 0.0,
+	float xmax = 1.0, float ymax = 1.0);
   ~SG_Ranger2D();
-  void SetFactors(float xfac, float yfac);
-  void SetXFactor(float xfac);
-  void SetYFactor(float yfac);
-  void SetValues(float xoff, float yoff);
-  void SetXValue(float xoff);
-  void SetYValue(float yoff);
+  void SetSpans(float xspn, float yspn);
+  void SetXSpan(float xspn);
+  void SetYSpan(float yspn);
+  void SetValues(float xval, float yval);
+  void SetXValue(float xval);
+  void SetYValue(float yval);
   void SetLimits(float xmn, float ymn, float xmx, float ymx);
   void SetXLimits(float xmn, float xmx);
   void SetYLimits(float ymn, float ymx);
 
-  float XFactor() { return xranger.Factor(); };
-  float YFactor() { return yranger.Factor(); };
+  float XSpan() { return xranger.Span(); };
+  float YSpan() { return yranger.Span(); };
   float XValue() { return xranger.Value(); };
   float YValue() { return yranger.Value(); };
   float XMin() { return xranger.Min(); };

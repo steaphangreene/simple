@@ -30,11 +30,11 @@
 #include "sg_dragable.h"
 #include "sg_events.h"
 
-SG_SliderBar::SG_SliderBar(bool vert, double fac, double off,
+SG_SliderBar::SG_SliderBar(bool vert,
         SG_Texture b1tex, SG_Texture b1tex_dis, SG_Texture b1tex_click,
         SG_Texture b2tex, SG_Texture b2tex_dis, SG_Texture b2tex_click,
         SG_Texture handtex, SG_Texture bgtex)
-	: SG_Compound(1, 1, 0.0, 0.0), SG_Ranger(fac, off) {
+	: SG_Compound(1, 1, 0.0, 0.0), SG_Ranger() {
   vertical = vert;
   SetBackground(new SG_Panel(bgtex));
   handle = new SG_Dragable(handtex);

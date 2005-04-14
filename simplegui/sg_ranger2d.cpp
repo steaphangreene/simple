@@ -21,39 +21,39 @@
 
 #include "sg_ranger2d.h"
 
-SG_Ranger2D::SG_Ranger2D(float xfac, float yfac, float xoff, float yoff,
+SG_Ranger2D::SG_Ranger2D(float xspn, float yspn, float xval, float yval,
 	float xmin, float ymin, float xmax, float ymax)
-	: xranger(xfac, xoff, xmin, xmax),
-	  yranger(yfac, yoff, ymin, ymax) {
+	: xranger(xspn, xval, xmin, xmax),
+	  yranger(yspn, yval, ymin, ymax) {
   }
 
 SG_Ranger2D::~SG_Ranger2D() {
   }
 
-void SG_Ranger2D::SetFactors(float xfac, float yfac) {
-  xranger.SetFactor(xfac);
-  yranger.SetFactor(yfac);
+void SG_Ranger2D::SetSpans(float xspn, float yspn) {
+  xranger.SetSpan(xspn);
+  yranger.SetSpan(yspn);
   }
 
-void SG_Ranger2D::SetXFactor(float xfac) {
-  xranger.SetFactor(xfac);
+void SG_Ranger2D::SetXSpan(float xspn) {
+  xranger.SetSpan(xspn);
   }
 
-void SG_Ranger2D::SetYFactor(float yfac) {
-  yranger.SetFactor(yfac);
+void SG_Ranger2D::SetYSpan(float yspn) {
+  yranger.SetSpan(yspn);
   }
 
-void SG_Ranger2D::SetValues(float xoff, float yoff) {
-  xranger.SetValue(xoff);
-  yranger.SetValue(yoff);
+void SG_Ranger2D::SetValues(float xval, float yval) {
+  xranger.SetValue(xval);
+  yranger.SetValue(yval);
   }
 
-void SG_Ranger2D::SetXValue(float xoff) {
-  xranger.SetValue(xoff);
+void SG_Ranger2D::SetXValue(float xval) {
+  xranger.SetValue(xval);
   }
 
-void SG_Ranger2D::SetYValue(float yoff) {
-  yranger.SetValue(yoff);
+void SG_Ranger2D::SetYValue(float yval) {
+  yranger.SetValue(yval);
   }
 
 void SG_Ranger2D::SetLimits(float xmn, float ymn, float xmx, float ymx) {

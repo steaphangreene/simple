@@ -35,7 +35,8 @@ struct SG_ScrollableGeometry {
 
 class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
 public:
-  SG_Scrollable(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
+  SG_Scrollable(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
+	float xmin = 0.0, float ymin = 0.0, float xmax = 1.0, float ymax = 1.0);
   virtual ~SG_Scrollable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
