@@ -114,13 +114,14 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
     }
 
   float mnx, mny, mxx, mxy;	//Limits
-  mnx = -(float)(x1) * 2.0 / (float)(xs);
-  mny = -(float)(ysize-(y1+ys)) * 2.0 / (float)(ys);
-  mxx = (float)(xsize-(x1+xs)) * 2.0 / (float)(xs);
-  mxy = (float)(y1) * 2.0 / (float)(ys);
+  mnx = -(float)(x1) / (float)(xs);
+  mny = -(float)(ysize-(y1+ys)) / (float)(ys);
+  mxx = (float)(xsize-(x1+xs)) / (float)(xs);
+  mxy = (float)(y1) / (float)(ys);
 
   SG_Dragable *but = new SG_Dragable(icon);
   but->SetLimits(mnx, mny, mxx, mxy);
+  but->SetDisplayLimits(mnx * 2.0, mny * 2.0, mxx * 2.0, mxy * 2.0);
   but->SetTransparent();
 
   SG_Table::AddWidget(but, x1, y1, xs, ys);

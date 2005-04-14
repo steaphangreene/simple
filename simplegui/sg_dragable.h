@@ -32,11 +32,18 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+
+  void SetDisplayLimits(float mnx, float mny, float mxx, float mxy);
+  void SetXDisplayLimits(float mnx, float mxx);
+  void SetYDisplayLimits(float mny, float mxy);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   float base_x, base_y, start_x, start_y;
+
+  float min_dx, min_dy, max_dx, max_dy;	//Display Limits
+  void Disp2Limits(float &x, float &y);
+  void Limits2Disp(float &x, float &y);
   };
 
 #endif // SG_DRAGABLE_H
-
