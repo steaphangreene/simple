@@ -45,6 +45,7 @@ public:
   virtual ~SG_SliderBar();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+  virtual bool Render(unsigned long cur_time);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

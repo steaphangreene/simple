@@ -24,20 +24,20 @@
 
 class SG_Ranger {
 public:
-  SG_Ranger(double fac, double off = 0.0, double mn = 0.0, double mx = 1.0);
+  SG_Ranger(float fac, float off = 0.0, float mn = 0.0, float mx = 1.0);
   ~SG_Ranger();
-  void SetFactor(double fac);
-  void SetOffset(double off);
-  void SetLimits(double mn, double mx);
+  void SetFactor(float fac);
+  void SetOffset(float off);
+  void SetLimits(float mn, float mx);
 
-  double Factor() { return factor; };
-  double Offset() { return offset; };
-  double Min() { return min; };
-  double Max() { return max; };
+  float Factor() { return factor; };
+  float Offset() { return offset; };
+  float Min() { return min; };
+  float Max() { return max; };
 
 protected:
-  double factor, offset;
-  double min, max;
+  float factor, offset;
+  float min, max;
   };
 
 #endif	//SG_RANGER_H

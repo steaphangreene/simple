@@ -39,7 +39,7 @@ SG_SliderBar::SG_SliderBar(bool vert, double fac, double off,
   SetBackground(new SG_Panel(bgtex));
   handle = new SG_Dragable(handtex);
 
-  if(vert) {
+  if(vertical) {
     incb = new SG_Button("^", b1tex, b1tex_dis, b1tex_click);
     decb = new SG_Button("v", b2tex, b2tex_dis, b2tex_click);
     AddWidget(incb, 0, 0);
@@ -70,3 +70,7 @@ bool SG_SliderBar::ChildEvent(SDL_Event *event) {
 //  bool SG_SliderBar::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_SliderBar::Default_Mouse_Cursor = NULL;
+
+bool SG_SliderBar::Render(unsigned long cur_time) {
+  return SG_Compound::Render(cur_time);
+  }

@@ -21,8 +21,8 @@
 
 #include "sg_ranger2d.h"
 
-SG_Ranger2D::SG_Ranger2D(double xfac, double yfac, double xoff, double yoff,
-	double xmin, double ymin, double xmax, double ymax)
+SG_Ranger2D::SG_Ranger2D(float xfac, float yfac, float xoff, float yoff,
+	float xmin, float ymin, float xmax, float ymax)
 	: xranger(xfac, xoff, xmin, xmax),
 	  yranger(yfac, yoff, ymin, ymax) {
   }
@@ -30,42 +30,42 @@ SG_Ranger2D::SG_Ranger2D(double xfac, double yfac, double xoff, double yoff,
 SG_Ranger2D::~SG_Ranger2D() {
   }
 
-void SG_Ranger2D::SetFactors(double xfac, double yfac) {
+void SG_Ranger2D::SetFactors(float xfac, float yfac) {
   xranger.SetFactor(xfac);
   yranger.SetFactor(yfac);
   }
 
-void SG_Ranger2D::SetXFactor(double xfac) {
+void SG_Ranger2D::SetXFactor(float xfac) {
   xranger.SetFactor(xfac);
   }
 
-void SG_Ranger2D::SetYFactor(double yfac) {
+void SG_Ranger2D::SetYFactor(float yfac) {
   yranger.SetFactor(yfac);
   }
 
-void SG_Ranger2D::SetOffsets(double xoff, double yoff) {
+void SG_Ranger2D::SetOffsets(float xoff, float yoff) {
   xranger.SetOffset(xoff);
   yranger.SetOffset(yoff);
   }
 
-void SG_Ranger2D::SetXOffset(double xoff) {
+void SG_Ranger2D::SetXOffset(float xoff) {
   xranger.SetOffset(xoff);
   }
 
-void SG_Ranger2D::SetYOffset(double yoff) {
+void SG_Ranger2D::SetYOffset(float yoff) {
   yranger.SetOffset(yoff);
   }
 
-void SG_Ranger2D::SetLimits(double xmn, double ymn, double xmx, double ymx) {
+void SG_Ranger2D::SetLimits(float xmn, float ymn, float xmx, float ymx) {
   xranger.SetLimits(xmn, xmx);
   yranger.SetLimits(ymn, ymx);
   }
 
-void SG_Ranger2D::SetXLimits(double xmn, double xmx) {
+void SG_Ranger2D::SetXLimits(float xmn, float xmx) {
   xranger.SetLimits(xmn, xmx);
   }
 
-void SG_Ranger2D::SetYLimits(double ymn, double ymx) {
+void SG_Ranger2D::SetYLimits(float ymn, float ymx) {
   yranger.SetLimits(ymn, ymx);
   }
 

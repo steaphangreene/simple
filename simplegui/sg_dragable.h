@@ -35,7 +35,7 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  double base_x, base_y, start_x, start_y;
+  float base_x, base_y, start_x, start_y;
   };
 
 #endif // SG_DRAGABLE_H
