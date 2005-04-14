@@ -25,25 +25,11 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex) {
-  max_x = 0.0;
-  min_x = 0.0;
-  max_y = 0.0;
-  min_y = 0.0;
+SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex),
+	SG_Ranger2D(1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
   }
 
 SG_Dragable::~SG_Dragable() {
-  }
-
-void SG_Dragable::SetLimits(float mnx, float mny, float mxx, float mxy) {
-  if(mxx < 0.0 || mxy < 0.0 || mnx > 0.0 || mny > 0.0) {
-    fprintf(stderr, "WARNING: Invalid Limits to Dragable!\n");
-    return;
-    }
-  min_x = mnx;
-  min_y = mny;
-  max_x = mxx;
-  max_y = mxy;
   }
 
 int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
@@ -63,8 +49,8 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data2 = NULL;
     base_x = x;
     base_y = y;
-    off_x = 0;
-    off_y = 0;
+    start_x = XOffset();
+    start_y = YOffset();
     return 1;
     }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
@@ -72,14 +58,10 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     }
   else if(event->type == SDL_MOUSEMOTION) {
     if(current_sg->CurrentWidget() == this) {
-      off_x = x - base_x;
-      if(off_x > max_x) off_x = max_x;
-      if(off_x < min_x) off_x = min_x;
-      off_y = y - base_y;
-      if(off_y > max_y) off_y = max_y;
-      if(off_y < min_y) off_y = min_y;
-      event_data.f[0] = off_x;
-      event_data.f[1] = off_y;
+      SetXOffset(x - base_x);
+      SetYOffset(y - base_y);
+      event_data.f[0] = XOffset();
+      event_data.f[1] = YOffset();
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_DRAGMOVE;
@@ -90,14 +72,10 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     return 0;
     }
   else if(event->type == SDL_MOUSEBUTTONUP) {
-    off_x = x - base_x;
-    if(off_x > max_x) off_x = max_x;
-    if(off_x < min_x) off_x = min_x;
-    off_y = y - base_y;
-    if(off_y > max_y) off_y = max_y;
-    if(off_y < min_y) off_y = min_y;
-    event_data.f[0] = off_x;
-    event_data.f[1] = off_y;
+    SetXOffset(x - base_x);
+    SetYOffset(y - base_y);
+    event_data.f[0] = XOffset();
+    event_data.f[1] = YOffset();
 
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
@@ -116,7 +94,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
 bool SG_Dragable::Render(unsigned long cur_time) {
   if(current_sg->CurrentWidget() == this) {
-    glTranslatef(off_x, off_y, 0.0);
+    glTranslatef(XOffset(), YOffset(), 0.0);
     }
   return SG_Panel::Render(cur_time);
   }

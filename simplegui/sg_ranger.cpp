@@ -42,4 +42,12 @@ void SG_Ranger::SetFactor(double fac) {
 
 void SG_Ranger::SetOffset(double off) {
   offset = off;
+  if(min < max) {
+    if(offset < min) offset = min;
+    if(offset > max) offset = max;
+    }
+  else {
+    if(offset > min) offset = min;
+    if(offset < max) offset = max;
+    }
   }

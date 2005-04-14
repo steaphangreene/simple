@@ -23,21 +23,19 @@
 #define SG_DRAGABLE_H
 
 #include "sg_panel.h"
+#include "sg_ranger2d.h"
 
-class SG_Dragable : public SG_Panel {
+class SG_Dragable : public SG_Panel, public SG_Ranger2D {
 public:
   SG_Dragable(SG_Texture tex = SG_COL_RAISED);
   virtual ~SG_Dragable();
-  void SetLimits(float mnx, float mny, float mxx, float mxy);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  float base_x, base_y;
-  float off_x, off_y;
-  float max_x, min_x, max_y, min_y;
+  double base_x, base_y, start_x, start_y;
   };
 
 #endif // SG_DRAGABLE_H
