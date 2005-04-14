@@ -33,6 +33,8 @@
 #endif
 #define DEG2RAD(d)	((d)*M_PI/180.0)
 
+#define MIN_DOWN	5.0	//Minimum of 5 degrees angle to z plane
+
 using namespace std;
 
 #include "sv.h"
@@ -185,8 +187,8 @@ void SimpleVideo::SetPerspective(double vert_fov) {
   flags = 0;
   yfov = vert_fov;
 
-  if(down < 22.5 + (yfov/2.0)) down = 22.5 + (yfov/2.0);
-  if(targ_down < 22.5 + (yfov/2.0)) targ_down = 22.5 + (yfov/2.0);
+  if(down < MIN_DOWN + (yfov/2.0)) down = MIN_DOWN + (yfov/2.0);
+  if(targ_down < MIN_DOWN + (yfov/2.0)) targ_down = MIN_DOWN + (yfov/2.0);
   }
 
 SimpleVideo::~SimpleVideo() {
@@ -463,7 +465,7 @@ void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
 void SimpleVideo::SetDown(double dn, Uint32 delay) {
   //FIXME: Smooth Interpolation!
   if(dn > 90.0) dn = 90.0;
-  else if(dn < 22.5) dn = 22.5;
+  else if(dn < MIN_DOWN) dn = MIN_DOWN;
 
   down = dn;
   targ_down = down;
