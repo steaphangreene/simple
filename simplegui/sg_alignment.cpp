@@ -79,8 +79,8 @@ bool SG_Alignment::HandEventTo(SG_Widget *targ, SDL_Event *event,
   if(targ == this) return HandleEvent(event, x, y);
 
   if(widgets.size() >= 1 && widgets[0]) {
-    CalcGeometry();
     if(widgets[0]->HasWidget(targ)) {
+      CalcGeometry();
       x /= cur_geom.xs; //Scale the coordinates to widget's relative coords
       y /= cur_geom.ys;
       return widgets[0]->HandEventTo(targ, event, x, y);

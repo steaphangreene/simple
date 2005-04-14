@@ -13,7 +13,6 @@ Implement actual mouse cursors, including adjustable focus points
 Fixed ratio of text on widgets
 Alignment of text on widgets
 Scrolling of text on widgets
-Implement Scrollable
 Implement ProgressBar
 Implement FileBrowser
 Implement MultiTab
@@ -31,3 +30,4 @@ Add time offset to AnimatedPanel widget?
 Console widget?
 Determine state dynamically based on flags and flag changes?
 Typecastor for char * (separated by '\n's) to vector<string>?
+Abstract range type for Scrollable and ScrollBar?

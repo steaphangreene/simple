@@ -34,13 +34,20 @@ struct SG_ScrollableGeometry {
 
 class SG_Scrollable : public SG_Alignment {
 public:
-  SG_Scrollable(float xfac, float yfac);
+  SG_Scrollable(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
   virtual ~SG_Scrollable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+
+  void SetFactors(float xfac, float yfac);
+  void SetXFactor(float xfac);
+  void SetYFactor(float yfac);
+  void SetOffsets(float xoff, float yoff);
+  void SetXOffset(float xoff);
+  void SetYOffset(float yoff);
   
 protected:
   void CalcGeometry();
@@ -48,6 +55,7 @@ protected:
 
 //  static GL_MODEL Default_Mouse_Cursor;
   float xfactor, yfactor;
+  float xoffset, yoffset;
   };
 
 #endif // SG_SCROLLABLE_H

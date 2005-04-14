@@ -95,8 +95,8 @@ bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    CalcGeometry(itrg);
     if((*itrw)->HasWidget(targ)) {
+      CalcGeometry(itrg);
       x -= cur_geom.xp;	//Scale the coordinates to widget's relative coords
       y -= cur_geom.yp;
       x /= cur_geom.xs;

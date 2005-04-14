@@ -104,6 +104,8 @@ int main(int argc, char **argv) {
 
   scroll = new SG_Scrollable(2.0, 2.0);
   scroll->SetBorder(0.125, 0.125);
+  scroll->SetFactors(2.0, 2.0);
+  scroll->SetOffsets(0.5, 0.5);
 
   align[0] = new SG_Alignment();
   align[0]->SetBorder(0.0, 0.0);
@@ -332,6 +334,8 @@ int main(int argc, char **argv) {
 		((float*)(event.user.data2))[3],
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
+	  double xoff = rand(), yoff = rand();
+	  scroll->SetOffsets(xoff/RAND_MAX, yoff/RAND_MAX);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code >= SG_EVENT_MENU
