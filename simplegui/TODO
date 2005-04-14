@@ -30,4 +30,3 @@ Add time offset to AnimatedPanel widget?
 Console widget?
 Determine state dynamically based on flags and flag changes?
 Typecastor for char * (separated by '\n's) to vector<string>?
-Abstract range type for Scrollable and SliderBar?

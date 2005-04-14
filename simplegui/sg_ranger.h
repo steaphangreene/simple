@@ -19,36 +19,22 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_SCROLLABLE_H
-#define SG_SCROLLABLE_H
+#ifndef	SG_RANGER_H
+#define	SG_RANGER_H
 
-#include "sg_alignment.h"
-#include "sg_ranger2d.h"
-
-#include <vector>
-using namespace std;
-
-struct SG_ScrollableGeometry {
-  float xp, yp; //Relative Position (Center)
-  float xs, ys; //Relative Size (From Center)
-  };
-
-class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
+class SG_Ranger {
 public:
-  SG_Scrollable(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
-  virtual ~SG_Scrollable();
-  virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-  virtual bool Render(unsigned long cur_time);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  SG_Ranger(float fac, float off = 0.0);
+  ~SG_Ranger();
+  void SetFactor(float fac);
+  void SetOffset(float off);
+
+  float Factor() { return factor; };
+  float Offset() { return offset; };
 
 protected:
-  void CalcGeometry();
-  SG_ScrollableGeometry cur_geom;
-
-//  static GL_MODEL Default_Mouse_Cursor;
+  float factor, offset;
   };
 
-#endif // SG_SCROLLABLE_H
+#endif	//SG_RANGER_H
 

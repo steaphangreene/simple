@@ -19,36 +19,29 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_SCROLLABLE_H
-#define SG_SCROLLABLE_H
+#ifndef	SG_RANGER2_H
+#define	SG_RANGER2_H
 
-#include "sg_alignment.h"
-#include "sg_ranger2d.h"
+#include "sg_ranger.h"
 
-#include <vector>
-using namespace std;
-
-struct SG_ScrollableGeometry {
-  float xp, yp; //Relative Position (Center)
-  float xs, ys; //Relative Size (From Center)
-  };
-
-class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
+class SG_Ranger2D {
 public:
-  SG_Scrollable(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
-  virtual ~SG_Scrollable();
-  virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-  virtual bool Render(unsigned long cur_time);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  SG_Ranger2D(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
+  ~SG_Ranger2D();
+  void SetFactors(float xfac, float yfac);
+  void SetXFactor(float xfac);
+  void SetYFactor(float yfac);
+  void SetOffsets(float xoff, float yoff);
+  void SetXOffset(float xoff);
+  void SetYOffset(float yoff);
+
+  float XFactor() { return xranger.Factor(); };
+  float YFactor() { return yranger.Factor(); };
+  float XOffset() { return xranger.Offset(); };
+  float YOffset() { return yranger.Offset(); };
 
 protected:
-  void CalcGeometry();
-  SG_ScrollableGeometry cur_geom;
-
-//  static GL_MODEL Default_Mouse_Cursor;
+  SG_Ranger xranger, yranger;
   };
 
-#endif // SG_SCROLLABLE_H
-
+#endif	//SG_RANGER2_H

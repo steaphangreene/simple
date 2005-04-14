@@ -24,9 +24,7 @@
 #include "sg_scrollable.h"
 
 SG_Scrollable::SG_Scrollable(float xfac, float yfac, float xoff, float yoff)
-	: SG_Alignment(0.0, 0.0) {
-  SetFactors(xfac, yfac);
-  SetOffsets(xoff, yoff);
+	: SG_Alignment(0.0, 0.0), SG_Ranger2D(xfac, yfac, xoff, yoff) {
   }
 
 SG_Scrollable::~SG_Scrollable() {
@@ -36,32 +34,6 @@ SG_Scrollable::~SG_Scrollable() {
   for(; itrw != tmp.end(); ++itrw) {
     if(*itrw) delete (*itrw);
     }
-  }
-
-void SG_Scrollable::SetFactors(float xfac, float yfac) {
-  xfactor = xfac;
-  yfactor = yfac;
-  }
-
-void SG_Scrollable::SetXFactor(float xfac) {
-  xfactor = xfac;
-  }
-
-void SG_Scrollable::SetYFactor(float yfac) {
-  yfactor = yfac;
-  }
-
-void SG_Scrollable::SetOffsets(float xoff, float yoff) {
-  xoffset = xoff;
-  yoffset = yoff;
-  }
-
-void SG_Scrollable::SetXOffset(float xoff) {
-  xoffset = xoff;
-  }
-
-void SG_Scrollable::SetYOffset(float yoff) {
-  yoffset = yoff;
   }
 
 int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
@@ -127,7 +99,7 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
 
-  if(xfactor <= 0.0 || yfactor <= 0.0) return true;
+  if(XFactor() <= 0.0 || YFactor() <= 0.0) return true;
 
   glPushMatrix();
 
@@ -197,11 +169,11 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 void SG_Scrollable::CalcGeometry() {
   double xoff = 0.0, yoff = 0.0;
 
-  if(xfactor > 1.0) xoff = xoffset * (xfactor - 1.0);
-  if(yfactor > 1.0) yoff = yoffset * (yfactor - 1.0);
+  if(XFactor() > 1.0) xoff = XOffset() * (XFactor() - 1.0);
+  if(YFactor() > 1.0) yoff = YOffset() * (YFactor() - 1.0);
 
-  cur_geom.xp = -xoff + (xfactor - 1.0);
-  cur_geom.yp = yoff - (yfactor - 1.0);
-  cur_geom.xs = xfactor - xborder;
-  cur_geom.ys = yfactor - yborder;
+  cur_geom.xp = -xoff + (XFactor() - 1.0);
+  cur_geom.yp = yoff - (YFactor() - 1.0);
+  cur_geom.xs = XFactor() - xborder;
+  cur_geom.ys = YFactor() - yborder;
   }

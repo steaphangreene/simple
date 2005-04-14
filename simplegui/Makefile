@@ -56,6 +56,7 @@ LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 #LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
 
 OBJS:=	sg.o sg_widget.o sg_texture.o \
+	sg_ranger.o sg_ranger2d.o \
 	sg_alignment.o sg_table.o sg_scrollable.o \
 	sg_panel.o sg_animatedpanel.o \
 	sg_textarea.o sg_progressbar.o sg_editable.o \
@@ -71,6 +72,7 @@ WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config -
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lglu32 -lopengl32
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
+	sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_table.win32_o sg_scrollable.win32_o \
 	sg_panel.win32_o sg_animatedpanel.win32_o \
 	sg_textarea.win32_o sg_progressbar.win32_o sg_editable.win32_o \

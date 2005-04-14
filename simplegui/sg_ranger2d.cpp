@@ -19,36 +19,39 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_SCROLLABLE_H
-#define SG_SCROLLABLE_H
-
-#include "sg_alignment.h"
 #include "sg_ranger2d.h"
 
-#include <vector>
-using namespace std;
+SG_Ranger2D::SG_Ranger2D(float xfac, float yfac, float xoff, float yoff)
+	: xranger(xfac, xoff), yranger(yfac, yoff) {
+  SetFactors(xfac, yfac);
+  SetOffsets(xoff, yoff);
+  }
 
-struct SG_ScrollableGeometry {
-  float xp, yp; //Relative Position (Center)
-  float xs, ys; //Relative Size (From Center)
-  };
+SG_Ranger2D::~SG_Ranger2D() {
+  }
 
-class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
-public:
-  SG_Scrollable(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
-  virtual ~SG_Scrollable();
-  virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-  virtual bool Render(unsigned long cur_time);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+void SG_Ranger2D::SetFactors(float xfac, float yfac) {
+  xranger.SetFactor(xfac);
+  yranger.SetFactor(yfac);
+  }
 
-protected:
-  void CalcGeometry();
-  SG_ScrollableGeometry cur_geom;
+void SG_Ranger2D::SetXFactor(float xfac) {
+  xranger.SetFactor(xfac);
+  }
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+void SG_Ranger2D::SetYFactor(float yfac) {
+  yranger.SetFactor(yfac);
+  }
 
-#endif // SG_SCROLLABLE_H
+void SG_Ranger2D::SetOffsets(float xoff, float yoff) {
+  xranger.SetOffset(xoff);
+  yranger.SetOffset(yoff);
+  }
 
+void SG_Ranger2D::SetXOffset(float xoff) {
+  xranger.SetOffset(xoff);
+  }
+
+void SG_Ranger2D::SetYOffset(float yoff) {
+  yranger.SetOffset(yoff);
+  }
