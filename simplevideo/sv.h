@@ -88,6 +88,8 @@ protected:
 
   double down, targ_down;
   Uint32 down_start, down_delay;
+
+  GLdouble projv[16], modelv[16];
   };
 
 #endif // SV_H

@@ -254,6 +254,10 @@ bool SimpleVideo::StartScene() {
   double upz = cos(DEG2RAD(down));
 
   gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, upx, upy, upz);
+
+  glGetDoublev(GL_MODELVIEW_MATRIX, modelv);
+  glGetDoublev(GL_PROJECTION_MATRIX, projv);
+
   return true;
   }
 
@@ -480,10 +484,34 @@ void SimpleVideo::SetZExtents(double mnz, double mxz) {
   }
 
 void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
-  x = 0.0; y = 0.0;	//FIXME: Implement this for real!
+  GLint viewport[4] = { 0, 0, 2, 2 };
+
+  x = x + 1.0;
+  y = y + 1.0;
+
+  GLdouble x0, x1, y0, y1, z0, z1;
+  if(!gluUnProject(x, y, 0.0, modelv, projv, viewport, &x0, &y0, &z0)) {
+    fprintf(stderr, "WARNING: gluUnProject Failed!\n");
+    }
+  if(!gluUnProject(x, y, 1.0, modelv, projv, viewport, &x1, &y1, &z1)) {
+    fprintf(stderr, "WARNING: gluUnProject Failed!\n");
+    }
+
+  x1 = x1 - x0;		// x1 is now dX for view_z:1.0
+  y1 = y1 - y0;		// y1 is now dY for view_z:1.0
+  z1 = z1 - z0;		// a1 is now dZ for view_z:1.0
+
+  if(z1 == 0.0) {	//Don't actually cross Z plane
+    x = 0.0;
+    y = 0.0;
+    return;
+    }
+
+  GLdouble fact = (z - z0) / z1;
+  x = x0 + x1*fact;
+  y = y0 + y1*fact;
   }
 
 void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
   x = 0.0; y = 0.0;	//FIXME: Implement this for real!
   }
-
