@@ -157,10 +157,10 @@ int start_scene() {
   //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45.0, 4.0/3.0, 0.25, 250.0);
+  gluPerspective(45.0, 4.0/3.0, 1.0, 150.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(7.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+  gluLookAt(10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   return 1;
   }
 
