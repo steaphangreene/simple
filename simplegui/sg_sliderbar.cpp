@@ -45,7 +45,7 @@ SG_SliderBar::SG_SliderBar(bool vert, double fac, double off,
     AddWidget(incb, 0, 0);
     AddWidget(decb, 0, ysize-1);
     AddWidget(handle, 0, ysize/2);	//Hardcoded placement/range (for now)
-//    handle->SetLimits(0.0, -2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1));
+    handle->SetLimits(0.0, -2.0 * (ysize/2-1), 0.0, 2.0 * ((ysize-1)/2-1));
     }
   else {
     incb = new SG_Button(">", b1tex, b1tex_dis, b1tex_click);
@@ -53,7 +53,7 @@ SG_SliderBar::SG_SliderBar(bool vert, double fac, double off,
     AddWidget(incb, xsize-1, 0);
     AddWidget(decb, 0, 0);
     AddWidget(handle, xsize/2, 0);	//Hardcoded placement/range (for now)
-//    handle->SetLimits(-2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1), 0.0);
+    handle->SetLimits(-2.0 * (xsize/2-1), 0.0, 2.0 * ((xsize-1)/2-1), 0.0);
     }
   }
 
