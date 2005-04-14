@@ -105,7 +105,7 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o *.a test1 test2 test3 test4 *.win32_o *.win32_a *.exe
+	rm -f deps.mk *.o *.a test[0-9] *.win32_o *.win32_a *.exe
 
 test:	test1 test2 test3 test4
 

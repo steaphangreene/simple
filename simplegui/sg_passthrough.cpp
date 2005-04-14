@@ -28,11 +28,15 @@
 
 SG_PassThrough::SG_PassThrough(int lact, int mact, int ract)
 	: SG_Alignment(0.0, 0.0) {
+  SetBehavior(lact, mact, ract);
+  cur_action = SG_PT_IGNORE;
+  cur_button = 0;
+  }
+
+void SG_PassThrough::SetBehavior(int lact, int mact, int ract) {
   button_action[0] = lact;
   button_action[1] = mact;
   button_action[2] = ract;
-  cur_action = SG_PT_IGNORE;
-  cur_button = 0;
   }
 
 SG_PassThrough::~SG_PassThrough() {

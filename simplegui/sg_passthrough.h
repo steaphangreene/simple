@@ -31,6 +31,7 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  void SetBehavior(int lact, int mact, int ract);
   
 protected:
   int button_action[3];	//Auto-Handling of the main three buttons
