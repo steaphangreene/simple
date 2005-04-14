@@ -21,7 +21,8 @@
 
 #include "sg_ranger.h"
 
-SG_Ranger::SG_Ranger(float fac, float off) {
+SG_Ranger::SG_Ranger(double fac, double off, double mn, double mx) {
+  SetLimits(mn, mx);
   SetFactor(fac);
   SetOffset(off);
   }
@@ -29,10 +30,16 @@ SG_Ranger::SG_Ranger(float fac, float off) {
 SG_Ranger::~SG_Ranger() {
   }
 
-void SG_Ranger::SetFactor(float fac) {
+
+void SG_Ranger::SetLimits(double mn, double mx) {
+  min = mn;
+  max = mx;
+  }
+
+void SG_Ranger::SetFactor(double fac) {
   factor = fac;
   }
 
-void SG_Ranger::SetOffset(float off) {
+void SG_Ranger::SetOffset(double off) {
   offset = off;
   }

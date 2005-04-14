@@ -26,19 +26,28 @@
 
 class SG_Ranger2D {
 public:
-  SG_Ranger2D(float xfac, float yfac, float xoff = 0.0, float yoff = 0.0);
+  SG_Ranger2D(double xfac, double yfac, double xoff = 0.0, double yoff = 0.0,
+	double xmin = 0.0, double ymin = 0.0,
+	double xmax = 1.0, double ymax = 1.0);
   ~SG_Ranger2D();
-  void SetFactors(float xfac, float yfac);
-  void SetXFactor(float xfac);
-  void SetYFactor(float yfac);
-  void SetOffsets(float xoff, float yoff);
-  void SetXOffset(float xoff);
-  void SetYOffset(float yoff);
+  void SetFactors(double xfac, double yfac);
+  void SetXFactor(double xfac);
+  void SetYFactor(double yfac);
+  void SetOffsets(double xoff, double yoff);
+  void SetXOffset(double xoff);
+  void SetYOffset(double yoff);
+  void SetLimits(double xmn, double ymn, double xmx, double ymx);
+  void SetXLimits(double xmn, double xmx);
+  void SetYLimits(double ymn, double ymx);
 
-  float XFactor() { return xranger.Factor(); };
-  float YFactor() { return yranger.Factor(); };
-  float XOffset() { return xranger.Offset(); };
-  float YOffset() { return yranger.Offset(); };
+  double XFactor() { return xranger.Factor(); };
+  double YFactor() { return yranger.Factor(); };
+  double XOffset() { return xranger.Offset(); };
+  double YOffset() { return yranger.Offset(); };
+  double XMin() { return xranger.Min(); };
+  double YMin() { return yranger.Min(); };
+  double XMax() { return xranger.Max(); };
+  double YMax() { return yranger.Max(); };
 
 protected:
   SG_Ranger xranger, yranger;

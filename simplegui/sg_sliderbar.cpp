@@ -30,11 +30,11 @@
 #include "sg_dragable.h"
 #include "sg_events.h"
 
-SG_SliderBar::SG_SliderBar(bool vert, int binvpro,
+SG_SliderBar::SG_SliderBar(bool vert, double fac, double off,
         SG_Texture b1tex, SG_Texture b1tex_dis, SG_Texture b1tex_click,
         SG_Texture b2tex, SG_Texture b2tex_dis, SG_Texture b2tex_click,
         SG_Texture handtex, SG_Texture bgtex)
-	: SG_Compound(vert ? 1 : binvpro, vert? binvpro : 1, 0.0, 0.0) {
+	: SG_Compound(vert ? 1:10, vert ? 10:1, 0.0, 0.0), SG_Ranger(fac, off) {
   vertical = vert;
   SetBackground(new SG_Panel(bgtex));
   handle = new SG_Dragable(handtex);
@@ -43,17 +43,17 @@ SG_SliderBar::SG_SliderBar(bool vert, int binvpro,
     incb = new SG_Button("^", b1tex, b1tex_dis, b1tex_click);
     decb = new SG_Button("v", b2tex, b2tex_dis, b2tex_click);
     AddWidget(incb, 0, 0);
-    AddWidget(decb, 0, binvpro-1);
-    AddWidget(handle, 0, binvpro/2);	//Hardcoded placement/range (for now)
-    handle->SetLimits(0.0, -2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1));
+    AddWidget(decb, 0, ysize-1);
+    AddWidget(handle, 0, ysize/2);	//Hardcoded placement/range (for now)
+//    handle->SetLimits(0.0, -2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1));
     }
   else {
     incb = new SG_Button(">", b1tex, b1tex_dis, b1tex_click);
     decb = new SG_Button("<", b2tex, b2tex_dis, b2tex_click);
-    AddWidget(incb, binvpro-1, 0);
+    AddWidget(incb, xsize-1, 0);
     AddWidget(decb, 0, 0);
-    AddWidget(handle, binvpro/2, 0);	//Hardcoded placement/range (for now)
-    handle->SetLimits(-2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1), 0.0);
+    AddWidget(handle, xsize/2, 0);	//Hardcoded placement/range (for now)
+//    handle->SetLimits(-2.0 * (binvpro/2-1), 0.0, 2.0 * ((binvpro-1)/2-1), 0.0);
     }
   }
 
