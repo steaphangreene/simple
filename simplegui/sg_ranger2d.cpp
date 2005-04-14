@@ -43,17 +43,17 @@ void SG_Ranger2D::SetYFactor(float yfac) {
   yranger.SetFactor(yfac);
   }
 
-void SG_Ranger2D::SetOffsets(float xoff, float yoff) {
-  xranger.SetOffset(xoff);
-  yranger.SetOffset(yoff);
+void SG_Ranger2D::SetValues(float xoff, float yoff) {
+  xranger.SetValue(xoff);
+  yranger.SetValue(yoff);
   }
 
-void SG_Ranger2D::SetXOffset(float xoff) {
-  xranger.SetOffset(xoff);
+void SG_Ranger2D::SetXValue(float xoff) {
+  xranger.SetValue(xoff);
   }
 
-void SG_Ranger2D::SetYOffset(float yoff) {
-  yranger.SetOffset(yoff);
+void SG_Ranger2D::SetYValue(float yoff) {
+  yranger.SetValue(yoff);
   }
 
 void SG_Ranger2D::SetLimits(float xmn, float ymn, float xmx, float ymx) {

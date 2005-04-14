@@ -27,11 +27,11 @@ public:
   SG_Ranger(float fac, float off = 0.0, float mn = 0.0, float mx = 1.0);
   ~SG_Ranger();
   void SetFactor(float fac);
-  void SetOffset(float off);
+  void SetValue(float off);
   void SetLimits(float mn, float mx);
 
   float Factor() { return factor; };
-  float Offset() { return offset; };
+  float Value() { return offset; };
   float Min() { return min; };
   float Max() { return max; };
 

@@ -24,7 +24,7 @@
 SG_Ranger::SG_Ranger(float fac, float off, float mn, float mx) {
   SetLimits(mn, mx);
   SetFactor(fac);
-  SetOffset(off);
+  SetValue(off);
   }
 
 SG_Ranger::~SG_Ranger() {
@@ -40,7 +40,7 @@ void SG_Ranger::SetFactor(float fac) {
   factor = fac;
   }
 
-void SG_Ranger::SetOffset(float off) {
+void SG_Ranger::SetValue(float off) {
   offset = off;
   if(min < max) {
     if(offset < min) offset = min;

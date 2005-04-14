@@ -50,8 +50,8 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data2 = NULL;
     base_x = x;
     base_y = y;
-    start_x = XOffset();
-    start_y = YOffset();
+    start_x = XValue();
+    start_y = YValue();
     return 1;
     }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
@@ -61,10 +61,10 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     if(current_sg->CurrentWidget() == this) {
       x -= base_x;  y -= base_y;
       Disp2Limits(x, y);
-      SetXOffset(x);
-      SetYOffset(y);
-      event_data.f[0] = XOffset();
-      event_data.f[1] = YOffset();
+      SetXValue(x);
+      SetYValue(y);
+      event_data.f[0] = XValue();
+      event_data.f[1] = YValue();
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_DRAGMOVE;
@@ -77,10 +77,10 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
   else if(event->type == SDL_MOUSEBUTTONUP) {
     x -= base_x;  y -= base_y;
     Disp2Limits(x, y);
-    SetXOffset(x);
-    SetYOffset(y);
-    event_data.f[0] = XOffset();
-    event_data.f[1] = YOffset();
+    SetXValue(x);
+    SetYValue(y);
+    event_data.f[0] = XValue();
+    event_data.f[1] = YValue();
 
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
@@ -99,7 +99,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
 bool SG_Dragable::Render(unsigned long cur_time) {
   if(current_sg->CurrentWidget() == this) {
-    float xprog = XOffset(), yprog = YOffset();
+    float xprog = XValue(), yprog = YValue();
     Limits2Disp(xprog, yprog);
     glTranslatef(xprog, yprog, 0.0);
     }

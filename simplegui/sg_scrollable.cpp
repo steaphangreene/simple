@@ -169,8 +169,8 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 void SG_Scrollable::CalcGeometry() {
   double xoff = 0.0, yoff = 0.0;
 
-  if(XFactor() > 1.0) xoff = XOffset() * (XFactor() - 1.0);
-  if(YFactor() > 1.0) yoff = YOffset() * (YFactor() - 1.0);
+  if(XFactor() > 1.0) xoff = XValue() * (XFactor() - 1.0);
+  if(YFactor() > 1.0) yoff = YValue() * (YFactor() - 1.0);
 
   cur_geom.xp = -xoff + (XFactor() - 1.0);
   cur_geom.yp = yoff - (YFactor() - 1.0);

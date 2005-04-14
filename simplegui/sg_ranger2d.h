@@ -32,17 +32,17 @@ public:
   void SetFactors(float xfac, float yfac);
   void SetXFactor(float xfac);
   void SetYFactor(float yfac);
-  void SetOffsets(float xoff, float yoff);
-  void SetXOffset(float xoff);
-  void SetYOffset(float yoff);
+  void SetValues(float xoff, float yoff);
+  void SetXValue(float xoff);
+  void SetYValue(float yoff);
   void SetLimits(float xmn, float ymn, float xmx, float ymx);
   void SetXLimits(float xmn, float xmx);
   void SetYLimits(float ymn, float ymx);
 
   float XFactor() { return xranger.Factor(); };
   float YFactor() { return yranger.Factor(); };
-  float XOffset() { return xranger.Offset(); };
-  float YOffset() { return yranger.Offset(); };
+  float XValue() { return xranger.Value(); };
+  float YValue() { return yranger.Value(); };
   float XMin() { return xranger.Min(); };
   float YMin() { return yranger.Min(); };
   float XMax() { return xranger.Max(); };
