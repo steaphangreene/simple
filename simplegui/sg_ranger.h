@@ -22,6 +22,9 @@
 #ifndef	SG_RANGER_H
 #define	SG_RANGER_H
 
+#include <set>
+using namespace std;
+
 class SG_Ranger {
 public:
   SG_Ranger(float spn = 0.0, float val = 0.0, float mn = 0.0, float mx = 1.0);
@@ -35,9 +38,13 @@ public:
   float Min() { return min; };
   float Max() { return max; };
 
+  void LinkTo(SG_Ranger *other);
+  void LinkFrom(SG_Ranger *other);
+
 protected:
   float span, value;
   float min, max;
+  set<SG_Ranger*> linked;
   };
 
 #endif	//SG_RANGER_H

@@ -28,17 +28,31 @@ SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx) {
   }
 
 SG_Ranger::~SG_Ranger() {
+  set<SG_Ranger *>::iterator itr = linked.begin();
+  for(; itr != linked.end(); ++itr) {
+    (*itr)->linked.erase(this);
+    }
   }
-
 
 void SG_Ranger::SetLimits(float mn, float mx) {
   min = mn;
   max = mx;
+
+  set<SG_Ranger *>::iterator itr = linked.begin();
+  for(; itr != linked.end(); ++itr) {
+    (*itr)->max = max;
+    (*itr)->min = min;
+    }
   }
 
 void SG_Ranger::SetSpan(float spn) {
   span = spn;
   if(span < 0.0) span = 0.0;
+
+  set<SG_Ranger *>::iterator itr = linked.begin();
+  for(; itr != linked.end(); ++itr) {
+    (*itr)->span = span;
+    }
   }
 
 void SG_Ranger::SetValue(float val) {
@@ -50,5 +64,40 @@ void SG_Ranger::SetValue(float val) {
   else {
     if(value > min) value = min;
     else if(value < max + span) value = max + span;
+    }
+
+  set<SG_Ranger *>::iterator itr = linked.begin();
+  for(; itr != linked.end(); ++itr) {
+    (*itr)->value = value;
+    }
+  }
+
+void SG_Ranger::LinkTo(SG_Ranger *other) {
+  other->linked.insert(this);
+  linked.insert(other);
+  set<SG_Ranger *>::iterator itr = other->linked.begin();
+  for(; itr != other->linked.end(); ++itr) if((*itr) != this) {
+    (*itr)->linked.insert(this);
+    linked.insert(*itr);
+
+    (*itr)->value = value;
+    (*itr)->span = span;
+    (*itr)->min = min;
+    (*itr)->max = max;
+    }
+  }
+
+void SG_Ranger::LinkFrom(SG_Ranger *other) {
+  other->linked.insert(this);
+  linked.insert(other);
+  set<SG_Ranger *>::iterator itr = other->linked.begin();
+  for(; itr != other->linked.end(); ++itr) if((*itr) != this) {
+    (*itr)->linked.insert(this);
+    linked.insert(*itr);
+
+    value = (*itr)->value;
+    span = (*itr)->span;
+    min = (*itr)->min;
+    max = (*itr)->max;
     }
   }

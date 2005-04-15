@@ -46,9 +46,8 @@ SG_SliderBar::SG_SliderBar(bool vert,
     AddWidget(incb, 0, 0);
     AddWidget(decb, 0, ysize-1);
     AddWidget(handle, 0, 1);	//Hardcoded initial placement (for now)
-//    handle->SetLimits(0.0, -2.0 * (ysize/2-1), 0.0, 2.0 * ((ysize-1)/2-1));
-    handle->SetLimits(0.0, 0.0, 0.0, 1.0);
     handle->SetYDisplayLimits(0.0, 16.0);
+    handle->LinkYFrom(this);
     }
   else {
     Resize(11, 1);
@@ -57,9 +56,8 @@ SG_SliderBar::SG_SliderBar(bool vert,
     AddWidget(incb, xsize-1, 0);
     AddWidget(decb, 0, 0);
     AddWidget(handle, 1, 0);	//Hardcoded initial placement (for now)
-//    handle->SetLimits(-2.0 * (xsize/2-1), 0.0, 2.0 * ((xsize-1)/2-1), 0.0);
-    handle->SetLimits(0.0, 0.0, 1.0, 0.0);
     handle->SetXDisplayLimits(0.0, 16.0);
+    handle->LinkXFrom(this);
     }
   }
 

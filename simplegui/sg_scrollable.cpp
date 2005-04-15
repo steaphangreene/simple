@@ -170,27 +170,36 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 //  static GL_MODEL SG_Scrollable::Default_Mouse_Cursor = NULL;
 
 void SG_Scrollable::CalcGeometry() {
-//  double xoff = 0.0, yoff = 0.0;
-//
-//  if(XSpan() < fabs(XMax() - XMin())) xoff = XValue() * (XSpan() - 1.0);
-//  if(YSpan() < fabs(YMax() - YMin())) yoff = YValue() * (YSpan() - 1.0);
-
   double xfac = 1.0, yfac = 1.0;
+  double xbas = 0.0, ybas = 0.0;
   double xoff = 0.0, yoff = 0.0;
+  double xrat = 0.0, yrat = 0.0;
 
   if(XSpan() > 0.0 && XMax() != XMin()) {
     xfac = fabs(XMax() - XMin()) / XSpan();
-    xoff = XValue() / (fabs(XMax() - XMin()) - XSpan());
+    xbas = xfac - 1.0;
+    xrat = fabs(XValue() - XMin()) / (fabs(XMax() - XMin()) - XSpan());
+    if(xbas > 0.0) xoff = xrat * xbas * 2.0;
     }
   if(YSpan() > 0.0 && YMax() != YMin()) {
     yfac = fabs(YMax() - YMin()) / YSpan();
-    yoff = XValue() / (fabs(XMax() - XMin()) - XSpan());
+    ybas = yfac - 1.0;
+    yrat = fabs(YValue() - YMin()) / (fabs(YMax() - YMin()) - YSpan());
+//    fprintf(stderr, "yval = %f, ymin = %f, ymax = %f, yspn = %f\n",
+//	YValue(), YMin(), YMax(), YSpan());
+    if(ybas > 0.0) yoff = yrat * ybas * 2.0;
     }
 
-//  cur_geom.xp = (-(xfac - 1.0) / 2.0) + xoff;
+//  fprintf(stderr, "yrat = %f, ybas = %f, yoff = %f\n", yrat, ybas, yoff);
+
+//  cur_geom.xp = 0.0;
+//  cur_geom.yp = 0.0;
+//  cur_geom.xp = (-(xfac - 1.0) / 2.0) - xoff;
 //  cur_geom.yp = (-(yfac - 1.0) / 2.0) + yoff;
-  cur_geom.xp = xoff;
-  cur_geom.yp = yoff;
+//  cur_geom.xp = -xoff;
+//  cur_geom.yp = yoff;
+  cur_geom.xp = (xbas - xoff);
+  cur_geom.yp = -(ybas - yoff);
   cur_geom.xs = xfac - xborder;
   cur_geom.ys = yfac - yborder;
   }

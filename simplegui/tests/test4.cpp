@@ -98,11 +98,13 @@ int main(int argc, char **argv) {
   tab->SetBorder(0.0625, 0.125);
   scr->AddWidget(tab);
 
-  SG_SliderBar *vert = new SG_SliderBar(true);
-  main->AddWidget(vert, 39, 0, 1, 29);
-
   SG_SliderBar *horiz = new SG_SliderBar(false);
+  scr->LinkXTo(horiz);
   main->AddWidget(horiz, 0, 29, 39, 1);
+
+  SG_SliderBar *vert = new SG_SliderBar(true);
+  scr->LinkYTo(vert);
+  main->AddWidget(vert, 39, 0, 1, 29);
 
   map<SG_Button*, int> but2colid;
   map<SG_Button*, int> but2rowid;

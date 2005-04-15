@@ -98,11 +98,11 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 //  static GL_MODEL SG_Dragable::Default_Mouse_Cursor = NULL;
 
 bool SG_Dragable::Render(unsigned long cur_time) {
-  if(current_sg->CurrentWidget() == this) {
+//  if(current_sg->CurrentWidget() == this) {
     float xprog = XValue(), yprog = YValue();
     Limits2Disp(xprog, yprog);
     glTranslatef(xprog, yprog, 0.0);
-    }
+//    }
   return SG_Panel::Render(cur_time);
   }
 
@@ -127,7 +127,7 @@ void SG_Dragable::Disp2Limits(float &x, float &y) {
   if(min_dx != max_dx && XMin() != XMax()) {
     x -= min_dx;
     x /= (max_dx - min_dx);
-    x *= (XMax() - XMin());
+    x *= (XMax() - XMin() - XSpan());
     x += XMin();
     }
   else x = XMin();
@@ -136,7 +136,7 @@ void SG_Dragable::Disp2Limits(float &x, float &y) {
     y -= min_dy;
     y /= (max_dy - min_dy);
     y = -y;
-    y *= (YMax() - YMin());
+    y *= (YMax() - YMin() - YSpan());
     y += YMin();
     }
   else y = YMin();
@@ -145,7 +145,7 @@ void SG_Dragable::Disp2Limits(float &x, float &y) {
 void SG_Dragable::Limits2Disp(float &x, float &y) {
   if(min_dx != max_dx && XMin() != XMax()) {
     x -= XMin();
-    x /= (XMax() - XMin());
+    x /= (XMax() - XMin() - XSpan());
     x *= (max_dx - min_dx);
     x += min_dx;
     }
@@ -153,11 +153,10 @@ void SG_Dragable::Limits2Disp(float &x, float &y) {
 
   if(min_dy != max_dy && YMin() != YMax()) {
     y -= YMin();
-    y /= (YMax() - YMin());
+    y /= (YMax() - YMin() - YSpan());
     y = -y;
     y *= (max_dy - min_dy);
     y += min_dy;
     }
   else y = min_dy;
   }
-

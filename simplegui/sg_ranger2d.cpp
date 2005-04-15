@@ -69,3 +69,44 @@ void SG_Ranger2D::SetYLimits(float ymn, float ymx) {
   yranger.SetLimits(ymn, ymx);
   }
 
+void SG_Ranger2D::LinkTo(SG_Ranger2D *other) {
+  xranger.LinkTo(&(other->xranger));
+  yranger.LinkTo(&(other->yranger));
+  }
+
+void SG_Ranger2D::LinkXTo(SG_Ranger2D *other) {
+  xranger.LinkTo(&(other->xranger));
+  }
+
+void SG_Ranger2D::LinkYTo(SG_Ranger2D *other) {
+  yranger.LinkFrom(&(other->yranger));
+  }
+
+void SG_Ranger2D::LinkXTo(SG_Ranger *other) {
+  xranger.LinkTo(other);
+  }
+
+void SG_Ranger2D::LinkYTo(SG_Ranger *other) {
+  yranger.LinkTo(other);
+  }
+
+void SG_Ranger2D::LinkFrom(SG_Ranger2D *other) {
+  xranger.LinkFrom(&(other->xranger));
+  yranger.LinkFrom(&(other->yranger));
+  }
+
+void SG_Ranger2D::LinkXFrom(SG_Ranger2D *other) {
+  xranger.LinkFrom(&(other->xranger));
+  }
+
+void SG_Ranger2D::LinkYFrom(SG_Ranger2D *other) {
+  yranger.LinkFrom(&(other->yranger));
+  }
+
+void SG_Ranger2D::LinkXFrom(SG_Ranger *other) {
+  xranger.LinkFrom(other);
+  }
+
+void SG_Ranger2D::LinkYFrom(SG_Ranger *other) {
+  yranger.LinkFrom(other);
+  }

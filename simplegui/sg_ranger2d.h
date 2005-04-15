@@ -50,6 +50,18 @@ public:
   float XMax() { return xranger.Max(); };
   float YMax() { return yranger.Max(); };
 
+  void LinkTo(SG_Ranger2D *other);
+  void LinkXTo(SG_Ranger *other);
+  void LinkXTo(SG_Ranger2D *other);
+  void LinkYTo(SG_Ranger *other);
+  void LinkYTo(SG_Ranger2D *other);
+
+  void LinkFrom(SG_Ranger2D *other);
+  void LinkXFrom(SG_Ranger *other);
+  void LinkXFrom(SG_Ranger2D *other);
+  void LinkYFrom(SG_Ranger *other);
+  void LinkYFrom(SG_Ranger2D *other);
+
 protected:
   SG_Ranger xranger, yranger;
   };
