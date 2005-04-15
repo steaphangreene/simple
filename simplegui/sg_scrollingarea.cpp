@@ -25,35 +25,46 @@
 #include "SDL_opengl.h"
 
 #include "sg_scrollingarea.h"
-#include "sg_panel.h"
-#include "sg_button.h"
 #include "sg_events.h"
 
-SG_ScrollingArea::SG_ScrollingArea()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_ScrollingArea", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+SG_ScrollingArea::SG_ScrollingArea(float xsz, float ysz, float xvs, float yvs)
+	: SG_Compound(41, 41, 0.0, 0.0) {
+  scroll = new SG_Scrollable((xvs < 1.0) ? xsz : xvs, (yvs < 1.0) ? ysz : yvs,
+	0.0, 0.0, 0.0, 0.0, xsz, ysz);
+  LinkFrom(scroll);
+  SG_Compound::AddWidget(scroll, 0, 0, 40, 40);
+
+  horiz = new SG_SliderBar(false);
+  scroll->LinkXTo(horiz);
+  SG_Compound::AddWidget(horiz, 0, 40, 40, 1);
+
+  vert = new SG_SliderBar(true);
+  scroll->LinkYTo(vert);
+  SG_Compound::AddWidget(vert, 40, 0, 1, 40);
   }
 
 SG_ScrollingArea::~SG_ScrollingArea() {
   }
 
 bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
-      }
+  if(event->user.data1 == (void*)horiz) {
+    return 0; // Silence my children doing things
     }
-  return 0; // Silence children doing other things
+  else if(event->user.data1 == (void*)vert) {
+    return 0; // Silence my children doing things
+    }
+  return 1; // Others can do whatever they want
   }
 
 //  bool SG_ScrollingArea::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_ScrollingArea::Default_Mouse_Cursor = NULL;
+
+bool SG_ScrollingArea::AddWidget(SG_Widget *wid) {
+  return scroll->AddWidget(wid);
+  }
+
+void SG_ScrollingArea::RemoveWidget(SG_Widget *wid) {
+  scroll->RemoveWidget(wid);
+  }
+

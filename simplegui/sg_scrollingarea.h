@@ -26,20 +26,32 @@
 #define SG_SCROLLINGAREA_H
 
 #include "sg_compound.h"
+#include "sg_ranger2d.h"
+#include "sg_scrollable.h"
+#include "sg_sliderbar.h"
+
+#ifndef SG_AUTOSIZE
+#define SG_AUTOSIZE     -1
+#endif
 
 class SG_Button;
 class SG_TextArea;
 
-class SG_ScrollingArea : public SG_Compound {
+class SG_ScrollingArea : public SG_Compound, public SG_Ranger2D {
 public:
-  SG_ScrollingArea();
+  SG_ScrollingArea(float xsz, float ysz,
+	float xvs = SG_AUTOSIZE, float yvs = SG_AUTOSIZE);
   virtual ~SG_ScrollingArea();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
-  
+
+  virtual bool AddWidget(SG_Widget *wid);
+  virtual void RemoveWidget(SG_Widget *wid);
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  SG_Scrollable *scroll;
+  SG_SliderBar *vert, *horiz;
   };
 
 #endif // SG_SCROLLINGAREA_H

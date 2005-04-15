@@ -79,32 +79,18 @@ int main(int argc, char **argv) {
 
   int click = audio_buildsound(click_data, sizeof(click_data));
 
-//  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);
   gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
-//  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
 
   gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
-  SG_Table *main = new SG_Table(40, 30);
-  gui->MasterWidget()->AddWidget(main);
-
-  SG_Scrollable *scr =
-	new SG_Scrollable(6.0, 12.0, 0.0, 0.0, 0.0, 0.0, 8.0, 16.0);
-  main->AddWidget(scr, 0, 0, 39, 29);
+  SG_ScrollingArea *scr = new SG_ScrollingArea(8.0, 16.0, 6.0, 12.0);
+  gui->MasterWidget()->AddWidget(scr);
 
   SG_Table *tab = new SG_Table(8, 16);
   tab->SetBorder(0.0625, 0.125);
   scr->AddWidget(tab);
-
-  SG_SliderBar *horiz = new SG_SliderBar(false);
-  scr->LinkXTo(horiz);
-  main->AddWidget(horiz, 0, 29, 39, 1);
-
-  SG_SliderBar *vert = new SG_SliderBar(true);
-  scr->LinkYTo(vert);
-  main->AddWidget(vert, 39, 0, 1, 29);
 
   map<SG_Button*, int> but2colid;
   map<SG_Button*, int> but2rowid;
