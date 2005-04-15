@@ -115,9 +115,9 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
 
   float mnx, mny, mxx, mxy;	//Limits
   mnx = -(float)(x1) / (float)(xs);
-  mny = -(float)(ysize-(y1+ys)) / (float)(ys);
+  mny = -(float)(y1) / (float)(ys);
   mxx = (float)(xsize-(x1+xs)) / (float)(xs);
-  mxy = (float)(y1) / (float)(ys);
+  mxy = (float)(ysize-(y1+ys)) / (float)(ys);
 
   SG_Dragable *but = new SG_Dragable(icon);
   but->SetLimits(mnx, mny, mxx, mxy);

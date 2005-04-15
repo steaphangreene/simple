@@ -144,15 +144,15 @@ void SG_Dragable::SetYDisplayLimits(float mny, float mxy) {
 void SG_Dragable::Disp2Limits(float &x, float &y) {
   if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
     x -= min_dx + base_x;
-    x /= (max_dx - min_dx);
+    x /= fabs(max_dx - min_dx);
     x *= (fabs(XMax() - XMin()) - XSpan());
     x += XMin() + start_x;
     }
   else x = XMin();
 
   if(min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
-    y -= min_dy + base_y;
-    y /= (max_dy - min_dy);
+    y -= -min_dy + base_y;
+    y /= fabs(max_dy - min_dy);
     y = -y;
     y *= (fabs(YMax() - YMin()) - YSpan());
     y += YMin() + start_y;
@@ -164,7 +164,7 @@ void SG_Dragable::Limits2Disp(float &x, float &y) {
   if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
     x -= XMin();
     x /= (fabs(XMax() - XMin()) - XSpan());
-    x *= (max_dx - min_dx);
+    x *= fabs(max_dx - min_dx);
     x += min_dx;
     }
   else x = min_dx;
@@ -173,8 +173,8 @@ void SG_Dragable::Limits2Disp(float &x, float &y) {
     y -= YMin();
     y /= (fabs(YMax() - YMin()) - YSpan());
     y = -y;
-    y *= (max_dy - min_dy);
-    y += min_dy;
+    y *= fabs(max_dy - min_dy);
+    y += -min_dy;
     }
   else y = min_dy;
   }
@@ -182,7 +182,6 @@ void SG_Dragable::Limits2Disp(float &x, float &y) {
 void SG_Dragable::AdjustGeometry(SG_AlignmentGeometry *geom) {
   float xprog = XValue(), yprog = YValue();
   Limits2Disp(xprog, yprog);
-//  fprintf(stderr, "Value %f,%f\n", xprog, yprog);
   geom->xp += xprog * geom->xs;
   geom->yp += yprog * geom->ys;
   }
