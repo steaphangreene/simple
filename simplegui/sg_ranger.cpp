@@ -88,16 +88,17 @@ void SG_Ranger::LinkTo(SG_Ranger *other) {
   }
 
 void SG_Ranger::LinkFrom(SG_Ranger *other) {
-  other->linked.insert(this);
-  linked.insert(other);
   set<SG_Ranger *>::iterator itr = other->linked.begin();
   for(; itr != other->linked.end(); ++itr) if((*itr) != this) {
     (*itr)->linked.insert(this);
     linked.insert(*itr);
 
-    value = (*itr)->value;
-    span = (*itr)->span;
-    min = (*itr)->min;
-    max = (*itr)->max;
     }
+  other->linked.insert(this);
+  linked.insert(other);
+
+  value = other->value;
+  span = other->span;
+  min = other->min;
+  max = other->max;
   }

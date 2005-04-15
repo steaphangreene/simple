@@ -74,3 +74,5 @@ void SG_Widget::TurnOff() {
   
 //  static GL_MODEL SG_Widget::Default_Mouse_Cursor = NULL;
 
+void SG_Widget::AdjustGeometry(SG_AlignmentGeometry *geom) {
+  }

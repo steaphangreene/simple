@@ -19,15 +19,25 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+#include <cmath>
+using namespace std;
+
 #include "SDL_opengl.h"
 
 #include "sg_dragable.h"
+#include "sg_alignment.h"
 #include "sg_events.h"
 #include "sg_globals.h"
 
 SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex),
 	SG_Ranger2D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
   SetDisplayLimits(0.0, 0.0, 0.0, 0.0);
+  start_x = 0.0;
+  start_y = 0.0;
+  base_x = 0.0;
+  base_y = 0.0;
+  off_x = 0.0;
+  off_y = 0.0;
   }
 
 SG_Dragable::~SG_Dragable() {
@@ -48,10 +58,13 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.code = SG_EVENT_DRAGGRAB;
     event->user.data1 = (void*)this;
     event->user.data2 = NULL;
-    base_x = x;
-    base_y = y;
     start_x = XValue();
     start_y = YValue();
+    base_x = start_x;
+    base_y = start_y;
+    Limits2Disp(base_x, base_y);
+    off_x = x - base_x;
+    off_y = y - base_y;
     return 1;
     }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
@@ -59,7 +72,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     }
   else if(event->type == SDL_MOUSEMOTION) {
     if(current_sg->CurrentWidget() == this) {
-      x -= base_x;  y -= base_y;
+      x -= off_x;  y -= off_y;
       Disp2Limits(x, y);
       SetXValue(x);
       SetYValue(y);
@@ -75,12 +88,17 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     return 0;
     }
   else if(event->type == SDL_MOUSEBUTTONUP) {
-    x -= base_x;  y -= base_y;
+    x -= off_x;  y -= off_y;
     Disp2Limits(x, y);
     SetXValue(x);
     SetYValue(y);
     event_data.f[0] = XValue();
     event_data.f[1] = YValue();
+
+    start_x = 0.0;
+    start_y = 0.0;
+    base_x = 0.0;
+    base_y = 0.0;
 
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
@@ -99,9 +117,9 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
 bool SG_Dragable::Render(unsigned long cur_time) {
 //  if(current_sg->CurrentWidget() == this) {
-    float xprog = XValue(), yprog = YValue();
-    Limits2Disp(xprog, yprog);
-    glTranslatef(xprog, yprog, 0.0);
+//    float xprog = XValue(), yprog = YValue();
+//    Limits2Disp(xprog, yprog);
+//    glTranslatef(xprog, yprog, 0.0);
 //    }
   return SG_Panel::Render(cur_time);
   }
@@ -124,39 +142,47 @@ void SG_Dragable::SetYDisplayLimits(float mny, float mxy) {
   }
 
 void SG_Dragable::Disp2Limits(float &x, float &y) {
-  if(min_dx != max_dx && XMin() != XMax()) {
-    x -= min_dx;
+  if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
+    x -= min_dx + base_x;
     x /= (max_dx - min_dx);
-    x *= (XMax() - XMin() - XSpan());
-    x += XMin();
+    x *= (fabs(XMax() - XMin()) - XSpan());
+    x += XMin() + start_x;
     }
   else x = XMin();
 
-  if(min_dy != max_dy && YMin() != YMax()) {
-    y -= min_dy;
+  if(min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
+    y -= min_dy + base_y;
     y /= (max_dy - min_dy);
     y = -y;
-    y *= (YMax() - YMin() - YSpan());
-    y += YMin();
+    y *= (fabs(YMax() - YMin()) - YSpan());
+    y += YMin() + start_y;
     }
   else y = YMin();
   }
 
 void SG_Dragable::Limits2Disp(float &x, float &y) {
-  if(min_dx != max_dx && XMin() != XMax()) {
+  if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
     x -= XMin();
-    x /= (XMax() - XMin() - XSpan());
+    x /= (fabs(XMax() - XMin()) - XSpan());
     x *= (max_dx - min_dx);
     x += min_dx;
     }
   else x = min_dx;
 
-  if(min_dy != max_dy && YMin() != YMax()) {
+  if(min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
     y -= YMin();
-    y /= (YMax() - YMin() - YSpan());
+    y /= (fabs(YMax() - YMin()) - YSpan());
     y = -y;
     y *= (max_dy - min_dy);
     y += min_dy;
     }
   else y = min_dy;
+  }
+
+void SG_Dragable::AdjustGeometry(SG_AlignmentGeometry *geom) {
+  float xprog = XValue(), yprog = YValue();
+  Limits2Disp(xprog, yprog);
+//  fprintf(stderr, "Value %f,%f\n", xprog, yprog);
+  geom->xp += xprog * geom->xs;
+  geom->yp += yprog * geom->ys;
   }

@@ -28,11 +28,6 @@
 #include <vector>
 using namespace std;
 
-struct SG_ScrollableGeometry {
-  float xp, yp; //Relative Position (Center)
-  float xs, ys; //Relative Size (From Center)
-  };
-
 class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
 public:
   SG_Scrollable(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
@@ -46,7 +41,6 @@ public:
 
 protected:
   void CalcGeometry();
-  SG_ScrollableGeometry cur_geom;
 
 //  static GL_MODEL Default_Mouse_Cursor;
   };

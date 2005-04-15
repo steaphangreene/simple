@@ -19,9 +19,9 @@ Implement MultiTab
 Implement RadioButtons
 Implement ComboBox
 Implement PullDown
-Implement SliderBar
 Implement ScrollingArea
 Implement Menu
+Implement increments and inc/dec buttons on sliderbars/rangers.
 
 -=Wishlist=-
 Composite textures?

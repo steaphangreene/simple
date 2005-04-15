@@ -30,6 +30,8 @@
 #define SG_WIDGET_FLAGS_ON		8
 #define SG_WIDGET_FLAGS_IGNORE		16
 
+class SG_AlignmentGeometry;
+
 class SG_Widget {
 public:
   SG_Widget();
@@ -56,6 +58,9 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 //  bool SetCursor(GL_MODEL *cur)
 //  bool UnsetCursor()
+
+	//Internal Use Only!  For self-reconfiguring widgets.
+  virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
   
 protected:
 //  GL_MODEL Mouse_Cursor;

@@ -50,11 +50,15 @@ int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();
-    if(x >= -cur_geom.xs && x <= cur_geom.xs
-		&& y >= -cur_geom.ys && y <= cur_geom.ys) {
+    SG_AlignmentGeometry adj_geom = cur_geom;
+    widgets[0]->AdjustGeometry(&adj_geom);
+    if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
+	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
 
-      x /= cur_geom.xs; //Scale the coordinates to widget's relative coords
+      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
+      y -= cur_geom.yp;
+      x /= cur_geom.xs;
       y /= cur_geom.ys;
       ret = widgets[0]->HandleEvent(event, x, y);
       if(ret != -1) return ret;
@@ -81,7 +85,9 @@ bool SG_Alignment::HandEventTo(SG_Widget *targ, SDL_Event *event,
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
       CalcGeometry();
-      x /= cur_geom.xs; //Scale the coordinates to widget's relative coords
+      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
+      y -= cur_geom.yp;
+      x /= cur_geom.xs;
       y /= cur_geom.ys;
       return widgets[0]->HandEventTo(targ, event, x, y);
       }
@@ -125,6 +131,8 @@ bool SG_Alignment::Render(unsigned long cur_time) {
     if(*itrw) {
       glPushMatrix();
       CalcGeometry();
+      widgets[0]->AdjustGeometry(&cur_geom);
+      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
@@ -196,8 +204,8 @@ void SG_Alignment::RemoveWidget(SG_Widget *wid) {
 //  static GL_MODEL SG_Alignment::Default_Mouse_Cursor = NULL;
 
 void SG_Alignment::CalcGeometry() {
-  // cur_geom.xp = 0.0; // Not used by SG_Alignment widget
-  // cur_geom.yp = 0.0; // Not used by SG_Alignment widget
+  cur_geom.xp = 0.0;
+  cur_geom.yp = 0.0;
   cur_geom.xs = 1.0 - xborder;
   cur_geom.ys = 1.0 - yborder;
   }

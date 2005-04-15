@@ -36,10 +36,13 @@ public:
   void SetDisplayLimits(float mnx, float mny, float mxx, float mxy);
   void SetXDisplayLimits(float mnx, float mxx);
   void SetYDisplayLimits(float mny, float mxy);
+
+	//Internal Use Only!  For self-reconfiguring widgets.
+  virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  float base_x, base_y, start_x, start_y;
+  float base_x, base_y, off_x, off_y, start_x, start_y;
 
   float min_dx, min_dy, max_dx, max_dy;	//Display Limits
   void Disp2Limits(float &x, float &y);

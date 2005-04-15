@@ -52,8 +52,10 @@ int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();
-    if(x >= cur_geom.xp-cur_geom.xs && x <= cur_geom.xp+cur_geom.xs
-	&& y >= cur_geom.yp-cur_geom.ys && y <= cur_geom.yp+cur_geom.ys) {
+    SG_AlignmentGeometry adj_geom = cur_geom;
+    widgets[0]->AdjustGeometry(&adj_geom);
+    if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
+	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
       
       x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
@@ -142,6 +144,7 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
     if(*itrw) {
       glPushMatrix();
       CalcGeometry();
+      widgets[0]->AdjustGeometry(&cur_geom);
       glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
       (*itrw)->Render(cur_time);
