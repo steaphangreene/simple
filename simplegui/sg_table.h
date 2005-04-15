@@ -24,6 +24,7 @@
 
 #include "sg_alignment.h"
 
+#include <set>
 #include <vector>
 using namespace std;
 
@@ -31,6 +32,9 @@ struct SG_TableGeometry {
   int xpos, ypos;	//Starting X/Y Position (Cell)
   int xsize, ysize;	//X/Y Size (in Cells)
   };
+
+class SG_Ranger;
+class SG_Ranger2D;
 
 class SG_Table : public SG_Alignment {
 public:
@@ -52,6 +56,12 @@ public:
   virtual void RemoveCols(const vector<int> &xels);
   virtual void RemoveRows(const vector<int> &yels);
   virtual void Substitute(SG_Widget *oldwid, SG_Widget *newwid);
+
+  void LinkResize(SG_Ranger2D *ranger);
+  void LinkXResize(SG_Ranger2D *ranger);
+  void LinkYResize(SG_Ranger2D *ranger);
+  void LinkXResize(SG_Ranger *ranger);
+  void LinkYResize(SG_Ranger *ranger);
   
 protected:
   void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
@@ -60,7 +70,12 @@ protected:
   int xsize, ysize;	//Geometry of Table
   int xpos, ypos;		//Current X/Y Position
   vector<SG_TableGeometry> wgeom;
+
+  void SendResize();
+  void SendXResize();
+  void SendYResize();
+  set<SG_Ranger *> xrangers;
+  set<SG_Ranger *> yrangers;
   };
 
 #endif // SG_TABLE_H
-

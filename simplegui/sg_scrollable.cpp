@@ -25,6 +25,7 @@ using namespace std;
 #include "SDL_opengl.h"
 
 #include "sg_scrollable.h"
+#include "sg_table.h"
 
 SG_Scrollable::SG_Scrollable(float xspn, float yspn, float xval, float yval,
 	float xmin, float ymin, float xmax, float ymax)
@@ -205,4 +206,14 @@ void SG_Scrollable::CalcGeometry() {
   cur_geom.yp = -(ybas - yoff);
   cur_geom.xs = xfac - xborder;
   cur_geom.ys = yfac - yborder;
+  }
+
+bool SG_Scrollable::AddWidget(SG_Widget *wid) {
+  return SG_Alignment::AddWidget(wid);
+  }
+
+bool SG_Scrollable::AddWidget(SG_Table *tab) {
+  int ret = SG_Alignment::AddWidget((SG_Widget*)tab);	//Add it normally
+  if(ret) tab->LinkResize(this);			//Link its resizing in
+  return ret;
   }

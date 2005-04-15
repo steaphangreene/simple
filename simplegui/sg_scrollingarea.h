@@ -47,6 +47,7 @@ public:
 
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
+  virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

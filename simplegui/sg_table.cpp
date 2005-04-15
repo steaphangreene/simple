@@ -22,6 +22,8 @@
 #include "SDL_opengl.h"
 
 #include "sg_table.h"
+#include "sg_ranger.h"
+#include "sg_ranger2d.h"
 
 SG_Table::SG_Table(int xsz, int ysz, float xbor, float ybor)
 	: SG_Alignment(xbor, ybor) {
@@ -223,6 +225,7 @@ void SG_Table::Resize(int xsz, int ysz) {
     }
   xsize = xsz;
   ysize = ysz;
+  SendResize();
   }
 
 void SG_Table::AddCol(int xel) {
@@ -236,6 +239,7 @@ void SG_Table::AddCol(int xel) {
       }
     }
   ++xsize;
+  SendXResize();
   }
 
 void SG_Table::AddRow(int yel) {
@@ -249,6 +253,7 @@ void SG_Table::AddRow(int yel) {
       }
     }
   ++ysize;
+  SendYResize();
   }
 
 void SG_Table::RemoveCol(int xel) {
@@ -268,6 +273,7 @@ void SG_Table::RemoveCol(int xel) {
       }
     }
   --xsize;
+  SendXResize();
   }
 
 void SG_Table::RemoveRow(int yel) {
@@ -287,6 +293,7 @@ void SG_Table::RemoveRow(int yel) {
       }
     }
   --ysize;
+  SendYResize();
   }
 
 void SG_Table::RemoveCols(const vector<int> &xels) {	//FIXME: Do this better!
@@ -294,6 +301,7 @@ void SG_Table::RemoveCols(const vector<int> &xels) {	//FIXME: Do this better!
   for(; itr != xels.end(); ++itr) {
     RemoveCol(*itr);
     }
+//  SendXResize();	//Done in RemoveCol() for now.
   }
 
 void SG_Table::RemoveRows(const vector<int> &yels) {	//FIXME: Do this better!
@@ -301,6 +309,7 @@ void SG_Table::RemoveRows(const vector<int> &yels) {	//FIXME: Do this better!
   for(; itr != yels.end(); ++itr) {
     RemoveRow(*itr);
     }
+//  SendYResize();	//Done in RemoveRow() for now.
   }
 
 void SG_Table::Substitute(SG_Widget *oldwid, SG_Widget *newwid) {
@@ -313,3 +322,49 @@ void SG_Table::Substitute(SG_Widget *oldwid, SG_Widget *newwid) {
       }
     }
   }
+
+void SG_Table::LinkResize(SG_Ranger2D *ranger) {
+  xrangers.insert(ranger->XRanger());
+  yrangers.insert(ranger->YRanger());
+  SendResize();
+  }
+
+void SG_Table::LinkXResize(SG_Ranger2D *ranger) {
+  xrangers.insert(ranger->XRanger());
+  SendXResize();
+  }
+
+void SG_Table::LinkYResize(SG_Ranger2D *ranger) {
+  yrangers.insert(ranger->YRanger());
+  SendYResize();
+  }
+
+void SG_Table::LinkXResize(SG_Ranger *ranger) {
+  xrangers.insert(ranger);
+  SendXResize();
+  }
+
+void SG_Table::LinkYResize(SG_Ranger *ranger) {
+  yrangers.insert(ranger);
+  SendYResize();
+  }
+
+void SG_Table::SendResize() {
+  SendXResize();
+  SendYResize();
+  }
+
+void SG_Table::SendXResize() {
+  set<SG_Ranger *>::iterator itr = xrangers.begin();
+  for(; itr != xrangers.end(); ++itr) {
+    (*itr)->SetLimits(0, xsize);
+    }
+  }
+
+void SG_Table::SendYResize() {
+  set<SG_Ranger *>::iterator itr = yrangers.begin();
+  for(; itr != yrangers.end(); ++itr) {
+    (*itr)->SetLimits(0, ysize);
+    }
+  }
+

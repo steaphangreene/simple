@@ -68,3 +68,6 @@ void SG_ScrollingArea::RemoveWidget(SG_Widget *wid) {
   scroll->RemoveWidget(wid);
   }
 
+bool SG_ScrollingArea::AddWidget(SG_Table *tab) {
+  return scroll->AddWidget(tab);
+  }

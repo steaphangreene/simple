@@ -37,21 +37,25 @@ SG_Ranger::~SG_Ranger() {
 void SG_Ranger::SetLimits(float mn, float mx) {
   min = mn;
   max = mx;
+  SetValue(value);	//To check the limits -vs- value
 
   set<SG_Ranger *>::iterator itr = linked.begin();
   for(; itr != linked.end(); ++itr) {
     (*itr)->max = max;
     (*itr)->min = min;
+    (*itr)->value = value;
     }
   }
 
 void SG_Ranger::SetSpan(float spn) {
   span = spn;
   if(span < 0.0) span = 0.0;
+  SetValue(value);	//To check the limits -vs- value
 
   set<SG_Ranger *>::iterator itr = linked.begin();
   for(; itr != linked.end(); ++itr) {
     (*itr)->span = span;
+    (*itr)->value = value;
     }
   }
 

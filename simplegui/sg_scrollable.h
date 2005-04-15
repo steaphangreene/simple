@@ -28,6 +28,8 @@
 #include <vector>
 using namespace std;
 
+class SG_Table;
+
 class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
 public:
   SG_Scrollable(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
@@ -38,6 +40,9 @@ public:
 		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+
+  virtual bool AddWidget(SG_Widget *wid);
+  virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
 
 protected:
   void CalcGeometry();
