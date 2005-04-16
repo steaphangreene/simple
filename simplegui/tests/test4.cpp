@@ -38,12 +38,12 @@ using namespace std;
 
 static SimpleGUI *gui;
 
-static SG_Button *newbutt() {
+static SG_PullDown *newbutt() {
   static int num = 0;
 
   char buf[32] = {0};
   sprintf(buf, "Button %d", ++num);
-  return new SG_Button(buf);
+  return new SG_PullDown(buf);
   }
 
 int main(int argc, char **argv) {
@@ -92,14 +92,14 @@ int main(int argc, char **argv) {
   tab->SetBorder(0.0625, 0.125);
   scr->AddWidget(tab);
 
-  map<SG_Button*, int> but2colid;
-  map<SG_Button*, int> but2rowid;
+  map<SG_PullDown*, int> but2colid;
+  map<SG_PullDown*, int> but2rowid;
   map<int, int> colid2col;
   map<int, int> rowid2row;
 
   int el = 0;
   for(; el<8*16; ++el) {
-    SG_Button *but = newbutt();
+    SG_PullDown *but = newbutt();
     tab->AddWidget(but, el/16, el%16);
     but2colid[but] = el/16;
     but2rowid[but] = el%16;
@@ -116,8 +116,8 @@ int main(int argc, char **argv) {
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONCLICK) {
 	  if(removing) {
-	    int row = rowid2row[but2rowid[(SG_Button*)event.user.data1]];
-	    int col = colid2col[but2colid[(SG_Button*)event.user.data1]];
+	    int row = rowid2row[but2rowid[(SG_PullDown*)event.user.data1]];
+	    int col = colid2col[but2colid[(SG_PullDown*)event.user.data1]];
 	    tab->RemoveRow(row);
 	    tab->RemoveCol(col);
 
@@ -130,8 +130,8 @@ int main(int argc, char **argv) {
 	      }
 	    }
 	  else {
-	    int row = rowid2row[but2rowid[(SG_Button*)event.user.data1]];
-	    int col = colid2col[but2colid[(SG_Button*)event.user.data1]];
+	    int row = rowid2row[but2rowid[(SG_PullDown*)event.user.data1]];
+	    int col = colid2col[but2colid[(SG_PullDown*)event.user.data1]];
 	    tab->AddRow(row);
 	    tab->AddCol(col);
 

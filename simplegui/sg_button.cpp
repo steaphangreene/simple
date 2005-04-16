@@ -25,7 +25,7 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Button::SG_Button(string mes, SG_Texture tex, SG_Texture dis_tex,
+SG_Button::SG_Button(const string &mes, SG_Texture tex, SG_Texture dis_tex,
 	SG_Texture click_tex) : SG_TextArea(mes, tex, dis_tex) {
   texture.push_back(click_tex);
   }

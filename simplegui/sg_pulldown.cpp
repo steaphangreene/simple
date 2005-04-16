@@ -19,24 +19,29 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-// This file was created from (or actually IS) a basic compound widget
-// def, so it's not defined and is really just a place-holder for now.
-
 #include "SDL_opengl.h"
 
 #include "sg_pulldown.h"
-#include "sg_panel.h"
-#include "sg_button.h"
+#include "sg_globals.h"
 #include "sg_events.h"
+#include "sg_button.h"
+#include "sg_menu.h"
 
-SG_PullDown::SG_PullDown()
-	: SG_Compound(8, 5, 0.1, 0.1) {
-  background = new SG_Panel(SG_COL_FG);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_PullDown", SG_COL_LOW);
-  AddWidget(labelb, 1, 2, 6, 1);
+SG_PullDown::SG_PullDown(const string &mes, SG_Texture tex, SG_Texture dis_tex,
+        SG_Texture click_tex)
+	: SG_Compound(1, 1, 0.0, 0.0) {
+  but = new SG_Button(mes, tex, dis_tex, click_tex);
+  AddWidget(but, 0, 0);
+
+  vector<string> menuitems;
+  menuitems.push_back("Option 1");
+  menuitems.push_back("Option 2");
+  menuitems.push_back("Option 3");
+  menuitems.push_back("Option 4");
+  menu = new SG_Menu(menuitems);
+  AddWidget(menu, 0, 0);
+  wgeom[1].ypos = 1;
+  wgeom[1].ysize = menuitems.size();
   }
 
 SG_PullDown::~SG_PullDown() {
@@ -44,12 +49,8 @@ SG_PullDown::~SG_PullDown() {
 
 bool SG_PullDown::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
-      event->user.data2 = NULL;
-      return 1;
-      }
+    current_sg->SetCurrentWidget(menu);
+    return 0;
     }
   return 0; // Silence children doing other things
   }

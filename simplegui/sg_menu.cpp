@@ -68,6 +68,8 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
   }
 
 bool SG_Menu::Render(unsigned long cur_time) {
+  if(current_sg->CurrentWidget() != this) return true;
+
   glPushMatrix();
   while(texture.size() < items.size() * 3) {
     texture.push_back(texture[0]);
