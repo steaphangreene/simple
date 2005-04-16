@@ -29,6 +29,9 @@
 SG_PassThrough::SG_PassThrough(int lact, int mact, int ract)
 	: SG_Alignment(0.0, 0.0) {
   SetBehavior(lact, mact, ract);
+  button_menu[0] = NULL;
+  button_menu[1] = NULL;
+  button_menu[2] = NULL;
   cur_action = SG_PT_IGNORE;
   cur_button = 0;
   }
@@ -40,6 +43,40 @@ void SG_PassThrough::SetBehavior(int lact, int mact, int ract) {
   }
 
 SG_PassThrough::~SG_PassThrough() {
+  }
+
+bool SG_PassThrough::HandEventTo(SG_Widget *targ, SDL_Event *event,
+		float x, float y) {
+  bool ret = false;
+//  if(event->type == SDL_MOUSEBUTTONUP)
+//    fprintf(stderr, "Align/Hand: Button Up at (%f,%f)\n", x, y);
+
+  if(targ == this) return HandleEvent(event, x, y);
+
+  if(widgets.size() >= 1 && widgets[0]) {
+    if(widgets[0]->HasWidget(targ)) {
+      CalcGeometry();
+      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
+      y -= cur_geom.yp;
+      x /= cur_geom.xs;
+      y /= cur_geom.ys;
+      ret = widgets[0]->HandEventTo(targ, event, x, y);
+      }
+    }
+
+  if(background && background->HasWidget(targ)) {
+    ret = background->HandEventTo(targ, event, x, y);
+    }
+
+  //Clean up after menu completion
+  if(cur_action == SG_PT_MENU && widgets.size() > 0
+	&& current_sg->CurrentWidget() != widgets[0]) {
+    if(widgets.size() > 0) RemoveWidget(widgets[0]);
+    cur_action = SG_PT_IGNORE;
+    cur_button = 0;
+    }
+
+  return ret;
   }
 
 int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
@@ -63,6 +100,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
+
       ret = widgets[0]->HandleEvent(event, x, y);
       if(ret != -1) return ret;
 
@@ -105,8 +143,11 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_button = event->button.button;
       act_x = x;
       act_y = y;
-      AddWidget(new SG_TextArea("Menu!"));
-      widgets[0]->Ignore();
+      if(button_menu[event->button.button - 1]) {
+	if(widgets.size() > 0) RemoveWidget(widgets[0]);
+	AddWidget(button_menu[event->button.button - 1]);
+	current_sg->SetCurrentWidget(button_menu[event->button.button - 1]);
+	}
       return 0;
       }
     else {
@@ -129,21 +170,6 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       event->user.data2 = (void*)&event_data;
       cur_action = SG_PT_IGNORE;
       cur_button = 0;
-      return 1;
-      }
-    else if(cur_action == SG_PT_MENU) {
-      event_data.i[0] = 1;	//Pick option #1 //FIXME: HARDCODED STUB!
-      event->type = SDL_SG_EVENT;
-      event->user.code = SG_EVENT_MENU + cur_button;
-      event->user.data1 = (void*)this;
-      event->user.data2 = (void*)&event_data;
-      cur_action = SG_PT_IGNORE;
-      cur_button = 0;
-
-      SG_Widget *w = widgets[0];
-      RemoveWidget(w);
-      delete w;
-
       return 1;
       }
     else if(cur_action == SG_PT_CLICK) {
@@ -228,5 +254,19 @@ void SG_PassThrough::CalcGeometry() {
     cur_geom.yp = 0.0; // Not used by SG_PassThrough widget
     cur_geom.xs = 1.0 - xborder;
     cur_geom.ys = 1.0 - yborder;
+    }
+  }
+
+void SG_PassThrough::SetMenu(int but, const vector<string> itms) {
+  if(but < 1 || but > 3) {
+    fprintf(stderr, "WARNING: Attempted to set menu to invalid button!\n");
+    return;
+    }
+  if(button_menu[but-1] == NULL) {
+    button_menu[but-1] = new SG_Menu(itms);
+    button_menu[but-1]->SetID(but);
+    }
+  else {
+    button_menu[but-1]->SetItems(itms);
     }
   }

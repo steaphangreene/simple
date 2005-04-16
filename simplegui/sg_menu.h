@@ -22,18 +22,28 @@
 #ifndef SG_MENU_H
 #define SG_MENU_H
 
-#include "sg_textarea.h"
+#include <vector>
+using namespace std;
 
-class SG_Menu : public SG_TextArea {
+#include "sg_button.h"
+
+class SG_Menu : public SG_Button {
 public:
-  SG_Menu(string itms, SG_Texture c, SG_Texture ac);
-		//The idea is that newlines will separate menuitems
+  SG_Menu(const vector<string> &itms, SG_Texture tex = SG_COL_RAISED,
+        SG_Texture dis_tex = SG_COL_LOW, SG_Texture click_tex = SG_COL_LOW);
   virtual ~SG_Menu();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
+  virtual bool Render(unsigned long cur_time);
+
+  void SetItems(const vector<string> &itms);
+  void SetID(int id);
+  int ID() { return menu_id; };
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+  vector<string> items;
+  int menu_id;
   };
 
 #endif // SG_MENU_H
-

@@ -58,7 +58,7 @@
 #define	SG_EVENT_LEFTMENU	1065
 #define	SG_EVENT_MIDDLEMENU	1066
 #define	SG_EVENT_RIGHTMENU	1067
-#define	SG_EVENT_MENUMAX	1096	//Max of 31 mouse buttons!
+#define	SG_EVENT_MENUMAX	1096	//Max of 32 menu ids (0-31)!
 
 //Compound Actions
 #define	SG_EVENT_OK		2000

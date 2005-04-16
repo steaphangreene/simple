@@ -116,6 +116,12 @@ int main(int argc, char **argv) {
   panel[0] = new SG_Panel(gui->NewColor(0.2, 0.2, 0.2));
 
   pass[0] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_MENU);
+  vector<string> menuitems;
+  menuitems.push_back("Option 1");
+  menuitems.push_back("Option 2");
+  menuitems.push_back("Option 3");
+  menuitems.push_back("Option 4");
+  pass[0]->SetMenu(3, menuitems);
   pass[1] = new SG_PassThrough(SG_PT_BOX, SG_PT_CLICK, SG_PT_CLICK);
 
   gui->MasterWidget()->AddWidget(tab[0]);
@@ -340,10 +346,8 @@ int main(int argc, char **argv) {
 	  }
 	else if(event.user.code >= SG_EVENT_MENU
 		&& event.user.code < SG_EVENT_MENUMAX) {
-	  printf("Received SG_EVENT_BOX from %s, for button #%d"
-			" item %d selected.\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
-		event.user.code - SG_EVENT_BOX, *((int*)(event.user.data2)));
+	  printf("Received SG_EVENT_MENU from menu #%d - item %d selected.\n",
+		event.user.code - SG_EVENT_MENU, *((int*)(event.user.data2)));
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_FILEOPEN) {

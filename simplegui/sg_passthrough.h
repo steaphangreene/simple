@@ -23,18 +23,23 @@
 #define SG_PASSTHROUGH_H
 
 #include "sg_alignment.h"
+#include "sg_menu.h"
 
 class SG_PassThrough : public SG_Alignment {
 public:
   SG_PassThrough(int lact, int mact, int ract);
   virtual ~SG_PassThrough();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
+		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetBehavior(int lact, int mact, int ract);
+  void SetMenu(int but, const vector<string> itms);
   
 protected:
-  int button_action[3];	//Auto-Handling of the main three buttons
+  int button_action[3];		//Auto-Handling of the three main buttons
+  SG_Menu *button_menu[3];	//Click Menus for the three main buttons
   int cur_action, cur_button;
   float act_x, act_y;
   float cur_x, cur_y;
@@ -51,4 +56,3 @@ protected:
 #define SG_PT_MENU	4
 
 #endif // SG_PASSTHROUGH_H
-
