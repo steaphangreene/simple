@@ -40,7 +40,11 @@ public:
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);
-  
+
+  //For Internal Use Only!
+  void SetState(int st) { state = st; };
+  int State() { return state; };
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 

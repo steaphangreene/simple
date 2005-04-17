@@ -48,17 +48,16 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
   if(event->type == SDL_MOUSEBUTTONUP) {
     current_sg->UnsetCurrentWidget();
     y -= 1.0;
-    if(y > 0.0 || y < -(double)(items.size()) * 2.0) {
-      return 0;	//Missed Menu Options
+    event->type = SDL_SG_EVENT;
+    event->user.data1 = (void*)this;
+    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data2 = NULL;
+      return 1;		//Missed Menu Options
       }
     else {
       event_data.i[0] = (int)(-y)/2;
-      current_sg->UnsetCurrentWidget();
-      flags &= (~SG_WIDGET_FLAGS_PRESSED);
-      state = 0;
-      event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_MENU + menu_id;
-      event->user.data1 = (void*)this;
       event->user.data2 = (void*)&event_data;
       return 1;
       }

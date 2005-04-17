@@ -23,10 +23,11 @@
 #include <SDL/SDL_opengl.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_keysym.h>
-#include <cstdio>
 #include <cstring>
-#include <map>
+#include <cstdio>
 #include <string>
+#include <vector>
+#include <map>
 
 using namespace std;
 
@@ -38,12 +39,12 @@ using namespace std;
 
 static SimpleGUI *gui;
 
-static SG_PullDown *newbutt() {
+static SG_PullDown *newmenu(const vector<string> &itms) {
   static int num = 0;
 
   char buf[32] = {0};
-  sprintf(buf, "Button %d", ++num);
-  return new SG_PullDown(buf);
+  sprintf(buf, "Menu %d", ++num);
+  return new SG_PullDown(buf, itms);
   }
 
 int main(int argc, char **argv) {
@@ -92,70 +93,80 @@ int main(int argc, char **argv) {
   tab->SetBorder(0.0625, 0.125);
   scr->AddWidget(tab);
 
-  map<SG_PullDown*, int> but2colid;
-  map<SG_PullDown*, int> but2rowid;
+  map<SG_PullDown*, int> menu2colid;
+  map<SG_PullDown*, int> menu2rowid;
   map<int, int> colid2col;
   map<int, int> rowid2row;
 
-  int el = 0;
-  for(; el<8*16; ++el) {
-    SG_PullDown *but = newbutt();
-    tab->AddWidget(but, el/16, el%16);
-    but2colid[but] = el/16;
-    but2rowid[but] = el%16;
+  vector<string> opts;
+  opts.push_back("Remove Row\n");
+  opts.push_back("Remove Col\n");
+  opts.push_back("Add Row\n");
+  opts.push_back("Add Col\n");
+
+  for(int el = 8*16-1; el>=0; --el) {
+    SG_PullDown *menu = newmenu(opts);
+    tab->AddWidget(menu, el/16, el%16);
+    menu2colid[menu] = el/16;
+    menu2rowid[menu] = el%16;
     colid2col[el/16] = el/16;
     rowid2row[el%16] = el%16;
     }
 
-  bool removing = true;
   SDL_Event event;
   int user_quit = 0;
   while(!user_quit) {
-    while(SDL_PollEvent(&event)) {
-      if(!gui->ProcessEvent(&event)) continue;
+//    while(gui->PollEvent(&event)) {
+    gui->WaitEvent(&event);
+    do {
       if(event.type == SDL_SG_EVENT) {
-	if(event.user.code == SG_EVENT_BUTTONCLICK) {
-	  if(removing) {
-	    int row = rowid2row[but2rowid[(SG_PullDown*)event.user.data1]];
-	    int col = colid2col[but2colid[(SG_PullDown*)event.user.data1]];
+	if(event.user.code == SG_EVENT_MENU) {
+	  audio_play(click, 8, 8);
+	  if(((int *)(event.user.data2))[0] == 0) {		//Remove Row
+	    int row = rowid2row[menu2rowid[(SG_PullDown*)event.user.data1]];
 	    tab->RemoveRow(row);
+
+	    map<int,int>::iterator itr;
+	    for(itr = rowid2row.begin(); itr != rowid2row.end(); ++itr) {
+	      if(itr->second > row) --(itr->second);
+	      }
+	    }
+	  else if(((int *)(event.user.data2))[0] == 1) {	//Remove Col
+	    int col = colid2col[menu2colid[(SG_PullDown*)event.user.data1]];
 	    tab->RemoveCol(col);
 
 	    map<int,int>::iterator itr;
 	    for(itr = colid2col.begin(); itr != colid2col.end(); ++itr) {
 	      if(itr->second > col) --(itr->second);
 	      }
+	    }
+	  else if(((int *)(event.user.data2))[0] == 2) {	//Add Row
+	    int row = rowid2row[menu2rowid[(SG_PullDown*)event.user.data1]];
+	    tab->AddRow(row);
+
+	    map<int,int>::iterator itr;
 	    for(itr = rowid2row.begin(); itr != rowid2row.end(); ++itr) {
-	      if(itr->second > row) --(itr->second);
+	      if(itr->second >= row) ++(itr->second);
 	      }
 	    }
-	  else {
-	    int row = rowid2row[but2rowid[(SG_PullDown*)event.user.data1]];
-	    int col = colid2col[but2colid[(SG_PullDown*)event.user.data1]];
-	    tab->AddRow(row);
+	  else {						//Add Col
+	    int col = colid2col[menu2colid[(SG_PullDown*)event.user.data1]];
 	    tab->AddCol(col);
 
 	    map<int,int>::iterator itr;
 	    for(itr = colid2col.begin(); itr != colid2col.end(); ++itr) {
 	      if(itr->second >= col) ++(itr->second);
 	      }
-	    for(itr = rowid2row.begin(); itr != rowid2row.end(); ++itr) {
-	      if(itr->second >= row) ++(itr->second);
-	      }
 	    }
-	  }
-	else if(event.user.code == SG_EVENT_BUTTONPRESS) {
-	  audio_play(click, 8, 8);
 	  }
 	}
       else if(event.type == SDL_KEYDOWN) {
 	if(event.key.keysym.sym == SDLK_ESCAPE) user_quit = 1;
-	else if(event.key.keysym.sym == SDLK_SPACE) removing = !removing;
 	}
       else if(event.type == SDL_QUIT) {
 	user_quit = 1;
 	}
-      }
+      } while(gui->PollEvent(&event));
     start_scene();
     gui->Render(SDL_GetTicks());
     finish_scene();

@@ -31,8 +31,9 @@ class SG_Menu;
 
 class SG_PullDown : public SG_Compound {
 public:
-  SG_PullDown(const string &mes, SG_Texture tex = SG_COL_RAISED,
-        SG_Texture dis_tex = SG_COL_LOW, SG_Texture click_tex = SG_COL_LOW);
+  SG_PullDown(const string &mes, const vector<string> &itms,
+	SG_Texture tex = SG_COL_RAISED, SG_Texture dis_tex = SG_COL_LOW,
+	SG_Texture click_tex = SG_COL_LOW);
   virtual ~SG_PullDown();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);

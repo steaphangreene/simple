@@ -255,8 +255,7 @@ int main(int argc, char **argv) {
   SDL_Event event;
   int user_quit = 0;
   while(!user_quit) {
-    while(SDL_PollEvent(&event)) {
-      if(!gui->ProcessEvent(&event)) continue;
+    while(gui->PollEvent(&event)) {
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONCLICK) {
 	  printf("Received SG_EVENT_BUTTONCLICK from %s button.\n",
@@ -408,6 +407,7 @@ int main(int argc, char **argv) {
 //	printf("Received unintercepted key release.\n");
 	}
       }
+
     start_scene();
     gui->Render(SDL_GetTicks());
     finish_scene();

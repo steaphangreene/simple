@@ -27,21 +27,16 @@
 #include "sg_button.h"
 #include "sg_menu.h"
 
-SG_PullDown::SG_PullDown(const string &mes, SG_Texture tex, SG_Texture dis_tex,
-        SG_Texture click_tex)
+SG_PullDown::SG_PullDown(const string &mes, const vector<string> &itms,
+	SG_Texture tex, SG_Texture dis_tex, SG_Texture click_tex)
 	: SG_Compound(1, 1, 0.0, 0.0) {
   but = new SG_Button(mes, tex, dis_tex, click_tex);
   AddWidget(but, 0, 0);
 
-  vector<string> menuitems;
-  menuitems.push_back("Option 1");
-  menuitems.push_back("Option 2");
-  menuitems.push_back("Option 3");
-  menuitems.push_back("Option 4");
-  menu = new SG_Menu(menuitems);
+  menu = new SG_Menu(itms);
   AddWidget(menu, 0, 0);
   wgeom[1].ypos = 1;
-  wgeom[1].ysize = menuitems.size();
+  wgeom[1].ysize = 1;
   }
 
 SG_PullDown::~SG_PullDown() {
@@ -50,7 +45,16 @@ SG_PullDown::~SG_PullDown() {
 bool SG_PullDown::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     current_sg->SetCurrentWidget(menu);
-    return 0;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = (void*)this;
+    return 1;
+    }
+  if(event->user.data1 == (void*)menu) {
+    if(current_sg->CurrentWidget() != menu) {
+      if(but->State() == 2) but->SetState(0);
+      }
+    event->user.data1 = (void*)this;
+    return 1;	// Pass menu events through as my events
     }
   return 0; // Silence children doing other things
   }

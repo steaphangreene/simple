@@ -128,8 +128,8 @@ int main(int argc, char **argv) {
   SDL_Event event;
   int user_quit = 0;
   while(!user_quit) {
-    while(SDL_PollEvent(&event)) {
-      if(!gui->ProcessEvent(&event)) continue;
+    gui->WaitEvent(&event);
+    do { // while(gui->PollEvent(&event))
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONCLICK) {
 	  printf("Received SG_EVENT_BUTTONCLICK from %s button.\n",
@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
 	  printf("\n");
 	  }
 	else {
-	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);
+	  //printf("Received Unknown SG_EVENT #%d.\n", event.user.code);
 	  }
 	}
       else if(event.type == SDL_MOUSEBUTTONDOWN) {
@@ -265,7 +265,8 @@ int main(int argc, char **argv) {
       else if(event.type == SDL_KEYUP) {
 //	printf("Received unintercepted key release.\n");
 	}
-      }
+      } while(gui->PollEvent(&event));
+
     start_scene();
     gui->Render(SDL_GetTicks());
     finish_scene();

@@ -38,7 +38,6 @@ using namespace std;
 
 int user_quit = 0;	//Don't need to mutex this one - no race condition
 static SimpleGUI *gui;
-SDL_mutex *gui_mutex;
 
 int event_thread_handler(void *arg) {
   int click = audio_buildsound(click_data, sizeof(click_data));
@@ -46,14 +45,7 @@ int event_thread_handler(void *arg) {
   SDL_Event event;
 
   while(!user_quit) {
-    while(!user_quit && SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS)) {
-      int have_event = 0;
-
-      SDL_mutexP(gui_mutex);
-      have_event = gui->ProcessEvent(&event);
-      SDL_mutexV(gui_mutex);
-
-      if(!have_event) continue;
+    while(!user_quit && gui->WaitEvent(&event, true)) {
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONPRESS) {
 	  audio_play(click, 8, 8);
@@ -75,22 +67,10 @@ int event_thread_handler(void *arg) {
 
 int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
   while(!user_quit) {
-
-    SDL_PumpEvents();
-    start_scene();
     unsigned long cur_time = SDL_GetTicks();
-
-    SDL_PumpEvents();
-    SDL_mutexP(gui_mutex);
-    gui->RenderStart(cur_time);
-    SDL_mutexV(gui_mutex);
-
-    SDL_PumpEvents();
-    SDL_mutexP(gui_mutex);
-    gui->Render(cur_time);
-    SDL_mutexV(gui_mutex);
-
-    SDL_PumpEvents();
+    start_scene();
+    gui->RenderStart(cur_time, true);
+    gui->RenderFinish(cur_time, true);
     finish_scene();
     }
   return 0;
@@ -160,8 +140,6 @@ int main(int argc, char **argv) {
     sprintf(buf, "B:%d%c", n+1, 0);  //I don't trust sprintf() to null term.
     btab->AddWidget(new SG_Button(buf));
     }
-
-  gui_mutex = SDL_CreateMutex();
 
   SDL_Thread *ev_t, *game_t;
 
