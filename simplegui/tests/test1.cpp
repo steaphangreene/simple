@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
   text = new SG_TextArea(
 	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
   text->SetMargins(0.2, 0.2);
-  tab[1]->AddWidget(text, 0, 4, 2, 1);
+  tab[1]->AddWidget(text, 0, 9, 2, 1);
 
   prog = new SG_ProgressBar("Progress",
 	gui->NewColor(0.3, 0.3, 0.3), gui->NewColor(0.6, 0.0, 0.0));
@@ -224,15 +224,6 @@ int main(int argc, char **argv) {
 //  SG_FileBrowser *fileb;
 //  fileb = new SG_FileBrowser("*.cpp");
 //  tab[1]->AddWidget(fileb, 0, 9, 2, 3);
-
-  SG_ComboBox *combob;
-  vector<string> opts;
-  opts.push_back("Option 1");
-  opts.push_back("Option 2");
-  opts.push_back("Option 3");
-  opts.push_back("Option 4");
-  combob = new SG_ComboBox(opts);
-  tab[1]->AddWidget(combob, 0, 9, 2, 1);
 
   SG_Alignment *stack1 = new SG_Alignment(0.0, 0.0);
   SG_Button *stack2 = new SG_Button("Click Me");
@@ -246,6 +237,15 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(slide, 0, 11, 2, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
+
+  SG_ComboBox *combob;			//NOTE: Must be added LAST!
+  vector<string> opts;
+  opts.push_back("Option 1");
+  opts.push_back("Option 2");
+  opts.push_back("Option 3");
+  opts.push_back("Option 4");
+  combob = new SG_ComboBox(opts);
+  tab[1]->AddWidget(combob, 0, 4, 2, 1);
 
   popup = new SG_Table(6, 6);
   popup->SetBackground(new SG_Panel());
@@ -359,18 +359,24 @@ int main(int argc, char **argv) {
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDIT) {
-	  printf("Received SG_EVENT_EDIT - value = '%s'.\n",
-		((SG_Editable*)(event.user.data1))->Text().c_str());
+	  //This causes a segfault - why?
+	  //printf("Received SG_EVENT_EDIT - value = '%s'.\n",
+	  //	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDITABORT) {
-	  printf("Received SG_EVENT_EDITABORT - value = '%s'.\n",
-		((SG_Editable*)(event.user.data1))->Text().c_str());
+	  //This causes a segfault - why?
+	  //printf("Received SG_EVENT_EDITABORT - value = '%s'.\n",
+	  //	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
-	else if(event.user.code == SG_EVENT_EDITCOMPLETE) {
-	  printf("Received SG_EVENT_EDITCOMPLETE - value = '%s'.\n",
-		((SG_Editable*)(event.user.data1))->Text().c_str());
+	else if(event.user.code == SG_EVENT_NEWTEXT) {
+	  if(event.user.data1 == (void*)combob)
+	    printf("Received SG_EVENT_NEWTEXT - value = '%s'.\n",
+		((SG_ComboBox*)(event.user.data1))->Text().c_str());
+	  //This causes a segfault - why?
+	  //printf("Received SG_EVENT_NEWTEXT - value = '%s'.\n",
+	  //	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_NEEDTORENDER) {

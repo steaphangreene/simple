@@ -36,8 +36,9 @@
 #define	SG_EVENT_DRAGRELEASE	112
 
 #define	SG_EVENT_EDIT		200
-#define	SG_EVENT_EDITCOMPLETE	201
-#define	SG_EVENT_EDITABORT	202
+#define	SG_EVENT_EDITABORT	201
+#define	SG_EVENT_NEWTEXT	202
+#define	SG_EVENT_EDITCOMPLETE	202	//Old Name for Event for BW compat.
 
 //Passthrough Actions
 #define	SG_EVENT_CLICK		1000
@@ -55,8 +56,8 @@
 #define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
 
 #define	SG_EVENT_MENU		1064
-#define	SG_EVENT_LEFTMENU	1065
-#define	SG_EVENT_MIDDLEMENU	1066
+#define	SG_EVENT_LEFTMENU	1065	//These three are the IDs of the
+#define	SG_EVENT_MIDDLEMENU	1066	//PassThrough click menus
 #define	SG_EVENT_RIGHTMENU	1067
 #define	SG_EVENT_MENUMAX	1096	//Max of 32 menu ids (0-31)!
 

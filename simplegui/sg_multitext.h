@@ -19,40 +19,25 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SG_TEXTAREA_H
-#define SG_TEXTAREA_H
-
-#include "sg_panel.h"
-#include "sg_text.h"
+#ifndef SG_MULTITEXT_H
+#define SG_MULTITEXT_H
 
 #include <string>
-
+#include <vector>
 using namespace std;
 
-class SG_TextArea : public SG_Panel, public SG_Text {
+class SG_MultiText {
 public:
-  SG_TextArea(string mes, SG_Texture tex = SG_COL_BG,
-	SG_Texture dis_tex = SG_COL_BG, float mx = 0.125, float my = 0.125);
-  virtual ~SG_TextArea();
-  virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  void SetMargins(float xmar, float ymar);
-  void SetFontSize(int sz);	// Ignored for defined-texture widgets
-  virtual void Disable();
-  virtual void Enable();
-
-  virtual void SetText(const string &txt);
-  virtual const string &Text();
-  
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-
-  virtual void BuildTexture(int st);
-
-  float xmargin, ymargin;
-  int lines_visible;
-  string message;
-  int font_size;
+  SG_MultiText() {};
+  virtual ~SG_MultiText() {};
+  virtual const string &Item(int opt) {
+    fprintf(stderr, "WARNING: Calling SG_MultiText::Item() - should not be here!\n");
+    static string s;
+    return s;
+    };
+  virtual void SetItems(const vector<string> &itms) {
+    fprintf(stderr, "WARNING: Calling SG_MultiText::SetItems() - should not be here!\n");
+    };
   };
 
-#endif // SG_TEXTAREA_H
+#endif // SG_MULTITEXT_H

@@ -47,6 +47,7 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
     current_sg->SetCurrentWidget(menu);
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = (void*)this;
+    event->user.data2 = NULL;
     return 1;
     }
   if(event->user.data1 == (void*)menu) {

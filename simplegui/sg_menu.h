@@ -36,9 +36,11 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 
-  void SetItems(const vector<string> &itms);
   void SetID(int id);
   int ID() { return menu_id; };
+
+  virtual const string &Item(int opt);
+  virtual void SetItems(const vector<string> &itms);
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

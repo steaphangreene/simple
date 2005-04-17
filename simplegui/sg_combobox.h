@@ -31,23 +31,36 @@ using namespace std;
 #include "sg_compound.h"
 #include "sg_texture.h"
 #include "sg_colors.h"
+#include "sg_text.h"
+#include "sg_multitext.h"
 
 class SG_Button;
 class SG_TextArea;
+class SG_Menu;
 
-class SG_ComboBox : public SG_Compound {
+class SG_ComboBox : public SG_Compound, public SG_Text, public SG_MultiText {
 public:
-  SG_ComboBox(vector<string> options, int binvpro = 8,
+  SG_ComboBox(const vector<string> &options, int binvpro = 8, bool edit = false,
 	SG_Texture btex = SG_COL_RAISED, SG_Texture btex_dis = SG_COL_LOW,
 	SG_Texture btex_click = SG_COL_LOW,
-	SG_Texture ttex = SG_COL_FG, SG_Texture ttex_dis = SG_COL_BG);
+	SG_Texture ttex = SG_COL_FG, SG_Texture ttex_dis = SG_COL_BG,
+	SG_Texture ttex_fg = SG_COL_HIGH,
+	SG_Texture mtex = SG_COL_BG, SG_Texture mtex_dis = SG_COL_LOW,
+	SG_Texture mtex_sel = SG_COL_RAISED);
   virtual ~SG_ComboBox();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+
+  virtual const string &Text();
+  virtual void SetText(const string &txt);
+  virtual const string &Item(int opt);
+  virtual void SetItems(const vector<string> &itms);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+  SG_TextArea *text;
   SG_Button *opb;
+  SG_Menu *menu;
   };
 
 #endif // SG_COMBOBOX_H

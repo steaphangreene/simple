@@ -22,6 +22,11 @@
 #ifndef	SIMPLEGUI_H
 #define	SIMPLEGUI_H
 
+#include "sg_ranger.h"
+#include "sg_ranger2d.h"
+#include "sg_text.h"
+#include "sg_multitext.h"
+
 #include "sg.h"
 #include "sg_events.h"
 #include "sg_widget.h"

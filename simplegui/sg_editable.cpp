@@ -80,7 +80,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	|| event->key.keysym.sym == SDLK_KP_ENTER) {
       current_sg->UnsetFocusWidget();
       event->type = SDL_SG_EVENT;
-      event->user.code = SG_EVENT_EDITCOMPLETE;
+      event->user.code = SG_EVENT_NEWTEXT;
       event->user.data1 = (void*)this;
       event->user.data2 = NULL;
       return 1;

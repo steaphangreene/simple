@@ -103,3 +103,6 @@ void SG_Menu::SetID(int id) {
 	menu_id = SG_EVENT_MENUMAX - SG_EVENT_MENU - 1;
   }
 
+const string &SG_Menu::Item(int opt) {
+  return items[opt];
+  }
