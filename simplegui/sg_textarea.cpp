@@ -31,7 +31,7 @@
 SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
-  lines_visible = 1;
+  visible_lines = 1;
   message = mes;
   xmargin = mx;
   ymargin = my;
@@ -117,7 +117,7 @@ void SG_TextArea::BuildTexture(int st) {
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    font_size = ysize / lines_visible;
+    font_size = ysize / visible_lines;
     if(current_sg->Font(font_size) == NULL) {
       fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
       SG_Panel::BuildTexture(st);
@@ -234,4 +234,9 @@ void SG_TextArea::Disable() {
 void SG_TextArea::Enable() {
   flags &= (~SG_WIDGET_FLAGS_DISABLED);
   state = 0;
+  }
+
+void SG_TextArea::SetVisibleLines(int numlns) {
+  visible_lines = numlns;
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   }

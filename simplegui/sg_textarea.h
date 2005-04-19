@@ -37,6 +37,7 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
+  void SetVisibleLines(int numlns);
   void SetFontSize(int sz);	// Ignored for defined-texture widgets
   virtual void Disable();
   virtual void Enable();
@@ -50,7 +51,7 @@ protected:
   virtual void BuildTexture(int st);
 
   float xmargin, ymargin;
-  int lines_visible;
+  int visible_lines;
   string message;
   int font_size;
   };
