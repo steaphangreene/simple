@@ -51,6 +51,7 @@ public:
 
   void SetZExtents(double mnz, double mxz);
 
+  void ScreenToMapAuto(double &x, double &y);
   void ScreenToMap(double &x, double &y, const double &z = 0.0);
   void MapToScreen(double &x, double &y, const double &z = 0.0);
 
@@ -92,6 +93,7 @@ protected:
   Uint32 down_start, down_delay;
 
   GLdouble projv[16], modelv[16];
+  GLint viewport[4];
 
   double xstart, xend, ystart, yend;
   };
