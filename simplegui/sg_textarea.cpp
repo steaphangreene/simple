@@ -32,6 +32,11 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
   visible_lines = 1;
+  xoffset = 0.0;
+  yoffset = 0.0;
+  scroll_ystart = 0.0;
+  scroll_yend = 0.0;
+  scroll_time = 0;
   message = mes;
   xmargin = mx;
   ymargin = my;
@@ -134,7 +139,7 @@ void SG_TextArea::BuildTexture(int st) {
     texture[st].xfact = (float)(bxsize) / (float)(xsize);
     texture[st].yfact = (float)(bysize) / (float)(ysize);
     }
-  else while(1) { 
+  else while(1) {
     int bxsize = 0, bysize = 0;
     int pos = 0, lpos=0, tmpx=0, tmpy=0;
 						//FIXME: Scroll?
@@ -239,4 +244,30 @@ void SG_TextArea::Enable() {
 void SG_TextArea::SetVisibleLines(int numlns) {
   visible_lines = numlns;
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  }
+
+void SG_TextArea::SetXOffset(float xoff) {
+  xoffset = xoff;
+  }
+
+void SG_TextArea::SetYOffset(float yoff) {
+  yoffset = yoff;
+  }
+
+void SG_TextArea::SetOffsets(float xoff, float yoff) {
+  SetXOffset(xoff);
+  SetYOffset(yoff);
+  }
+
+void AutoScroll(float startyoff, float endyoff, Uint32 starttime, int loop) {
+  scroll_loop = loop;
+  scroll_time = starttime;
+  scroll_ystart = startyoff;
+  scroll_yend = endyoff;
+  }
+
+void StopScroll() {
+  scroll_ystart = 0.0;
+  scroll_yend = 0.0;
+  scroll_time = 0;
   }

@@ -27,6 +27,10 @@
 
 #include <string>
 
+#define SCROLL_ONCE	0
+#define SCROLL_LOOP	1
+#define SCROLL_BOUNCE	2
+
 using namespace std;
 
 class SG_TextArea : public SG_Panel, public SG_Text {
@@ -37,10 +41,18 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
-  void SetVisibleLines(int numlns);
   void SetFontSize(int sz);	// Ignored for defined-texture widgets
   virtual void Disable();
   virtual void Enable();
+
+  void SetVisibleLines(int numlns);
+  void SetXOffset(float xoff);
+  void SetYOffset(float yoff);
+  void SetOffsets(float xoff, float yoff);
+
+  void AutoScroll(float startyoff, float endyoff, Uint32 starttime,
+	int loop=SCROLL_LOOP);
+  void StopScroll();
 
   virtual void SetText(const string &txt);
   virtual const string &Text();
@@ -51,6 +63,10 @@ protected:
   virtual void BuildTexture(int st);
 
   float xmargin, ymargin;
+  float xoffset, yoffset;
+  float scroll_ystart, scroll_yend;
+  Uint32 scroll_time;
+  int scroll_loop;
   int visible_lines;
   string message;
   int font_size;
