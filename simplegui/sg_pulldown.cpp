@@ -60,6 +60,15 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
   return 0; // Silence children doing other things
   }
 
+void SG_PullDown::SetID(int id) {
+  menu->SetID(id);
+  }
+
+int SG_PullDown::ID() {
+  return menu->ID();
+  }
+
+
 //  bool SG_PullDown::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_PullDown::Default_Mouse_Cursor = NULL;

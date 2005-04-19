@@ -37,6 +37,9 @@ public:
   virtual ~SG_PullDown();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+
+  void SetID(int id);
+  int ID();
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
