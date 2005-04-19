@@ -64,8 +64,10 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
 
   xsize = xs;   ysize = ys;
 
-  SDL_GL_LoadLibrary(NULL);	// Load up OpenGL Dynamically
-				// (Is this loaded version really being used?)
+  xstart = -1.0;
+  xend = 1.0;
+  ystart = -1.0;
+  yend = 1.0;
 
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_DEBUG) != 0) {
     fprintf(stderr, "Error: %s\n", SDL_GetError());
@@ -230,6 +232,10 @@ bool SimpleVideo::StartScene() {
   //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+
+  glTranslatef((xend+xstart)/2.0, (yend+ystart)/2.0, 0.0);
+  glScalef((xend-xstart)/2.0, (yend-ystart)/2.0, (yend-ystart)/2.0);
+
   if(flags & SV_ORTHO) {
     //FIXME: Calculate ACTUAL near and far clipping limits
     glOrtho(-aspect*zm/2.0, aspect*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0, 1.0, 64.0);
@@ -489,6 +495,11 @@ void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
   x = x + 1.0;
   y = y + 1.0;
 
+  x *= (xend-xstart)/2.0;	//Handle Subscreen Translation
+  y *= (yend-ystart)/2.0;
+  x += (xstart+1.0);
+  y += (ystart+1.0);
+
   GLdouble x0, x1, y0, y1, z0, z1;
   if(!gluUnProject(x, y, 0.0, modelv, projv, viewport, &x0, &y0, &z0)) {
     fprintf(stderr, "WARNING: gluUnProject Failed!\n");
@@ -514,4 +525,20 @@ void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
 
 void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
   x = 0.0; y = 0.0;	//FIXME: Implement this for real!
+  }
+
+void SimpleVideo::SetSubscreen(double xs, double ys, double xe, double ye) {
+  if(xs >= xe || ys >= ye || xs < -1.0 || ys < -1.0 || xe > 1.0 || ye > 1.0) {
+    fprintf(stderr, "ERROR: Bad SubScreen values passed to SimpleVideo\n");
+    fprintf(stderr, "ERROR: Values (%f,%f) - (%f,%f)\n", xs, ys, xe, ye);
+    exit(1);
+    }
+  xstart = xs;
+  xend = xe;
+  ystart = ys;
+  yend = ye;
+  }
+
+void SimpleVideo::ResetSubscreen() {
+  SetSubscreen(-1.0, -1.0, 1.0, 1.0);
   }

@@ -34,6 +34,8 @@ public:
 
   void SetOrtho();
   void SetPerspective(double vert_fov);
+  void SetSubscreen(double xs, double ys, double xe, double ye);
+  void ResetSubscreen();
 
   bool StartScene();
   bool FinishScene();
@@ -90,6 +92,8 @@ protected:
   Uint32 down_start, down_delay;
 
   GLdouble projv[16], modelv[16];
+
+  double xstart, xend, ystart, yend;
   };
 
 #endif // SV_H
