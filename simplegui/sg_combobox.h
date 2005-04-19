@@ -40,7 +40,7 @@ class SG_Menu;
 
 class SG_ComboBox : public SG_Compound, public SG_Text, public SG_MultiText {
 public:
-  SG_ComboBox(const vector<string> &options, int binvpro = 8, bool edit = false,
+  SG_ComboBox(const vector<string> &options, bool edit = false,
 	SG_Texture btex = SG_COL_RAISED, SG_Texture btex_dis = SG_COL_LOW,
 	SG_Texture btex_click = SG_COL_LOW,
 	SG_Texture ttex = SG_COL_FG, SG_Texture ttex_dis = SG_COL_BG,

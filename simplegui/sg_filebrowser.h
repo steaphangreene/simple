@@ -29,10 +29,11 @@ using namespace std;
 
 class SG_Button;
 class SG_TextArea;
+class SG_ComboBox;
 
 class SG_FileBrowser : public SG_Compound {
 public:
-  SG_FileBrowser(const string &filter);
+  SG_FileBrowser(const string &filter, bool newfile = false);
   virtual ~SG_FileBrowser();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
@@ -44,7 +45,7 @@ protected:
   string reg;	//Pseudo-Regex of Files
   SG_Button *openb;
   SG_TextArea *dirb;
-  SG_TextArea *fileb;
+  SG_ComboBox *fileb;
   string filename;
   };
 

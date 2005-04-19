@@ -30,7 +30,9 @@
 #include "sg_combobox.h"
 #include "sg_editable.h"
 
-SG_ComboBox::SG_ComboBox(const vector<string> &options, int binvpro, bool edit,
+const int binvpro = 8; //FIXME: Changable?
+
+SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
         SG_Texture btex, SG_Texture btex_dis, SG_Texture btex_click,
         SG_Texture ttex, SG_Texture ttex_dis, SG_Texture ttex_fg,
 	SG_Texture mtex, SG_Texture mtex_dis, SG_Texture mtex_sel)

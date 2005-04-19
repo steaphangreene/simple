@@ -32,9 +32,10 @@ using namespace std;
 #include "sg_panel.h"
 #include "sg_button.h"
 #include "sg_editable.h"
+#include "sg_combobox.h"
 #include "sg_events.h"
 
-SG_FileBrowser::SG_FileBrowser(const string &filter)
+SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
 	: SG_Compound(8, 5, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
 
@@ -45,9 +46,6 @@ SG_FileBrowser::SG_FileBrowser(const string &filter)
 
   dirb = new SG_TextArea("./", SG_COL_LOW, SG_COL_BG);
   AddWidget(dirb, 1, 1, 6, 1);
-
-  fileb = new SG_Editable("file.txt", SG_COL_LOW, SG_COL_BG, SG_COL_HIGH);
-  AddWidget(fileb, 1, 2, 6, 1);
 
   int pos = 0, npos = -1;
   do {
@@ -62,13 +60,13 @@ SG_FileBrowser::SG_FileBrowser(const string &filter)
 
   dirb->SetText(path);
 
+  vector<string> files;
+
   unsigned int astpos = reg.find('*');
   if(astpos >= reg.length()) {			//No '*' in filename!
-    fileb->SetText(reg);
+    files.push_back(reg);
     }
   else {
-    fileb->SetText("<unknown>");
-
     unsigned int testast = reg.find('*', astpos + 1);
 
     if(testast < reg.length()) {		//Multiple '*'s in filename!
@@ -89,23 +87,23 @@ SG_FileBrowser::SG_FileBrowser(const string &filter)
     if(dir == NULL) {
       fprintf(stderr, "WARNING: Unable to open directory '%s'!\n",
 	path.c_str());
-      fileb->SetText("<unknown>");
       }
     else {
       struct dirent *ent;
-      fileb->SetText("<no files>");
       while((ent = readdir(dir))) {	// Only works with '*' first (eg: *.map)
 	if(strlen(ent->d_name) >= reg.length() - 1) {
 	  if(!strncmp(ent->d_name + strlen(ent->d_name) - (reg.length() - 1),
 		reg.c_str() + 1, reg.length() - 1)) {
-	    fileb->SetText(ent->d_name);
-	    break;
+	    files.push_back(ent->d_name);
 	    }
 	  }
 	}
       closedir(dir);
       }
     }
+  fileb = new SG_ComboBox(files, 8, newfile);
+  if(files.size() == 0) fileb->SetText("<no files>");
+  AddWidget(fileb, 1, 2, 6, 1);
   }
 
 SG_FileBrowser::~SG_FileBrowser() {
