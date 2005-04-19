@@ -259,14 +259,14 @@ void SG_TextArea::SetOffsets(float xoff, float yoff) {
   SetYOffset(yoff);
   }
 
-void AutoScroll(float startyoff, float endyoff, Uint32 starttime, int loop) {
+void SG_TextArea::AutoScroll(float startyoff, float endyoff, Uint32 starttime, int loop) {
   scroll_loop = loop;
   scroll_time = starttime;
   scroll_ystart = startyoff;
   scroll_yend = endyoff;
   }
 
-void StopScroll() {
+void SG_TextArea::StopScroll() {
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
   scroll_time = 0;
