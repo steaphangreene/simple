@@ -387,7 +387,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousey = float(event->motion.y);
     ScreenToRelative(mousex, mousey);
 
-    int ret = 0;
+    int ret = 1;
     if(current_widget) {
       ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
       if(popWid && ret && event->type != SDL_SG_EVENT) {
@@ -413,6 +413,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       event->user.code = SG_EVENT_NEEDTORENDER;
       ret = 1;
       }
+
     return ret;
     }
 
