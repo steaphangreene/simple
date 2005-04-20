@@ -71,7 +71,7 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
     if(event->user.code == SG_EVENT_MENU) {
       text->SetText(menu->Item(((int*)(event->user.data2))[0]));
       event->user.code = SG_EVENT_NEWTEXT;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_Text*)this;
       event->user.data2 = NULL;
       return 1;   // This event is now mine
       }

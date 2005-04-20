@@ -60,7 +60,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
       current_sg->UnsetFocusWidget();
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_EDITABORT;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_Text*)this;
       event->user.data2 = NULL;
       return 1;
       }
@@ -70,7 +70,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	SetText(newmes);
 	event->type = SDL_SG_EVENT;
 	event->user.code = SG_EVENT_EDIT;
-	event->user.data1 = (void*)this;
+	event->user.data1 = (void*)(SG_Text*)this;
 	event->user.data2 = NULL;
 	return 1;
 	}
@@ -81,7 +81,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
       current_sg->UnsetFocusWidget();
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_NEWTEXT;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_Text*)this;
       event->user.data2 = NULL;
       return 1;
       }
@@ -91,7 +91,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	SetText(newmes);
 	event->type = SDL_SG_EVENT;
 	event->user.code = SG_EVENT_EDIT;
-	event->user.data1 = (void*)this;
+	event->user.data1 = (void*)(SG_Text*)this;
 	event->user.data2 = NULL;
 	return 1;
 	}

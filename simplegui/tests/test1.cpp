@@ -359,24 +359,19 @@ int main(int argc, char **argv) {
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDIT) {
-	  //This causes a segfault - why?
-	  //printf("Received SG_EVENT_EDIT - value = '%s'.\n",
-	  //	((SG_Text*)(event.user.data1))->Text().c_str());
+	  printf("Received SG_EVENT_EDIT - value = '%s'.\n",
+	  	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDITABORT) {
-	  //This causes a segfault - why?
-	  //printf("Received SG_EVENT_EDITABORT - value = '%s'.\n",
-	  //	((SG_Text*)(event.user.data1))->Text().c_str());
+	  printf("Received SG_EVENT_EDITABORT - value = '%s'.\n",
+	  	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_NEWTEXT) {
 	  if(event.user.data1 == (void*)combob)
-	    printf("Received SG_EVENT_NEWTEXT - value = '%s'.\n",
-		((SG_ComboBox*)(event.user.data1))->Text().c_str());
-	  //This causes a segfault - why?
-	  //printf("Received SG_EVENT_NEWTEXT - value = '%s'.\n",
-	  //	((SG_Text*)(event.user.data1))->Text().c_str());
+	  printf("Received SG_EVENT_NEWTEXT - value = '%s'.\n",
+	  	((SG_Text*)(event.user.data1))->Text().c_str());
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_NEEDTORENDER) {
