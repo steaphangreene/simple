@@ -316,9 +316,16 @@ int SimpleModel_MD3::CalcFrame(Uint32 cur_time, const vector<int> &anim,
     //FIXME: Actually interpolate!
     int start = animations[anim[0]].start;
     int end = animations[anim[0]].end;
+    int loop = animations[anim[0]].loop;
     float fps = animations[anim[0]].fps;
     float elapsed = cur_time - start_time[0];
-    frame = start + (int)(elapsed * fps / 1000.0) % (end - start);
+
+    frame = start + (int)(elapsed * fps / 1000.0);
+
+    if(frame >= end && loop > 0)
+      frame = (end - loop) + (frame - end + loop) % loop;
+    else if(frame >= end)
+      frame = end - 1;
     }
 
   return frame;
