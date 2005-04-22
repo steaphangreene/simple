@@ -47,11 +47,16 @@
 #define	SG_EVENT_MENUMAX	396	//Max of 32 menu ids (0-31)!
 
 //SG_Ranger Actions
+#define	SG_EVENT_MOVE		400
 
 //SG_Ranger2D Actions
-#define	SG_EVENT_DRAGGRAB	500
-#define	SG_EVENT_DRAGMOVE	501
-#define	SG_EVENT_DRAGRELEASE	502
+#define	SG_EVENT_MOVE2D		500
+#define	SG_EVENT_DRAGMOVE	500	//Old Name for Event for BW compat.
+#define	SG_EVENT_MOVEX		501
+#define	SG_EVENT_MOVEY		502
+
+#define	SG_EVENT_DRAGGRAB	503
+#define	SG_EVENT_DRAGRELEASE	504
 
 //SG_Passthrough Actions
 #define	SG_EVENT_CLICK		1000

@@ -120,6 +120,9 @@ int main(int argc, char **argv) {
     gui->WaitEvent(&event);
     do {
       if(event.type == SDL_SG_EVENT) {
+	if(event.user.code == SG_EVENT_MOVE) {
+	  printf("Got SG_EVENT_MOVE to %f\n", ((float*)(event.user.data2))[0]);
+	  }
 	if(event.user.code == SG_EVENT_MENU) {
 	  audio_play(click, 8, 8);
 	  if(((int *)(event.user.data2))[0] == 0) {		//Remove Row

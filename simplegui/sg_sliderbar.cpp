@@ -64,9 +64,18 @@ SG_SliderBar::SG_SliderBar(bool vert,
 SG_SliderBar::~SG_SliderBar() {
   }
 
+static SG_Event_DataType event_data;
+
 bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     // FIXME: Unimplemented
+    }
+  else if(event->user.code == SG_EVENT_MOVE2D) {
+    event->user.code = SG_EVENT_MOVE;
+    event->user.data1 = (void*)(SG_Ranger*)this;
+    event_data.f[0] = Value();
+    event->user.data2 = (void*)&event_data;
+    return 1;
     }
   return 0; // Silence children doing other things
   }

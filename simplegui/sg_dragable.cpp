@@ -80,7 +80,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
       event_data.f[1] = YValue();
 
       event->type = SDL_SG_EVENT;
-      event->user.code = SG_EVENT_DRAGMOVE;
+      event->user.code = SG_EVENT_MOVE2D;
       event->user.data1 = (void*)(SG_Ranger2D*)this;
       event->user.data2 = (void*)&event_data;
       return 1;

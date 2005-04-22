@@ -47,11 +47,17 @@ SG_ScrollingArea::~SG_ScrollingArea() {
   }
 
 bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
-  if(event->user.data1 == (void*)horiz) {
-    return 0; // Silence my children doing things
+  if(event->user.data1 == (void*)(SG_Ranger*)horiz) {
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1; // Silence my children doing things
     }
-  else if(event->user.data1 == (void*)vert) {
-    return 0; // Silence my children doing things
+  else if(event->user.data1 == (void*)(SG_Ranger*)vert) {
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1; // Silence my children doing things
     }
   return 1; // Others can do whatever they want
   }
