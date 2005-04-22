@@ -40,6 +40,12 @@
 //SG_MultiText Actions
 #define	SG_EVENT_SELECTTEXT	300
 
+#define	SG_EVENT_MENU		364
+#define	SG_EVENT_LEFTMENU	365	//These three are the IDs of the
+#define	SG_EVENT_MIDDLEMENU	366	//PassThrough click menus
+#define	SG_EVENT_RIGHTMENU	367
+#define	SG_EVENT_MENUMAX	396	//Max of 32 menu ids (0-31)!
+
 //SG_Ranger Actions
 
 //SG_Ranger2D Actions
@@ -61,12 +67,6 @@
 #define	SG_EVENT_MIDDLEBOX	1034
 #define	SG_EVENT_RIGHTBOX	1035
 #define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
-
-#define	SG_EVENT_MENU		1064
-#define	SG_EVENT_LEFTMENU	1065	//These three are the IDs of the
-#define	SG_EVENT_MIDDLEMENU	1066	//PassThrough click menus
-#define	SG_EVENT_RIGHTMENU	1067
-#define	SG_EVENT_MENUMAX	1096	//Max of 32 menu ids (0-31)!
 
 //SG_Compound Actions
 #define	SG_EVENT_OK		2000

@@ -7,6 +7,7 @@ Be able to safely unlink table from resize targets, and handle deletions.
 Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 
 -=TODO=-
+SG_Menu should be paralell to, not derrived from SG_Button.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s

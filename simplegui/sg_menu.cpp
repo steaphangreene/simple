@@ -58,8 +58,7 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
     else {
       event_data.i[0] = (int)(-y)/2;
       event->user.code = SG_EVENT_MENU + menu_id;
-      event->user.data1 = (void*)(SG_Widget*)this;	//FIXME: Wrong!
-//      event->user.data1 = (void*)(SG_MultiText*)this;
+      event->user.data1 = (void*)(SG_MultiText*)this;
       event->user.data2 = (void*)&event_data;
       return 1;
       }

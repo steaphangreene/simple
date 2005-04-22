@@ -54,7 +54,7 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
     if(current_sg->CurrentWidget() != menu) {
       if(but->State() == 2) but->SetState(0);
       }
-    event->user.data1 = (void*)this;	//FIXME: This is WRONG!  MultiText!
+    event->user.data1 = (void*)(SG_MultiText*)this;
     return 1;	// Pass menu events through as my events
     }
   return 0; // Silence children doing other things
@@ -68,6 +68,13 @@ int SG_PullDown::ID() {
   return menu->ID();
   }
 
+const string &SG_PullDown::Item(int opt) {
+  return menu->Item(opt);
+  }
+
+void SG_PullDown::SetItems(const vector<string> &itms) {
+  menu->SetItems(itms);
+  }
 
 //  bool SG_PullDown::SetDefaultCursor(GL_MODEL *cur);
   

@@ -26,8 +26,9 @@
 using namespace std;
 
 #include "sg_button.h"
+#include "sg_multitext.h"
 
-class SG_Menu : public SG_Button {
+class SG_Menu : public SG_Button, SG_MultiText {
 public:
   SG_Menu(const vector<string> &itms, SG_Texture tex = SG_COL_RAISED,
         SG_Texture dis_tex = SG_COL_LOW, SG_Texture click_tex = SG_COL_LOW);
