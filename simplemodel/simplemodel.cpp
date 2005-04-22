@@ -21,12 +21,15 @@
 
 #include "SDL.h"
 
+#include <dirent.h>
+
 #include <cstdio>
 #include <cstdlib>
 using namespace std;
 
 #include "simplemodel.h"
 #include "simplemodel_q3dir.h"
+#include "simplemodel_3ds.h"
 #include "simplemodel_sphere.h"
 
 SimpleModel *SM_LoadModel(const string &filename) {
@@ -35,6 +38,13 @@ SimpleModel *SM_LoadModel(const string &filename) {
     fclose(cfg);
     return new SimpleModel_Q3Dir(filename);
     }
+
+
+  if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
+    return new SimpleModel_3DS(filename);
+    }      
+	
   fprintf(stderr,
 	"WARNING: Failed to detect model type of '%s' - using sphere.\n",
 	filename.c_str());
