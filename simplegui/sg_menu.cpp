@@ -49,15 +49,17 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->UnsetCurrentWidget();
     y -= 1.0;
     event->type = SDL_SG_EVENT;
-    event->user.data1 = (void*)this;
     if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
       event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
       event->user.data2 = NULL;
       return 1;		//Missed Menu Options
       }
     else {
       event_data.i[0] = (int)(-y)/2;
       event->user.code = SG_EVENT_MENU + menu_id;
+      event->user.data1 = (void*)(SG_Widget*)this;	//FIXME: Wrong!
+//      event->user.data1 = (void*)(SG_MultiText*)this;
       event->user.data2 = (void*)&event_data;
       return 1;
       }

@@ -46,7 +46,7 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     current_sg->SetCurrentWidget(menu);
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = (void*)this;
+    event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;
     }
@@ -54,7 +54,7 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
     if(current_sg->CurrentWidget() != menu) {
       if(but->State() == 2) but->SetState(0);
       }
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)this;	//FIXME: This is WRONG!  MultiText!
     return 1;	// Pass menu events through as my events
     }
   return 0; // Silence children doing other things

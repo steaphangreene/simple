@@ -65,7 +65,7 @@ void SG_MultiTab::Set(int which) {
 bool SG_MultiTab::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_SELECT) {
     Set(*((int *)(event->user.data2)));
-    event->user.data1 = (void*) this;	//Now it's MY select event
+    event->user.data1 = (void*)(SG_Compound*)this;  //Now it's MY select event
     return 1;
     }
   return 0; // Silence children doing other things

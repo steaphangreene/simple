@@ -119,7 +119,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 	|| button_action[event->button.button - 1] == SG_PT_CLICK) {
       event->user.code = SG_EVENT_CLICK + event->button.button;
       event->type = SDL_SG_EVENT;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_PassThrough*)this;
       event->user.data2 = (void*)&event_data;
       return 1;
       }
@@ -166,7 +166,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       event_data.f[3] = act_y;
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_BOX + cur_button;  //Preserve Original Button
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_PassThrough*)this;
       event->user.data2 = (void*)&event_data;
       cur_action = SG_PT_IGNORE;
       cur_button = 0;

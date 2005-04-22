@@ -290,41 +290,41 @@ int main(int argc, char **argv) {
 	  }
 	else if(event.user.code == SG_EVENT_LEFTCLICK) {
 	  printf("Received SG_EVENT_LEFTCLICK from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_MIDDLECLICK) {
 	  printf("Received SG_EVENT_MIDDLECLICK from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_RIGHTCLICK) {
 	  printf("Received SG_EVENT_RIGHTCLICK from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_SCROLLUP) {
 	  printf("Received SG_EVENT_SCROLLUP from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  }
 	else if(event.user.code == SG_EVENT_SCROLLDOWN) {
 	  printf("Received SG_EVENT_SCROLLDOWN from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  }
 	else if(event.user.code >= SG_EVENT_CLICK
 		&& event.user.code < SG_EVENT_CLICKMAX) {
 	  printf("Received SG_EVENT_OTHERCLICK from %s, at (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
 	  audio_play(bong, 8, 8);
@@ -333,7 +333,7 @@ int main(int argc, char **argv) {
 		&& event.user.code < SG_EVENT_BOXMAX) {
 	  printf("Received SG_EVENT_BOX from %s, for button #%d"
 			" - for area (%f,%f) - (%f,%f).\n",
-		name[(SG_Widget*)(event.user.data1)].c_str(),
+		name[(SG_PassThrough*)(event.user.data1)].c_str(),
 		event.user.code - SG_EVENT_BOX,
 		((float*)(event.user.data2))[2],
 		((float*)(event.user.data2))[3],

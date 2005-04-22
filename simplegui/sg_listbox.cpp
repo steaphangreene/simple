@@ -79,7 +79,7 @@ bool SG_ListBox::ChildEvent(SDL_Event *event) {
         } 
       else {
 	event->user.code = SG_EVENT_UNSELECT_ITEM;
-	event->user.data1= (void*)this;
+	event->user.data1= (void*)(SG_StickyButton*)this;
 	event->user.data2= NULL;
 	return 1;
         }		
@@ -92,7 +92,7 @@ bool SG_ListBox::ChildEvent(SDL_Event *event) {
       Select(ind);
 
       event->user.code = SG_EVENT_SELECT_ITEM;
-      event->user.data1=(void*)this;
+      event->user.data1=(void*)(SG_StickyButton*)this;
       event->user.data2=NULL;
       return 1;
       }

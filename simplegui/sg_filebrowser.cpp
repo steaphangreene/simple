@@ -113,7 +113,7 @@ bool SG_FileBrowser::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(event->user.data1 == (void *)(openb)) {
       event->user.code = SG_EVENT_FILEOPEN;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_FileBrowser*)this;
       event->user.data2 = NULL;
       return 1;
       }

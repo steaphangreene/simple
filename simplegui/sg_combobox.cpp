@@ -60,7 +60,7 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     current_sg->SetCurrentWidget(menu);
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = (void*)this;
+    event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;
     }
@@ -76,7 +76,7 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
       return 1;   // This event is now mine
       }
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = (void*)this;
+    event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;   // Eat other menu events but request re-render
     }

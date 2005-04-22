@@ -4,7 +4,7 @@ Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
 Fix positioning of events on offset popups.
 Be able to safely unlink table from resize targets, and handle deletions.
-Fix unknown segfault from calling SG_Text-derrived widgets virtually
+Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 
 -=TODO=-
 

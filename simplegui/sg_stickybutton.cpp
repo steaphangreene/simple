@@ -48,7 +48,7 @@ int SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_STICKYOFF + ((flags & SG_WIDGET_FLAGS_ON) > 0);
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)(SG_Widget*)this;
     event->user.data2 = NULL;
     return 1;
     }
@@ -61,7 +61,7 @@ int SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
     state = 3 * ((flags & SG_WIDGET_FLAGS_ON) > 0);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONRELEASE;
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)(SG_Widget*)this;
     event->user.data2 = NULL;
     return 1;
     }  

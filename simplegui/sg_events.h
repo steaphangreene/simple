@@ -24,23 +24,30 @@
 //System Events
 #define	SG_EVENT_NEEDTORENDER	1	//Something changed but no action
 
-//Basic Actions
+//SG_Widget Actions
 #define	SG_EVENT_BUTTONCLICK	100
 #define	SG_EVENT_BUTTONPRESS	101
 #define	SG_EVENT_BUTTONRELEASE	102
 #define	SG_EVENT_STICKYOFF	103
 #define	SG_EVENT_STICKYON	104
 
-#define	SG_EVENT_DRAGGRAB	110
-#define	SG_EVENT_DRAGMOVE	111
-#define	SG_EVENT_DRAGRELEASE	112
-
+//SG_Text Actions
 #define	SG_EVENT_EDIT		200
 #define	SG_EVENT_EDITABORT	201
 #define	SG_EVENT_NEWTEXT	202
 #define	SG_EVENT_EDITCOMPLETE	202	//Old Name for Event for BW compat.
 
-//Passthrough Actions
+//SG_MultiText Actions
+#define	SG_EVENT_SELECTTEXT	300
+
+//SG_Ranger Actions
+
+//SG_Ranger2D Actions
+#define	SG_EVENT_DRAGGRAB	500
+#define	SG_EVENT_DRAGMOVE	501
+#define	SG_EVENT_DRAGRELEASE	502
+
+//SG_Passthrough Actions
 #define	SG_EVENT_CLICK		1000
 #define	SG_EVENT_LEFTCLICK	1001
 #define	SG_EVENT_MIDDLECLICK	1002
@@ -61,10 +68,12 @@
 #define	SG_EVENT_RIGHTMENU	1067
 #define	SG_EVENT_MENUMAX	1096	//Max of 32 menu ids (0-31)!
 
-//Compound Actions
+//SG_Compound Actions
 #define	SG_EVENT_OK		2000
-#define	SG_EVENT_FILEOPEN	2001
-#define	SG_EVENT_SELECT		2002
+#define	SG_EVENT_SELECT		2001
+
+//SG_FileBrowser Actions
+#define	SG_EVENT_FILEOPEN	2101
 
 #define SG_EVENT_SELECT_ITEM	3000
 #define SG_EVENT_UNSELECT_ITEM	3001

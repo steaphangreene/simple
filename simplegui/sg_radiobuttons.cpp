@@ -46,7 +46,7 @@ bool SG_RadioButtons::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(event->user.data1 == (void *)(okb)) {
       event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_Compound*)this;
       event->user.data2 = NULL;
       return 1;
       }

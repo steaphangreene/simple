@@ -56,7 +56,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_DRAGGRAB;
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)(SG_Ranger2D*)this;
     event->user.data2 = NULL;
     start_x = XValue();
     start_y = YValue();
@@ -81,7 +81,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_DRAGMOVE;
-      event->user.data1 = (void*)this;
+      event->user.data1 = (void*)(SG_Ranger2D*)this;
       event->user.data2 = (void*)&event_data;
       return 1;
       }
@@ -103,7 +103,7 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_DRAGRELEASE;
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)(SG_Ranger2D*)this;
     event->user.data2 = (void*)&event_data;
     return 1;
     }  

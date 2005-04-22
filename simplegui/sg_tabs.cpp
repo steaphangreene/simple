@@ -57,7 +57,7 @@ bool SG_Tabs::ChildEvent(SDL_Event *event) {
       }
     event_data.i[0] = cur_on;
     event->user.code = SG_EVENT_SELECT;
-    event->user.data1 = (void*)this;
+    event->user.data1 = (void*)(SG_Compound*)this;
     event->user.data2 = (void*)&event_data;
     return 1;
     }
