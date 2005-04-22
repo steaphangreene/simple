@@ -51,7 +51,6 @@ public:
 
   void SetZExtents(double mnz, double mxz);
 
-  void ScreenToMapAuto(double &x, double &y);
   void ScreenToMap(double &x, double &y, const double &z = 0.0);
   void MapToScreen(double &x, double &y, const double &z = 0.0);
 

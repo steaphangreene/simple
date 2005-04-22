@@ -490,34 +490,6 @@ void SimpleVideo::SetZExtents(double mnz, double mxz) {
   maxz = mxz;
   }
 
-void SimpleVideo::ScreenToMapAuto(double &x, double &y) {
-  glEnable(GL_DEPTH_TEST);
-
-  x = x + 1.0;
-  y = y + 1.0;
-
-  x *= (xend-xstart)/2.0;	//Handle Subscreen Translation
-  y *= (yend-ystart)/2.0;
-  x += (xstart+1.0);
-  y += (ystart+1.0);
-
-  GLdouble z;
-  GLint gl_x, gl_y;
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  gl_x = (GLint)(x * viewport[2] / 2.0);
-  gl_y = (viewport[3] - 1) - (GLint)(y * viewport[3] / 2.0);
-  glReadPixels(gl_x, gl_y, 1, 1, GL_DEPTH_COMPONENT, GL_DOUBLE, &z);
-  fprintf(stderr, "DEBUG: Location (%d,%d) has depth %f\n", gl_x, gl_y, z);
-
-  GLdouble mx, my, mz;
-  if(!gluUnProject(gl_x, gl_y, z, modelv, projv, viewport, &mx, &my, &mz)) {
-    fprintf(stderr, "WARNING: gluUnProject Failed!\n");
-    }
-
-  x = mx;
-  y = my;
-  }
-
 void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
   GLint fake_viewport[4] = { 0, 0, 2, 2 };
 
