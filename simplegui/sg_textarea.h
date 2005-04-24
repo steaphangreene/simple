@@ -67,6 +67,7 @@ protected:
 
   virtual void BuildTexture(int st);
   SDL_Surface *rendered_text;
+  int text_width;
 
   float xmargin, ymargin;
   float xoffset, yoffset;

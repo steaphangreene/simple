@@ -32,16 +32,17 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
   rendered_text = NULL;
+  text_width = 0;
   visible_lines = 1;
   xoffset = 0.0;
   yoffset = 0.0;
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
   scroll_time = 0;
-  message = mes;
   xmargin = mx;
   ymargin = my;
   font_size = -1; //AUTO
+  SetText(mes);
   }
 
 SG_TextArea::~SG_TextArea() {
@@ -72,6 +73,7 @@ void SG_TextArea::SetText(const string &mes) {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   if(rendered_text != NULL) SDL_FreeSurface(rendered_text);
   rendered_text = NULL;
+  UpdateLines();
   }
 
 void SG_TextArea::SetFontSize(int sz) {
@@ -79,6 +81,7 @@ void SG_TextArea::SetFontSize(int sz) {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   if(rendered_text != NULL) SDL_FreeSurface(rendered_text);
   rendered_text = NULL;
+  UpdateLines();
   }
 
 const string &SG_TextArea::Text() {
@@ -108,17 +111,6 @@ void SG_TextArea::BuildTexture(int st) {
 
   int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
-  int maxx = 80, maxy = 40;
-
-  { int pos = 0, lpos=0;
-    while(lpos < int(message.length()) && int(lines.size()) < maxy) {
-      pos = message.find('\n', lpos);
-      if(pos < lpos) pos = message.length();
-      lines.push_back(message.substr(lpos, pos - lpos));
-      lpos = pos+1;
-      }
-    }
-
   if(texture[st].type == SG_TEXTURE_DEFINED) {
     int bxsize = texture[st].src->w;
     int bysize = texture[st].src->h;
@@ -144,25 +136,9 @@ void SG_TextArea::BuildTexture(int st) {
     texture[st].xfact = (float)(bxsize) / (float)(xsize);
     texture[st].yfact = (float)(bysize) / (float)(ysize);
     }
-  else while(1) {
-    int bxsize = 0, bysize = 0;
-    int pos = 0, lpos=0, tmpx=0, tmpy=0;
-						//FIXME: Scroll?
-    lines.clear();
-    while(lpos < int(message.length()) && int(lines.size()) < maxy) {
-      pos = message.find('\n', lpos);
-      if(pos < lpos) pos = message.length();
-      lines.push_back(message.substr(lpos, pos - lpos));
-
-      //FIXME: Scroll?
-      if(int(lines.back().length()) > maxx)
-	lines.back() = lines.back().substr(0, maxx);
-
-      lpos = pos+1;
-      TTF_SizeText(current_sg->Font(font_size), lines.back().c_str(), &tmpx, &tmpy);
-      if(bxsize < tmpx) bxsize = tmpx;
-      bysize += tmpy;
-      }
+  else {
+    int bxsize = text_width;
+    int bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -180,14 +156,11 @@ void SG_TextArea::BuildTexture(int st) {
 
     texture[st].xfact = (float)(bxsize) / (float)(xsize);
     texture[st].yfact = (float)(bysize) / (float)(ysize);
-
-    if(xsize > max && ysize > max) { --maxx; --maxy; }
-    else if(xsize > max) { --maxx; }
-    else if(ysize > max) { --maxy; }
-    else break;
     }
 
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
+  texture[st].cur = NULL;
+
   if(texture[st].type == SG_TEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
@@ -276,4 +249,17 @@ void SG_TextArea::StopScroll() {
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
   scroll_time = 0;
+  }
+
+void SG_TextArea::UpdateLines() {
+  int pos = 0, lpos=0;
+  while(lpos < (int)(message.length())) {
+    pos = message.find('\n', lpos);
+    if(pos < lpos) pos = message.length();
+    lines.push_back(message.substr(lpos, pos - lpos));
+    int xs = 0, ys = 0;
+    TTF_SizeText(current_sg->Font(font_size), lines.back().c_str(), &xs, &ys);
+    if(text_width < xs) text_width = xs;
+    lpos = pos+1;
+    }
   }
