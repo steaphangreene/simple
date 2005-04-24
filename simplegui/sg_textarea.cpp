@@ -206,9 +206,12 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
+    double ysz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
+    srec.x = (int)(XValue() + 0.5);
+    srec.y = (int)(ysz * YValue() + 0.5);
+
     srec.w = (int)(XSpan() + 0.5);
-    srec.h = (int)((double)(TTF_FontHeight(current_sg->Font(font_size)))
-	 * YSpan() + 0.5);
+    srec.h = (int)(ysz * YSpan() + 0.5);
 
     if(texture[st].type == SG_TEXTURE_TRANS
 		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
@@ -271,4 +274,8 @@ void SG_TextArea::UpdateLines() {
   SetYLimits(0.0, (double)(lines.size()));
   if(visible_lines > 0) SetYSpan((double)(visible_lines));
   else SetYSpan((double)(lines.size()));
+  }
+
+void SG_TextArea::RangerChanged() {
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   }

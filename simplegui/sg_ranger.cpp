@@ -20,8 +20,11 @@
 // *************************************************************************
 
 #include "sg_ranger.h"
+#include "sg_ranger2d.h"
 
-SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx) {
+SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx,
+	SG_Ranger2D *par) {
+  parent = par;
   SetLimits(mn, mx);
   SetSpan(spn);
   SetValue(val);
@@ -37,25 +40,27 @@ SG_Ranger::~SG_Ranger() {
 void SG_Ranger::SetLimits(float mn, float mx) {
   min = mn;
   max = mx;
-  SetValue(value);	//To check the limits -vs- value
+  SetValue(value);	//To check the limits -vs- value & call RangerChanged()
 
   set<SG_Ranger *>::iterator itr = linked.begin();
   for(; itr != linked.end(); ++itr) {
     (*itr)->max = max;
     (*itr)->min = min;
     (*itr)->value = value;
+    (*itr)->RangerChanged();
     }
   }
 
 void SG_Ranger::SetSpan(float spn) {
   span = spn;
   if(span < 0.0) span = 0.0;
-  SetValue(value);	//To check the limits -vs- value
+  SetValue(value);	//To check the limits -vs- value & call RangerChanged()
 
   set<SG_Ranger *>::iterator itr = linked.begin();
   for(; itr != linked.end(); ++itr) {
     (*itr)->span = span;
     (*itr)->value = value;
+    (*itr)->RangerChanged();
     }
   }
 
@@ -69,10 +74,12 @@ void SG_Ranger::SetValue(float val) {
     if(value > min) value = min;
     else if(value < max + span) value = max + span;
     }
+  RangerChanged();
 
   set<SG_Ranger *>::iterator itr = linked.begin();
   for(; itr != linked.end(); ++itr) {
     (*itr)->value = value;
+    (*itr)->RangerChanged();
     }
   }
 
@@ -88,6 +95,7 @@ void SG_Ranger::LinkTo(SG_Ranger *other) {
     (*itr)->span = span;
     (*itr)->min = min;
     (*itr)->max = max;
+    (*itr)->RangerChanged();
     }
   }
 
@@ -105,4 +113,10 @@ void SG_Ranger::LinkFrom(SG_Ranger *other) {
   span = other->span;
   min = other->min;
   max = other->max;
+
+  RangerChanged();
+  }
+
+void SG_Ranger::RangerChanged() {
+  if(parent) parent->RangerChanged();
   }

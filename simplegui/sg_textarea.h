@@ -64,7 +64,9 @@ public:
 
   virtual void SetText(const string &txt);
   virtual const string &Text();
-  
+
+  virtual void RangerChanged();
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 

@@ -25,10 +25,14 @@
 #include <set>
 using namespace std;
 
+class SG_Ranger2D;
+
 class SG_Ranger {
 public:
-  SG_Ranger(float spn = 0.0, float val = 0.0, float mn = 0.0, float mx = 1.0);
-  ~SG_Ranger();
+  SG_Ranger(float spn = 0.0, float val = 0.0, float mn = 0.0, float mx = 1.0,
+	SG_Ranger2D *par = NULL);
+  virtual ~SG_Ranger();
+
   void SetValue(float val);
   void SetSpan(float spn);
   void SetLimits(float mn, float mx);
@@ -41,10 +45,13 @@ public:
   void LinkTo(SG_Ranger *other);
   void LinkFrom(SG_Ranger *other);
 
+  virtual void RangerChanged();
+
 protected:
   float span, value;
   float min, max;
   set<SG_Ranger*> linked;
+  SG_Ranger2D *parent;
   };
 
 #endif	//SG_RANGER_H

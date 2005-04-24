@@ -23,8 +23,8 @@
 
 SG_Ranger2D::SG_Ranger2D(float xspn, float yspn, float xval, float yval,
 	float xmin, float ymin, float xmax, float ymax)
-	: xranger(xspn, xval, xmin, xmax),
-	  yranger(yspn, yval, ymin, ymax) {
+	: xranger(xspn, xval, xmin, xmax, this),
+	  yranger(yspn, yval, ymin, ymax, this) {
   }
 
 SG_Ranger2D::~SG_Ranger2D() {
@@ -33,40 +33,49 @@ SG_Ranger2D::~SG_Ranger2D() {
 void SG_Ranger2D::SetSpans(float xspn, float yspn) {
   xranger.SetSpan(xspn);
   yranger.SetSpan(yspn);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetXSpan(float xspn) {
   xranger.SetSpan(xspn);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetYSpan(float yspn) {
   yranger.SetSpan(yspn);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetValues(float xval, float yval) {
   xranger.SetValue(xval);
   yranger.SetValue(yval);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetXValue(float xval) {
   xranger.SetValue(xval);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetYValue(float yval) {
   yranger.SetValue(yval);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetLimits(float xmn, float ymn, float xmx, float ymx) {
   xranger.SetLimits(xmn, xmx);
   yranger.SetLimits(ymn, ymx);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetXLimits(float xmn, float xmx) {
   xranger.SetLimits(xmn, xmx);
+  RangerChanged();
   }
 
 void SG_Ranger2D::SetYLimits(float ymn, float ymx) {
   yranger.SetLimits(ymn, ymx);
+  RangerChanged();
   }
 
 void SG_Ranger2D::LinkTo(SG_Ranger2D *other) {
@@ -109,4 +118,7 @@ void SG_Ranger2D::LinkXFrom(SG_Ranger *other) {
 
 void SG_Ranger2D::LinkYFrom(SG_Ranger *other) {
   yranger.LinkFrom(other);
+  }
+
+void SG_Ranger2D::RangerChanged() {
   }

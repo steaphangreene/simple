@@ -30,7 +30,7 @@ public:
 	float xval = 0.0, float yval = 0.0,
 	float xmin = 0.0, float ymin = 0.0,
 	float xmax = 1.0, float ymax = 1.0);
-  ~SG_Ranger2D();
+  virtual ~SG_Ranger2D();
 
   void SetSpans(float xspn, float yspn);
   void SetXSpan(float xspn);
@@ -65,6 +65,8 @@ public:
 
   SG_Ranger *XRanger() { return &xranger; };
   SG_Ranger *YRanger() { return &yranger; };
+
+  virtual void RangerChanged();
 
 protected:
   SG_Ranger xranger, yranger;
