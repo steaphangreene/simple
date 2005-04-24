@@ -93,8 +93,8 @@ int main(int argc, char **argv) {
   tab->SetBorder(0.0625, 0.125);
   scr->AddWidget(tab);
 
-  map<SG_PullDown*, int> menu2colid;
-  map<SG_PullDown*, int> menu2rowid;
+  map<SG_MultiText*, int> menu2colid;
+  map<SG_MultiText*, int> menu2rowid;
   map<int, int> colid2col;
   map<int, int> rowid2row;
 
@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
 	if(event.user.code == SG_EVENT_MENU) {
 	  audio_play(click, 8, 8);
 	  if(((int *)(event.user.data2))[0] == 0) {		//Remove Row
-	    int row = rowid2row[menu2rowid[(SG_PullDown*)event.user.data1]];
+	    int row = rowid2row[menu2rowid[(SG_MultiText*)event.user.data1]];
 	    tab->RemoveRow(row);
 
 	    map<int,int>::iterator itr;
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 	      }
 	    }
 	  else if(((int *)(event.user.data2))[0] == 1) {	//Remove Col
-	    int col = colid2col[menu2colid[(SG_PullDown*)event.user.data1]];
+	    int col = colid2col[menu2colid[(SG_MultiText*)event.user.data1]];
 	    tab->RemoveCol(col);
 
 	    map<int,int>::iterator itr;
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
 	      }
 	    }
 	  else if(((int *)(event.user.data2))[0] == 2) {	//Add Row
-	    int row = rowid2row[menu2rowid[(SG_PullDown*)event.user.data1]];
+	    int row = rowid2row[menu2rowid[(SG_MultiText*)event.user.data1]];
 	    tab->AddRow(row);
 
 	    map<int,int>::iterator itr;
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 	      }
 	    }
 	  else {						//Add Col
-	    int col = colid2col[menu2colid[(SG_PullDown*)event.user.data1]];
+	    int col = colid2col[menu2colid[(SG_MultiText*)event.user.data1]];
 	    tab->AddCol(col);
 
 	    map<int,int>::iterator itr;
