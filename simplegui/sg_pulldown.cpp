@@ -50,10 +50,10 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
     event->user.data2 = NULL;
     return 1;
     }
-  if(event->user.data1 == (void*)menu) {
-    if(current_sg->CurrentWidget() != menu) {
-      if(but->State() == 2) but->SetState(0);
-      }
+  if(current_sg->CurrentWidget() != (SG_Widget*)menu) {
+    if(but->State() == 2) but->SetState(0);
+    }
+  if(event->user.data1 == (void*)(SG_MultiText*)menu) {
     event->user.data1 = (void*)(SG_MultiText*)this;
     return 1;	// Pass menu events through as my events
     }

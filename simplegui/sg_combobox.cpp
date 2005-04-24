@@ -64,10 +64,10 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
     event->user.data2 = NULL;
     return 1;
     }
-  if(event->user.data1 == (void*)menu) {
-    if(current_sg->CurrentWidget() != menu) {
-      if(opb->State() == 2) opb->SetState(0);
-      }
+  if(current_sg->CurrentWidget() != (SG_Widget*)menu) {
+    if(opb->State() == 2) opb->SetState(0);
+    }
+  if(event->user.data1 == (void*)(SG_MultiText*)menu) {
     if(event->user.code == SG_EVENT_MENU) {
       text->SetText(menu->Item(((int*)(event->user.data2))[0]));
       event->user.code = SG_EVENT_NEWTEXT;

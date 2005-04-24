@@ -81,7 +81,7 @@ bool SG_Menu::Render(unsigned long cur_time) {
     }
   for(unsigned int item = 0; item < items.size(); ++item) {
     state = (state % 3) + item * 3;
-    if(texture[state].dirty) message = items[item];
+    if(texture[state].dirty) SetText(items[item]);
     if(!SG_Button::Render(cur_time)) {
       glPopMatrix();
       return false;
