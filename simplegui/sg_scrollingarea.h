@@ -48,6 +48,7 @@ public:
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
   virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
+  virtual bool AddWidget(SG_TextArea *text);	//Special Handler for TextAreas
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

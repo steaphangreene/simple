@@ -25,12 +25,14 @@ using namespace std;
 #include "SDL_opengl.h"
 
 #include "sg_scrollable.h"
+#include "sg_textarea.h"
 #include "sg_table.h"
 
 SG_Scrollable::SG_Scrollable(float xspn, float yspn, float xval, float yval,
 	float xmin, float ymin, float xmax, float ymax)
 	: SG_Alignment(0.0, 0.0),
 	  SG_Ranger2D(xspn, yspn, xval, yval, xmin, ymin, xmax, ymax) {
+  subwidget_handles = false;
   }
 
 SG_Scrollable::~SG_Scrollable() {
@@ -106,6 +108,8 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Scrollable %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
+
+  if(subwidget_handles) return SG_Alignment::Render(cur_time);
 
   glPushMatrix();
 
@@ -209,11 +213,20 @@ void SG_Scrollable::CalcGeometry() {
   }
 
 bool SG_Scrollable::AddWidget(SG_Widget *wid) {
+  subwidget_handles = false;
   return SG_Alignment::AddWidget(wid);
   }
 
 bool SG_Scrollable::AddWidget(SG_Table *tab) {
+  subwidget_handles = false;
   int ret = SG_Alignment::AddWidget((SG_Widget*)tab);	//Add it normally
   if(ret) tab->LinkResize(this);			//Link its resizing in
+  return ret;
+  }
+
+bool SG_Scrollable::AddWidget(SG_TextArea *text) {
+  subwidget_handles = true;
+  int ret = SG_Alignment::AddWidget((SG_Widget*)text);	//Add it normally
+  if(ret) text->LinkTo(this);				//Link its sizing in
   return ret;
   }

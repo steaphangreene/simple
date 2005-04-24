@@ -29,6 +29,7 @@
 using namespace std;
 
 class SG_Table;
+class SG_TextArea;
 
 class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
 public:
@@ -43,9 +44,11 @@ public:
 
   virtual bool AddWidget(SG_Widget *wid);
   virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
+  virtual bool AddWidget(SG_TextArea *text);	//Special Handler for TextAreas
 
 protected:
   void CalcGeometry();
+  bool subwidget_handles;
 
 //  static GL_MODEL Default_Mouse_Cursor;
   };

@@ -34,8 +34,6 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   rendered_text = NULL;
   text_width = 0;
   visible_lines = SG_AUTOSIZE;
-  xoffset = 0.0;
-  yoffset = 0.0;
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
   scroll_time = 0;
@@ -73,6 +71,7 @@ void SG_TextArea::SetText(const string &mes) {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   if(rendered_text != NULL) SDL_FreeSurface(rendered_text);
   rendered_text = NULL;
+  lines.clear();
   UpdateLines();
   }
 
@@ -81,6 +80,7 @@ void SG_TextArea::SetFontSize(int sz) {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   if(rendered_text != NULL) SDL_FreeSurface(rendered_text);
   rendered_text = NULL;
+  lines.clear();	//FIXME: Only really need to redetect XSize
   UpdateLines();
   }
 
@@ -119,12 +119,7 @@ void SG_TextArea::BuildTexture(int st) {
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    if(visible_lines > 0) {
-      font_size = ysize / visible_lines;
-      }
-    else {
-      font_size = ysize / lines.size();
-      }
+    font_size = (int)((double)(ysize) / YSpan() + 0.5);
 
     if(current_sg->Font(font_size) == NULL) {
       fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
@@ -144,12 +139,7 @@ void SG_TextArea::BuildTexture(int st) {
     }
   else {
     bxsize = text_width;
-    if(visible_lines > 0) {
-      bysize = TTF_FontHeight(current_sg->Font(font_size)) * visible_lines;
-      }
-    else {
-      bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
-      }
+    bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -216,13 +206,9 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
-    srec.w = rendered_text->w;
-    if(visible_lines > 0) {
-      srec.h = TTF_FontHeight(current_sg->Font(font_size)) * visible_lines;
-      }
-    else {
-      srec.h = rendered_text->h;
-      }
+    srec.w = (int)(XSpan() + 0.5);
+    srec.h = (int)((double)(TTF_FontHeight(current_sg->Font(font_size)))
+	 * YSpan() + 0.5);
 
     if(texture[st].type == SG_TEXTURE_TRANS
 		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
@@ -248,19 +234,7 @@ void SG_TextArea::Enable() {
 void SG_TextArea::SetVisibleLines(int numlns) {
   visible_lines = numlns;
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
-  }
-
-void SG_TextArea::SetXOffset(float xoff) {
-  xoffset = xoff;
-  }
-
-void SG_TextArea::SetYOffset(float yoff) {
-  yoffset = yoff;
-  }
-
-void SG_TextArea::SetOffsets(float xoff, float yoff) {
-  SetXOffset(xoff);
-  SetYOffset(yoff);
+  UpdateLines();
   }
 
 void SG_TextArea::AutoScroll(float startyoff, float endyoff, Uint32 starttime, int loop) {
@@ -277,15 +251,28 @@ void SG_TextArea::StopScroll() {
   }
 
 void SG_TextArea::UpdateLines() {
-  lines.clear();
-  int pos = 0, lpos=0;
-  while(lpos < (int)(message.length())) {
-    pos = message.find('\n', lpos);
-    if(pos < lpos) pos = message.length();
-    lines.push_back(message.substr(lpos, pos - lpos));
-    int xs = 0, ys = 0;
-    TTF_SizeText(current_sg->Font(font_size), lines.back().c_str(), &xs, &ys);
-    if(text_width < xs) text_width = xs;
-    lpos = pos+1;
+  if(lines.size() == 0) {
+    text_width = 0;
+    int pos = 0, lpos = 0;
+    while(lpos < (int)(message.length())) {
+      pos = message.find('\n', lpos);
+      if(pos < lpos) pos = message.length();
+      lines.push_back(message.substr(lpos, pos - lpos));
+      int xs = 0, ys = 0;
+      TTF_SizeText(current_sg->Font(font_size), lines.back().c_str(), &xs, &ys);
+      if(text_width < xs) text_width = xs;
+      lpos = pos+1;
+      }
     }
+
+  SetXLimits(0.0, (double)(text_width));
+  SetXSpan((double)(text_width));
+
+//  fprintf(stderr, "XSet %f in (%f-%f)\n", XSpan(), XMin(), XMax());
+
+  SetYLimits(0.0, (double)(lines.size()));
+  if(visible_lines > 0) SetYSpan((double)(visible_lines));
+  else SetYSpan((double)(lines.size()));
+
+  fprintf(stderr, "YSet %f in (%f-%f)\n", YSpan(), YMin(), YMax());
   }

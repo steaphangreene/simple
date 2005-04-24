@@ -75,7 +75,6 @@ protected:
   int text_width;
 
   float xmargin, ymargin;
-  float xoffset, yoffset;
   float scroll_ystart, scroll_yend;
   Uint32 scroll_time;
   int scroll_loop;

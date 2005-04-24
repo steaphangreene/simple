@@ -25,6 +25,7 @@
 #include "SDL_opengl.h"
 
 #include "sg_scrollingarea.h"
+#include "sg_textarea.h"
 #include "sg_events.h"
 
 SG_ScrollingArea::SG_ScrollingArea(float xsz, float ysz, float xvs, float yvs)
@@ -76,4 +77,8 @@ void SG_ScrollingArea::RemoveWidget(SG_Widget *wid) {
 
 bool SG_ScrollingArea::AddWidget(SG_Table *tab) {
   return scroll->AddWidget(tab);
+  }
+
+bool SG_ScrollingArea::AddWidget(SG_TextArea *text) {
+  return scroll->AddWidget(text);
   }
