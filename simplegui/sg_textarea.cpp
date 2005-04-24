@@ -33,7 +33,7 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   texture.push_back(dis_tex);
   rendered_text = NULL;
   text_width = 0;
-  visible_lines = 1;
+  visible_lines = -1;
   xoffset = 0.0;
   yoffset = 0.0;
   scroll_ystart = 0.0;
@@ -119,7 +119,9 @@ void SG_TextArea::BuildTexture(int st) {
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    font_size = ysize / visible_lines;
+    if(visible_lines > 0) font_size = ysize / visible_lines;
+    else font_size = ysize / lines.size();
+
     if(current_sg->Font(font_size) == NULL) {
       fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
       SG_Panel::BuildTexture(st);
