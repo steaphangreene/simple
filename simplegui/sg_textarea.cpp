@@ -268,11 +268,7 @@ void SG_TextArea::UpdateLines() {
   SetXLimits(0.0, (double)(text_width));
   SetXSpan((double)(text_width));
 
-//  fprintf(stderr, "XSet %f in (%f-%f)\n", XSpan(), XMin(), XMax());
-
   SetYLimits(0.0, (double)(lines.size()));
   if(visible_lines > 0) SetYSpan((double)(visible_lines));
   else SetYSpan((double)(lines.size()));
-
-  fprintf(stderr, "YSet %f in (%f-%f)\n", YSpan(), YMin(), YMax());
   }
