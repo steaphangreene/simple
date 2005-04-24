@@ -34,6 +34,11 @@ using namespace std;
 #define SCROLL_LOOP	1
 #define SCROLL_BOUNCE	2
 
+#ifndef SG_AUTOSIZE
+#define SG_AUTOSIZE	-1
+#endif
+
+
 using namespace std;
 
 class SG_TextArea : public SG_Panel, public SG_Text, public SG_Ranger2D {

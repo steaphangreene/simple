@@ -33,7 +33,7 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   texture.push_back(dis_tex);
   rendered_text = NULL;
   text_width = 0;
-  visible_lines = -1;
+  visible_lines = SG_AUTOSIZE;
   xoffset = 0.0;
   yoffset = 0.0;
   scroll_ystart = 0.0;
@@ -41,7 +41,7 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   scroll_time = 0;
   xmargin = mx;
   ymargin = my;
-  font_size = -1; //AUTO
+  font_size = SG_AUTOSIZE; //AUTO
   SetText(mes);
   }
 
