@@ -66,6 +66,7 @@ public:
   virtual const string &Text();
 
   virtual void RangerChanged();
+  unsigned int NumLines() { return lines.size(); };
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
