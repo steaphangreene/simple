@@ -19,43 +19,27 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+#ifndef SG_AUTOSCROLL_H
+#define SG_AUTOSCROLL_H
 
-#include "sg_ranger.h"
-#include "sg_ranger2d.h"
-#include "sg_text.h"
-#include "sg_multitext.h"
-
-#include "sg.h"
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
-#include "sg_table.h"
 #include "sg_scrollable.h"
-#include "sg_autoscroll.h"
-#include "sg_button.h"
-#include "sg_dragable.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
-#include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_dndboxes.h"
-#include "sg_tabs.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
 
-#endif	//SIMPLEGUI_H
+class SG_AutoScroll : public SG_Scrollable {
+public:
+  SG_AutoScroll(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
+	float xmin = 0.0, float ymin = 0.0, float xmax = 1.0, float ymax = 1.0);
+  virtual ~SG_AutoScroll();
+  virtual bool Render(unsigned long cur_time);
+
+  void SetXScroll(float start, float end, float secs, Uint32 cur_time = 0);
+  void StopXScroll();
+  void SetYScroll(float start, float end, float secs, Uint32 cur_time = 0);
+  void StopYScroll();
+
+protected:
+  float xstart, ystart, xend, yend, xduration, yduration;
+  Uint32 xstart_time, ystart_time;
+  };
+
+#endif // SG_AUTOSCROLL_H
 
