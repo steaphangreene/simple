@@ -109,18 +109,22 @@ void SG_TextArea::BuildTexture(int st) {
     return;
     }
 
-  int xsize = 0, ysize = 0, xoff = 0, yoff = 0;
+  int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
   if(texture[st].type == SG_TEXTURE_DEFINED) {
-    int bxsize = texture[st].src->w;
-    int bysize = texture[st].src->h;
+    bxsize = texture[st].src->w;
+    bysize = texture[st].src->h;
 
 			//Used temporarilly - not final values
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    if(visible_lines > 0) font_size = ysize / visible_lines;
-    else font_size = ysize / lines.size();
+    if(visible_lines > 0) {
+      font_size = ysize / visible_lines;
+      }
+    else {
+      font_size = ysize / lines.size();
+      }
 
     if(current_sg->Font(font_size) == NULL) {
       fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
@@ -139,8 +143,13 @@ void SG_TextArea::BuildTexture(int st) {
     texture[st].yfact = (float)(bysize) / (float)(ysize);
     }
   else {
-    int bxsize = text_width;
-    int bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
+    bxsize = text_width;
+    if(visible_lines > 0) {
+      bysize = TTF_FontHeight(current_sg->Font(font_size)) * visible_lines;
+      }
+    else {
+      bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
+      }
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -186,28 +195,42 @@ void SG_TextArea::BuildTexture(int st) {
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
 
-  SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
-  for(int ln = 0; ln < int(lines.size()); ++ln) {
-    if(lines[ln].length() > 0) {
-      rendered_text =
-	TTF_RenderText_Blended(current_sg->Font(font_size), lines[ln].c_str(),
-		texture[st].fg);
-      if(!rendered_text) {
-	fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
-	exit(1);
+  if(rendered_text == NULL) {
+    SDL_Rect drec = { 0, 0, 0, 0 };
+    rendered_text = SDL_CreateRGBSurface(0, bxsize, bysize, 32,
+	SG_SDL_RGBA_COLFIELDS);
+    for(int ln = 0; ln < int(lines.size()); ++ln) {
+      if(lines[ln].length() > 0) {
+	SDL_Surface *tmp_text = TTF_RenderText_Blended(
+		current_sg->Font(font_size), lines[ln].c_str(), texture[st].fg);
+	if(!tmp_text) {
+	  fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
+	  exit(1);
+	  }
+	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
+	SDL_BlitSurface(tmp_text, NULL, rendered_text, &drec);
+	SDL_FreeSurface(tmp_text);
 	}
-      srec.w = rendered_text->w;
-      srec.h = rendered_text->h;
-      if(texture[st].type == SG_TEXTURE_TRANS
-		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
-	SDL_SetAlpha(rendered_text, 0, SDL_ALPHA_TRANSPARENT);
-	}
-      SDL_BlitSurface(rendered_text, &srec, texture[st].cur, &drec);
-      SDL_FreeSurface(rendered_text);
-      rendered_text = NULL;
+      drec.y += TTF_FontHeight(current_sg->Font(font_size));
       }
-    drec.y += TTF_FontHeight(current_sg->Font(font_size));
     }
+
+  { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
+    srec.w = rendered_text->w;
+    if(visible_lines > 0) {
+      srec.h = TTF_FontHeight(current_sg->Font(font_size)) * visible_lines;
+      }
+    else {
+      srec.h = rendered_text->h;
+      }
+
+    if(texture[st].type == SG_TEXTURE_TRANS
+		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+      SDL_SetAlpha(rendered_text, 0, SDL_ALPHA_TRANSPARENT);
+      }
+    SDL_BlitSurface(rendered_text, &srec, texture[st].cur, &drec);
+    }
+
 
   texture[st].Update();
   }
