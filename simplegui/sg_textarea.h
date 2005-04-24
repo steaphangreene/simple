@@ -24,8 +24,11 @@
 
 #include "sg_panel.h"
 #include "sg_text.h"
+#include "sg_ranger2d.h"
 
+#include <vector>
 #include <string>
+using namespace std;
 
 #define SCROLL_ONCE	0
 #define SCROLL_LOOP	1
@@ -33,7 +36,7 @@
 
 using namespace std;
 
-class SG_TextArea : public SG_Panel, public SG_Text {
+class SG_TextArea : public SG_Panel, public SG_Text, public SG_Ranger2D {
 public:
   SG_TextArea(string mes, SG_Texture tex = SG_COL_BG,
 	SG_Texture dis_tex = SG_COL_BG, float mx = 0.125, float my = 0.125);
@@ -60,7 +63,10 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 
+  void UpdateLines();
+
   virtual void BuildTexture(int st);
+  SDL_Surface *rendered_text;
 
   float xmargin, ymargin;
   float xoffset, yoffset;
@@ -69,6 +75,7 @@ protected:
   int scroll_loop;
   int visible_lines;
   string message;
+  vector<string> lines;
   int font_size;
   };
 
