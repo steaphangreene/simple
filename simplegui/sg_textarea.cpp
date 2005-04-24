@@ -32,7 +32,8 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
   rendered_text = NULL;
-  text_width = 0;
+  text_xsize = 0;
+  text_ysize = 0;
   visible_lines = SG_AUTOSIZE;
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
@@ -138,8 +139,9 @@ void SG_TextArea::BuildTexture(int st) {
     texture[st].yfact = (float)(bysize) / (float)(ysize);
     }
   else {
-    bxsize = text_width;
-    bysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
+    bxsize = text_xsize;
+    double ysz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
+    bysize = (int)(ysz * YSpan() + 0.5);
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -185,9 +187,9 @@ void SG_TextArea::BuildTexture(int st) {
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
 
-  if(rendered_text == NULL) {
+  if(rendered_text == NULL) {	// Create persistent text surface
     SDL_Rect drec = { 0, 0, 0, 0 };
-    rendered_text = SDL_CreateRGBSurface(0, bxsize, bysize, 32,
+    rendered_text = SDL_CreateRGBSurface(0, text_xsize, text_ysize, 32,
 	SG_SDL_RGBA_COLFIELDS);
     for(int ln = 0; ln < int(lines.size()); ++ln) {
       if(lines[ln].length() > 0) {
@@ -255,7 +257,7 @@ void SG_TextArea::StopScroll() {
 
 void SG_TextArea::UpdateLines() {
   if(lines.size() == 0) {
-    text_width = 0;
+    text_xsize = 0;
     int pos = 0, lpos = 0;
     while(lpos < (int)(message.length())) {
       pos = message.find('\n', lpos);
@@ -263,13 +265,14 @@ void SG_TextArea::UpdateLines() {
       lines.push_back(message.substr(lpos, pos - lpos));
       int xs = 0, ys = 0;
       TTF_SizeText(current_sg->Font(font_size), lines.back().c_str(), &xs, &ys);
-      if(text_width < xs) text_width = xs;
+      if(text_xsize < xs) text_xsize = xs;
       lpos = pos+1;
       }
+    text_ysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
     }
 
-  SetXLimits(0.0, (double)(text_width));
-  SetXSpan((double)(text_width));
+  SetXLimits(0.0, (double)(text_xsize));
+  SetXSpan((double)(text_xsize));
 
   SetYLimits(0.0, (double)(lines.size()));
   if(visible_lines > 0) SetYSpan((double)(visible_lines));
