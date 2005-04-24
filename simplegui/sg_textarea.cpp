@@ -252,6 +252,7 @@ void SG_TextArea::StopScroll() {
   }
 
 void SG_TextArea::UpdateLines() {
+  lines.clear();
   int pos = 0, lpos=0;
   while(lpos < (int)(message.length())) {
     pos = message.find('\n', lpos);
