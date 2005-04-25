@@ -36,12 +36,10 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   text_ysize = 0;
   visible_xlines = SG_AUTOSIZE;
   visible_ylines = SG_AUTOSIZE;
-  scroll_ystart = 0.0;
-  scroll_yend = 0.0;
-  scroll_time = 0;
   xmargin = mx;
   ymargin = my;
   font_size = SG_AUTOSIZE; //AUTO
+  alignment = SG_ALIGN_LEFT;
   SetText(mes);
   }
 
@@ -256,19 +254,6 @@ void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
   UpdateLines();
   }
 
-void SG_TextArea::AutoScroll(float startyoff, float endyoff, Uint32 starttime, int loop) {
-  scroll_loop = loop;
-  scroll_time = starttime;
-  scroll_ystart = startyoff;
-  scroll_yend = endyoff;
-  }
-
-void SG_TextArea::StopScroll() {
-  scroll_ystart = 0.0;
-  scroll_yend = 0.0;
-  scroll_time = 0;
-  }
-
 void SG_TextArea::UpdateLines() {
   if(lines.size() == 0) {
     text_xsize = 0;
@@ -307,4 +292,11 @@ void SG_TextArea::UpdateLines() {
 
 void SG_TextArea::RangerChanged() {
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  }
+
+void SG_TextArea::SetAlignment(int align) {
+  alignment = align;
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  if(rendered_text != NULL) SDL_FreeSurface(rendered_text);
+  rendered_text = NULL;
   }

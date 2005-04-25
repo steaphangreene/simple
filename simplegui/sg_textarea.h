@@ -30,9 +30,9 @@
 #include <string>
 using namespace std;
 
-#define SCROLL_ONCE	0
-#define SCROLL_LOOP	1
-#define SCROLL_BOUNCE	2
+#define SG_ALIGN_LEFT	0
+#define SG_ALIGN_CENTER	1
+#define SG_ALIGN_RIGHT	2
 
 #ifndef SG_AUTOSIZE
 #define SG_AUTOSIZE	-1
@@ -56,13 +56,7 @@ public:
   void SetVisibleSize(double xs, double ys);
   void SetVisibleLines(int numlns);	//Depricated!
 
-  void SetXOffset(float xoff);
-  void SetYOffset(float yoff);
-  void SetOffsets(float xoff, float yoff);
-
-  void AutoScroll(float startyoff, float endyoff, Uint32 starttime,
-	int loop=SCROLL_LOOP);
-  void StopScroll();
+  void SetAlignment(int align);
 
   virtual void SetText(const string &txt);
   virtual const string &Text();
@@ -80,13 +74,11 @@ protected:
   int text_xsize, text_ysize;
 
   float xmargin, ymargin;
-  float scroll_ystart, scroll_yend;
-  Uint32 scroll_time;
-  int scroll_loop;
   float visible_xlines, visible_ylines;
   string message;
   vector<string> lines;
   int font_size;
+  int alignment;
   };
 
 #endif // SG_TEXTAREA_H
