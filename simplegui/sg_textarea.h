@@ -68,6 +68,7 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 
   void UpdateLines();
+  void UpdateRange();
 
   virtual void BuildTexture(int st);
   SDL_Surface *rendered_text;

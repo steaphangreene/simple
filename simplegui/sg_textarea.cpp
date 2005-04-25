@@ -73,6 +73,7 @@ void SG_TextArea::SetText(const string &mes) {
   rendered_text = NULL;
   lines.clear();
   UpdateLines();
+  UpdateRange();
   }
 
 void SG_TextArea::SetFontSize(int sz) {
@@ -82,6 +83,7 @@ void SG_TextArea::SetFontSize(int sz) {
   rendered_text = NULL;
   lines.clear();	//FIXME: Only really need to redetect XSize
   UpdateLines();
+  UpdateRange();
   }
 
 const string &SG_TextArea::Text() {
@@ -119,7 +121,14 @@ void SG_TextArea::BuildTexture(int st) {
     xsize = int((float)(bxsize) * (1.0f - xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - ymargin * 2.0f) + 0.5f);
 
-    font_size = (int)((double)(ysize) / YSpan() + 0.5);
+    if(font_size != (int)((double)(ysize) / YSpan() + 0.5)) {
+      SetFontSize((int)((double)(ysize) / YSpan() + 0.5));
+      }
+
+    if(text_xsize < xsize) {
+      text_xsize = xsize;  //To be sure alignment works!
+      UpdateRange();
+      }
 
     if(current_sg->Font(font_size) == NULL) {
       fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", font_size);
@@ -258,12 +267,14 @@ void SG_TextArea::SetVisibleSize(double xs, double ys) {
   visible_ylines = ys;
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   UpdateLines();
+  UpdateRange();
   }
 
 void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
   visible_ylines = numlns;
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   UpdateLines();
+  UpdateRange();
   }
 
 void SG_TextArea::UpdateLines() {
@@ -281,7 +292,9 @@ void SG_TextArea::UpdateLines() {
       }
     text_ysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
     }
+  }
 
+void SG_TextArea::UpdateRange() {
   double font_height = TTF_FontHeight(current_sg->Font(font_size));
   if(visible_xlines > 0) {
     SetXLimits(0.0, (double)(text_xsize) / font_height);
