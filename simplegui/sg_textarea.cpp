@@ -34,7 +34,8 @@ SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
   rendered_text = NULL;
   text_xsize = 0;
   text_ysize = 0;
-  visible_lines = SG_AUTOSIZE;
+  visible_xlines = SG_AUTOSIZE;
+  visible_ylines = SG_AUTOSIZE;
   scroll_ystart = 0.0;
   scroll_yend = 0.0;
   scroll_time = 0;
@@ -139,9 +140,9 @@ void SG_TextArea::BuildTexture(int st) {
     texture[st].yfact = (float)(bysize) / (float)(ysize);
     }
   else {
-    bxsize = text_xsize;
-    double ysz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
-    bysize = (int)(ysz * YSpan() + 0.5);
+    double fsz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
+    bxsize = (int)(fsz * XSpan() + 0.5);
+    bysize = (int)(fsz * YSpan() + 0.5);
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -208,17 +209,17 @@ void SG_TextArea::BuildTexture(int st) {
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
-    double ysz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
-    srec.x = (int)(XValue() + 0.5);
-    srec.w = (int)(XSpan() + 0.5);
+    double fsz = (double)(TTF_FontHeight(current_sg->Font(font_size)));
+    srec.x = (int)(fsz * XValue() + 0.5);
+    srec.w = (int)(fsz * XSpan() + 0.5);
 
     if(YValue() >= 0.0) {
-      srec.y = (int)(ysz * YValue() + 0.5);
-      srec.h = (int)(ysz * YSpan() + 0.5);
+      srec.y = (int)(fsz * YValue() + 0.5);
+      srec.h = (int)(fsz * YSpan() + 0.5);
       }
     else {
-      drec.y += (int)(ysz * -YValue() + 0.5);
-      srec.h = (int)(ysz * (YSpan() + YSpan()) + 0.5);
+      drec.y += (int)(fsz * -YValue() + 0.5);
+      srec.h = (int)(fsz * (YSpan() + YSpan()) + 0.5);
       }
 
     if(texture[st].type == SG_TEXTURE_TRANS
@@ -242,8 +243,15 @@ void SG_TextArea::Enable() {
   state = 0;
   }
 
-void SG_TextArea::SetVisibleLines(int numlns) {
-  visible_lines = numlns;
+void SG_TextArea::SetVisibleSize(double xs, double ys) {
+  visible_xlines = xs;
+  visible_ylines = ys;
+  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  UpdateLines();
+  }
+
+void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
+  visible_ylines = numlns;
   for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
   UpdateLines();
   }
@@ -277,12 +285,19 @@ void SG_TextArea::UpdateLines() {
     text_ysize = TTF_FontHeight(current_sg->Font(font_size)) * lines.size();
     }
 
-  SetXLimits(0.0, (double)(text_xsize));
-  SetXSpan((double)(text_xsize));
+  double font_height = TTF_FontHeight(current_sg->Font(font_size));
+  if(visible_xlines > 0) {
+    SetXLimits(0.0, (double)(text_xsize) / font_height);
+    SetXSpan((double)(visible_xlines));
+    }
+  else {
+    SetXLimits(0.0, (double)(text_xsize) / font_height);
+    SetXSpan((double)(text_xsize) / font_height);
+    }
 
-  if(visible_lines > 0) {
-    SetYLimits(-(double)(visible_lines), (double)(lines.size()) + (double)(visible_lines));
-    SetYSpan((double)(visible_lines));
+  if(visible_ylines > 0) {	//Allows scrolling before/after text vertically
+    SetYLimits(-(double)(visible_ylines), (double)(lines.size()) + (double)(visible_ylines));
+    SetYSpan((double)(visible_ylines));
     }
   else {
     SetYLimits(-(double)(lines.size()), (double)(lines.size()) * 2.0);

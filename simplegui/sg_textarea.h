@@ -53,7 +53,9 @@ public:
   virtual void Disable();
   virtual void Enable();
 
-  void SetVisibleLines(int numlns);
+  void SetVisibleSize(double xs, double ys);
+  void SetVisibleLines(int numlns);	//Depricated!
+
   void SetXOffset(float xoff);
   void SetYOffset(float yoff);
   void SetOffsets(float xoff, float yoff);
@@ -81,7 +83,7 @@ protected:
   float scroll_ystart, scroll_yend;
   Uint32 scroll_time;
   int scroll_loop;
-  int visible_lines;
+  float visible_xlines, visible_ylines;
   string message;
   vector<string> lines;
   int font_size;

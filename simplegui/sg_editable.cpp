@@ -78,7 +78,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
       }
     else if(event->key.keysym.sym == SDLK_RETURN
 	|| event->key.keysym.sym == SDLK_KP_ENTER) {
-      if(visible_lines == 1) {
+      if(visible_xlines == 1.0) {
 	current_sg->UnsetFocusWidget();
 	event->type = SDL_SG_EVENT;
 	event->user.code = SG_EVENT_NEWTEXT;

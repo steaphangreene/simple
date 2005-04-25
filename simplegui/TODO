@@ -9,6 +9,7 @@ Clean up mulitple redundant calls to RangerChanged during SG_Ranger2D events.
 
 -=TODO=-
 SG_Menu should be paralell to, not derrived from SG_Button.
+Text Alignment in SG_TextArea.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s
