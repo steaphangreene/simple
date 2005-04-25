@@ -198,6 +198,18 @@ void SG_TextArea::BuildTexture(int st) {
 	  fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
 	  exit(1);
 	  }
+
+	if(alignment == SG_ALIGN_RIGHT) {
+	  int xs = 0, ys = 0;
+	  TTF_SizeText(current_sg->Font(font_size), lines[ln].c_str(), &xs, &ys);
+	  drec.x = text_xsize - xs;
+	  }
+	else if(alignment == SG_ALIGN_CENTER) {
+	  int xs = 0, ys = 0;
+	  TTF_SizeText(current_sg->Font(font_size), lines[ln].c_str(), &xs, &ys);
+	  drec.x = (text_xsize - xs)/2;
+	  }
+
 	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
 	SDL_BlitSurface(tmp_text, NULL, rendered_text, &drec);
 	SDL_FreeSurface(tmp_text);

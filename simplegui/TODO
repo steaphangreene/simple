@@ -14,7 +14,6 @@ SG_Menu should be paralell to, not derrived from SG_Button.
 Fix all the in-code "FIXME"s
 Better handle modal popups and text focus of widgets.
 Implement actual mouse cursors, including adjustable focus points
-Alignment of text on widgets
 Implement ProgressBar
 Implement FileBrowser
 Implement RadioButtons

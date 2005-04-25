@@ -138,6 +138,7 @@ int main(int argc, char **argv) {
   trans = new SG_TransLabel("TransLabel Widget\nIs Right Here",
 	gui->NewColor(0.0, 0.0, 0.0, 0.6, 0.4, 0.3));
   trans->SetMargins(0.2, 0.2);
+  trans->SetAlignment(SG_ALIGN_RIGHT);
   align[1]->AddWidget(trans);
 
   panel[2] = new SG_Panel(gui->NewColor(0.0, 0.5, 1.0));
@@ -361,6 +362,7 @@ int main(int argc, char **argv) {
 	else if(event.user.code == SG_EVENT_EDIT) {
 	  printf("Received SG_EVENT_EDIT - value = '%s'.\n",
 	  	((SG_Text*)(event.user.data1))->Text().c_str());
+	  ((SG_TextArea*)(SG_Text*)(event.user.data1))->SetAlignment(SG_ALIGN_CENTER);
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDITABORT) {
