@@ -19,19 +19,16 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-// This file was created from (or actually IS) a basic compound widget
-// def, so it's not defined and is really just a place-holder for now.
-
 #include "SDL_opengl.h"
 
 #include "simpleconnect.h"
 #include "../simplegui/sg_events.h"
 #include "../simplegui/sg_stickybutton.h"
 
-SimpleConnect::SimpleConnect(const vector<SC_SlotType> &slts)
-	: SG_Compound(8, slts.size() + 1, 0.1, 0.1) {
-  slots = slts;
-  network = false;
+SimpleConnect::SimpleConnect() : SG_Compound(8, 1, 0.1, 0.1) {
+  mode = SC_MODE_NONE;
+  prop_flags = 0;
+  change_flags = 0;
 
   background = new SG_Panel(SG_COL_FG);
   for(unsigned int slot = 0; slot < slots.size(); ++slot) {
@@ -57,9 +54,20 @@ SimpleConnect::SimpleConnect(const vector<SC_SlotType> &slts)
 SimpleConnect::~SimpleConnect() {
   }
 
-void SimpleConnect::EnableNetwork(const string &tag) {
+void SimpleConnect::Host(const string &tag, const vector<SC_SlotType> &slts) {
+  slots = slts;
   nettag = tag;
-  network = true;
+  mode = SC_MODE_HOST;
+  }
+
+void SimpleConnect::Search(const string &tag) {
+  nettag = tag;
+  mode = SC_MODE_SEARCH;
+  }
+
+void SimpleConnect::Config(const vector<SC_SlotType> &slts) {
+  slots = slts;
+  mode = SC_MODE_CONFIG;
   }
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
