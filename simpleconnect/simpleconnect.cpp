@@ -69,7 +69,6 @@ SimpleConnect::~SimpleConnect() {
   }
 
 bool SimpleConnect::Render(unsigned long cur_time) {
-/*
   if(mode == SC_MODE_SEARCH) {
     SDL_mutexP(net_mutex);
     bool changed = false;
@@ -93,7 +92,6 @@ bool SimpleConnect::Render(unsigned long cur_time) {
       }
     SDL_mutexV(net_mutex);
     }
-*/
   return SG_Compound::Render(cur_time);
   }
 
@@ -193,13 +191,8 @@ int SimpleConnect::HandleNetThread() {
   while(!exiting) {
     while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
-	fprintf(stderr, "Tags match!\n");
-	fprintf(stderr, "Got packet type %d\n", indata->act);
 	if(mode == SC_MODE_HOST && indata->act == SC_ACT_QUERYING) {
 	  outpacket->address = inpacket->address;
-	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
-		| ((Uint64)(inpacket->address.port));
-	  fprintf(stderr, "Responding to %.16LX entry\n", entry);
 	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
 	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());      exiting = true;
 	    return 1;
@@ -209,14 +202,10 @@ int SimpleConnect::HandleNetThread() {
 	  SDL_mutexP(net_mutex);
 	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
 		| ((Uint64)(inpacket->address.port));
-	  fprintf(stderr, "Adding %.16LX entry\n", entry);
 	  hosts[entry].address = inpacket->address;
 	  hosts[entry].map = "Unknown";
 	  hosts[entry].changed = true;
 	  SDL_mutexV(net_mutex);
-	  }
-	else {
-	  fprintf(stderr, "Me = %d, packet = %d\n", mode, indata->act);
 	  }
 	}
       }
