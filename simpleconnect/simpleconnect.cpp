@@ -105,15 +105,19 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 //  static GL_MODEL SimpleConnect::Default_Mouse_Cursor = NULL;
 
 struct DataPacket {
-  Uint32 act;
+  Uint8 act;
+  Sint8 tag[1];
   };
 
 int SimpleConnect::HandleNetThread() {
-  UDPpacket *inpacket = SDLNet_AllocPacket(sizeof(DataPacket));
+  UDPpacket *inpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
   DataPacket *indata = (DataPacket*)(inpacket->data);
-  UDPpacket *outpacket = SDLNet_AllocPacket(sizeof(DataPacket));
+
+  UDPpacket *outpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
   DataPacket *outdata = (DataPacket*)(outpacket->data);
-  outpacket->len = sizeof(DataPacket);
+  outpacket->len = sizeof(DataPacket) + nettag.length();
 
   UDPsocket udpsock;
   if(mode == SC_MODE_SEARCH) udpsock = SDLNet_UDP_Open(0);
@@ -135,6 +139,7 @@ int SimpleConnect::HandleNetThread() {
   if(mode == SC_MODE_SEARCH) {
     outpacket->address = broadcast_address;
     outdata->act = 0;
+    strcpy((char*)outdata->tag, nettag.c_str());
     if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
       fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
       exiting = true;
@@ -147,7 +152,10 @@ int SimpleConnect::HandleNetThread() {
 
   while(!exiting) {
     while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
-      fprintf(stderr, "Got packet type %d\n", indata->act);
+      if(!strcmp((char*)indata->tag, nettag.c_str())) {
+	fprintf(stderr, "Tags match!\n");
+	fprintf(stderr, "Got packet type %d\n", indata->act);
+	}
       }
     SDL_Delay(10);
     }
