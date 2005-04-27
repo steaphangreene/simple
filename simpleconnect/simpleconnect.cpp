@@ -164,11 +164,21 @@ int SimpleConnect::HandleNetThread() {
   else {
     fprintf(stderr, "ERROR: Invalid mode in SimpleConnect network handler!\n");
     }
-
   if(!udpsock) {
     fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
     exiting = true;
     return 1;
+    }
+
+  TCPsocket serversock = NULL;
+  if(mode == SC_MODE_HOST) {
+    IPaddress serverip;
+    SDLNet_ResolveHost(&serverip, NULL, port);	// Listener socket
+    serversock=SDLNet_TCP_Open(&serverip);
+    if(!serversock) {
+      printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+      return 1;
+      }
     }
 
   IPaddress broadcast_address = {0};
@@ -211,6 +221,8 @@ int SimpleConnect::HandleNetThread() {
       }
     SDL_Delay(10);
     }
+
+  if(serversock) SDLNet_TCP_Close(serversock);
 
   SDLNet_UDP_Close(udpsock);
 
