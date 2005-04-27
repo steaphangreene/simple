@@ -81,6 +81,8 @@ class SimpleConnect : public SG_Compound {
 public:
   SimpleConnect();
   virtual ~SimpleConnect();
+
+  virtual bool Render(unsigned long cur_time);
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 

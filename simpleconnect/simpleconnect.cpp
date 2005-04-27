@@ -61,11 +61,39 @@ SimpleConnect::~SimpleConnect() {
   CleanupNet();
   }
 
+bool SimpleConnect::Render(unsigned long cur_time) {
+  if(mode == SC_MODE_SEARCH) {
+    SDL_mutexP(net_mutex);
+    bool changed = false;
+    map<Uint64, SC_Host>::iterator host = hosts.begin();
+    for(; host != hosts.end(); ++host) {
+      if(host->second.changed) {
+	host->second.changed = false;
+	if(!changed) {
+	  int ysz = ysize;
+	  Resize(8, 1);		//Clear the discovery widgets
+	  Resize(8, ysz);
+	  changed = true;
+	  }
+	if(host->second.line < 0) {
+	  host->second.line = (ysize - 1);
+	  Resize(xsize, ysize+1);
+	  }
+	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
+		0, 1 + host->second.line, 8, 1);
+	}
+      }
+    SDL_mutexV(net_mutex);
+    }
+  return SG_Compound::Render(cur_time);
+  }
+
 void SimpleConnect::Host(const string &tag, const vector<SC_SlotType> &slts) {
   CleanupNet();
   slots = slts;
   nettag = tag;
   mode = SC_MODE_HOST;
+  Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
 
@@ -73,6 +101,7 @@ void SimpleConnect::Search(const string &tag) {
   CleanupNet();
   nettag = tag;
   mode = SC_MODE_SEARCH;
+  Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
 
@@ -80,12 +109,14 @@ void SimpleConnect::Config(const vector<SC_SlotType> &slts) {
   CleanupNet();
   slots = slts;
   mode = SC_MODE_CONFIG;
+  Resize(8, 1);		//Clear any list widgets
   }
 
 void SimpleConnect::Reset() {
   CleanupNet();
   slots.clear();
   mode = SC_MODE_NONE;
+  Resize(8, 1);		//Clear any list widgets
   }
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
