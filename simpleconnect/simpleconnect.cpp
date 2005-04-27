@@ -19,6 +19,9 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
+#include <set>
+using namespace std;
+
 #include "SDL_opengl.h"
 
 #include "simpleconnect.h"
@@ -170,6 +173,10 @@ int SimpleConnect::HandleNetThread() {
     return 1;
     }
 
+  int tcpset_cap = 16;
+  set<TCPsocket> tcpset;
+  SDLNet_SocketSet tcpset_sdl = NULL;
+
   TCPsocket serversock = NULL;
   if(mode == SC_MODE_HOST) {
     IPaddress serverip;
@@ -179,6 +186,7 @@ int SimpleConnect::HandleNetThread() {
       printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
       return 1;
       }
+    tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
     }
 
   IPaddress broadcast_address = {0};
@@ -219,9 +227,49 @@ int SimpleConnect::HandleNetThread() {
 	  }
 	}
       }
-    SDL_Delay(10);
+    if(mode == SC_MODE_HOST && serversock) {
+      TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
+      while(tmpsock) {
+	tcpset.insert(tmpsock);
+	if((int)(tcpset.size()) <= tcpset_cap) {
+	  SDLNet_TCP_AddSocket(tcpset_sdl, tmpsock);
+	  }
+	else {	// Enlarge SDL Socket Set
+	  SDLNet_FreeSocketSet(tcpset_sdl);
+	  tcpset_cap *= 2;
+	  tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
+	  set<TCPsocket>::iterator sock = tcpset.begin();
+	  for(; sock != tcpset.end(); ++sock) {
+	    SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
+	    }
+	  }
+	tmpsock = SDLNet_TCP_Accept(serversock);
+	}
+      }
+    if(tcpset.size() > 0) {
+      set<TCPsocket> toremove;
+      SDLNet_CheckSockets(tcpset_sdl, 10);
+      set<TCPsocket>::iterator sock;
+
+      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	if(SDLNet_SocketReady(*sock)) {
+	  toremove.insert(*sock);
+	  fprintf(stderr, "DEBUG: Got data from socket (and closed it for now)\n");
+	  }
+	}
+
+      for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
+	tcpset.erase(*sock);
+	SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
+	SDLNet_TCP_Close(*sock);
+	}
+      }
+    else {
+      SDL_Delay(10);
+      }
     }
 
+  if(tcpset_sdl) SDLNet_FreeSocketSet(tcpset_sdl);
   if(serversock) SDLNet_TCP_Close(serversock);
 
   SDLNet_UDP_Close(udpsock);
