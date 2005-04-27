@@ -22,9 +22,16 @@
 #ifndef SIMPLECONNECT_H
 #define SIMPLECONNECT_H
 
+#ifndef DEFAULT_PORT
+#define DEFAULT_PORT 8942
+#endif
+
 #include <string>
 #include <vector>
 using namespace std;
+
+#include "SDL_thread.h"
+#include "SDL_net.h"
 
 #include "../simplegui/sg_compound.h"
 
@@ -68,9 +75,12 @@ public:
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-  void Host(const string &tag, const vector<SC_SlotType> &slts);
-  void Search(const string &tag);
-  void Config(const vector<SC_SlotType> &slts);
+  void Host(const string &tag, const vector<SC_SlotType> &slts);  //Host game
+  void Search(const string &tag);		  //Find network games
+  void Config(const vector<SC_SlotType> &slts);	  //Local game, no networking
+  void Reset();
+
+  void SetPort(Uint16 p) { port = p; };
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
@@ -80,6 +90,15 @@ protected:
   string nettag;
   SC_Mode mode;
   unsigned int prop_flags, change_flags;
+
+  Uint16 port;
+  static int thread_handler(void *me);
+  int HandleNetThread();
+  void StartNet();
+  void CleanupNet();
+  SDL_Thread *net_thread;
+  SDL_mutex *net_mutex;
+  bool exiting;
   };
 
 #endif // SIMPLECONNECT_H
