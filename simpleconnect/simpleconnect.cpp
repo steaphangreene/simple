@@ -130,8 +130,8 @@ int SimpleConnect::HandleNetThread() {
     }
 
   IPaddress broadcast_address = {0};
-//  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
-  SDLNet_ResolveHost(&broadcast_address, "10.0.0.10", port);
+  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
+//  SDLNet_ResolveHost(&broadcast_address, "10.0.0.10", port);
 
   //Temporary!
   if(mode == SC_MODE_SEARCH) {
