@@ -25,6 +25,13 @@
 #include "../simplegui/sg_events.h"
 #include "../simplegui/sg_stickybutton.h"
 
+enum SCAct {
+  SC_ACT_QUERYING = 0,
+  SC_ACT_HOSTING,
+  SC_ACT_LEAVING,
+  SC_ACT_MAX
+  };
+
 SimpleConnect::SimpleConnect() : SG_Compound(8, 1, 0.1, 0.1) {
   mode = SC_MODE_NONE;
   prop_flags = 0;
@@ -170,7 +177,7 @@ int SimpleConnect::HandleNetThread() {
   //Temporary!
   if(mode == SC_MODE_SEARCH) {
     outpacket->address = broadcast_address;
-    outdata->act = 0;
+    outdata->act = SC_ACT_QUERYING;
     if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
       fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
       exiting = true;
@@ -178,7 +185,7 @@ int SimpleConnect::HandleNetThread() {
       }
     }
   else if(mode == SC_MODE_HOST) {
-    outdata->act = 1;
+    outdata->act = SC_ACT_HOSTING;
     }
 
   while(!exiting) {
@@ -186,7 +193,7 @@ int SimpleConnect::HandleNetThread() {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
 	fprintf(stderr, "Tags match!\n");
 	fprintf(stderr, "Got packet type %d\n", indata->act);
-	if(mode == SC_MODE_HOST && indata->act == 0) {
+	if(mode == SC_MODE_HOST && indata->act == SC_ACT_QUERYING) {
 	  outpacket->address = inpacket->address;
 	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
 		| ((Uint64)(inpacket->address.port));
@@ -196,7 +203,7 @@ int SimpleConnect::HandleNetThread() {
 	    return 1;
 	    }
 	  }
-	else if(mode == SC_MODE_SEARCH && indata->act == 1) {
+	else if(mode == SC_MODE_SEARCH && indata->act == SC_ACT_HOSTING) {
 	  SDL_mutexP(net_mutex);
 	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
 		| ((Uint64)(inpacket->address.port));
