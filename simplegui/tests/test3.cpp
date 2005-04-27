@@ -178,17 +178,17 @@ int main(int argc, char **argv) {
 	  if( s == "vrem") {
 	    if( listb->RemoveItem( atoi(vremind->Text().c_str()) ) ) fprintf(stderr,"Removal Successful\n");
 	    else fprintf(stderr,"Removal Unsuccessful\n");
-	  }
+	    }
 	  if( s == "hrem") {
 	    l=hlistb;
 	    if( hlistb->RemoveItem(atoi(hremind->Text().c_str()) ) ) fprintf(stderr,"Removal Successful\n");
 	    else fprintf(stderr,"Removal Unsuccessful\n");
-	  }
+	    }
 	  printf("The modified listbox selection is: ");
 	  deque<int> dq = (l->Which());
 	  deque<int>::iterator iter=dq.begin();
 	  for(;iter!=dq.end();iter++) {
-  	      printf("%d ",(*iter));
+	    printf("%d ",(*iter));
             }
 	  printf("\n");
 	  }
@@ -293,7 +293,7 @@ int main(int argc, char **argv) {
 	  deque<int> dq = (((SG_ListBox*)(event.user.data1))->Which());
 	  deque<int>::iterator iter=dq.begin();
 	  for(;iter!=dq.end();iter++) {
-  	      printf("%d ",(*iter));
+	    printf("%d ",(*iter));
             }
 	  printf("\n");
 	  }
