@@ -69,6 +69,7 @@ SimpleConnect::~SimpleConnect() {
   }
 
 bool SimpleConnect::Render(unsigned long cur_time) {
+/*
   if(mode == SC_MODE_SEARCH) {
     SDL_mutexP(net_mutex);
     bool changed = false;
@@ -92,6 +93,7 @@ bool SimpleConnect::Render(unsigned long cur_time) {
       }
     SDL_mutexV(net_mutex);
     }
+*/
   return SG_Compound::Render(cur_time);
   }
 
