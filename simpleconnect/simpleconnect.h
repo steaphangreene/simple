@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 using namespace std;
 
 #include "SDL_thread.h"
@@ -68,6 +69,14 @@ enum SC_Mode {
 #define SC_FLAG_COLOR
 #define SC_FLAG_TEAM
 
+struct SC_Host {
+  SC_Host() { line = -1; };
+  IPaddress address;
+  string map;
+  int line;
+  bool changed;
+  };
+
 class SimpleConnect : public SG_Compound {
 public:
   SimpleConnect();
@@ -97,8 +106,11 @@ protected:
   void StartNet();
   void CleanupNet();
   SDL_Thread *net_thread;
+
   SDL_mutex *net_mutex;
   bool exiting;
+  bool needtoscan;
+  map<Uint64, SC_Host> hosts;
   };
 
 #endif // SIMPLECONNECT_H

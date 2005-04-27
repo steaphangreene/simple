@@ -118,6 +118,7 @@ int SimpleConnect::HandleNetThread() {
 	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
   DataPacket *outdata = (DataPacket*)(outpacket->data);
   outpacket->len = sizeof(DataPacket) + nettag.length();
+  strcpy((char*)outdata->tag, nettag.c_str());
 
   UDPsocket udpsock;
   if(mode == SC_MODE_SEARCH) udpsock = SDLNet_UDP_Open(0);
@@ -139,7 +140,6 @@ int SimpleConnect::HandleNetThread() {
   if(mode == SC_MODE_SEARCH) {
     outpacket->address = broadcast_address;
     outdata->act = 0;
-    strcpy((char*)outdata->tag, nettag.c_str());
     if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
       fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
       exiting = true;
@@ -155,6 +155,29 @@ int SimpleConnect::HandleNetThread() {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
 	fprintf(stderr, "Tags match!\n");
 	fprintf(stderr, "Got packet type %d\n", indata->act);
+	if(mode == SC_MODE_HOST && indata->act == 0) {
+	  outpacket->address = inpacket->address;
+	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
+		| ((Uint64)(inpacket->address.port));
+	  fprintf(stderr, "Responding to %.16LX entry\n", entry);
+	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
+	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());      exiting = true;
+	    return 1;
+	    }
+	  }
+	else if(mode == SC_MODE_SEARCH && indata->act == 1) {
+	  SDL_mutexP(net_mutex);
+	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
+		| ((Uint64)(inpacket->address.port));
+	  fprintf(stderr, "Adding %.16LX entry\n", entry);
+	  hosts[entry].address = inpacket->address;
+	  hosts[entry].map = "Unknown";
+	  hosts[entry].changed = true;
+	  SDL_mutexV(net_mutex);
+	  }
+	else {
+	  fprintf(stderr, "Me = %d, packet = %d\n", mode, indata->act);
+	  }
 	}
       }
     SDL_Delay(10);
@@ -177,6 +200,7 @@ void SimpleConnect::CleanupNet() {
   net_thread = NULL;
   if(net_mutex) SDL_DestroyMutex(net_mutex);
   net_mutex = NULL;
+  hosts.clear();
   }
 
 void SimpleConnect::StartNet() {
