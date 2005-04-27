@@ -130,11 +130,11 @@ int SimpleConnect::HandleNetThread() {
     }
 
   IPaddress broadcast_address = {0};
-  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
+//  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
+  SDLNet_ResolveHost(&broadcast_address, "10.0.0.10", port);
 
   //Temporary!
   if(mode == SC_MODE_SEARCH) {
-//    outpacket->channel = -1;
     outpacket->address = broadcast_address;
     outdata->act = 0;
     if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
