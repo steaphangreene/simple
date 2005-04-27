@@ -161,7 +161,7 @@ int SimpleConnect::HandleNetThread() {
   outpacket->len = sizeof(DataPacket) + nettag.length();
   strcpy((char*)outdata->tag, nettag.c_str());
 
-  UDPsocket udpsock;
+  UDPsocket udpsock = NULL;
   if(mode == SC_MODE_SEARCH) udpsock = SDLNet_UDP_Open(0);
   else if(mode == SC_MODE_HOST) udpsock = SDLNet_UDP_Open(port);
   else {
