@@ -126,12 +126,10 @@ int SimpleConnect::HandleNetThread() {
     fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
     exiting = true;
     return 1;
-//    exit(1);
     }
 
   IPaddress broadcast_address = {0};
   SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
-//  SDLNet_ResolveHost(&broadcast_address, "10.0.0.10", port);
 
   //Temporary!
   if(mode == SC_MODE_SEARCH) {
@@ -141,7 +139,6 @@ int SimpleConnect::HandleNetThread() {
       fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
       exiting = true;
       return 1;
-//      exit(1);
       }
     }
   else if(mode == SC_MODE_HOST) {
