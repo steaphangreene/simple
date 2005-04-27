@@ -29,18 +29,20 @@
 SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SG_Texture desel,
 			SG_Texture sel, SG_Texture click, SG_Texture dis, unsigned int min, unsigned int max, bool vert,
 			float border)
-	: SG_Compound( (!vert?(items.size()==0?1:items.size()):1), (vert?(items.size()==0?1:items.size()):1), 0, 0) {
+	: SG_Compound( (!vert?(items.size()==0?1:items.size()):1), (vert?(items.size()==0?1:items.size()):1), 0, 0), 
+	  texdesel(desel), texsel(sel), texclick(click), texdisable(dis) {
   /* Copy the passed data into our class data */
   minsel = min;
   maxsel = max;
   vertical = vert;
   listsize=items.size();
-		
+  alignborder=border;
+ 	 
   /* Sanity Check */
   if( min > max ) {
     fprintf(stderr,"SG_ListBox Constructor: Invalid min %d because it is greater than max %d\n",min,max);
     exit(1);
-  }
+    }
 		
   /* Add SG_Widget* to table slots */
   SG_Alignment* align;
@@ -115,6 +117,95 @@ bool SG_ListBox::SetSelection(const set<int>& toselect) {
   
   return true;
   }
+
+void SG_ListBox::AddItem( SG_Widget* w, int at ) {
+  if( at != -1 && at < 0 ) return; //Invalid argument
+  
+  unsigned int selcnt;
+  int selected_items[ selcnt=selhistory.size() ];
+  
+  SG_Alignment* a = new SG_Alignment(alignborder,alignborder);
+  a->Enable();
+  SG_StickyButton* sb = new SG_StickyButton("",texdesel,texdisable,texclick,texsel);
+  a->SetBackground(sb);
+  a->AddWidget(w);
+
+  if( at == -1 || at >= (signed)listsize) {
+    aligns.push_back(a);
+    stickies.push_back(sb);
+    if( vertical ) AddRow(listsize); else AddCol(listsize);
+    listsize++;
+    ptr2pos[ stickies[listsize-1] ] = listsize-1;
+    if( vertical ) AddWidget(a, 0, listsize-1); else AddWidget(a, listsize-1,0); 
+    } else {
+    // Dump selection history into local array
+    deque<int>::iterator itr = selhistory.begin();
+    for(unsigned int i=0; i<selcnt; i++,++itr) {
+      selected_items[ i ] = (*itr);
+      if( selected_items[i] >= at ) selected_items[i]++; //Shift forward
+      }
+    //Clear selections
+    while(Deselect(true));
+	    
+    //Otherwise... insert in middle
+    aligns.insert(aligns.begin()+at,a);
+    stickies.insert(stickies.begin()+at,sb);
+    listsize++;
+    for(unsigned int i=at; i<listsize; i++) ptr2pos[ stickies[i] ] = i;
+
+    if( vertical ) {
+      AddRow(at);
+      AddWidget(a,0,at);
+      } else {
+      AddCol(at);
+      AddWidget(a,at,0);
+      }
+    
+    //Replace selection
+    for(unsigned int i=0; i<selcnt; i++) {
+      Select(selected_items[i]);
+      }
+    }
+  
+  }
+
+  
+bool SG_ListBox::RemoveItem( unsigned int item ) {
+  unsigned int i;
+	
+  /* Range Check */
+  if( item >= listsize ) return false;
+
+  /* Minimum Selection Is Entire List Removal Impossible */
+  if( selhistory.size() == minsel && listsize == minsel ) return false;
+
+  /* Unselect Item (doesn't hurt if it was not selected) */
+  Deselect( true, item );
+
+  /* Remove Item */
+  if( vertical ) {
+    RemoveRow(item);
+    } else {
+    RemoveCol(item);	  
+    }
+	
+  stickies.erase(stickies.begin()+item);
+  aligns.erase(aligns.begin()+item);
+  for(i=item; i<listsize; i++) {
+    ptr2pos[ stickies[i] ] = i; 
+    }
+  listsize--;
+
+  /* Ensure Minimum Selection */
+  i=0;
+  while( i < listsize && selhistory.size() < minsel ) {
+    Select(i);
+    i--;
+  }
+
+  return true;
+  }
+
 
 //  bool SG_ListBox::SetDefaultCursor(GL_MODEL *cur);
 

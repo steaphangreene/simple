@@ -90,7 +90,8 @@ int main(int argc, char **argv) {
   SG_Table *tab;
   SG_ListBox *listb;
   SG_ListBox *hlistb;
-
+  SG_Editable *vaddind, *vaddval, *vremind, *haddind, *haddval, *hremind;
+  
   tab = new SG_Table(10, 10);
 
   gui->MasterWidget()->AddWidget(tab);
@@ -112,6 +113,19 @@ int main(int argc, char **argv) {
 
   tab->AddWidget(listb,0,0,4,4);
 
+  SG_Widget* b;
+  name[b=new SG_Button("Add At")]="vaddat";
+  tab->AddWidget(b,5,0,2,1);
+  name[b=new SG_Button("Add End")]="vaddend";
+  tab->AddWidget(b,5,1,2,1);
+  name[b=new SG_Button("Remove At")]="vrem";
+  tab->AddWidget(b,5,2,2,1);
+  
+  tab->AddWidget(vaddind=new SG_Editable("0"),7,0,1,1);
+  tab->AddWidget(vaddval=new SG_Editable("Val"),8,0,2,1);
+  tab->AddWidget(vremind=new SG_Editable("0"),7,2,1,1);
+ 
+  
   vector<SG_Widget*> horzitems;
 
   horzitems.push_back(new SG_TransLabel("H1",col));
@@ -121,6 +135,16 @@ int main(int argc, char **argv) {
   horzitems.push_back(new SG_TransLabel("H5",col));
   horzitems.push_back(new SG_TransLabel("H6",col));
 
+  name[b=new SG_Button("Add At")]="haddat";
+  tab->AddWidget(b,0,8,2,1);
+  tab->AddWidget(haddind=new SG_Editable("0"),2,8,1,1);
+  tab->AddWidget(haddval=new SG_Editable("Val"),3,8,2,1);
+  name[b=new SG_Button("Add End")]="haddend";
+  tab->AddWidget(b,5,8,2,1);
+  name[b=new SG_Button("Remove At")]="hrem";
+  tab->AddWidget(b,7,8,2,1);
+  tab->AddWidget(hremind=new SG_Editable("0"),9,8,1,1);
+  
   hlistb = new SG_ListBox(horzitems,dkgray,red,gray,black,2,4,false);
 
   tab->AddWidget(hlistb,0,6,10,2);
@@ -132,8 +156,41 @@ int main(int argc, char **argv) {
     do { // while(gui->PollEvent(&event))
       if(event.type == SDL_SG_EVENT) {
 	if(event.user.code == SG_EVENT_BUTTONCLICK) {
+	  string s;
+	  SG_ListBox* l=listb;
 	  printf("Received SG_EVENT_BUTTONCLICK from %s button.\n",
-		name[(SG_Widget*)(event.user.data1)].c_str());
+		(s=name[(SG_Widget*)(event.user.data1)]).c_str());
+
+	  if( s == "vaddend" ) {
+	    listb->AddItem(new SG_TransLabel(vaddval->Text(),col));
+	    }
+	  if( s == "haddend" ) {
+	    hlistb->AddItem(new SG_TransLabel(haddval->Text(),col));
+	    l=hlistb;
+	    }
+	  if( s == "vaddat" ) {
+	    listb->AddItem(new SG_TransLabel(vaddval->Text(),col), atoi( vaddind->Text().c_str() ) ); 
+	    }
+	  if( s == "haddat" ) {
+ 	    hlistb->AddItem(new SG_TransLabel(haddval->Text(),col), atoi(haddind->Text().c_str() ) );
+	    l=hlistb;
+	    }
+	  if( s == "vrem") {
+	    if( listb->RemoveItem( atoi(vremind->Text().c_str()) ) ) fprintf(stderr,"Removal Successful\n");
+	    else fprintf(stderr,"Removal Unsuccessful\n");
+	  }
+	  if( s == "hrem") {
+	    l=hlistb;
+	    if( hlistb->RemoveItem(atoi(hremind->Text().c_str()) ) ) fprintf(stderr,"Removal Successful\n");
+	    else fprintf(stderr,"Removal Unsuccessful\n");
+	  }
+	  printf("The modified listbox selection is: ");
+	  deque<int> dq = (l->Which());
+	  deque<int>::iterator iter=dq.begin();
+	  for(;iter!=dq.end();iter++) {
+  	      printf("%d ",(*iter));
+            }
+	  printf("\n");
 	  }
 	else if(event.user.code == SG_EVENT_BUTTONPRESS) {
 	  printf("Received SG_EVENT_BUTTONPRESS from %s button.\n",
