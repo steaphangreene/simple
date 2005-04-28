@@ -382,6 +382,7 @@ int SimpleConnect::HandleHostThread() {
 	  }
 	}
 
+      fprintf(stderr, "Finding a slot!\n");
       vector<SlotData>::iterator slot = slots.begin();
       for(; slot != slots.end(); ++slot) {
 	if((slot->ptype == SC_PLAYER_NONE || slot->ptype == SC_PLAYER_AI) && (
@@ -393,6 +394,8 @@ int SimpleConnect::HandleHostThread() {
 	  slot->ptype = SC_PLAYER_REMOTE;
 	  slot->sock = tmpsock;
 	  slots_dirty = true;
+	  fprintf(stderr, "Found slot!\n");
+	  break;
 	  }
 	}
 
