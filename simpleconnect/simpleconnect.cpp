@@ -483,7 +483,6 @@ int SimpleConnect::HandleHostThread() {
 	    slot->ptype = SC_PLAYER_AI;
 	  slot->sock = NULL;
 	  slots_dirty = true;
-	  fprintf(stderr, "Freed slot!\n");
 	  break;
 	  }
 	}
