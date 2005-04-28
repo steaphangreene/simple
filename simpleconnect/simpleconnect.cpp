@@ -398,7 +398,6 @@ int SimpleConnect::HandleHostThread() {
 	  }
 	}
 
-      fprintf(stderr, "Finding a slot!\n");
       vector<SlotData>::iterator slot = conn.slots.begin();
       for(; slot != conn.slots.end(); ++slot) {
 	if((slot->ptype == SC_PLAYER_NONE || slot->ptype == SC_PLAYER_AI) && (
@@ -410,7 +409,6 @@ int SimpleConnect::HandleHostThread() {
 	  slot->ptype = SC_PLAYER_REMOTE;
 	  slot->sock = tmpsock;
 	  slots_dirty = true;
-	  fprintf(stderr, "Found slot!\n");
 	  break;
 	  }
 	}
@@ -460,12 +458,6 @@ int SimpleConnect::HandleHostThread() {
       }
     SDL_mutexV(net_mutex);
 
-    for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
-      tcpset.erase(*sock);
-      SDLNet_TCP_DelSocket(conn.tcpset, *sock);
-      SDLNet_TCP_Close(*sock);
-      }
-
     if(tcpset.size() > 0) {
       SDLNet_CheckSockets(conn.tcpset, 10);
 
@@ -475,15 +467,31 @@ int SimpleConnect::HandleHostThread() {
 	  fprintf(stderr, "DEBUG: Got data from socket (and closed it for now)\n");
 	  }
 	}
-
-      for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
-	tcpset.erase(*sock);
-	SDLNet_TCP_DelSocket(conn.tcpset, *sock);
-	SDLNet_TCP_Close(*sock);
-	}
       }
     else {
       SDL_Delay(10);
+      }
+
+    for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
+      SDL_mutexP(net_mutex);
+      vector<SlotData>::iterator slot = conn.slots.begin();
+      for(; slot != conn.slots.end(); ++slot) {
+	if(slot->sock == *sock) {
+	  if(slot->type >= SC_SLOT_OPTPLAYER)
+	    slot->ptype = SC_PLAYER_NONE;
+	  else
+	    slot->ptype = SC_PLAYER_AI;
+	  slot->sock = NULL;
+	  slots_dirty = true;
+	  fprintf(stderr, "Freed slot!\n");
+	  break;
+	  }
+	}
+      SDL_mutexV(net_mutex);
+
+      tcpset.erase(*sock);
+      SDLNet_TCP_DelSocket(conn.tcpset, *sock);
+      SDLNet_TCP_Close(*sock);
       }
     }
 
