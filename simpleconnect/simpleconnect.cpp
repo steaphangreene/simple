@@ -57,8 +57,8 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, 1, 0.1, 0.1) {
   SG_Widget *labelb =
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
   AddWidget(labelb, 0, 0, 6, 1);
-  okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(okb, 7, 0, 1, 1);
+  scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
+  AddWidget(scanb, 7, 0, 1, 1);
 
   port = DEFAULT_PORT;
 
@@ -74,21 +74,18 @@ SimpleConnect::~SimpleConnect() {
 bool SimpleConnect::Render(unsigned long cur_time) {
   if(mode == SC_MODE_SEARCH) {
     SDL_mutexP(net_mutex);
-    bool changed = false;
     map<Uint64, SC_Host>::iterator host = hosts.begin();
     for(; host != hosts.end(); ++host) {
       if(host->second.changed) {
 	host->second.changed = false;
-	if(!changed) {
-	  int ysz = ysize;
-	  Resize(8, 1);		//Clear the discovery widgets
-	  Resize(8, ysz);
-	  changed = true;
-	  }
 	if(host->second.line < 0) {
 	  host->second.line = (ysize - 1);
 	  Resize(xsize, ysize+1);
 	  }
+	else {			//Clear the old widgets
+	  ClearRow(1 + host->second.line);
+	  }
+
 	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
 		0, 1 + host->second.line, 6, 1);
 	AddWidget(new SG_Button("Join"), 6, 1 + host->second.line);
@@ -142,10 +139,11 @@ void SimpleConnect::Reset() {
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
-      event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)this;
+    if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
       event->user.data2 = NULL;
+      rescan = true;
       return 1;
       }
     }
@@ -182,16 +180,20 @@ int SimpleConnect::HandleSearchThread() {
 
   IPaddress broadcast_address = {0};
   SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
-
   outpacket->address = broadcast_address;
   outdata->act = SC_ACT_QUERYING;
-  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
-    exiting = true;
-    return 1;
-    }
+
+  rescan = true;
 
   while(!exiting) {
+    if(rescan) {
+      rescan = false;
+      if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
+	fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+	exiting = true;
+	return 1;
+	}
+      }
     while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
 	if(indata->act == SC_ACT_HOSTING) {
@@ -474,6 +476,7 @@ int SimpleConnect::slave_thread_handler(void *me) {
 
 void SimpleConnect::CleanupNet() {
   exiting = true;
+  rescan = false;
   if(net_thread) SDL_WaitThread(net_thread, NULL);
   net_thread = NULL;
   if(net_mutex) SDL_DestroyMutex(net_mutex);
@@ -483,6 +486,7 @@ void SimpleConnect::CleanupNet() {
 
 void SimpleConnect::StartNet() {
   exiting = false;
+  rescan = false;
   net_mutex = SDL_CreateMutex();
   if(mode == SC_MODE_SEARCH)
     net_thread = SDL_CreateThread(search_thread_handler, (void*)(this));

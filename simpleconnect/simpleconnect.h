@@ -96,7 +96,7 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *okb;
+  SG_Button *scanb;
   vector<SC_SlotType> slots;
 
   string nettag;
@@ -105,6 +105,7 @@ protected:
 
   Uint16 port;
   IPaddress connect_to;
+  bool rescan;
 
   static int search_thread_handler(void *me);
   int HandleSearchThread();
