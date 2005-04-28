@@ -86,13 +86,15 @@ public:
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-  void Host(const string &tag, const vector<SC_SlotType> &slts);  //Host game
-  void Search(const string &tag);		  //Find network games
-  void Config(const vector<SC_SlotType> &slts);	  //Local game, no networking
-  void Connect(const string &tag, const IPaddress &location);
-  void Reset();
-
   void SetPort(Uint16 p) { port = p; };
+  void SetTag(const string &tag);
+  void SetSlots(const vector<SC_SlotType> &slts);
+
+  void Host();					//Host new game
+  void Search();				//Find network games
+  void Config();				//Local game, no networking
+  void Connect(const IPaddress &location);	//Connect to active game
+  void Reset();
 
   void SetMapName(const string &map) { mapname = map; };
   const string &MapName() { return mapname; };

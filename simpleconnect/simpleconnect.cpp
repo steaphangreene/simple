@@ -106,27 +106,47 @@ bool SimpleConnect::Render(unsigned long cur_time) {
   return SG_Compound::Render(cur_time);
   }
 
-void SimpleConnect::Host(const string &tag, const vector<SC_SlotType> &slts) {
-  CleanupNet();
-  slots = slts;
+void SimpleConnect::SetTag(const string &tag) {
   nettag = tag;
+  }
+
+void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
+  slots = slts;
+  }
+
+void SimpleConnect::Host() {
+  CleanupNet();
+  if(nettag.length() == 0) {
+    fprintf(stderr, "ERROR: Tag not set before SimpleConnect::Host()\n");
+    exit(1);
+    }
+  if(slots.size() == 0) {
+    fprintf(stderr, "ERROR: Slots not set before SimpleConnect::Host()\n");
+    exit(1);
+    }
   mode = SC_MODE_HOST;
   Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
 
-void SimpleConnect::Search(const string &tag) {
+void SimpleConnect::Search() {
   CleanupNet();
-  nettag = tag;
+  if(nettag.length() == 0) {
+    fprintf(stderr, "ERROR: Tag not set before SimpleConnect::Search()\n");
+    exit(1);
+    }
   mode = SC_MODE_SEARCH;
   Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
 
-void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
-  connect_to = location;
+void SimpleConnect::Connect(const IPaddress &location) {
   CleanupNet();
-  nettag = tag;
+  if(nettag.length() == 0) {
+    fprintf(stderr, "ERROR: Tag not set before SimpleConnect::Connect()\n");
+    exit(1);
+    }
+  connect_to = location;
   mode = SC_MODE_SLAVE;
   Resize(8, 1);		//Clear any list widgets
   ClearRow(0);		//Clear header if present
@@ -134,9 +154,12 @@ void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
   StartNet();
   }
 
-void SimpleConnect::Config(const vector<SC_SlotType> &slts) {
+void SimpleConnect::Config() {
   CleanupNet();
-  slots = slts;
+  if(slots.size() == 0) {
+    fprintf(stderr, "ERROR: Slots not set before SimpleConnect::Config()\n");
+    exit(1);
+    }
   mode = SC_MODE_CONFIG;
   Resize(8, 1);		//Clear any list widgets
   }
@@ -151,7 +174,7 @@ void SimpleConnect::Reset() {
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(joinmap.count((SG_Widget*)(event->user.data1)) > 0) {
-      Connect(nettag, joinmap[(SG_Widget*)(event->user.data1)]);
+      Connect(joinmap[(SG_Widget*)(event->user.data1)]);
       }
     else if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
       event->user.code = SG_EVENT_NEEDTORENDER;
