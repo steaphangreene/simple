@@ -63,6 +63,8 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   netclaimed = false;
 
   conn.sock = NULL;
+  conn.tcpset = NULL;
+  conn.slots.clear();
   }
 
 SimpleConnect::~SimpleConnect() {
