@@ -150,7 +150,170 @@ struct DataPacket {
   Sint8 tag[1];
   };
 
-int SimpleConnect::HandleNetThread() {
+int SimpleConnect::HandleSearchThread() {
+  UDPpacket *inpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
+  DataPacket *indata = (DataPacket*)(inpacket->data);
+
+  UDPpacket *outpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
+  DataPacket *outdata = (DataPacket*)(outpacket->data);
+  outpacket->len = sizeof(DataPacket) + nettag.length();
+  strcpy((char*)outdata->tag, nettag.c_str());
+
+  UDPsocket udpsock = NULL;
+  udpsock = SDLNet_UDP_Open(0);
+  if(!udpsock) {
+    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
+    exiting = true;
+    return 1;
+    }
+
+  IPaddress broadcast_address = {0};
+  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
+
+  outpacket->address = broadcast_address;
+  outdata->act = SC_ACT_QUERYING;
+  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
+    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+    exiting = true;
+    return 1;
+    }
+
+  while(!exiting) {
+    while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
+      if(!strcmp((char*)indata->tag, nettag.c_str())) {
+	if(indata->act == SC_ACT_HOSTING) {
+	  SDL_mutexP(net_mutex);
+	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
+		| ((Uint64)(inpacket->address.port));
+	  hosts[entry].address = inpacket->address;
+	  hosts[entry].map = "Unknown";
+	  hosts[entry].changed = true;
+	  SDL_mutexV(net_mutex);
+	  }
+	}
+      }
+    SDL_Delay(10);
+    }
+
+  SDLNet_UDP_Close(udpsock);
+
+  SDLNet_FreePacket(inpacket);
+  SDLNet_FreePacket(outpacket);
+  return 0;
+  }
+
+int SimpleConnect::HandleHostThread() {
+  UDPpacket *inpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
+  DataPacket *indata = (DataPacket*)(inpacket->data);
+
+  UDPpacket *outpacket =
+	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
+  DataPacket *outdata = (DataPacket*)(outpacket->data);
+  outpacket->len = sizeof(DataPacket) + nettag.length();
+  strcpy((char*)outdata->tag, nettag.c_str());
+
+  UDPsocket udpsock = NULL;
+  udpsock = SDLNet_UDP_Open(port);
+  if(!udpsock) {
+    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
+    exiting = true;
+    return 1;
+    }
+
+  int tcpset_cap = 16;
+  set<TCPsocket> tcpset;
+  SDLNet_SocketSet tcpset_sdl = NULL;
+  tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
+
+  TCPsocket serversock = NULL;
+  IPaddress serverip;
+  SDLNet_ResolveHost(&serverip, NULL, port);	// Listener socket
+  serversock=SDLNet_TCP_Open(&serverip);
+  if(!serversock) {
+    printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+    return 1;
+    }
+
+  IPaddress broadcast_address = {0};
+  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
+
+  outdata->act = SC_ACT_HOSTING;
+
+  while(!exiting) {
+    while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
+      if(!strcmp((char*)indata->tag, nettag.c_str())) {
+	if(indata->act == SC_ACT_QUERYING) {
+	  outpacket->address = inpacket->address;
+	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
+	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+	    exiting = true;
+	    return 1;
+	    }
+	  }
+	}
+      }
+
+    TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
+    while(tmpsock) {
+      tcpset.insert(tmpsock);
+      if((int)(tcpset.size()) <= tcpset_cap) {
+	SDLNet_TCP_AddSocket(tcpset_sdl, tmpsock);
+	}
+      else {	// Enlarge SDL Socket Set
+	SDLNet_FreeSocketSet(tcpset_sdl);
+	tcpset_cap *= 2;
+	tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
+	set<TCPsocket>::iterator sock = tcpset.begin();
+	for(; sock != tcpset.end(); ++sock) {
+	  SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
+	  }
+	}
+      tmpsock = SDLNet_TCP_Accept(serversock);	// Get the next one (if present)
+      }
+
+    if(tcpset.size() > 0) {
+      set<TCPsocket> toremove;
+      SDLNet_CheckSockets(tcpset_sdl, 10);
+      set<TCPsocket>::iterator sock;
+
+      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	if(SDLNet_SocketReady(*sock)) {
+	  toremove.insert(*sock);
+	  fprintf(stderr, "DEBUG: Got data from socket (and closed it for now)\n");
+	  }
+	}
+
+      for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
+	tcpset.erase(*sock);
+	SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
+	SDLNet_TCP_Close(*sock);
+	}
+      }
+    else {
+      SDL_Delay(10);
+      }
+    }
+
+  set<TCPsocket>::iterator sock = tcpset.begin();
+  for(; sock != tcpset.end(); ++sock) {
+    SDLNet_TCP_Close(*sock);
+    }
+  tcpset.clear();
+
+  SDLNet_FreeSocketSet(tcpset_sdl);
+  SDLNet_TCP_Close(serversock);
+
+  SDLNet_UDP_Close(udpsock);
+
+  SDLNet_FreePacket(inpacket);
+  SDLNet_FreePacket(outpacket);
+  return 0;
+  }
+
+int SimpleConnect::HandleSlaveThread() {
   UDPpacket *inpacket =
 	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
   DataPacket *indata = (DataPacket*)(inpacket->data);
@@ -212,7 +375,8 @@ int SimpleConnect::HandleNetThread() {
 	if(mode == SC_MODE_HOST && indata->act == SC_ACT_QUERYING) {
 	  outpacket->address = inpacket->address;
 	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());      exiting = true;
+	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+	    exiting = true;
 	    return 1;
 	    }
 	  }
@@ -285,8 +449,16 @@ int SimpleConnect::HandleNetThread() {
   return 0;
   }
 
-int SimpleConnect::thread_handler(void *me) {
-  return ((SimpleConnect*)(me))->HandleNetThread();
+int SimpleConnect::search_thread_handler(void *me) {
+  return ((SimpleConnect*)(me))->HandleSearchThread();
+  }
+
+int SimpleConnect::host_thread_handler(void *me) {
+  return ((SimpleConnect*)(me))->HandleHostThread();
+  }
+
+int SimpleConnect::slave_thread_handler(void *me) {
+  return ((SimpleConnect*)(me))->HandleSlaveThread();
   }
 
 void SimpleConnect::CleanupNet() {
@@ -301,5 +473,10 @@ void SimpleConnect::CleanupNet() {
 void SimpleConnect::StartNet() {
   exiting = false;
   net_mutex = SDL_CreateMutex();
-  net_thread = SDL_CreateThread(thread_handler, (void*)(this));
+  if(mode == SC_MODE_SEARCH)
+    net_thread = SDL_CreateThread(search_thread_handler, (void*)(this));
+  else if(mode == SC_MODE_HOST)
+    net_thread = SDL_CreateThread(host_thread_handler, (void*)(this));
+  else if(mode == SC_MODE_SLAVE)
+    net_thread = SDL_CreateThread(slave_thread_handler, (void*)(this));
   }

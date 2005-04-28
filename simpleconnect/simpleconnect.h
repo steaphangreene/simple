@@ -103,8 +103,12 @@ protected:
   unsigned int prop_flags, change_flags;
 
   Uint16 port;
-  static int thread_handler(void *me);
-  int HandleNetThread();
+  static int search_thread_handler(void *me);
+  int HandleSearchThread();
+  static int host_thread_handler(void *me);
+  int HandleHostThread();
+  static int slave_thread_handler(void *me);
+  int HandleSlaveThread();
   void StartNet();
   void CleanupNet();
   SDL_Thread *net_thread;
