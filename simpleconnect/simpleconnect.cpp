@@ -416,7 +416,10 @@ int SimpleConnect::HandleHostThread() {
       Uint8 *data = new Uint8[slots.size() * 20];
       for(unsigned int slot = 0; slot < slots.size(); ++slot) {
 	data[slot*20 + 0] = slots[slot].type;
-	data[slot*20 + 1] = slots[slot].ptype;
+	if(slots[slot].ptype == SC_PLAYER_LOCAL)
+	  data[slot*20 + 1] = SC_PLAYER_REMOTE;
+	else 
+	  data[slot*20 + 1] = slots[slot].ptype;
 	data[slot*20 + 2] = slots[slot].team;
 	data[slot*20 + 3] = slots[slot].color;
 	strncpy((char*)(data + slot*20 + 4),
@@ -424,6 +427,8 @@ int SimpleConnect::HandleHostThread() {
 	data[slot*20 + 19] = 0;
 	}
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	for(unsigned int slot = 0; slot < slots.size(); ++slot)
+	  if(slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_LOCAL;
 	int res = SDLNet_TCP_Send(*sock, data, slots.size() * 20);
 	if(res != (int)(slots.size() * 20)) {
 	  SDLNet_TCP_Close(*sock);
@@ -431,6 +436,8 @@ int SimpleConnect::HandleHostThread() {
 	  fprintf(stderr, "WARNING: A socket that was connected failed!\n");
 	  continue;
 	  }
+	for(unsigned int slot = 0; slot < slots.size(); ++slot)
+	  if(slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_REMOTE;
 	}
       delete [] data;
       slots_send = false;
