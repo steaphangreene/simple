@@ -80,6 +80,14 @@ struct SC_Host {
   bool changed;
   };
 
+struct SlotData {
+  SC_SlotType type;
+  Uint8 team;
+  Uint8 color;
+  Uint8 present;
+  Sint8 playername[16];
+  };
+
 class SimpleConnect : public SG_Compound {
 public:
   SimpleConnect();
@@ -106,7 +114,7 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *scanb;
 
-  vector<SC_SlotType> slots;
+  vector<SlotData> slots;
 
   string mapname;
   string nettag;

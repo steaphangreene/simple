@@ -37,6 +37,12 @@ enum SCAct {
   SC_ACT_MAX
   };
 
+struct DataPacket {
+  Uint8 act;
+  Sint8 mapname[32];
+  Sint8 tag[1];
+  };
+
 SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   mode = SC_MODE_NONE;
   prop_flags = 0;
@@ -100,7 +106,35 @@ void SimpleConnect::SetTag(const string &tag) {
   }
 
 void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
-  slots = slts;
+  SlotData data = { SC_SLOT_NONE, 0 };
+  slots.clear();
+  vector<SC_SlotType>::const_iterator slot = slts.begin();
+  for(; slot != slts.end(); ++slot) {
+    data.type = (*slot);
+    sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
+    slots.push_back(data);
+    }
+  }
+
+void SimpleConnect::InitSlots() {
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  Resize(8, HEADER_SIZE + slots.size());
+  for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+    SG_StickyButton *meb = new SG_StickyButton("Me");
+    SG_TextArea *name = NULL;
+    if(slot == 0) {
+      meb->TurnOn();
+      name = new SG_TextArea("Local Player");
+      }
+    else {
+      name = new SG_TextArea("AI Player");
+      }
+    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
+    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
+
+    AddWidget(new SG_TextArea((char*)(slots[slot].playername)),
+	1, slot+HEADER_SIZE, 3, 1);
+    }
   }
 
 void SimpleConnect::Host() {
@@ -179,12 +213,6 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 //  bool SimpleConnect::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SimpleConnect::Default_Mouse_Cursor = NULL;
-
-struct DataPacket {
-  Uint8 act;
-  Sint8 mapname[32];
-  Sint8 tag[1];
-  };
 
 int SimpleConnect::HandleSearchThread() {
   UDPpacket *inpacket =
@@ -299,14 +327,23 @@ int SimpleConnect::HandleHostThread() {
 
     TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
     while(tmpsock) {
-      Uint8 *data = new Uint8[slots.size() + 1];
-      data[0] = slots.size();
-      for(unsigned int slot = 0; slot < slots.size(); ++slot) {
-	data[slot+1] = slots[slot];
+      Uint8 num = slots.size();
+      int res = SDLNet_TCP_Send(tmpsock, &num, 1);
+      if(res == 1) {
+	Uint8 *data = new Uint8[slots.size() * 20];
+	for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+	  data[slot*20 + 0] = slots[slot].type;
+	  data[slot*20 + 1] = slots[slot].team;
+	  data[slot*20 + 2] = slots[slot].color;
+	  data[slot*20 + 3] = slots[slot].present;
+	  strncpy((char*)(data + slot*20 + 4),
+		(char*)(slots[slot].playername), 15);
+	  data[slot*20 + 19] = 0;
+	  }
+	res = SDLNet_TCP_Send(tmpsock, data, slots.size() * 20);
+	delete [] data;
 	}
-      int res = SDLNet_TCP_Send(tmpsock, data, slots.size() + 1);
-      delete data;
-      if(res != (int)(slots.size() + 1)) {
+      if(res != (int)(slots.size() * 20)) {
 	SDLNet_TCP_Close(tmpsock);
 	fprintf(stderr, "WARNING: Got connection from socket which failed!\n");
 	continue;
@@ -377,14 +414,17 @@ int SimpleConnect::HandleSlaveThread() {
     return 1;
     }
 
-  { Uint8 num_slots, data;
+  { Uint8 num_slots;
     SDLNet_TCP_Recv(sock, &num_slots, 1);
-    vector<SC_SlotType> slts;
+    slots.clear();
+    slots.resize(num_slots);
     for(int sl = 0; sl < num_slots; ++sl) {
-      SDLNet_TCP_Recv(sock, &data, 1);
-      slts.push_back((SC_SlotType)data);
+      SDLNet_TCP_Recv(sock, &(slots[sl].type), 1);
+      SDLNet_TCP_Recv(sock, &(slots[sl].team), 1);
+      SDLNet_TCP_Recv(sock, &(slots[sl].color), 1);
+      SDLNet_TCP_Recv(sock, &(slots[sl].present), 1);
+      SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
       }
-    SetSlots(slts);
     InitSlots();
     }
 
@@ -437,22 +477,4 @@ void SimpleConnect::StartNet() {
     net_thread = SDL_CreateThread(host_thread_handler, (void*)(this));
   else if(mode == SC_MODE_SLAVE)
     net_thread = SDL_CreateThread(slave_thread_handler, (void*)(this));
-  }
-
-void SimpleConnect::InitSlots() {
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
-  Resize(8, HEADER_SIZE + slots.size());
-  for(unsigned int slot = 0; slot < slots.size(); ++slot) {
-    SG_StickyButton *meb = new SG_StickyButton("Me");
-    SG_TextArea *name = NULL;
-    if(slot == 0) {
-      meb->TurnOn();
-      name = new SG_TextArea("Local Player");
-      }
-    else {
-      name = new SG_TextArea("AI Player");
-      }
-    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
-    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
-    }
   }
