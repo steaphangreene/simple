@@ -48,6 +48,8 @@ public:
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
 
+  virtual void ClearCol(int xel);
+  virtual void ClearRow(int yel);
   virtual void Resize(int xsz, int ysz);
   virtual void AddCol(int xel);
   virtual void AddRow(int yel);

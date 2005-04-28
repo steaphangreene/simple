@@ -256,6 +256,36 @@ void SG_Table::AddRow(int yel) {
   SendYResize();
   }
 
+void SG_Table::ClearCol(int xel) {
+  if(xel >= xsize || xel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(xel >= itrg->xpos && xel < itrg->xpos + itrg->xsize) {
+      itrw = widgets.erase(itrw);	//Remove widgets that get nailed
+      itrg = wgeom.erase(itrg);
+      --itrw;  // Undo ++itrw from for() loop.
+      --itrg;  // Undo ++itrg from for() loop.
+      }
+    }
+  }
+
+void SG_Table::ClearRow(int yel) {
+  if(yel >= ysize || yel < 0) return;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(yel >= itrg->ypos && yel < itrg->ypos + itrg->ysize) {
+      itrw = widgets.erase(itrw);	//Remove widgets that get nailed
+      itrg = wgeom.erase(itrg);
+      --itrw;  // Undo ++itrw from for() loop.
+      --itrg;  // Undo ++itrg from for() loop.
+      }
+    }
+  }
+
 void SG_Table::RemoveCol(int xel) {
   if(xel >= xsize || xel < 0) return;
 
@@ -275,6 +305,7 @@ void SG_Table::RemoveCol(int xel) {
   --xsize;
   SendXResize();
   }
+
 
 void SG_Table::RemoveRow(int yel) {
   if(yel >= ysize || yel < 0) return;
