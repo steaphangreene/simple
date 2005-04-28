@@ -1,2 +1,4 @@
 Veritfy with UDP right before TCP attempt - to try to be sure other is there.
 Add ability to cancel/obsolete TCP attempts to get around SDL's TCP timeout.
+
+Add remote AI support?
