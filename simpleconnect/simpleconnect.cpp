@@ -28,7 +28,8 @@ using namespace std;
 #include "../simplegui/sg_events.h"
 #include "../simplegui/sg_stickybutton.h"
 
-#define HEADER_SIZE 1
+#define HEADER_SIZE	1
+#define BASE_TAG	"SC-0000:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -120,7 +121,7 @@ bool SimpleConnect::Render(unsigned long cur_time) {
   }
 
 void SimpleConnect::SetTag(const string &tag) {
-  nettag = tag;
+  nettag = string(BASE_TAG) + tag;
   }
 
 void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
