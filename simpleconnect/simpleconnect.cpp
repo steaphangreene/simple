@@ -129,8 +129,8 @@ void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
   nettag = tag;
   mode = SC_MODE_SLAVE;
   Resize(8, 1);		//Clear any list widgets
-  Resize(8, 2);
-  AddWidget(new SG_TextArea("Connecting..."), 1, 1, 6, 1);
+  ClearRow(0);		//Clear header if present
+  AddWidget(new SG_TextArea("Connecting..."), 1, 0, 6, 1);
   StartNet();
   }
 
