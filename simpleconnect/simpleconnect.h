@@ -115,6 +115,8 @@ protected:
   SG_Button *scanb;
 
   vector<SlotData> slots;
+  bool slots_dirty;
+  bool slots_send;
 
   string mapname;
   string nettag;

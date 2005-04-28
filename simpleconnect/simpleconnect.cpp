@@ -98,6 +98,19 @@ bool SimpleConnect::Render(unsigned long cur_time) {
       }
     SDL_mutexV(net_mutex);
     }
+
+  else if(mode == SC_MODE_HOST || mode == SC_MODE_SLAVE) {
+    SDL_mutexP(net_mutex);
+    if(slots_dirty) InitSlots();
+    slots_dirty = false;
+    SDL_mutexV(net_mutex);
+    }
+
+  else if(mode == SC_MODE_CONFIG) {
+    if(slots_dirty) InitSlots();
+    slots_dirty = false;
+    }
+
   return SG_Compound::Render(cur_time);
   }
 
@@ -148,7 +161,8 @@ void SimpleConnect::Host() {
     exit(1);
     }
   mode = SC_MODE_HOST;
-  InitSlots();
+  slots_dirty = true;
+  slots_send = true;
   StartNet();
   }
 
@@ -184,7 +198,7 @@ void SimpleConnect::Config() {
     exit(1);
     }
   mode = SC_MODE_CONFIG;
-  InitSlots();
+  slots_dirty = true;
   }
 
 void SimpleConnect::Reset() {
@@ -327,27 +341,9 @@ int SimpleConnect::HandleHostThread() {
 
     TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
     while(tmpsock) {
-      Uint8 num = slots.size();
-      int res = SDLNet_TCP_Send(tmpsock, &num, 1);
-      if(res == 1) {
-	Uint8 *data = new Uint8[slots.size() * 20];
-	for(unsigned int slot = 0; slot < slots.size(); ++slot) {
-	  data[slot*20 + 0] = slots[slot].type;
-	  data[slot*20 + 1] = slots[slot].team;
-	  data[slot*20 + 2] = slots[slot].color;
-	  data[slot*20 + 3] = slots[slot].present;
-	  strncpy((char*)(data + slot*20 + 4),
-		(char*)(slots[slot].playername), 15);
-	  data[slot*20 + 19] = 0;
-	  }
-	res = SDLNet_TCP_Send(tmpsock, data, slots.size() * 20);
-	delete [] data;
-	}
-      if(res != (int)(slots.size() * 20)) {
-	SDLNet_TCP_Close(tmpsock);
-	fprintf(stderr, "WARNING: Got connection from socket which failed!\n");
-	continue;
-	}
+      SDL_mutexP(net_mutex);
+      slots_send = true;
+      SDL_mutexV(net_mutex);
 
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
@@ -366,10 +362,47 @@ int SimpleConnect::HandleHostThread() {
       tmpsock = SDLNet_TCP_Accept(serversock);	// Get the next one (if present)
       }
 
+    set<TCPsocket> toremove;
+    set<TCPsocket>::iterator sock;
+
+    SDL_mutexP(net_mutex);
+    if(slots_send) {
+      Uint8 num = slots.size();
+      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	SDLNet_TCP_Send(*sock, &num, 1);
+	}
+      Uint8 *data = new Uint8[slots.size() * 20];
+      for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+	data[slot*20 + 0] = slots[slot].type;
+	data[slot*20 + 1] = slots[slot].team;
+	data[slot*20 + 2] = slots[slot].color;
+	data[slot*20 + 3] = slots[slot].present;
+	strncpy((char*)(data + slot*20 + 4),
+		(char*)(slots[slot].playername), 15);
+	data[slot*20 + 19] = 0;
+	}
+      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	int res = SDLNet_TCP_Send(*sock, data, slots.size() * 20);
+	if(res != (int)(slots.size() * 20)) {
+	  SDLNet_TCP_Close(*sock);
+	  toremove.insert(*sock);
+	  fprintf(stderr, "WARNING: A socket that was connected failed!\n");
+	  continue;
+	  }
+	}
+      delete [] data;
+      slots_send = false;
+      }
+    SDL_mutexV(net_mutex);
+
+    for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
+      tcpset.erase(*sock);
+      SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
+      SDLNet_TCP_Close(*sock);
+      }
+
     if(tcpset.size() > 0) {
-      set<TCPsocket> toremove;
       SDLNet_CheckSockets(tcpset_sdl, 10);
-      set<TCPsocket>::iterator sock;
 
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
 	if(SDLNet_SocketReady(*sock)) {
@@ -414,26 +447,32 @@ int SimpleConnect::HandleSlaveThread() {
     return 1;
     }
 
-  { Uint8 num_slots;
-    SDLNet_TCP_Recv(sock, &num_slots, 1);
-    slots.clear();
-    slots.resize(num_slots);
-    for(int sl = 0; sl < num_slots; ++sl) {
-      SDLNet_TCP_Recv(sock, &(slots[sl].type), 1);
-      SDLNet_TCP_Recv(sock, &(slots[sl].team), 1);
-      SDLNet_TCP_Recv(sock, &(slots[sl].color), 1);
-      SDLNet_TCP_Recv(sock, &(slots[sl].present), 1);
-      SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
-      }
-    InitSlots();
-    }
-
   SDLNet_SocketSet tcpset_sdl = SDLNet_AllocSocketSet(1);
   SDLNet_TCP_AddSocket(tcpset_sdl, sock);
 
   while(!exiting) {
     SDLNet_CheckSockets(tcpset_sdl, 10);
     if(SDLNet_SocketReady(sock)) {
+      Uint8 num_slots;
+      SDLNet_TCP_Recv(sock, &num_slots, 1);
+      SDL_mutexP(net_mutex);
+      slots.clear();
+      slots.resize(num_slots);
+      for(int sl = 0; sl < num_slots; ++sl) {
+	int comp = 0;
+	comp += SDLNet_TCP_Recv(sock, &(slots[sl].type), 1);
+	comp += SDLNet_TCP_Recv(sock, &(slots[sl].team), 1);
+	comp += SDLNet_TCP_Recv(sock, &(slots[sl].color), 1);
+	comp += SDLNet_TCP_Recv(sock, &(slots[sl].present), 1);
+	comp += SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
+	if(comp != 20) {
+	  printf("ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());
+	  return 1;
+	  }
+	}
+      slots_dirty = true;
+      SDL_mutexV(net_mutex);
+
       fprintf(stderr, "DEBUG: Got data from server\n");
       }
     }
@@ -458,6 +497,8 @@ int SimpleConnect::slave_thread_handler(void *me) {
 void SimpleConnect::CleanupNet() {
   exiting = true;
   rescan = false;
+  slots_dirty = false;
+  slots_send = false;
   if(net_thread) SDL_WaitThread(net_thread, NULL);
   net_thread = NULL;
   if(net_mutex) SDL_DestroyMutex(net_mutex);
