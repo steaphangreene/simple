@@ -56,13 +56,14 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
   AddWidget(labelb, 0, 0, 6, 1);
   scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(scanb, 7, 0, 1, 1);
+  startb = new SG_Button("Start", SG_COL_RAISED, SG_COL_LOW);
 
   port = DEFAULT_PORT;
 
   net_thread = NULL;
   net_mutex = NULL;
   exiting = false;
+  starting = false;
   netclaimed = false;
 
   conn.sock = NULL;
@@ -72,6 +73,8 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
 
 SimpleConnect::~SimpleConnect() {
   CleanupNet();
+  delete startb;
+  delete scanb;
   }
 
 bool SimpleConnect::Render(unsigned long cur_time) {
@@ -194,6 +197,7 @@ void SimpleConnect::Host() {
   slots_dirty = true;
   slots_send = true;
   StartNet();
+  AddWidget(startb, 7, 0, 1, 1);
   }
 
 void SimpleConnect::Search() {
@@ -205,6 +209,7 @@ void SimpleConnect::Search() {
   mode = SC_MODE_SEARCH;
   Resize(8, HEADER_SIZE);		//Clear any list widgets
   StartNet();
+  AddWidget(scanb, 7, 0, 1, 1);
   }
 
 void SimpleConnect::Connect(const IPaddress &location) {
@@ -259,6 +264,13 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
       event->user.data1 = NULL;
       event->user.data2 = NULL;
       rescan = true;
+      return 1;
+      }
+    else if(event->user.data1 == (void *)(SG_Widget*)(startb)) {
+      event->user.code = SG_EVENT_CONNECTDONE;
+      event->user.data1 = (void*)(SG_Compound*)(this);
+      event->user.data2 = NULL;
+      starting = true;
       return 1;
       }
     }
@@ -429,7 +441,7 @@ int SimpleConnect::HandleHostThread() {
       num[0] = SC_ACT_DATA;
       num[1] = conn.slots.size();
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
-	SDLNet_TCP_Send(*sock, &num, 2);
+	SDLNet_TCP_Send(*sock, num, 2);
 	}
       Uint8 *data = new Uint8[conn.slots.size() * 20];
       for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
@@ -461,6 +473,20 @@ int SimpleConnect::HandleHostThread() {
       slots_send = false;
       }
     SDL_mutexV(net_mutex);
+
+    if(starting) {
+      starting = false;
+      Uint8 act = SC_ACT_START;
+      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+	int res = SDLNet_TCP_Send(*sock, &act, 1);
+	if(res != 1) {
+	  SDLNet_TCP_Close(*sock);
+	  toremove.insert(*sock);
+	  fprintf(stderr, "WARNING: A socket that was connected failed!\n");
+	  continue;
+	  }
+	}
+      }
 
     if(tcpset.size() > 0) {
       SDLNet_CheckSockets(conn.tcpset, 10);
@@ -539,7 +565,12 @@ int SimpleConnect::HandleSlaveThread() {
       Uint8 type = 0;
       SDLNet_TCP_Recv(conn.sock, &type, 1);
       if(type == SC_ACT_START) {
-	//FIXME: Implement this!
+	SDL_Event event;
+	event.type = SDL_SG_EVENT;
+	event.user.code = SG_EVENT_CONNECTDONE;
+	event.user.data1 = (void*)(SG_Compound*)(this);
+	event.user.data2 = NULL;
+	SDL_PushEvent(&event);
 	}
       else if(type != SC_ACT_DATA) {
 	fprintf(stderr, "ERROR: Got bad SimpleConnect action over TCP!\n");
@@ -605,6 +636,9 @@ void SimpleConnect::CleanupNet() {
   hosts.clear();
   joinmap.clear();
   specmap.clear();
+
+  RemoveWidget(startb);
+  RemoveWidget(scanb);
   }
 
 void SimpleConnect::StartNet() {

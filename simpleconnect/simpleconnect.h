@@ -22,6 +22,8 @@
 #ifndef SIMPLECONNECT_H
 #define SIMPLECONNECT_H
 
+#define SG_EVENT_CONNECTDONE	4000
+
 #ifndef DEFAULT_PORT
 #define DEFAULT_PORT 8942
 #endif
@@ -125,6 +127,7 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *scanb;
+  SG_Button *startb;
 
   SimpleConnections conn;
   bool slots_dirty;
@@ -156,6 +159,7 @@ protected:
 
   SDL_mutex *net_mutex;
   bool exiting;
+  bool starting;
   bool netclaimed;
   bool needtoscan;
   map<Uint64, SC_Host> hosts;
