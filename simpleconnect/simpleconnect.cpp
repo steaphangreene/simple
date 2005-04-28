@@ -364,8 +364,8 @@ int SimpleConnect::HandleHostThread() {
     TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
     while(tmpsock) {
       SDL_mutexP(net_mutex);
+
       slots_send = true;
-      SDL_mutexV(net_mutex);
 
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
@@ -380,6 +380,21 @@ int SimpleConnect::HandleHostThread() {
 	  SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
 	  }
 	}
+
+      vector<SlotData>::iterator slot = slots.begin();
+      for(; slot != slots.end(); ++slot) {
+	if((slot->ptype == SC_PLAYER_NONE || slot->ptype == SC_PLAYER_AI) && (
+		slot->type == SC_SLOT_PLAYER ||
+		slot->type == SC_SLOT_HUMANONLY ||
+		slot->type == SC_SLOT_OPTPLAYER ||
+		slot->type == SC_SLOT_OPTHUMANONLY)
+		) {
+	  slot->ptype = SC_PLAYER_REMOTE;
+	  slot->sock = tmpsock;
+	  }
+	}
+
+      SDL_mutexV(net_mutex);
 
       tmpsock = SDLNet_TCP_Accept(serversock);	// Get the next one (if present)
       }
