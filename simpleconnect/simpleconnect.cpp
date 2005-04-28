@@ -29,12 +29,14 @@ using namespace std;
 #include "../simplegui/sg_stickybutton.h"
 
 #define HEADER_SIZE	1
-#define BASE_TAG	"SC-0000:"
+#define BASE_TAG	"SC-0001:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
   SC_ACT_HOSTING,
   SC_ACT_LEAVING,
+  SC_ACT_DATA,
+  SC_ACT_START,
   SC_ACT_MAX
   };
 
@@ -353,7 +355,7 @@ int SimpleConnect::HandleHostThread() {
   SDLNet_ResolveHost(&serverip, NULL, port);	// Listener socket
   serversock=SDLNet_TCP_Open(&serverip);
   if(!serversock) {
-    printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+    fprintf(stderr, "ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
     exiting = true;
     return 1;
     }
@@ -423,9 +425,11 @@ int SimpleConnect::HandleHostThread() {
 
     SDL_mutexP(net_mutex);
     if(slots_send) {
-      Uint8 num = conn.slots.size();
+      Uint8 num[2];
+      num[0] = SC_ACT_DATA;
+      num[1] = conn.slots.size();
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
-	SDLNet_TCP_Send(*sock, &num, 1);
+	SDLNet_TCP_Send(*sock, &num, 2);
 	}
       Uint8 *data = new Uint8[conn.slots.size() * 20];
       for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
@@ -519,7 +523,7 @@ int SimpleConnect::HandleSlaveThread() {
 
     sock=SDLNet_TCP_Open(&connect_to);
     if(!sock) {
-      printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+      fprintf(stderr, "ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
       exiting = true;
       return 1;
       }
@@ -532,23 +536,35 @@ int SimpleConnect::HandleSlaveThread() {
   while(!exiting) {
     SDLNet_CheckSockets(conn.tcpset, 10);
     if(SDLNet_SocketReady(conn.sock)) {
-      Uint8 num_slots;
-      SDLNet_TCP_Recv(conn.sock, &num_slots, 1);
-      SDL_mutexP(net_mutex);
-      conn.slots.clear();
-      conn.slots.resize(num_slots);
-      for(int sl = 0; sl < num_slots; ++sl) {
-	int comp = 0;
-	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].type), 1);
-	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].ptype), 1);
-	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].team), 1);
-	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].color), 1);
-	comp += SDLNet_TCP_Recv(conn.sock, conn.slots[sl].playername, 16);
-	if(comp != 20) {
-	  printf("ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());
-	  exiting = true;
-	  SDL_mutexV(net_mutex);
-	  return 1;
+      Uint8 type = 0;
+      SDLNet_TCP_Recv(conn.sock, &type, 1);
+      if(type == SC_ACT_START) {
+	//FIXME: Implement this!
+	}
+      else if(type != SC_ACT_DATA) {
+	fprintf(stderr, "ERROR: Got bad SimpleConnect action over TCP!\n");
+	exiting = true;
+	return 1;
+	}
+      else {
+	Uint8 num_slots;
+	SDLNet_TCP_Recv(conn.sock, &num_slots, 1);
+	SDL_mutexP(net_mutex);
+	conn.slots.clear();
+	conn.slots.resize(num_slots);
+	for(int sl = 0; sl < num_slots; ++sl) {
+	  int comp = 0;
+	  comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].type), 1);
+	  comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].ptype), 1);
+	  comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].team), 1);
+	  comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].color), 1);
+	  comp += SDLNet_TCP_Recv(conn.sock, conn.slots[sl].playername, 16);
+	  if(comp != 20) {
+	    fprintf(stderr, "ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());
+	    exiting = true;
+	    SDL_mutexV(net_mutex);
+	    return 1;
+	    }
 	  }
 	}
       slots_dirty = true;
