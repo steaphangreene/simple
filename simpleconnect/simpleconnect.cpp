@@ -61,6 +61,8 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   net_mutex = NULL;
   exiting = false;
   netclaimed = false;
+
+  conn.sock = NULL;
   }
 
 SimpleConnect::~SimpleConnect() {
