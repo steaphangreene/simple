@@ -60,6 +60,7 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   net_thread = NULL;
   net_mutex = NULL;
   exiting = false;
+  netclaimed = false;
   }
 
 SimpleConnect::~SimpleConnect() {
@@ -120,7 +121,7 @@ void SimpleConnect::SetTag(const string &tag) {
 
 void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   SlotData data = { SC_SLOT_NONE, 0 };
-  slots.clear();
+  conn.slots.clear();
 
   bool placed_local = false;
   vector<SC_SlotType>::const_iterator slot = slts.begin();
@@ -137,28 +138,28 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
       data.ptype = SC_PLAYER_NONE;
       }
     sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
-    slots.push_back(data);
+    conn.slots.push_back(data);
     }
   }
 
 void SimpleConnect::InitSlots() {
   Resize(8, HEADER_SIZE);		//Clear any list widgets
-  Resize(8, HEADER_SIZE + slots.size());
+  Resize(8, HEADER_SIZE + conn.slots.size());
 
-  for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+  for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
     SG_StickyButton *meb = new SG_StickyButton("Me");
     SG_TextArea *name = NULL;
-    if(slots[slot].ptype == SC_PLAYER_LOCAL) {
+    if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) {
       meb->TurnOn();
       name = new SG_TextArea("Local Player");
       }
-    else if(slots[slot].ptype == SC_PLAYER_REMOTE) {
+    else if(conn.slots[slot].ptype == SC_PLAYER_REMOTE) {
       name = new SG_TextArea("Remote Player");
       }
-    else if(slots[slot].ptype == SC_PLAYER_AI) {
+    else if(conn.slots[slot].ptype == SC_PLAYER_AI) {
       name = new SG_TextArea("AI Player");
       }
-    else if(slots[slot].ptype == SC_PLAYER_NONE) {
+    else if(conn.slots[slot].ptype == SC_PLAYER_NONE) {
       name = new SG_TextArea("<Open>");
       }
     else {
@@ -167,7 +168,7 @@ void SimpleConnect::InitSlots() {
     AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
     AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
 
-    AddWidget(new SG_TextArea((char*)(slots[slot].playername)),
+    AddWidget(new SG_TextArea((char*)(conn.slots[slot].playername)),
 	1, slot+HEADER_SIZE, 3, 1);
     }
   }
@@ -178,7 +179,7 @@ void SimpleConnect::Host() {
     fprintf(stderr, "ERROR: Tag not set before SimpleConnect::Host()\n");
     exit(1);
     }
-  if(slots.size() == 0) {
+  if(conn.slots.size() == 0) {
     fprintf(stderr, "ERROR: Slots not set before SimpleConnect::Host()\n");
     exit(1);
     }
@@ -215,7 +216,7 @@ void SimpleConnect::Connect(const IPaddress &location) {
 
 void SimpleConnect::Config() {
   CleanupNet();
-  if(slots.size() == 0) {
+  if(conn.slots.size() == 0) {
     fprintf(stderr, "ERROR: Slots not set before SimpleConnect::Config()\n");
     exit(1);
     }
@@ -225,9 +226,20 @@ void SimpleConnect::Config() {
 
 void SimpleConnect::Reset() {
   CleanupNet();
-  slots.clear();
+  conn.slots.clear();
   mode = SC_MODE_NONE;
   Resize(8, HEADER_SIZE);		//Clear any list widgets
+  }
+
+const SimpleConnections &SimpleConnect::ClaimConnections() {
+  static SimpleConnections ret;
+  if(mode != SC_MODE_NONE) {	//Only reset once - can be called multiple times
+    ret = conn;
+    netclaimed = true;
+    Reset();
+    netclaimed = false;
+    }
+  return ret;
   }
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
@@ -329,8 +341,7 @@ int SimpleConnect::HandleHostThread() {
 
   int tcpset_cap = 16;
   set<TCPsocket> tcpset;
-  SDLNet_SocketSet tcpset_sdl = NULL;
-  tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
+  conn.tcpset = SDLNet_AllocSocketSet(tcpset_cap);
 
   TCPsocket serversock = NULL;
   IPaddress serverip;
@@ -370,21 +381,21 @@ int SimpleConnect::HandleHostThread() {
 
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
-	SDLNet_TCP_AddSocket(tcpset_sdl, tmpsock);
+	SDLNet_TCP_AddSocket(conn.tcpset, tmpsock);
 	}
       else {	// Enlarge SDL Socket Set
-	SDLNet_FreeSocketSet(tcpset_sdl);
+	SDLNet_FreeSocketSet(conn.tcpset);
 	tcpset_cap *= 2;
-	tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
+	conn.tcpset = SDLNet_AllocSocketSet(tcpset_cap);
 	set<TCPsocket>::iterator sock = tcpset.begin();
 	for(; sock != tcpset.end(); ++sock) {
-	  SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
+	  SDLNet_TCP_AddSocket(conn.tcpset, (*sock));
 	  }
 	}
 
       fprintf(stderr, "Finding a slot!\n");
-      vector<SlotData>::iterator slot = slots.begin();
-      for(; slot != slots.end(); ++slot) {
+      vector<SlotData>::iterator slot = conn.slots.begin();
+      for(; slot != conn.slots.end(); ++slot) {
 	if((slot->ptype == SC_PLAYER_NONE || slot->ptype == SC_PLAYER_AI) && (
 		slot->type == SC_SLOT_PLAYER ||
 		slot->type == SC_SLOT_HUMANONLY ||
@@ -409,35 +420,35 @@ int SimpleConnect::HandleHostThread() {
 
     SDL_mutexP(net_mutex);
     if(slots_send) {
-      Uint8 num = slots.size();
+      Uint8 num = conn.slots.size();
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
 	SDLNet_TCP_Send(*sock, &num, 1);
 	}
-      Uint8 *data = new Uint8[slots.size() * 20];
-      for(unsigned int slot = 0; slot < slots.size(); ++slot) {
-	data[slot*20 + 0] = slots[slot].type;
-	if(slots[slot].ptype == SC_PLAYER_LOCAL)
+      Uint8 *data = new Uint8[conn.slots.size() * 20];
+      for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+	data[slot*20 + 0] = conn.slots[slot].type;
+	if(conn.slots[slot].ptype == SC_PLAYER_LOCAL)
 	  data[slot*20 + 1] = SC_PLAYER_REMOTE;
 	else 
-	  data[slot*20 + 1] = slots[slot].ptype;
-	data[slot*20 + 2] = slots[slot].team;
-	data[slot*20 + 3] = slots[slot].color;
+	  data[slot*20 + 1] = conn.slots[slot].ptype;
+	data[slot*20 + 2] = conn.slots[slot].team;
+	data[slot*20 + 3] = conn.slots[slot].color;
 	strncpy((char*)(data + slot*20 + 4),
-		(char*)(slots[slot].playername), 15);
+		(char*)(conn.slots[slot].playername), 15);
 	data[slot*20 + 19] = 0;
 	}
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
-	for(unsigned int slot = 0; slot < slots.size(); ++slot)
-	  if(slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_LOCAL;
-	int res = SDLNet_TCP_Send(*sock, data, slots.size() * 20);
-	if(res != (int)(slots.size() * 20)) {
+	for(unsigned int slot = 0; slot < conn.slots.size(); ++slot)
+	  if(conn.slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_LOCAL;
+	int res = SDLNet_TCP_Send(*sock, data, conn.slots.size() * 20);
+	if(res != (int)(conn.slots.size() * 20)) {
 	  SDLNet_TCP_Close(*sock);
 	  toremove.insert(*sock);
 	  fprintf(stderr, "WARNING: A socket that was connected failed!\n");
 	  continue;
 	  }
-	for(unsigned int slot = 0; slot < slots.size(); ++slot)
-	  if(slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_REMOTE;
+	for(unsigned int slot = 0; slot < conn.slots.size(); ++slot)
+	  if(conn.slots[slot].sock == *sock) data[slot*20 + 1] = SC_PLAYER_REMOTE;
 	}
       delete [] data;
       slots_send = false;
@@ -446,12 +457,12 @@ int SimpleConnect::HandleHostThread() {
 
     for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
       tcpset.erase(*sock);
-      SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
+      SDLNet_TCP_DelSocket(conn.tcpset, *sock);
       SDLNet_TCP_Close(*sock);
       }
 
     if(tcpset.size() > 0) {
-      SDLNet_CheckSockets(tcpset_sdl, 10);
+      SDLNet_CheckSockets(conn.tcpset, 10);
 
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
 	if(SDLNet_SocketReady(*sock)) {
@@ -462,7 +473,7 @@ int SimpleConnect::HandleHostThread() {
 
       for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
 	tcpset.erase(*sock);
-	SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
+	SDLNet_TCP_DelSocket(conn.tcpset, *sock);
 	SDLNet_TCP_Close(*sock);
 	}
       }
@@ -471,13 +482,17 @@ int SimpleConnect::HandleHostThread() {
       }
     }
 
-  set<TCPsocket>::iterator sock = tcpset.begin();
-  for(; sock != tcpset.end(); ++sock) {
-    SDLNet_TCP_Close(*sock);
-    }
-  tcpset.clear();
+  if(!netclaimed) {	// Aborting, not connecting
+    set<TCPsocket>::iterator sock = tcpset.begin();
+    for(; sock != tcpset.end(); ++sock) {
+      SDLNet_TCP_Close(*sock);
+      }
+    tcpset.clear();
 
-  SDLNet_FreeSocketSet(tcpset_sdl);
+    SDLNet_FreeSocketSet(conn.tcpset);
+    conn.tcpset = NULL;
+    }
+
   SDLNet_TCP_Close(serversock);
 
   SDLNet_UDP_Close(udpsock);
@@ -488,33 +503,35 @@ int SimpleConnect::HandleHostThread() {
   }
 
 int SimpleConnect::HandleSlaveThread() {
-  TCPsocket sock = NULL;
+  { TCPsocket sock = NULL;
 
-  sock=SDLNet_TCP_Open(&connect_to);
-  if(!sock) {
-    printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
-    exiting = true;
-    return 1;
+    sock=SDLNet_TCP_Open(&connect_to);
+    if(!sock) {
+      printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+      exiting = true;
+      return 1;
+      }
+    conn.sock = sock;
     }
 
-  SDLNet_SocketSet tcpset_sdl = SDLNet_AllocSocketSet(1);
-  SDLNet_TCP_AddSocket(tcpset_sdl, sock);
+  conn.tcpset = SDLNet_AllocSocketSet(1);
+  SDLNet_TCP_AddSocket(conn.tcpset, conn.sock);
 
   while(!exiting) {
-    SDLNet_CheckSockets(tcpset_sdl, 10);
-    if(SDLNet_SocketReady(sock)) {
+    SDLNet_CheckSockets(conn.tcpset, 10);
+    if(SDLNet_SocketReady(conn.sock)) {
       Uint8 num_slots;
-      SDLNet_TCP_Recv(sock, &num_slots, 1);
+      SDLNet_TCP_Recv(conn.sock, &num_slots, 1);
       SDL_mutexP(net_mutex);
-      slots.clear();
-      slots.resize(num_slots);
+      conn.slots.clear();
+      conn.slots.resize(num_slots);
       for(int sl = 0; sl < num_slots; ++sl) {
 	int comp = 0;
-	comp += SDLNet_TCP_Recv(sock, &(slots[sl].type), 1);
-	comp += SDLNet_TCP_Recv(sock, &(slots[sl].ptype), 1);
-	comp += SDLNet_TCP_Recv(sock, &(slots[sl].team), 1);
-	comp += SDLNet_TCP_Recv(sock, &(slots[sl].color), 1);
-	comp += SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
+	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].type), 1);
+	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].ptype), 1);
+	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].team), 1);
+	comp += SDLNet_TCP_Recv(conn.sock, &(conn.slots[sl].color), 1);
+	comp += SDLNet_TCP_Recv(conn.sock, conn.slots[sl].playername, 16);
 	if(comp != 20) {
 	  printf("ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());
 	  exiting = true;
@@ -527,8 +544,12 @@ int SimpleConnect::HandleSlaveThread() {
       }
     }
 
-  SDLNet_FreeSocketSet(tcpset_sdl);
-  SDLNet_TCP_Close(sock);
+  if(!netclaimed) {	// Aborting, not connecting
+    SDLNet_FreeSocketSet(conn.tcpset);
+    conn.tcpset = NULL;
+
+    SDLNet_TCP_Close(conn.sock);
+    }
   return 0;
   }
 

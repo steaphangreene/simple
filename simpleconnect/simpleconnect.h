@@ -92,6 +92,12 @@ struct SlotData {
   TCPsocket sock;
   };
 
+struct SimpleConnections {
+  SDLNet_SocketSet tcpset;
+  vector<SlotData> slots;
+  TCPsocket sock;
+  };
+
 class SimpleConnect : public SG_Compound {
 public:
   SimpleConnect();
@@ -113,12 +119,14 @@ public:
 
   void SetMapName(const string &map) { mapname = map; };
   const string &MapName() { return mapname; };
+
+  const SimpleConnections &ClaimConnections();
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *scanb;
 
-  vector<SlotData> slots;
+  SimpleConnections conn;
   bool slots_dirty;
   bool slots_send;
 
@@ -148,6 +156,7 @@ protected:
 
   SDL_mutex *net_mutex;
   bool exiting;
+  bool netclaimed;
   bool needtoscan;
   map<Uint64, SC_Host> hosts;
   };
