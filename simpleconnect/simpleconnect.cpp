@@ -269,6 +269,12 @@ int SimpleConnect::HandleNetThread() {
       }
     }
 
+  set<TCPsocket>::iterator sock = tcpset.begin();
+  for(; sock != tcpset.end(); ++sock) {
+    SDLNet_TCP_Close(*sock);
+    }
+  tcpset.clear();
+
   if(tcpset_sdl) SDLNet_FreeSocketSet(tcpset_sdl);
   if(serversock) SDLNet_TCP_Close(serversock);
 
