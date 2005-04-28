@@ -110,6 +110,8 @@ protected:
   SC_Mode mode;
   unsigned int prop_flags, change_flags;
 
+  void InitSlots();
+
   Uint16 port;
   IPaddress connect_to;
   bool rescan;

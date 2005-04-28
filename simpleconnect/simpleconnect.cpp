@@ -28,6 +28,8 @@ using namespace std;
 #include "../simplegui/sg_events.h"
 #include "../simplegui/sg_stickybutton.h"
 
+#define HEADER_SIZE 1
+
 enum SCAct {
   SC_ACT_QUERYING = 0,
   SC_ACT_HOSTING,
@@ -35,7 +37,7 @@ enum SCAct {
   SC_ACT_MAX
   };
 
-SimpleConnect::SimpleConnect() : SG_Compound(8, 1, 0.1, 0.1) {
+SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   mode = SC_MODE_NONE;
   prop_flags = 0;
   change_flags = 0;
@@ -51,8 +53,8 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, 1, 0.1, 0.1) {
     else {
       name = new SG_TextArea("AI Player");
       }
-    AddWidget(name, 4, slot+1, 4, 1);
-    AddWidget(meb, 0, slot+1, 1, 1);
+    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
+    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
     }
   SG_Widget *labelb =
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
@@ -79,25 +81,25 @@ bool SimpleConnect::Render(unsigned long cur_time) {
       if(host->second.changed) {
 	host->second.changed = false;
 	if(host->second.line < 0) {
-	  host->second.line = (ysize - 1);
-	  Resize(xsize, ysize+1);
+	  host->second.line = (ysize - HEADER_SIZE);
+	  Resize(xsize, ysize+HEADER_SIZE);
 	  }
 	else {			//Clear the old widgets
-	  ClearRow(1 + host->second.line);
+	  ClearRow(HEADER_SIZE + host->second.line);
 	  }
 
 	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
-		0, 1 + host->second.line, 2, 1);
+		0, HEADER_SIZE + host->second.line, 2, 1);
 	AddWidget(new SG_TextArea(host->second.mapname),
-		2, 1 + host->second.line, 4, 1);
+		2, HEADER_SIZE + host->second.line, 4, 1);
 
 	SG_Widget *but;
 	but = new SG_Button("Join");
-	AddWidget(but, 6, 1 + host->second.line);
+	AddWidget(but, 6, HEADER_SIZE + host->second.line);
 	joinmap[but] = host->second.address;
 
 	but = new SG_Button("Spec");
-	AddWidget(but, 7, 1 + host->second.line);
+	AddWidget(but, 7, HEADER_SIZE + host->second.line);
 	specmap[but] = host->second.address;
 	}
       }
@@ -125,7 +127,8 @@ void SimpleConnect::Host() {
     exit(1);
     }
   mode = SC_MODE_HOST;
-  Resize(8, 1);		//Clear any list widgets
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  InitSlots();
   StartNet();
   }
 
@@ -136,7 +139,7 @@ void SimpleConnect::Search() {
     exit(1);
     }
   mode = SC_MODE_SEARCH;
-  Resize(8, 1);		//Clear any list widgets
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
   StartNet();
   }
 
@@ -148,7 +151,7 @@ void SimpleConnect::Connect(const IPaddress &location) {
     }
   connect_to = location;
   mode = SC_MODE_SLAVE;
-  Resize(8, 1);		//Clear any list widgets
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
   ClearRow(0);		//Clear header if present
   AddWidget(new SG_TextArea("Connecting..."), 1, 0, 6, 1);
   StartNet();
@@ -161,14 +164,15 @@ void SimpleConnect::Config() {
     exit(1);
     }
   mode = SC_MODE_CONFIG;
-  Resize(8, 1);		//Clear any list widgets
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  InitSlots();
   }
 
 void SimpleConnect::Reset() {
   CleanupNet();
   slots.clear();
   mode = SC_MODE_NONE;
-  Resize(8, 1);		//Clear any list widgets
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
   }
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
@@ -422,4 +426,7 @@ void SimpleConnect::StartNet() {
     net_thread = SDL_CreateThread(host_thread_handler, (void*)(this));
   else if(mode == SC_MODE_SLAVE)
     net_thread = SDL_CreateThread(slave_thread_handler, (void*)(this));
+  }
+
+void SimpleConnect::InitSlots() {
   }
