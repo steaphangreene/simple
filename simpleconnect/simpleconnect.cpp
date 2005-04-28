@@ -121,9 +121,21 @@ void SimpleConnect::SetTag(const string &tag) {
 void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   SlotData data = { SC_SLOT_NONE, 0 };
   slots.clear();
+
+  bool placed_local = false;
   vector<SC_SlotType>::const_iterator slot = slts.begin();
   for(; slot != slts.end(); ++slot) {
     data.type = (*slot);
+    if((!placed_local) && (data.type < SC_SLOT_AIONLY)) {
+      data.ptype = SC_PLAYER_LOCAL;
+      placed_local = true;
+      }
+    else if(data.type < SC_SLOT_OPTPLAYER) {
+      data.ptype = SC_PLAYER_AI;
+      }
+    else {
+      data.ptype = SC_PLAYER_NONE;
+      }
     sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
     slots.push_back(data);
     }
@@ -132,15 +144,25 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
 void SimpleConnect::InitSlots() {
   Resize(8, HEADER_SIZE);		//Clear any list widgets
   Resize(8, HEADER_SIZE + slots.size());
+
   for(unsigned int slot = 0; slot < slots.size(); ++slot) {
     SG_StickyButton *meb = new SG_StickyButton("Me");
     SG_TextArea *name = NULL;
-    if(slot == 0) {
+    if(slots[slot].ptype == SC_PLAYER_LOCAL) {
       meb->TurnOn();
       name = new SG_TextArea("Local Player");
       }
-    else {
+    else if(slots[slot].ptype == SC_PLAYER_REMOTE) {
+      name = new SG_TextArea("Remote Player");
+      }
+    else if(slots[slot].ptype == SC_PLAYER_AI) {
       name = new SG_TextArea("AI Player");
+      }
+    else if(slots[slot].ptype == SC_PLAYER_NONE) {
+      name = new SG_TextArea("<Open>");
+      }
+    else {
+      name = new SG_TextArea("<Unknown>");
       }
     AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
     AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
@@ -374,10 +396,10 @@ int SimpleConnect::HandleHostThread() {
       Uint8 *data = new Uint8[slots.size() * 20];
       for(unsigned int slot = 0; slot < slots.size(); ++slot) {
 	data[slot*20 + 0] = slots[slot].type;
-	data[slot*20 + 1] = slots[slot].team;
-	data[slot*20 + 2] = slots[slot].color;
-	data[slot*20 + 3] = slots[slot].present;
-	strncpy((char*)(data + slot*20 + 4),
+	data[slot*20 + 1] = slots[slot].ptype;
+	data[slot*20 + 2] = slots[slot].team;
+	data[slot*20 + 3] = slots[slot].color;
+	strncpy((char*)(data + slot*20 + 5),
 		(char*)(slots[slot].playername), 15);
 	data[slot*20 + 19] = 0;
 	}
@@ -461,9 +483,9 @@ int SimpleConnect::HandleSlaveThread() {
       for(int sl = 0; sl < num_slots; ++sl) {
 	int comp = 0;
 	comp += SDLNet_TCP_Recv(sock, &(slots[sl].type), 1);
+	comp += SDLNet_TCP_Recv(sock, &(slots[sl].ptype), 1);
 	comp += SDLNet_TCP_Recv(sock, &(slots[sl].team), 1);
 	comp += SDLNet_TCP_Recv(sock, &(slots[sl].color), 1);
-	comp += SDLNet_TCP_Recv(sock, &(slots[sl].present), 1);
 	comp += SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
 	if(comp != 20) {
 	  printf("ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());

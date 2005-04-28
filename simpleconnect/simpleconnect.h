@@ -42,10 +42,13 @@ class SG_TextArea;
 enum SC_SlotType {
   SC_SLOT_NONE = 0,
   SC_SLOT_PLAYER,
-  SC_SLOT_OPTPLAYER,
   SC_SLOT_LOCALONLY,
   SC_SLOT_HUMANONLY,
   SC_SLOT_AIONLY,
+  SC_SLOT_OPTPLAYER,
+  SC_SLOT_OPTLOCALONLY,
+  SC_SLOT_OPTHUMANONLY,
+  SC_SLOT_OPTAIONLY,
   SC_SLOT_SPEC,
   SC_SLOT_MAX
   };
@@ -81,11 +84,12 @@ struct SC_Host {
   };
 
 struct SlotData {
-  SC_SlotType type;
+  Uint8 type;
+  Uint8 ptype;
   Uint8 team;
   Uint8 color;
-  Uint8 present;
   Sint8 playername[16];
+  TCPsocket sock;
   };
 
 class SimpleConnect : public SG_Compound {
