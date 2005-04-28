@@ -474,20 +474,6 @@ int SimpleConnect::HandleHostThread() {
       }
     SDL_mutexV(net_mutex);
 
-    if(starting) {
-      starting = false;
-      Uint8 act = SC_ACT_START;
-      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
-	int res = SDLNet_TCP_Send(*sock, &act, 1);
-	if(res != 1) {
-	  SDLNet_TCP_Close(*sock);
-	  toremove.insert(*sock);
-	  fprintf(stderr, "WARNING: A socket that was connected failed!\n");
-	  continue;
-	  }
-	}
-      }
-
     if(tcpset.size() > 0) {
       SDLNet_CheckSockets(conn.tcpset, 10);
 
@@ -521,6 +507,14 @@ int SimpleConnect::HandleHostThread() {
       tcpset.erase(*sock);
       SDLNet_TCP_DelSocket(conn.tcpset, *sock);
       SDLNet_TCP_Close(*sock);
+      }
+    }
+
+  if(starting) {
+    Uint8 act = SC_ACT_START;
+    set<TCPsocket>::iterator sock;
+    for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
+      SDLNet_TCP_Send(*sock, &act, 1);
       }
     }
 
@@ -561,11 +555,12 @@ int SimpleConnect::HandleSlaveThread() {
 
   while(!exiting) {
     SDLNet_CheckSockets(conn.tcpset, 10);
-    if(SDLNet_SocketReady(conn.sock)) {
+    if((!starting) && SDLNet_SocketReady(conn.sock)) {
       Uint8 type = 0;
       SDLNet_TCP_Recv(conn.sock, &type, 1);
       if(type == SC_ACT_START) {
 	SDL_Event event;
+	starting = true;
 	event.type = SDL_SG_EVENT;
 	event.user.code = SG_EVENT_CONNECTDONE;
 	event.user.data1 = (void*)(SG_Compound*)(this);
@@ -636,6 +631,8 @@ void SimpleConnect::CleanupNet() {
   hosts.clear();
   joinmap.clear();
   specmap.clear();
+
+  starting = false;
 
   RemoveWidget(startb);
   RemoveWidget(scanb);
