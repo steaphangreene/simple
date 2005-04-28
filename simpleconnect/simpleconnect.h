@@ -111,6 +111,8 @@ protected:
   Uint16 port;
   IPaddress connect_to;
   bool rescan;
+  map<SG_Widget*, IPaddress> joinmap;
+  map<SG_Widget*, IPaddress> specmap;
 
   static int search_thread_handler(void *me);
   int HandleSearchThread();

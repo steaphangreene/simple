@@ -90,8 +90,15 @@ bool SimpleConnect::Render(unsigned long cur_time) {
 		0, 1 + host->second.line, 2, 1);
 	AddWidget(new SG_TextArea(host->second.mapname),
 		2, 1 + host->second.line, 4, 1);
-	AddWidget(new SG_Button("Join"), 6, 1 + host->second.line);
-	AddWidget(new SG_Button("Spec"), 7, 1 + host->second.line);
+
+	SG_Widget *but;
+	but = new SG_Button("Join");
+	AddWidget(but, 6, 1 + host->second.line);
+	joinmap[but] = host->second.address;
+
+	but = new SG_Button("Spec");
+	AddWidget(but, 7, 1 + host->second.line);
+	specmap[but] = host->second.address;
 	}
       }
     SDL_mutexV(net_mutex);
@@ -122,6 +129,8 @@ void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
   nettag = tag;
   mode = SC_MODE_SLAVE;
   Resize(8, 1);		//Clear any list widgets
+  Resize(8, 2);
+  AddWidget(new SG_TextArea("Connecting..."), 1, 1, 6, 1);
   StartNet();
   }
 
@@ -141,7 +150,10 @@ void SimpleConnect::Reset() {
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
+    if(joinmap.count((SG_Widget*)(event->user.data1)) > 0) {
+      Connect(nettag, joinmap[(SG_Widget*)(event->user.data1)]);
+      }
+    else if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
       event->user.code = SG_EVENT_NEEDTORENDER;
       event->user.data1 = NULL;
       event->user.data2 = NULL;
@@ -331,138 +343,25 @@ int SimpleConnect::HandleHostThread() {
   }
 
 int SimpleConnect::HandleSlaveThread() {
-  UDPpacket *inpacket =
-	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
-  DataPacket *indata = (DataPacket*)(inpacket->data);
+  TCPsocket sock = NULL;
 
-  UDPpacket *outpacket =
-	SDLNet_AllocPacket(sizeof(DataPacket) + nettag.length());
-  DataPacket *outdata = (DataPacket*)(outpacket->data);
-  outpacket->len = sizeof(DataPacket) + nettag.length();
-  strcpy((char*)outdata->tag, nettag.c_str());
-
-  UDPsocket udpsock = NULL;
-  if(mode == SC_MODE_SEARCH) udpsock = SDLNet_UDP_Open(0);
-  else if(mode == SC_MODE_HOST) udpsock = SDLNet_UDP_Open(port);
-  else {
-    fprintf(stderr, "ERROR: Invalid mode in SimpleConnect network handler!\n");
-    }
-  if(!udpsock) {
-    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
-    exiting = true;
+  sock=SDLNet_TCP_Open(&connect_to);
+  if(!sock) {
+    printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
     return 1;
     }
-
-  int tcpset_cap = 16;
-  set<TCPsocket> tcpset;
-  SDLNet_SocketSet tcpset_sdl = NULL;
-
-  TCPsocket serversock = NULL;
-  if(mode == SC_MODE_HOST) {
-    IPaddress serverip;
-    SDLNet_ResolveHost(&serverip, NULL, port);	// Listener socket
-    serversock=SDLNet_TCP_Open(&serverip);
-    if(!serversock) {
-      printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
-      return 1;
-      }
-    tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
-    }
-
-  IPaddress broadcast_address = {0};
-  SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
-
-  //Temporary!
-  if(mode == SC_MODE_SEARCH) {
-    outpacket->address = broadcast_address;
-    outdata->act = SC_ACT_QUERYING;
-    if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-      fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
-      exiting = true;
-      return 1;
-      }
-    }
-  else if(mode == SC_MODE_HOST) {
-    outdata->act = SC_ACT_HOSTING;
-    }
+  SDLNet_SocketSet tcpset_sdl = SDLNet_AllocSocketSet(1);
+  SDLNet_TCP_AddSocket(tcpset_sdl, sock);
 
   while(!exiting) {
-    while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
-      if(!strcmp((char*)indata->tag, nettag.c_str())) {
-	if(mode == SC_MODE_HOST && indata->act == SC_ACT_QUERYING) {
-	  outpacket->address = inpacket->address;
-	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
-	    exiting = true;
-	    return 1;
-	    }
-	  }
-	else if(mode == SC_MODE_SEARCH && indata->act == SC_ACT_HOSTING) {
-	  SDL_mutexP(net_mutex);
-	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
-		| ((Uint64)(inpacket->address.port));
-	  hosts[entry].address = inpacket->address;
-	  hosts[entry].mapname = "Unknown";
-	  hosts[entry].changed = true;
-	  SDL_mutexV(net_mutex);
-	  }
-	}
-      }
-    if(mode == SC_MODE_HOST && serversock) {
-      TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
-      while(tmpsock) {
-	tcpset.insert(tmpsock);
-	if((int)(tcpset.size()) <= tcpset_cap) {
-	  SDLNet_TCP_AddSocket(tcpset_sdl, tmpsock);
-	  }
-	else {	// Enlarge SDL Socket Set
-	  SDLNet_FreeSocketSet(tcpset_sdl);
-	  tcpset_cap *= 2;
-	  tcpset_sdl = SDLNet_AllocSocketSet(tcpset_cap);
-	  set<TCPsocket>::iterator sock = tcpset.begin();
-	  for(; sock != tcpset.end(); ++sock) {
-	    SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
-	    }
-	  }
-	tmpsock = SDLNet_TCP_Accept(serversock);
-	}
-      }
-    if(tcpset.size() > 0) {
-      set<TCPsocket> toremove;
-      SDLNet_CheckSockets(tcpset_sdl, 10);
-      set<TCPsocket>::iterator sock;
-
-      for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
-	if(SDLNet_SocketReady(*sock)) {
-	  toremove.insert(*sock);
-	  fprintf(stderr, "DEBUG: Got data from socket (and closed it for now)\n");
-	  }
-	}
-
-      for(sock = toremove.begin(); sock != toremove.end(); ++sock) {
-	tcpset.erase(*sock);
-	SDLNet_TCP_DelSocket(tcpset_sdl, *sock);
-	SDLNet_TCP_Close(*sock);
-	}
-      }
-    else {
-      SDL_Delay(10);
+    SDLNet_CheckSockets(tcpset_sdl, 10);
+    if(SDLNet_SocketReady(sock)) {
+      fprintf(stderr, "DEBUG: Got data from server\n");
       }
     }
 
-  set<TCPsocket>::iterator sock = tcpset.begin();
-  for(; sock != tcpset.end(); ++sock) {
-    SDLNet_TCP_Close(*sock);
-    }
-  tcpset.clear();
-
-  if(tcpset_sdl) SDLNet_FreeSocketSet(tcpset_sdl);
-  if(serversock) SDLNet_TCP_Close(serversock);
-
-  SDLNet_UDP_Close(udpsock);
-
-  SDLNet_FreePacket(inpacket);
-  SDLNet_FreePacket(outpacket);
+  SDLNet_FreeSocketSet(tcpset_sdl);
+  SDLNet_TCP_Close(sock);
   return 0;
   }
 
@@ -486,6 +385,8 @@ void SimpleConnect::CleanupNet() {
   if(net_mutex) SDL_DestroyMutex(net_mutex);
   net_mutex = NULL;
   hosts.clear();
+  joinmap.clear();
+  specmap.clear();
   }
 
 void SimpleConnect::StartNet() {
