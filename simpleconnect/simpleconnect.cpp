@@ -385,6 +385,7 @@ int SimpleConnect::HandleSlaveThread() {
   for(int sl = 0; sl < num_slots; ++sl) {
     slts.push_back((SC_SlotType)data[sl]);
     }
+  delete data;
   SetSlots(slts);
   InitSlots();
 
