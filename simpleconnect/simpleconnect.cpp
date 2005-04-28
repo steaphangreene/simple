@@ -338,6 +338,7 @@ int SimpleConnect::HandleHostThread() {
   serversock=SDLNet_TCP_Open(&serverip);
   if(!serversock) {
     printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+    exiting = true;
     return 1;
     }
 
@@ -391,6 +392,7 @@ int SimpleConnect::HandleHostThread() {
 		) {
 	  slot->ptype = SC_PLAYER_REMOTE;
 	  slot->sock = tmpsock;
+	  slots_dirty = true;
 	  }
 	}
 
@@ -481,6 +483,7 @@ int SimpleConnect::HandleSlaveThread() {
   sock=SDLNet_TCP_Open(&connect_to);
   if(!sock) {
     printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
+    exiting = true;
     return 1;
     }
 
@@ -504,13 +507,13 @@ int SimpleConnect::HandleSlaveThread() {
 	comp += SDLNet_TCP_Recv(sock, slots[sl].playername, 16);
 	if(comp != 20) {
 	  printf("ERROR: SDLNet_TCP_Recv Failed: %s\n", SDLNet_GetError());
+	  exiting = true;
+	  SDL_mutexV(net_mutex);
 	  return 1;
 	  }
 	}
       slots_dirty = true;
       SDL_mutexV(net_mutex);
-
-      fprintf(stderr, "DEBUG: Got data from server\n");
       }
     }
 
