@@ -377,17 +377,16 @@ int SimpleConnect::HandleSlaveThread() {
     return 1;
     }
 
-  Uint8 num_slots;
-  SDLNet_TCP_Recv(sock, &num_slots, 1);
-  Uint8 *data = new Uint8[num_slots];
-  SDLNet_TCP_Recv(sock, data, num_slots);
-  vector<SC_SlotType> slts;
-  for(int sl = 0; sl < num_slots; ++sl) {
-    slts.push_back((SC_SlotType)data[sl]);
+  { Uint8 num_slots, data;
+    SDLNet_TCP_Recv(sock, &num_slots, 1);
+    vector<SC_SlotType> slts;
+    for(int sl = 0; sl < num_slots; ++sl) {
+      SDLNet_TCP_Recv(sock, &data, 1);
+      slts.push_back((SC_SlotType)data);
+      }
+    SetSlots(slts);
+    InitSlots();
     }
-  delete data;
-  SetSlots(slts);
-  InitSlots();
 
   SDLNet_SocketSet tcpset_sdl = SDLNet_AllocSocketSet(1);
   SDLNet_TCP_AddSocket(tcpset_sdl, sock);
