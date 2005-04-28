@@ -419,7 +419,7 @@ int SimpleConnect::HandleHostThread() {
 	data[slot*20 + 1] = slots[slot].ptype;
 	data[slot*20 + 2] = slots[slot].team;
 	data[slot*20 + 3] = slots[slot].color;
-	strncpy((char*)(data + slot*20 + 5),
+	strncpy((char*)(data + slot*20 + 4),
 		(char*)(slots[slot].playername), 15);
 	data[slot*20 + 19] = 0;
 	}
