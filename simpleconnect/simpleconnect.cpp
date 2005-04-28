@@ -43,19 +43,6 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   change_flags = 0;
 
   background = new SG_Panel(SG_COL_FG);
-  for(unsigned int slot = 0; slot < slots.size(); ++slot) {
-    SG_StickyButton *meb = new SG_StickyButton("Me");
-    SG_TextArea *name = NULL;
-    if(slot == 0) {
-      meb->TurnOn();
-      name = new SG_TextArea("Local Player");
-      }
-    else {
-      name = new SG_TextArea("AI Player");
-      }
-    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
-    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
-    }
   SG_Widget *labelb =
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
   AddWidget(labelb, 0, 0, 6, 1);
@@ -127,7 +114,6 @@ void SimpleConnect::Host() {
     exit(1);
     }
   mode = SC_MODE_HOST;
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
   InitSlots();
   StartNet();
   }
@@ -164,7 +150,6 @@ void SimpleConnect::Config() {
     exit(1);
     }
   mode = SC_MODE_CONFIG;
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
   InitSlots();
   }
 
@@ -314,6 +299,19 @@ int SimpleConnect::HandleHostThread() {
 
     TCPsocket tmpsock = SDLNet_TCP_Accept(serversock);
     while(tmpsock) {
+      Uint8 *data = new Uint8[slots.size() + 1];
+      data[0] = slots.size();
+      for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+	data[slot+1] = slots[slot];
+	}
+      int res = SDLNet_TCP_Send(tmpsock, data, slots.size() + 1);
+      delete data;
+      if(res != (int)(slots.size() + 1)) {
+	SDLNet_TCP_Close(tmpsock);
+	fprintf(stderr, "WARNING: Got connection from socket which failed!\n");
+	continue;
+	}
+
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
 	SDLNet_TCP_AddSocket(tcpset_sdl, tmpsock);
@@ -327,6 +325,7 @@ int SimpleConnect::HandleHostThread() {
 	  SDLNet_TCP_AddSocket(tcpset_sdl, (*sock));
 	  }
 	}
+
       tmpsock = SDLNet_TCP_Accept(serversock);	// Get the next one (if present)
       }
 
@@ -377,6 +376,18 @@ int SimpleConnect::HandleSlaveThread() {
     printf("ERROR: SDLNet_TCP_Open Failed: %s\n", SDLNet_GetError());
     return 1;
     }
+
+  Uint8 num_slots;
+  SDLNet_TCP_Recv(sock, &num_slots, 1);
+  Uint8 *data = new Uint8[num_slots];
+  SDLNet_TCP_Recv(sock, data, num_slots);
+  vector<SC_SlotType> slts;
+  for(int sl = 0; sl < num_slots; ++sl) {
+    slts.push_back((SC_SlotType)data[sl]);
+    }
+  SetSlots(slts);
+  InitSlots();
+
   SDLNet_SocketSet tcpset_sdl = SDLNet_AllocSocketSet(1);
   SDLNet_TCP_AddSocket(tcpset_sdl, sock);
 
@@ -429,4 +440,19 @@ void SimpleConnect::StartNet() {
   }
 
 void SimpleConnect::InitSlots() {
+  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  Resize(8, HEADER_SIZE + slots.size());
+  for(unsigned int slot = 0; slot < slots.size(); ++slot) {
+    SG_StickyButton *meb = new SG_StickyButton("Me");
+    SG_TextArea *name = NULL;
+    if(slot == 0) {
+      meb->TurnOn();
+      name = new SG_TextArea("Local Player");
+      }
+    else {
+      name = new SG_TextArea("AI Player");
+      }
+    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
+    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
+    }
   }
