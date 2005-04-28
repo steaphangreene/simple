@@ -112,7 +112,7 @@ void SimpleConnect::Host(const string &tag, const vector<SC_SlotType> &slts) {
 void SimpleConnect::Search(const string &tag) {
   CleanupNet();
   nettag = tag;
-  mode = SC_MODE_SLAVE;
+  mode = SC_MODE_SEARCH;
   Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
@@ -121,7 +121,7 @@ void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
   connect_to = location;
   CleanupNet();
   nettag = tag;
-  mode = SC_MODE_SEARCH;
+  mode = SC_MODE_SLAVE;
   Resize(8, 1);		//Clear any list widgets
   StartNet();
   }
