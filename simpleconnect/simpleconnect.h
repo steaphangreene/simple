@@ -89,6 +89,7 @@ public:
   void Host(const string &tag, const vector<SC_SlotType> &slts);  //Host game
   void Search(const string &tag);		  //Find network games
   void Config(const vector<SC_SlotType> &slts);	  //Local game, no networking
+  void Connect(const string &tag, const IPaddress &location);
   void Reset();
 
   void SetPort(Uint16 p) { port = p; };
@@ -103,12 +104,15 @@ protected:
   unsigned int prop_flags, change_flags;
 
   Uint16 port;
+  IPaddress connect_to;
+
   static int search_thread_handler(void *me);
   int HandleSearchThread();
   static int host_thread_handler(void *me);
   int HandleHostThread();
   static int slave_thread_handler(void *me);
   int HandleSlaveThread();
+
   void StartNet();
   void CleanupNet();
   SDL_Thread *net_thread;

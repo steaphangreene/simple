@@ -90,7 +90,9 @@ bool SimpleConnect::Render(unsigned long cur_time) {
 	  Resize(xsize, ysize+1);
 	  }
 	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
-		0, 1 + host->second.line, 8, 1);
+		0, 1 + host->second.line, 6, 1);
+	AddWidget(new SG_Button("Join"), 6, 1 + host->second.line);
+	AddWidget(new SG_Button("Spec"), 7, 1 + host->second.line);
 	}
       }
     SDL_mutexV(net_mutex);
@@ -108,6 +110,15 @@ void SimpleConnect::Host(const string &tag, const vector<SC_SlotType> &slts) {
   }
 
 void SimpleConnect::Search(const string &tag) {
+  CleanupNet();
+  nettag = tag;
+  mode = SC_MODE_SLAVE;
+  Resize(8, 1);		//Clear any list widgets
+  StartNet();
+  }
+
+void SimpleConnect::Connect(const string &tag, const IPaddress &location) {
+  connect_to = location;
   CleanupNet();
   nettag = tag;
   mode = SC_MODE_SEARCH;
