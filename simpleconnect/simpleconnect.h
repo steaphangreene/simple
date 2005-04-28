@@ -72,7 +72,7 @@ enum SC_Mode {
 struct SC_Host {
   SC_Host() { line = -1; };
   IPaddress address;
-  string map;
+  string mapname;
   int line;
   bool changed;
   };
@@ -93,12 +93,17 @@ public:
   void Reset();
 
   void SetPort(Uint16 p) { port = p; };
+
+  void SetMapName(const string &map) { mapname = map; };
+  const string &MapName() { return mapname; };
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *scanb;
+
   vector<SC_SlotType> slots;
 
+  string mapname;
   string nettag;
   SC_Mode mode;
   unsigned int prop_flags, change_flags;

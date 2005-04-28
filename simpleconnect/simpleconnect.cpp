@@ -87,7 +87,9 @@ bool SimpleConnect::Render(unsigned long cur_time) {
 	  }
 
 	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
-		0, 1 + host->second.line, 6, 1);
+		0, 1 + host->second.line, 2, 1);
+	AddWidget(new SG_TextArea(host->second.mapname),
+		2, 1 + host->second.line, 4, 1);
 	AddWidget(new SG_Button("Join"), 6, 1 + host->second.line);
 	AddWidget(new SG_Button("Spec"), 7, 1 + host->second.line);
 	}
@@ -156,6 +158,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 
 struct DataPacket {
   Uint8 act;
+  Sint8 mapname[32];
   Sint8 tag[1];
   };
 
@@ -201,7 +204,7 @@ int SimpleConnect::HandleSearchThread() {
 	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
 		| ((Uint64)(inpacket->address.port));
 	  hosts[entry].address = inpacket->address;
-	  hosts[entry].map = "Unknown";
+	  hosts[entry].mapname = (char*)indata->mapname;
 	  hosts[entry].changed = true;
 	  SDL_mutexV(net_mutex);
 	  }
@@ -253,13 +256,14 @@ int SimpleConnect::HandleHostThread() {
   IPaddress broadcast_address = {0};
   SDLNet_ResolveHost(&broadcast_address, "255.255.255.255", port);
 
-  outdata->act = SC_ACT_HOSTING;
-
   while(!exiting) {
     while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
 	if(indata->act == SC_ACT_QUERYING) {
 	  outpacket->address = inpacket->address;
+	  outdata->act = SC_ACT_HOSTING;
+	  strncpy((char*)outdata->mapname, mapname.c_str(), 31);
+	  outdata->mapname[31] = 0;
 	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
 	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
 	    exiting = true;
@@ -398,7 +402,7 @@ int SimpleConnect::HandleSlaveThread() {
 	  Uint64 entry = ((Uint64)(inpacket->address.host)) << 16
 		| ((Uint64)(inpacket->address.port));
 	  hosts[entry].address = inpacket->address;
-	  hosts[entry].map = "Unknown";
+	  hosts[entry].mapname = "Unknown";
 	  hosts[entry].changed = true;
 	  SDL_mutexV(net_mutex);
 	  }
