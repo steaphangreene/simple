@@ -36,6 +36,8 @@ using namespace std;
 #include "SDL_thread.h"
 #include "SDL_net.h"
 
+#include "safecomm.h"
+
 #include "../simplegui/sg_compound.h"
 
 class SG_Button;
