@@ -525,7 +525,19 @@ void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
   }
 
 void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
-  x = 0.0; y = 0.0;	//FIXME: Implement this for real!
+  GLint fake_viewport[4] = { 0, 0, 2, 2 };
+
+  GLdouble sx, sy, sz;
+  gluProject(x, y, z, modelv, projv, fake_viewport, &sx, &sy, &sz);
+  x = sx; y = sy;
+
+  x -= (xstart+1.0);		//Handle Subscreen Translation
+  y -= (ystart+1.0);
+  x /= (xend-xstart)/2.0;
+  y /= (yend-ystart)/2.0;
+
+  x -= 1.0;
+  y -= 1.0;
   }
 
 void SimpleVideo::SetSubscreen(double xs, double ys, double xe, double ye) {
