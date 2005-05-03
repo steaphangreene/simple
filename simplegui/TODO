@@ -7,6 +7,7 @@ Be able to safely unlink table from resize targets, and handle deletions.
 Fully Ranger-ize SG_Tables.
 Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 Clean up mulitple redundant calls to RangerChanged during SG_Ranger2D events.
+Implement Intelligent Copy Constructor for SG_Textures.
 
 -=TODO=-
 SG_Menu should be paralell to, not derrived from SG_Button.
