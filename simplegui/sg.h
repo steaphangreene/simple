@@ -51,7 +51,8 @@ public:
   SimpleGUI(int aspmeth, float asp);
   ~SimpleGUI();
 
-  static SimpleGUI *CurrentGUI();
+  static SimpleGUI *Current();
+  static SimpleGUI *CurrentGUI() { return Current(); };	// Depricated
 
   bool RenderStart(unsigned long cur_time, bool ts = false);
   bool RenderFinish(unsigned long cur_time, bool ts = false);
