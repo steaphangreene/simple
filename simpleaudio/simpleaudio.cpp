@@ -31,6 +31,9 @@ using namespace std;
 
 #include "simpleaudio.h"
 
+SimpleAudio *SimpleAudio::current = NULL;
+
+//////////////////////////////////////////////Temporary
 SDL_AudioSpec audio;
 
 static int Audio_Initialized = 0;
@@ -53,6 +56,7 @@ Sound SFX[128];
 int num_sounds = 0;
 Sound *free_blocks = NULL;
 Sound *play_blocks = NULL;
+////////////////////////////////////////////////End Temporary
 
 void SimpleAudio::Callback(void *userdata, Uint8 *stream, int len) {
 
@@ -214,6 +218,12 @@ void SimpleAudio::Stop(Sound *s) {
   }
 
 SimpleAudio::SimpleAudio(int bufsize) {
+  if(current) {
+    fprintf(stderr, "ERROR: Created mulitple SimpleAudio instances!\n");
+    exit(1);
+    }
+  current = this;
+
   audio.freq = 44100;
   audio.format = AUDIO_S16;
   audio.samples = bufsize;

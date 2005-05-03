@@ -25,6 +25,7 @@
 #include <string>
 using namespace std;
 
+#include "SDL.h"
 #include "SDL_mixer.h"
 
 class Sound;
@@ -33,16 +34,22 @@ class SimpleAudio {
 public:
   SimpleAudio(int bufsize=2048);
   ~SimpleAudio();
+
   void Play(int snd, int vol, int pan);
   Sound *Loop(int snd, int vol, int pan);
   void Stop(Sound *);
+
   void SetVol(Sound *, int);
   void SetPan(Sound *, int);
+
   int BuildSound(const unsigned char *, unsigned long);
   int LoadSound(const string &);
   int LoadMusic(const string &);
 
+  static SimpleAudio *Current() { return current; };
+
 private:
+  static SimpleAudio *current;
   static void Callback(void *userdata, Uint8 *stream, int len);
   };
 
