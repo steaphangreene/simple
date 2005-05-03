@@ -92,7 +92,18 @@ bool SimpleConnect::Render(unsigned long cur_time) {
 	  ClearRow(HEADER_SIZE + host->second.line);
 	  }
 
-	AddWidget(new SG_TextArea(SDLNet_ResolveIP(&(host->second.address))),
+	char *name = (char*)SDLNet_ResolveIP(&(host->second.address));
+	if(!name) {
+	  static char buf[256];
+	  sprintf(buf, "%d.%d.%d.%d%c",
+		((unsigned char*)(&(host->second.address.host)))[0],
+		((unsigned char*)(&(host->second.address.host)))[1],
+		((unsigned char*)(&(host->second.address.host)))[2],
+		((unsigned char*)(&(host->second.address.host)))[3],
+		0);
+	  name = buf;
+	  }
+	AddWidget(new SG_TextArea(name),
 		0, HEADER_SIZE + host->second.line, 2, 1);
 	AddWidget(new SG_TextArea(host->second.mapname),
 		2, HEADER_SIZE + host->second.line, 4, 1);
