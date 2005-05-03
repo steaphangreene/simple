@@ -69,6 +69,13 @@ void SG_Texture::CopyFrom(const SG_Texture &in) {
   else if(def_cache.count(src) > 0) {
     UpdateCache();			//Use cache to make it deep
     }
+  else {
+    cur = NULL;			//Don't use cache, make it recreate itself
+    texture = 0;
+    xfact = 1.0;
+    yfact = 1.0;
+    dirty = 1;
+    }
   }
 
 void SG_Texture::Clear() {
