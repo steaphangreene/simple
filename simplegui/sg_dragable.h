@@ -37,6 +37,8 @@ public:
   void SetXDisplayLimits(float mnx, float mxx);
   void SetYDisplayLimits(float mny, float mxy);
 
+  void SetLabel(SG_Widget *lab);
+
 	//Internal Use Only!  For self-reconfiguring widgets.
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
   
@@ -47,6 +49,8 @@ protected:
   float min_dx, min_dy, max_dx, max_dy;	//Display Limits
   void Disp2Limits(float &x, float &y);
   void Limits2Disp(float &x, float &y);
+
+  SG_Widget *label;
   };
 
 #endif // SG_DRAGABLE_H

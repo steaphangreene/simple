@@ -38,6 +38,7 @@ SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex),
   base_y = 0.0;
   off_x = 0.0;
   off_y = 0.0;
+  label = NULL;
   }
 
 SG_Dragable::~SG_Dragable() {
@@ -116,12 +117,12 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 //  static GL_MODEL SG_Dragable::Default_Mouse_Cursor = NULL;
 
 bool SG_Dragable::Render(unsigned long cur_time) {
-//  if(current_sg->CurrentWidget() == this) {
-//    float xprog = XValue(), yprog = YValue();
-//    Limits2Disp(xprog, yprog);
-//    glTranslatef(xprog, yprog, 0.0);
-//    }
-  return SG_Panel::Render(cur_time);
+  bool ret = SG_Panel::Render(cur_time);
+  if(!ret) return ret;
+
+  if(label) ret = label->Render(cur_time);
+
+  return ret;
   }
 
 void SG_Dragable::SetDisplayLimits(float mnx, float mny, float mxx, float mxy) {
@@ -184,4 +185,8 @@ void SG_Dragable::AdjustGeometry(SG_AlignmentGeometry *geom) {
   Limits2Disp(xprog, yprog);
   geom->xp += xprog * geom->xs;
   geom->yp += yprog * geom->ys;
+  }
+
+void SG_Dragable::SetLabel(SG_Widget *lab) {
+  label = lab;
   }

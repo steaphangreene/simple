@@ -96,7 +96,7 @@ void SG_Panel::BuildTexture(int st) {
 bool SG_Panel::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
+  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
 
   if(texture[state].dirty) BuildTexture(state);
 
@@ -133,7 +133,7 @@ bool SG_Panel::Render(unsigned long cur_time) {
 
   glPopMatrix();
 
-  return 1;
+  return true;
   }
 
 void SG_Panel::SetTransparent(bool val) {
