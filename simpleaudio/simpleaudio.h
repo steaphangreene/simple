@@ -29,18 +29,19 @@ using namespace std;
 #include "SDL_mixer.h"
 
 class Sound;
+typedef int PlayingSound;
 
 class SimpleAudio {
 public:
-  SimpleAudio(int bufsize=2048);
+  SimpleAudio(int bufsize=512);
   ~SimpleAudio();
 
-  void Play(int snd, int vol, int pan);
-  Sound *Loop(int snd, int vol, int pan);
-  void Stop(Sound *);
+  PlayingSound Play(int snd, float vol = 1.0, float pan = 0.0);
+  PlayingSound Loop(int snd, float vol = 1.0, float pan = 0.0, int loops = -1);
+  void Stop(PlayingSound);
 
-  void SetVol(Sound *, int);
-  void SetPan(Sound *, int);
+  void SetVol(PlayingSound, float vol = 1.0);
+  void SetPan(PlayingSound, float pan = 0.0);
 
   int BuildSound(const unsigned char *, unsigned long);
   int LoadSound(const string &);
@@ -50,7 +51,7 @@ public:
 
 private:
   static SimpleAudio *current;
-  static void Callback(void *userdata, Uint8 *stream, int len);
+//  static void Callback(void *userdata, Uint8 *stream, int len);
   };
 
 #endif //AUDIO_H

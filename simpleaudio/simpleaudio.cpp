@@ -34,9 +34,7 @@ using namespace std;
 SimpleAudio *SimpleAudio::current = NULL;
 
 //////////////////////////////////////////////Temporary
-SDL_AudioSpec audio;
-
-static int Audio_Initialized = 0;
+static int audio_initialized = 0;
 
 #define SOUND_LOOP	1
 #define SOUND_TERMINATE	2
@@ -46,8 +44,7 @@ struct Sound {
   Uint32 pos;
   Uint32 vol;
   Uint32 pan;
-  Uint8 *data;
-  Uint32 length;
+  Mix_Chunk *sound;
   Uint32 flags;
   Sound *next;
   };
@@ -58,6 +55,7 @@ Sound *free_blocks = NULL;
 Sound *play_blocks = NULL;
 ////////////////////////////////////////////////End Temporary
 
+/*	DISABLED!
 void SimpleAudio::Callback(void *userdata, Uint8 *stream, int len) {
 
   if(play_blocks == NULL)  {
@@ -133,23 +131,32 @@ void SimpleAudio::Callback(void *userdata, Uint8 *stream, int len) {
     sptr = &((*sptr)->next);
     }
   }
+*/
 
 int SimpleAudio::BuildSound(const unsigned char *data, unsigned long len) {
-  if(!Audio_Initialized) return 0;
-  SFX[num_sounds].data = (unsigned char *)data;
-  SFX[num_sounds].length = len;
+  if(!audio_initialized) return 0;
+
+  SFX[num_sounds].sound = Mix_QuickLoad_RAW((Uint8*)data, len);
+
+  if(!SFX[num_sounds].sound) {
+    fprintf(stderr, "Warning: Can't build sound!\n");
+    return 0;
+    }
+
   ++num_sounds;
   return num_sounds;
   }
 
 int SimpleAudio::LoadSound(const string &fn) {
-  if(!Audio_Initialized) return 0;
-  SDL_AudioSpec spec;
-  if(!SDL_LoadWAV(fn.c_str(), &spec,
-	&SFX[num_sounds].data, &SFX[num_sounds].length)) {
+  if(!audio_initialized) return 0;
+
+  SFX[num_sounds].sound = Mix_LoadWAV(fn.c_str());
+
+  if(!SFX[num_sounds].sound) {
     fprintf(stderr, "Warning: Can't load \"%s\"!\n", fn.c_str());
     return 0;
     }
+
   ++num_sounds;
   return num_sounds;
   }
@@ -167,54 +174,48 @@ Sound *get_block() {
   return s;
   }
 
-void SimpleAudio::Play(int snd, int vol, int pan) {
-  if((!Audio_Initialized) || snd < 1) return;
-  Sound *s = get_block();
-  *s = SFX[snd-1];
-  s->pos = 0;
-  s->vol = vol;
-  s->pan = pan;
-  s->flags = 0;
-  SDL_LockAudio();
-  s->next = play_blocks;
-  play_blocks = s;
-  SDL_UnlockAudio();
+PlayingSound SimpleAudio::Play(int snd, float vol, float pan) {
+  if((!audio_initialized) || snd < 1) return -1;
+
+  PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, 0);
+  if(ret >= 0) {
+    SetVol(ret, vol);
+    SetPan(ret, pan);
+    }
+  return ret;
   }
 
-Sound *SimpleAudio::Loop(int snd, int vol, int pan) {
-  if((!Audio_Initialized) || snd < 1) return NULL;
-  Sound *s = get_block();
-  *s = SFX[snd-1];
-  s->pos = 0;
-  s->vol = vol;
-  s->pan = pan;
-  s->flags |= SOUND_LOOP;
-  SDL_LockAudio();
-  s->next = play_blocks;
-  play_blocks = s;
-  SDL_UnlockAudio();
-  return s;
+PlayingSound SimpleAudio::Loop(int snd, float vol, float pan, int loops) {
+  if((!audio_initialized) || snd < 1) return -1;
+
+  PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, loops);
+  if(ret >= 0) {
+    SetVol(ret, vol);
+    SetPan(ret, pan);
+    }
+  return ret;
   }
 
-void SimpleAudio::SetVol(Sound *s, int v) {
-  if(!Audio_Initialized) return;
-  SDL_LockAudio();
-  if(s) s->vol = v;
-  SDL_UnlockAudio();
+void SimpleAudio::SetVol(PlayingSound s, float vol) {
+  if(!audio_initialized || s < 0) return;
+
+  Mix_Volume(s, (int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
   }
 
-void SimpleAudio::SetPan(Sound *s, int p) {
-  if(!Audio_Initialized) return;
-  SDL_LockAudio();
-  if(s) s->pan = p;
-  SDL_UnlockAudio();
+void SimpleAudio::SetPan(PlayingSound s, float pan) {
+  if(!audio_initialized || s < 0) return;
+
+  if(pan == 0.0) Mix_SetPanning(s, 255, 255);
+  else if(pan >=  1.0) Mix_SetPanning(s, 0, 255);
+  else if(pan <= -1.0) Mix_SetPanning(s, 255, 0);
+  else if(pan < 0.0) Mix_SetPanning(s, 255, (int)(255.0 + pan * 255.0 + 0.5));
+  else if(pan > 0.0) Mix_SetPanning(s, (int)(255.0 - pan * 255.0 + 0.5), 255);
   }
 
-void SimpleAudio::Stop(Sound *s) {
-  if(!Audio_Initialized) return;
-  SDL_LockAudio();
-  if(s) s->flags |= SOUND_TERMINATE;
-  SDL_UnlockAudio();
+void SimpleAudio::Stop(PlayingSound s) {
+  if(!audio_initialized) return;
+
+  Mix_HaltChannel(s);
   }
 
 SimpleAudio::SimpleAudio(int bufsize) {
@@ -224,17 +225,11 @@ SimpleAudio::SimpleAudio(int bufsize) {
     }
   current = this;
 
-  audio.freq = 44100;
-  audio.format = AUDIO_S16;
-  audio.samples = bufsize;
-  audio.channels = 2;
-  audio.callback = Callback;
-  audio.userdata = NULL;
-  if(SDL_OpenAudio(&audio, NULL) < 0) {
-    fprintf(stderr, "Error initializing SDL Audio!\n");
+  if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16SYS, 2, bufsize) < 0) {
+    fprintf(stderr, "Error initializing SDL Mixer Audio!\n");
     fprintf(stderr, "Continuing without sound.\n");
     return;
     }
-  SDL_PauseAudio(0);
-  Audio_Initialized = 1;
+  Mix_AllocateChannels(16);	//FIXME: Make this dynamic
+  audio_initialized = 1;
   }
