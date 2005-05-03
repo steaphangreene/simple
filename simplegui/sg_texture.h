@@ -41,10 +41,13 @@ class SG_Texture {
 public:
   SG_Texture(SDL_Surface *tex);
   SG_Texture(int sg_cols);
+  SG_Texture(const SG_Texture &in);
   ~SG_Texture();
 
   bool CheckCache();
   void Update();
+
+  const SG_Texture &operator = (const SG_Texture &in);
 
   GLuint GLTexture() { return texture; };
 
@@ -57,6 +60,9 @@ public:
   bool dirty; //Does the system need to rebuild this texture?
 
 protected:
+  void Clear();
+  void CopyFrom(const SG_Texture &in);
+
   GLuint texture;	//Current texture (when active)
 
   void UpdateCache();

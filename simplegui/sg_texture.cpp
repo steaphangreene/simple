@@ -48,6 +48,30 @@ SG_Texture::SG_Texture(int sg_cols) {
   }
 
 SG_Texture::~SG_Texture() {
+  Clear();
+  }
+
+SG_Texture::SG_Texture(const SG_Texture &in) {
+  CopyFrom(in);
+  }
+
+const SG_Texture &SG_Texture::operator = (const SG_Texture &in) {
+  Clear();
+  CopyFrom(in);
+  return *this;
+  }
+
+void SG_Texture::CopyFrom(const SG_Texture &in) {
+  memcpy(this, &in, sizeof(SG_Texture));	//WARNING! Shallow Copy
+  if(trans_cache.count(src) > 0) {
+    UpdateCache();			//Use cache to make it deep
+    }
+  else if(def_cache.count(src) > 0) {
+    UpdateCache();			//Use cache to make it deep
+    }
+  }
+
+void SG_Texture::Clear() {
   if(trans_cache.count(src) > 0) {
     trans_cache[src].erase(this);
     if(trans_cache[src].size() < 1) {
@@ -135,6 +159,7 @@ void SG_Texture::UpdateCache() {
     def_cache[src].insert(this);
     }
   else {
+    // Temporary - don't currently handle this case with cache
     }
   }
 

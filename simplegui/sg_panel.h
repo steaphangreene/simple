@@ -32,6 +32,9 @@ using namespace std;
 #include "sg_texture.h"
 #include "sg_widget.h"
 
+#define SG_STATE_DEFAULT	0
+#define SG_STATE_DISABLED	1
+
 class SG_Panel : public SG_Widget {
 public:
   SG_Panel(SG_Texture tex = SG_COL_BG);
@@ -40,6 +43,8 @@ public:
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);
+
+  void SetTexture(SG_Texture tex, int st = SG_STATE_DEFAULT);
 
   //For Internal Use Only!
   void SetState(int st) { state = st; };
