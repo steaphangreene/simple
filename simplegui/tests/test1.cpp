@@ -273,6 +273,13 @@ int main(int argc, char **argv) {
 	  audio_play(click, 8, 8);
 	  if(event.user.data1 == (void*)button[4])
 	    text->SetText("Or is it?");
+	  else if(event.user.data1 == (void*)button[3]) {
+	    double r = rand(), g = rand(), b = rand();
+	    r /= (double)(RAND_MAX);
+	    g /= (double)(RAND_MAX);
+	    b /= (double)(RAND_MAX);
+	    text->SetTexture(gui->NewColor(r, g, b));
+	    }
 	  else if(event.user.data1 == (void*)button[5])
 	    gui->SetPopupWidget(popup, 0.3, 0.3); 
 	  }

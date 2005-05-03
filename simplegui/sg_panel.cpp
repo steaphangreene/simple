@@ -154,4 +154,6 @@ void SG_Panel::SetTransparent(bool val) {
 //  static GL_MODEL SG_Panel::Default_Mouse_Cursor = NULL;
 
 void SG_Panel::SetTexture(SG_Texture tex, int st) {
+  if(st < 0 || st >= (int)(texture.size())) return;
+  texture[st] = tex;
   }
