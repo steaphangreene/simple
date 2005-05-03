@@ -54,8 +54,8 @@ public:
   void ScreenToMap(double &x, double &y, const double &z = 0.0);
   void MapToScreen(double &x, double &y, const double &z = 0.0);
 
-  static SimpleVideo *Current() { return current; }
-  static SimpleVideo *CurrentVideo() { return Current(); }	// Depricated
+  static SimpleVideo *Current() { return current; };
+  static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated
 
 protected:
   void CalcMove(double &xoff, double &yoff, Uint32 cur_time);
