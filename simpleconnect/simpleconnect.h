@@ -121,12 +121,14 @@ public:
   void Connect(const IPaddress &location);	//Connect to active game
   void Reset();
 
-  void SetMapName(const string &map) { mapname = map; };
+  void SetMapName(const string &mp) { mapname = mp; };
   const string &MapName() { return mapname; };
 
   const SimpleConnections &ClaimConnections();
   
 protected:
+  vector<int> colors;
+
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *scanb;
   SG_Button *startb;
@@ -147,6 +149,10 @@ protected:
   bool rescan;
   map<SG_Widget*, IPaddress> joinmap;
   map<SG_Widget*, IPaddress> specmap;
+
+  map<SG_Widget*, int> colmap;
+  map<SG_Widget*, int> teammap;
+  map<SG_Ranger2D*, int> pnamemap;
 
   static int search_thread_handler(void *me);
   int HandleSearchThread();

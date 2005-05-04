@@ -26,9 +26,13 @@ using namespace std;
 
 #include "simpleconnect.h"
 #include "../simplegui/sg_events.h"
-#include "../simplegui/sg_stickybutton.h"
+#include "../simplegui/sg_globals.h"
+#include "../simplegui/sg_button.h"
+#include "../simplegui/sg_dragable.h"
 
 #define HEADER_SIZE	1
+#define WIDGET_WIDTH	16
+#define VERT_MARGIN	0.1
 #define BASE_TAG	"SC-0001:"
 
 enum SCAct {
@@ -46,7 +50,8 @@ struct DataPacket {
   Sint8 tag[1];
   };
 
-SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
+SimpleConnect::SimpleConnect()
+	: SG_Compound(WIDGET_WIDTH, HEADER_SIZE, 0.1, VERT_MARGIN) {
   mode = SC_MODE_NONE;
   prop_flags = 0;
   change_flags = 0;
@@ -54,7 +59,7 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
   SG_Widget *labelb =
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
-  AddWidget(labelb, 0, 0, 6, 1);
+  AddWidget(labelb, 0, 0, 12, 1);
   scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
   startb = new SG_Button("Start", SG_COL_RAISED, SG_COL_LOW);
 
@@ -69,6 +74,16 @@ SimpleConnect::SimpleConnect() : SG_Compound(8, HEADER_SIZE, 0.1, 0.1) {
   conn.sock = NULL;
   conn.tcpset = NULL;
   conn.slots.clear();
+
+  colors.push_back(current_sg->NewColor(0.5, 0.5, 0.5));	//No Color!
+  colors.push_back(current_sg->NewColor(1.0, 0.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 1.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 0.0, 1.0));
+  colors.push_back(current_sg->NewColor(1.0, 1.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 1.0, 1.0));
+  colors.push_back(current_sg->NewColor(1.0, 0.0, 1.0));
+  colors.push_back(current_sg->NewColor(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+  colors.push_back(current_sg->NewColor(0.6, 0.4, 0.2, 1.0, 1.0, 1.0));
   }
 
 SimpleConnect::~SimpleConnect() {
@@ -143,11 +158,14 @@ void SimpleConnect::SetTag(const string &tag) {
 void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   SlotData data = { SC_SLOT_NONE, 0 };
   conn.slots.clear();
+  int cur_col = 1;
 
   bool placed_local = false;
   vector<SC_SlotType>::const_iterator slot = slts.begin();
   for(; slot != slts.end(); ++slot) {
     data.type = (*slot);
+    data.color = cur_col++;
+    if(cur_col >= (int)(colors.size())) cur_col = 1;
     if((!placed_local) && (data.type < SC_SLOT_AIONLY)) {
       data.ptype = SC_PLAYER_LOCAL;
       placed_local = true;
@@ -164,14 +182,46 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   }
 
 void SimpleConnect::InitSlots() {
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
-  Resize(8, HEADER_SIZE + conn.slots.size());
+  Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
+  Resize(WIDGET_WIDTH, HEADER_SIZE + conn.slots.size());
 
   for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
-    SG_StickyButton *meb = new SG_StickyButton("Me");
+    int xp = 0;
+
+    if(true) {	//FIXME: Check for color support
+      SG_Button *colb = new SG_Button("", colors[conn.slots[slot].color]);
+      AddWidget(colb, xp, slot+HEADER_SIZE, 1, 1);
+      colmap[colb] = slot;
+      xp += 1;
+      }
+
+    SG_Dragable *pnamec = new SG_Dragable();
+    pnamec->SetLimits(
+	0.0, -1.0 * slot, 0.0, 1.0 * (conn.slots.size() - slot - 1));
+    pnamec->SetDisplayLimits(
+	0.0, -2.0 * slot / (1.0 - VERT_MARGIN),
+	0.0, 2.0 * (conn.slots.size() - slot - 1) / (1.0 - VERT_MARGIN));
+    AddWidget(pnamec, xp, slot+HEADER_SIZE, 3, 1);
+    SG_TextArea *pname = new SG_TextArea((char*)(conn.slots[slot].playername));
+    pname->Ignore();
+    pnamec->SetLabel(pname);
+    pnamemap[pnamec] = slot;
+    xp += 3;
+
+    if(true) {	//FIXME: Check for team support
+      SG_Button *teamb = new SG_Button("No Team");
+      if(conn.slots[slot].team > 0) {
+        char buf[128] = {0};
+        sprintf(buf, "Team %d%c", (int)(conn.slots[slot].team), 0);
+        teamb->SetText(buf);
+        }
+      AddWidget(teamb, xp, slot+HEADER_SIZE, 2, 1);
+      teammap[teamb] = slot;
+      xp += 2;
+      }
+
     SG_TextArea *name = NULL;
     if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) {
-      meb->TurnOn();
       name = new SG_TextArea("Local Player");
       }
     else if(conn.slots[slot].ptype == SC_PLAYER_REMOTE) {
@@ -186,11 +236,9 @@ void SimpleConnect::InitSlots() {
     else {
       name = new SG_TextArea("<Unknown>");
       }
-    AddWidget(name, 4, slot+HEADER_SIZE, 4, 1);
-    AddWidget(meb, 0, slot+HEADER_SIZE, 1, 1);
-
-    AddWidget(new SG_TextArea((char*)(conn.slots[slot].playername)),
-	1, slot+HEADER_SIZE, 3, 1);
+    AddWidget(name, xp, slot+HEADER_SIZE, 4, 1);
+    xp += 4;
+    Resize(xp, ysize);
     }
   }
 
@@ -208,7 +256,7 @@ void SimpleConnect::Host() {
   slots_dirty = true;
   slots_send = true;
   StartNet();
-  AddWidget(startb, 7, 0, 1, 1);
+  AddWidget(startb, 14, 0, 2, 1);
   }
 
 void SimpleConnect::Search() {
@@ -218,9 +266,9 @@ void SimpleConnect::Search() {
     exit(1);
     }
   mode = SC_MODE_SEARCH;
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   StartNet();
-  AddWidget(scanb, 7, 0, 1, 1);
+  AddWidget(scanb, 14, 0, 2, 1);
   }
 
 void SimpleConnect::Connect(const IPaddress &location) {
@@ -231,7 +279,7 @@ void SimpleConnect::Connect(const IPaddress &location) {
     }
   connect_to = location;
   mode = SC_MODE_SLAVE;
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   ClearRow(0);		//Clear header if present
   AddWidget(new SG_TextArea("Connecting..."), 1, 0, 6, 1);
   StartNet();
@@ -251,7 +299,7 @@ void SimpleConnect::Reset() {
   CleanupNet();
   conn.slots.clear();
   mode = SC_MODE_NONE;
-  Resize(8, HEADER_SIZE);		//Clear any list widgets
+  Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   }
 
 const SimpleConnections &SimpleConnect::ClaimConnections() {
@@ -282,6 +330,33 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
       event->user.data1 = (void*)(SG_Compound*)(this);
       event->user.data2 = NULL;
       starting = true;
+      return 1;
+      }
+    else if(colmap.count((SG_Widget*)event->user.data1)) {
+      fprintf(stderr, "Request for 'Color' on slot %d\n",
+		colmap[(SG_Widget*)event->user.data1]);
+      return 1;
+      }
+    else if(teammap.count((SG_Widget*)event->user.data1)) {
+      fprintf(stderr, "Request for 'Team' on slot %d\n",
+		teammap[(SG_Widget*)event->user.data1]);
+      return 1;
+      }
+    }
+  else if(event->user.code == SG_EVENT_DRAGRELEASE) {
+    if(pnamemap.count((SG_Ranger2D*)(event->user.data1)) > 0) {
+      SG_Ranger2D *ran = (SG_Ranger2D*)(event->user.data1);
+      if(((float*)(event->user.data2))[1] > 0.5
+		|| ((float*)(event->user.data2))[1] < -0.5) {
+	int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
+	if(mod < 1) --mod;
+        fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
+		pnamemap[ran], pnamemap[ran] + mod);
+	}
+      ran->SetValues(0.0, 0.0);
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
+      event->user.data2 = NULL;
       return 1;
       }
     }
