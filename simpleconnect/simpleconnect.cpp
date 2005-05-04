@@ -188,8 +188,9 @@ void SimpleConnect::InitSlots() {
   for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
     int xp = 0;
 
+    SG_Button *colb = NULL;
     if(true) {	//FIXME: Check for color support
-      SG_Button *colb = new SG_Button("", colors[conn.slots[slot].color]);
+      colb = new SG_Button("", colors[conn.slots[slot].color]);
       AddWidget(colb, xp, slot+HEADER_SIZE, 1, 1);
       colmap[colb] = slot;
       xp += 1;
@@ -208,8 +209,9 @@ void SimpleConnect::InitSlots() {
     pnamemap[pnamec] = slot;
     xp += 3;
 
+    SG_Button *teamb = NULL;
     if(true) {	//FIXME: Check for team support
-      SG_Button *teamb = new SG_Button("No Team");
+      teamb = new SG_Button("No Team");
       if(conn.slots[slot].team > 0) {
         char buf[128] = {0};
         sprintf(buf, "Team %d%c", (int)(conn.slots[slot].team), 0);
@@ -239,6 +241,14 @@ void SimpleConnect::InitSlots() {
     AddWidget(name, xp, slot+HEADER_SIZE, 4, 1);
     xp += 4;
     Resize(xp, ysize);
+
+    if(mode == SC_MODE_SLAVE) {
+      if(conn.slots[slot].ptype != SC_PLAYER_LOCAL) {
+	if(pnamec) pnamec->Ignore();
+	if(teamb) teamb->Ignore();
+	if(colb) colb->Ignore();
+	}
+      }
     }
   }
 
@@ -314,50 +324,87 @@ const SimpleConnections &SimpleConnect::ClaimConnections() {
   }
 
 bool SimpleConnect::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(joinmap.count((SG_Widget*)(event->user.data1)) > 0) {
-      Connect(joinmap[(SG_Widget*)(event->user.data1)]);
-      }
-    else if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
-      event->user.code = SG_EVENT_NEEDTORENDER;
-      event->user.data1 = NULL;
-      event->user.data2 = NULL;
-      rescan = true;
-      return 1;
-      }
-    else if(event->user.data1 == (void *)(SG_Widget*)(startb)) {
-      event->user.code = SG_EVENT_CONNECTDONE;
-      event->user.data1 = (void*)(SG_Compound*)(this);
-      event->user.data2 = NULL;
-      starting = true;
-      return 1;
-      }
-    else if(colmap.count((SG_Widget*)event->user.data1)) {
-      fprintf(stderr, "Request for 'Color' on slot %d\n",
-		colmap[(SG_Widget*)event->user.data1]);
-      return 1;
-      }
-    else if(teammap.count((SG_Widget*)event->user.data1)) {
-      fprintf(stderr, "Request for 'Team' on slot %d\n",
-		teammap[(SG_Widget*)event->user.data1]);
-      return 1;
+  if(mode == SC_MODE_SEARCH) {
+    if(event->user.code == SG_EVENT_BUTTONPRESS) {
+      if(joinmap.count((SG_Widget*)(event->user.data1)) > 0) {
+	Connect(joinmap[(SG_Widget*)(event->user.data1)]);
+	}
+      else if(event->user.data1 == (void *)(SG_Widget*)(scanb)) {
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
+	rescan = true;
+	return 1;
+	}
       }
     }
-  else if(event->user.code == SG_EVENT_DRAGRELEASE) {
-    if(pnamemap.count((SG_Ranger2D*)(event->user.data1)) > 0) {
-      SG_Ranger2D *ran = (SG_Ranger2D*)(event->user.data1);
-      if(((float*)(event->user.data2))[1] > 0.5
-		|| ((float*)(event->user.data2))[1] < -0.5) {
-	int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
-	if(mod < 1) --mod;
-        fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
-		pnamemap[ran], pnamemap[ran] + mod);
+  else if(mode == SC_MODE_HOST) {
+    if(event->user.code == SG_EVENT_BUTTONPRESS) {
+      if(event->user.data1 == (void *)(SG_Widget*)(startb)) {
+	event->user.code = SG_EVENT_CONNECTDONE;
+	event->user.data1 = (void*)(SG_Compound*)(this);
+	event->user.data2 = NULL;
+	starting = true;
+	return 1;
 	}
-      ran->SetValues(0.0, 0.0);
-      event->user.code = SG_EVENT_NEEDTORENDER;
-      event->user.data1 = NULL;
-      event->user.data2 = NULL;
-      return 1;
+      else if(colmap.count((SG_Widget*)event->user.data1)) {
+	fprintf(stderr, "Request for 'Color' on slot %d\n",
+		colmap[(SG_Widget*)event->user.data1]);
+	return 1;
+	}
+      else if(teammap.count((SG_Widget*)event->user.data1)) {
+	fprintf(stderr, "Request for 'Team' on slot %d\n",
+		teammap[(SG_Widget*)event->user.data1]);
+	return 1;
+	}
+      }
+    else if(event->user.code == SG_EVENT_DRAGRELEASE) {
+      if(pnamemap.count((SG_Ranger2D*)(event->user.data1)) > 0) {
+	SG_Ranger2D *ran = (SG_Ranger2D*)(event->user.data1);
+	if(((float*)(event->user.data2))[1] > 0.5
+		|| ((float*)(event->user.data2))[1] < -0.5) {
+	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
+	  if(mod < 1) --mod;
+	  fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
+		pnamemap[ran], pnamemap[ran] + mod);
+	  }
+	ran->SetValues(0.0, 0.0);
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
+	return 1;
+	}
+      }
+    }
+  else if(mode == SC_MODE_SLAVE) {
+    if(event->user.code == SG_EVENT_BUTTONPRESS) {
+      if(colmap.count((SG_Widget*)event->user.data1)) {
+	fprintf(stderr, "Request for 'Color' on slot %d\n",
+		colmap[(SG_Widget*)event->user.data1]);
+	return 1;
+	}
+      else if(teammap.count((SG_Widget*)event->user.data1)) {
+	fprintf(stderr, "Request for 'Team' on slot %d\n",
+		teammap[(SG_Widget*)event->user.data1]);
+	return 1;
+	}
+      }
+    else if(event->user.code == SG_EVENT_DRAGRELEASE) {
+      if(pnamemap.count((SG_Ranger2D*)(event->user.data1)) > 0) {
+	SG_Ranger2D *ran = (SG_Ranger2D*)(event->user.data1);
+	if(((float*)(event->user.data2))[1] > 0.5
+		|| ((float*)(event->user.data2))[1] < -0.5) {
+	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
+	  if(mod < 1) --mod;
+	  fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
+		pnamemap[ran], pnamemap[ran] + mod);
+	  }
+	ran->SetValues(0.0, 0.0);
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
+	return 1;
+	}
       }
     }
   return 0; // Silence children doing other things
