@@ -33,7 +33,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	16
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0001:"
+#define BASE_TAG	"SC-0002:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -41,6 +41,9 @@ enum SCAct {
   SC_ACT_LEAVING,
   SC_ACT_DATA,
   SC_ACT_START,
+  SC_ACT_CHANGESLOT,
+  SC_ACT_CHANGETEAM,
+  SC_ACT_CHANGECOLOR,
   SC_ACT_MAX
   };
 
@@ -348,12 +351,12 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	return 1;
 	}
       else if(colmap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Request for 'Color' on slot %d\n",
+	fprintf(stderr, "Host Request for 'Color' on slot %d\n",
 		colmap[(SG_Widget*)event->user.data1]);
 	return 1;
 	}
       else if(teammap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Request for 'Team' on slot %d\n",
+	fprintf(stderr, "Host Request for 'Team' on slot %d\n",
 		teammap[(SG_Widget*)event->user.data1]);
 	return 1;
 	}
@@ -365,7 +368,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 		|| ((float*)(event->user.data2))[1] < -0.5) {
 	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
 	  if(mod < 1) --mod;
-	  fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
+	  fprintf(stderr, "Host Request for slot %d to exchange with slot %d\n",
 		pnamemap[ran], pnamemap[ran] + mod);
 	  }
 	ran->SetValues(0.0, 0.0);
@@ -377,15 +380,40 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
       }
     }
   else if(mode == SC_MODE_SLAVE) {
+    Request req;
     if(event->user.code == SG_EVENT_BUTTONPRESS) {
       if(colmap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Request for 'Color' on slot %d\n",
+	fprintf(stderr, "Slave Request for 'Color' on slot %d\n",
 		colmap[(SG_Widget*)event->user.data1]);
+
+	req.size = 3;
+	req.data[0] = SC_ACT_CHANGECOLOR;
+	req.data[1] = colmap[(SG_Widget*)event->user.data1];
+	req.data[2] = 0;  //FIXME: Requested Color!
+	SDL_mutexP(net_mutex);
+	reqs.push_back(req);
+	SDL_mutexV(net_mutex);
+
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
 	return 1;
 	}
       else if(teammap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Request for 'Team' on slot %d\n",
+	fprintf(stderr, "Slave Request for 'Team' on slot %d\n",
 		teammap[(SG_Widget*)event->user.data1]);
+
+	req.size = 3;
+	req.data[0] = SC_ACT_CHANGETEAM;
+	req.data[1] = teammap[(SG_Widget*)event->user.data1];
+	req.data[2] = 0;  //FIXME: Requested Team!
+	SDL_mutexP(net_mutex);
+	reqs.push_back(req);
+	SDL_mutexV(net_mutex);
+
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
 	return 1;
 	}
       }
@@ -396,10 +424,19 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 		|| ((float*)(event->user.data2))[1] < -0.5) {
 	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
 	  if(mod < 1) --mod;
-	  fprintf(stderr, "Request for slot %d to exchange with slot %d\n",
+	  fprintf(stderr, "Slave Request for slot %d to exchange with slot %d\n",
 		pnamemap[ran], pnamemap[ran] + mod);
+
+	  req.size = 3;
+	  req.data[0] = SC_ACT_CHANGESLOT;
+	  req.data[1] = teammap[(SG_Widget*)event->user.data1];
+	  req.data[2] = pnamemap[ran] + mod;
+	  SDL_mutexP(net_mutex);
+	  reqs.push_back(req);
+	  SDL_mutexV(net_mutex);
 	  }
 	ran->SetValues(0.0, 0.0);
+
 	event->user.code = SG_EVENT_NEEDTORENDER;
 	event->user.data1 = NULL;
 	event->user.data2 = NULL;
@@ -612,8 +649,34 @@ int SimpleConnect::HandleHostThread() {
 
       for(sock = tcpset.begin(); sock != tcpset.end(); ++sock) {
 	if(SDLNet_SocketReady(*sock)) {
-	  toremove.insert(*sock);
-	  fprintf(stderr, "DEBUG: Got data from socket (and closed it for now)\n");
+	  Uint8 type = 0;
+	  SDLNet_TCP_Recv(*sock, &type, 1);
+	  if(type == SC_ACT_CHANGECOLOR) {
+	    Uint8 data[2];
+	    SDLNet_TCP_Recv(*sock, data, 2);
+	    fprintf(stderr, "Change Color Request Received (%d, %d)\n",
+		data[0], data[1]);
+	    }
+	  else if(type == SC_ACT_CHANGETEAM) {
+	    Uint8 data[2];
+	    SDLNet_TCP_Recv(*sock, data, 2);
+	    fprintf(stderr, "Change Team Request Received (%d, %d)\n",
+		data[0], data[1]);
+	    }
+	  else if(type == SC_ACT_CHANGESLOT) {
+	    Uint8 data[2];
+	    SDLNet_TCP_Recv(*sock, data, 2);
+	    fprintf(stderr, "Change Slot Request Received (%d, %d)\n",
+		data[0], data[1]);
+	    }
+	  else if(type == SC_ACT_LEAVING) {
+	    toremove.insert(*sock);
+	    fprintf(stderr, "Slot leaving, closed.\n");
+	    }
+	  else {
+	    toremove.insert(*sock);
+	    fprintf(stderr, "ERROR: Got unknown data from socket, and closed it\n");
+	    }
 	  }
 	}
       }
@@ -729,6 +792,16 @@ int SimpleConnect::HandleSlaveThread() {
       slots_dirty = true;
       SDL_mutexV(net_mutex);
       }
+    if(!starting) {
+      SDL_mutexP(net_mutex);
+      while(reqs.size() > 0) {
+	Request req;
+	req = reqs.front();
+	reqs.pop_front();
+	SDLNet_TCP_Send(conn.sock, req.data, req.size);
+	}
+      SDL_mutexV(net_mutex);
+      }
     }
 
   if(!netclaimed) {	// Aborting, not connecting
@@ -764,6 +837,7 @@ void SimpleConnect::CleanupNet() {
   hosts.clear();
   joinmap.clear();
   specmap.clear();
+  reqs.clear();
 
   starting = false;
 
