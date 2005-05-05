@@ -114,7 +114,11 @@ public:
 
   void SetPort(Uint16 p) { port = p; };
   void SetTag(const string &tag);
+  void SetColors(const vector<int> &cols);	//SG_Color List Used
+
   void SetSlots(const vector<SC_SlotType> &slts);
+  void SetSlotColors(const vector<int> &cols);	//Color for each slot
+  void SetSlotTeams(const vector<int> &cols);	//Team for each slot
 
   void Host();					//Host new game
   void Search();				//Find network games
@@ -128,6 +132,7 @@ public:
   const SimpleConnections &ClaimConnections();
   
 protected:
+  void SetupDefaultColors();
   int NextFreeColor(int oldcolor);
   int NextTeam(int oldteam);
   vector<int> colors;

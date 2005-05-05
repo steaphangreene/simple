@@ -79,14 +79,6 @@ SimpleConnect::SimpleConnect()
   conn.slots.clear();
 
   colors.push_back(current_sg->NewColor(0.5, 0.5, 0.5));	//No Color!
-  colors.push_back(current_sg->NewColor(1.0, 0.0, 0.0));
-  colors.push_back(current_sg->NewColor(0.0, 1.0, 0.0));
-  colors.push_back(current_sg->NewColor(0.0, 0.0, 1.0));
-  colors.push_back(current_sg->NewColor(1.0, 1.0, 0.0));
-  colors.push_back(current_sg->NewColor(0.0, 1.0, 1.0));
-  colors.push_back(current_sg->NewColor(1.0, 0.0, 1.0));
-  colors.push_back(current_sg->NewColor(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
-  colors.push_back(current_sg->NewColor(0.6, 0.4, 0.2, 1.0, 1.0, 1.0));
   }
 
 SimpleConnect::~SimpleConnect() {
@@ -163,6 +155,8 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   conn.slots.clear();
   int cur_col = 1;
 
+  if(colors.size() <= 1) SetupDefaultColors();
+
   bool placed_local = false;
   vector<SC_SlotType>::const_iterator slot = slts.begin();
   for(; slot != slts.end(); ++slot) {
@@ -187,6 +181,8 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
 void SimpleConnect::InitSlots() {
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   Resize(WIDGET_WIDTH, HEADER_SIZE + conn.slots.size());
+
+  if(colors.size() <= 1) SetupDefaultColors();
 
   for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
     int xp = 0;
@@ -901,3 +897,41 @@ int SimpleConnect::NextTeam(int oldteam) {
   if(oldteam > maxteam) return 0;
   else return oldteam+1;
   }
+
+void SimpleConnect::SetupDefaultColors() {
+  colors.push_back(current_sg->NewColor(1.0, 0.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 1.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 0.0, 1.0));
+  colors.push_back(current_sg->NewColor(1.0, 1.0, 0.0));
+  colors.push_back(current_sg->NewColor(0.0, 1.0, 1.0));
+  colors.push_back(current_sg->NewColor(1.0, 0.0, 1.0));
+  colors.push_back(current_sg->NewColor(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+  colors.push_back(current_sg->NewColor(0.6, 0.4, 0.2, 1.0, 1.0, 1.0));
+  }
+
+void SimpleConnect::SetColors(const vector<int> &cols) {
+  if(net_mutex) SDL_mutexP(net_mutex);
+  colors.resize(1);
+  vector<int>::const_iterator itr = cols.begin();
+  for(; itr != cols.end(); ++itr) {
+    colors.push_back(*itr);
+    }
+  if(net_mutex) SDL_mutexV(net_mutex);
+  }
+
+void SimpleConnect::SetSlotColors(const vector<int> &cols) {
+  if(net_mutex) SDL_mutexP(net_mutex);
+  for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+    conn.slots[slot].color = cols[slot];
+    }
+  if(net_mutex) SDL_mutexV(net_mutex);
+  }
+
+void SimpleConnect::SetSlotTeams(const vector<int> &teams) {
+  if(net_mutex) SDL_mutexP(net_mutex);
+  for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+    conn.slots[slot].team = teams[slot];
+    }
+  if(net_mutex) SDL_mutexV(net_mutex);
+  }
+
