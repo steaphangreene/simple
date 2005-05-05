@@ -33,7 +33,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	16
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0002:"
+#define BASE_TAG	"SC-0003:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -429,7 +429,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 
 	  req.size = 3;
 	  req.data[0] = SC_ACT_CHANGESLOT;
-	  req.data[1] = teammap[(SG_Widget*)event->user.data1];
+	  req.data[1] = pnamemap[ran];
 	  req.data[2] = pnamemap[ran] + mod;
 	  SDL_mutexP(net_mutex);
 	  reqs.push_back(req);
@@ -656,18 +656,35 @@ int SimpleConnect::HandleHostThread() {
 	    SDLNet_TCP_Recv(*sock, data, 2);
 	    fprintf(stderr, "Change Color Request Received (%d, %d)\n",
 		data[0], data[1]);
+	    SDL_mutexP(net_mutex);
+	    conn.slots[data[0]].color = data[1];
+	    slots_dirty = true;
+	    slots_send = true;
+	    SDL_mutexV(net_mutex);
 	    }
 	  else if(type == SC_ACT_CHANGETEAM) {
 	    Uint8 data[2];
 	    SDLNet_TCP_Recv(*sock, data, 2);
 	    fprintf(stderr, "Change Team Request Received (%d, %d)\n",
 		data[0], data[1]);
+	    SDL_mutexP(net_mutex);
+	    conn.slots[data[0]].team = data[1];
+	    slots_dirty = true;
+	    slots_send = true;
+	    SDL_mutexV(net_mutex);
 	    }
 	  else if(type == SC_ACT_CHANGESLOT) {
 	    Uint8 data[2];
 	    SDLNet_TCP_Recv(*sock, data, 2);
 	    fprintf(stderr, "Change Slot Request Received (%d, %d)\n",
 		data[0], data[1]);
+	    SDL_mutexP(net_mutex);
+	    SlotData tmp = conn.slots[data[1]];
+	    conn.slots[data[1]] = conn.slots[data[0]];
+	    conn.slots[data[0]] = tmp;
+	    slots_dirty = true;
+	    slots_send = true;
+	    SDL_mutexV(net_mutex);
 	    }
 	  else if(type == SC_ACT_LEAVING) {
 	    toremove.insert(*sock);
