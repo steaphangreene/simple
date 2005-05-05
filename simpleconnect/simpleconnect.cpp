@@ -33,7 +33,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	16
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0003:"
+#define BASE_TAG	"SC-0004:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -383,13 +383,10 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
     Request req;
     if(event->user.code == SG_EVENT_BUTTONPRESS) {
       if(colmap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Slave Request for 'Color' on slot %d\n",
-		colmap[(SG_Widget*)event->user.data1]);
-
 	req.size = 3;
 	req.data[0] = SC_ACT_CHANGECOLOR;
 	req.data[1] = colmap[(SG_Widget*)event->user.data1];
-	req.data[2] = 0;  //FIXME: Requested Color!
+	req.data[2] = NextFreeColor(conn.slots[req.data[1]].color);
 	SDL_mutexP(net_mutex);
 	reqs.push_back(req);
 	SDL_mutexV(net_mutex);
@@ -400,13 +397,10 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	return 1;
 	}
       else if(teammap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Slave Request for 'Team' on slot %d\n",
-		teammap[(SG_Widget*)event->user.data1]);
-
 	req.size = 3;
 	req.data[0] = SC_ACT_CHANGETEAM;
 	req.data[1] = teammap[(SG_Widget*)event->user.data1];
-	req.data[2] = 0;  //FIXME: Requested Team!
+	req.data[2] = NextTeam(conn.slots[req.data[1]].team);
 	SDL_mutexP(net_mutex);
 	reqs.push_back(req);
 	SDL_mutexV(net_mutex);
@@ -424,8 +418,6 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 		|| ((float*)(event->user.data2))[1] < -0.5) {
 	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
 	  if(mod < 1) --mod;
-	  fprintf(stderr, "Slave Request for slot %d to exchange with slot %d\n",
-		pnamemap[ran], pnamemap[ran] + mod);
 
 	  req.size = 3;
 	  req.data[0] = SC_ACT_CHANGESLOT;
@@ -654,8 +646,6 @@ int SimpleConnect::HandleHostThread() {
 	  if(type == SC_ACT_CHANGECOLOR) {
 	    Uint8 data[2];
 	    SDLNet_TCP_Recv(*sock, data, 2);
-	    fprintf(stderr, "Change Color Request Received (%d, %d)\n",
-		data[0], data[1]);
 	    SDL_mutexP(net_mutex);
 	    conn.slots[data[0]].color = data[1];
 	    slots_dirty = true;
@@ -665,8 +655,6 @@ int SimpleConnect::HandleHostThread() {
 	  else if(type == SC_ACT_CHANGETEAM) {
 	    Uint8 data[2];
 	    SDLNet_TCP_Recv(*sock, data, 2);
-	    fprintf(stderr, "Change Team Request Received (%d, %d)\n",
-		data[0], data[1]);
 	    SDL_mutexP(net_mutex);
 	    conn.slots[data[0]].team = data[1];
 	    slots_dirty = true;
@@ -676,8 +664,6 @@ int SimpleConnect::HandleHostThread() {
 	  else if(type == SC_ACT_CHANGESLOT) {
 	    Uint8 data[2];
 	    SDLNet_TCP_Recv(*sock, data, 2);
-	    fprintf(stderr, "Change Slot Request Received (%d, %d)\n",
-		data[0], data[1]);
 	    SDL_mutexP(net_mutex);
 	    SlotData tmp = conn.slots[data[1]];
 	    conn.slots[data[1]] = conn.slots[data[0]];
@@ -872,4 +858,46 @@ void SimpleConnect::StartNet() {
     net_thread = SDL_CreateThread(host_thread_handler, (void*)(this));
   else if(mode == SC_MODE_SLAVE)
     net_thread = SDL_CreateThread(slave_thread_handler, (void*)(this));
+  }
+
+int SimpleConnect::NextFreeColor(int oldcolor) {
+  SDL_mutexP(net_mutex);
+
+  vector<bool> taken(colors.size(), false);
+  for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+    taken[conn.slots[slot].color] = true;
+    }
+
+  unsigned int col;
+  for(col = 1; col < colors.size(); ++col) {
+    if(((col+oldcolor) % colors.size() != 0)
+	&& (!taken[(col+oldcolor) % colors.size()])) break;
+    }
+
+  if(oldcolor != (int)((col+oldcolor) % colors.size())) {
+    oldcolor = (col+oldcolor) % colors.size();
+    }
+  else {
+    oldcolor = (1+oldcolor) % colors.size();
+    if(oldcolor == 0) oldcolor = 1;
+    }
+
+  SDL_mutexV(net_mutex);
+  return oldcolor;
+  }
+
+int SimpleConnect::NextTeam(int oldteam) {
+  int maxteam = 0;
+
+  SDL_mutexP(net_mutex);
+
+  for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+    if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) continue;
+    if(maxteam < conn.slots[slot].team) maxteam = conn.slots[slot].team;
+    }
+
+  SDL_mutexV(net_mutex);
+
+  if(oldteam > maxteam) return 0;
+  else return oldteam+1;
   }

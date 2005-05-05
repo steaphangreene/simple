@@ -128,6 +128,8 @@ public:
   const SimpleConnections &ClaimConnections();
   
 protected:
+  int NextFreeColor(int oldcolor);
+  int NextTeam(int oldteam);
   vector<int> colors;
 
 //  static GL_MODEL Default_Mouse_Cursor;
