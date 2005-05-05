@@ -59,7 +59,7 @@ SimpleConnect::SimpleConnect()
   background = new SG_Panel(SG_COL_FG);
   SG_Widget *labelb =
 	new SG_TextArea("SimpleConnect", SG_COL_LOW);
-  AddWidget(labelb, 0, 0, 12, 1);
+  AddWidget(labelb, 0, 0, 6, 1);
   scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
   startb = new SG_Button("Start", SG_COL_RAISED, SG_COL_LOW);
 
@@ -266,7 +266,7 @@ void SimpleConnect::Host() {
   slots_dirty = true;
   slots_send = true;
   StartNet();
-  AddWidget(startb, 14, 0, 2, 1);
+  AddWidget(startb, 6, 0, 1, 1);
   }
 
 void SimpleConnect::Search() {
@@ -278,7 +278,7 @@ void SimpleConnect::Search() {
   mode = SC_MODE_SEARCH;
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   StartNet();
-  AddWidget(scanb, 14, 0, 2, 1);
+  AddWidget(scanb, 6, 0, 1, 1);
   }
 
 void SimpleConnect::Connect(const IPaddress &location) {
