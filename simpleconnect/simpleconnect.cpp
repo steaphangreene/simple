@@ -33,7 +33,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	16
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0004:"
+#define BASE_TAG	"SC-0005:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -337,7 +337,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	}
       }
     }
-  else if(mode == SC_MODE_HOST) {
+  else if(mode == SC_MODE_HOST || mode == SC_MODE_CONFIG) {
     if(event->user.code == SG_EVENT_BUTTONPRESS) {
       if(event->user.data1 == (void *)(SG_Widget*)(startb)) {
 	event->user.code = SG_EVENT_CONNECTDONE;
@@ -347,13 +347,41 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	return 1;
 	}
       else if(colmap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Host Request for 'Color' on slot %d\n",
-		colmap[(SG_Widget*)event->user.data1]);
+	if(mode == SC_MODE_HOST) {
+	  SDL_mutexP(net_mutex);
+	  }
+	conn.slots[colmap[(SG_Widget*)event->user.data1]].color
+		= NextFreeColor(
+		conn.slots[colmap[(SG_Widget*)event->user.data1]].color
+		);
+	slots_dirty = true;
+	if(mode == SC_MODE_HOST) {
+	  slots_send = true;
+	  SDL_mutexV(net_mutex);
+	  }
+
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
 	return 1;
 	}
       else if(teammap.count((SG_Widget*)event->user.data1)) {
-	fprintf(stderr, "Host Request for 'Team' on slot %d\n",
-		teammap[(SG_Widget*)event->user.data1]);
+	if(mode == SC_MODE_HOST) {
+	  SDL_mutexP(net_mutex);
+	  }
+	conn.slots[teammap[(SG_Widget*)event->user.data1]].team
+		= NextTeam(
+		conn.slots[teammap[(SG_Widget*)event->user.data1]].team
+		);
+	slots_dirty = true;
+	if(mode == SC_MODE_HOST) {
+	  slots_send = true;
+	  SDL_mutexV(net_mutex);
+	  }
+
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
 	return 1;
 	}
       }
@@ -364,8 +392,18 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 		|| ((float*)(event->user.data2))[1] < -0.5) {
 	  int mod = (int)(((float*)(event->user.data2))[1] + 0.5);
 	  if(mod < 1) --mod;
-	  fprintf(stderr, "Host Request for slot %d to exchange with slot %d\n",
-		pnamemap[ran], pnamemap[ran] + mod);
+
+	  if(mode == SC_MODE_HOST) {
+	    SDL_mutexP(net_mutex);
+	    }
+	  SlotData tmp = conn.slots[pnamemap[ran] + mod];
+	  conn.slots[pnamemap[ran] + mod] = conn.slots[pnamemap[ran]];
+	  conn.slots[pnamemap[ran]] = tmp;
+	  slots_dirty = true;
+	  if(mode == SC_MODE_HOST) {
+	    slots_send = true;
+	    SDL_mutexV(net_mutex);
+	    }
 	  }
 	ran->SetValues(0.0, 0.0);
 	event->user.code = SG_EVENT_NEEDTORENDER;
@@ -887,9 +925,10 @@ int SimpleConnect::NextTeam(int oldteam) {
 
   SDL_mutexP(net_mutex);
 
+  bool not_seen = true;
   for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
-    if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) continue;
-    if(maxteam < conn.slots[slot].team) maxteam = conn.slots[slot].team;
+    if(not_seen && conn.slots[slot].team == oldteam) not_seen = false;
+    else if(maxteam < conn.slots[slot].team) maxteam = conn.slots[slot].team;
     }
 
   SDL_mutexV(net_mutex);
@@ -934,4 +973,3 @@ void SimpleConnect::SetSlotTeams(const vector<int> &teams) {
     }
   if(net_mutex) SDL_mutexV(net_mutex);
   }
-
