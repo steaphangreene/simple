@@ -32,6 +32,7 @@ using namespace std;
 #include "simplemodel_3ds.h"
 
 #include "simplemodel_cone.h"
+#include "simplemodel_cube.h"
 #include "simplemodel_wedge.h"
 #include "simplemodel_sphere.h"
 
@@ -49,6 +50,7 @@ SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
     }      
 	
   if(filename == "SimpleModel:Cone") return new SimpleModel_Cone();
+  if(filename == "SimpleModel:Cube") return new SimpleModel_Cube();
   if(filename == "SimpleModel:Wedge") return new SimpleModel_Wedge();
   if(filename == "SimpleModel:Sphere") return new SimpleModel_Sphere();
 
