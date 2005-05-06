@@ -21,58 +21,57 @@
 
 #include "SDL.h"
 
-#include <dirent.h>
-
 #include <cstdio>
 #include <cstdlib>
 using namespace std;
 
-#include "simplemodel.h"
-#include "simplemodel_q3dir.h"
-#include "simplemodel_3ds.h"
-#include "simplemodel_sphere.h"
 #include "simplemodel_wedge.h"
 
-SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
-  FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
-  if(cfg) {
-    fclose(cfg);
-    if(skinname.length() <= 0) return new SimpleModel_Q3Dir(filename);
-    else return new SimpleModel_Q3Dir(filename, skinname);
-    }
-
-  if(filename.length() >= 3
-	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
-    return new SimpleModel_3DS(filename, skinname);
-    }      
-	
-  if(filename == "SimpleModel:Wedge") return new SimpleModel_Wedge();
-  if(filename == "SimpleModel:Sphere") return new SimpleModel_Sphere();
-
-  fprintf(stderr,
-	"WARNING: Failed to detect model type of '%s' - using wedge.\n",
-	filename.c_str());
-  return new SimpleModel_Wedge();
+SimpleModel_Wedge::SimpleModel_Wedge(const string &filenm) {
   }
 
-SimpleModel::SimpleModel() {
+SimpleModel_Wedge::SimpleModel_Wedge() {
   }
 
-SimpleModel::~SimpleModel() {
+SimpleModel_Wedge::~SimpleModel_Wedge() {
   }
 
-bool SimpleModel::Load(const string &filenm) {
-  filename = filenm;
-  return false;
+bool SimpleModel_Wedge::Load(const string &filenm) {
+  return true;
   }
 
-bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
+bool SimpleModel_Wedge::Render(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const {
-  return false;
-  }
+  glBegin(GL_QUADS);
 
-const vector<string> &SimpleModel::GetSkinList() {
-  static vector<string> skins;
-  return skins;
-  }
+  glVertex3f(-1.0,  1.0, -1.0);
+  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f( 1.0,  0.0,  1.0);
+  glVertex3f( 1.0,  0.0, -1.0);
 
+  glVertex3f(-1.0, -1.0, -1.0);
+  glVertex3f( 1.0,  0.0, -1.0);
+  glVertex3f( 1.0,  0.0,  1.0);
+  glVertex3f(-1.0, -1.0,  1.0);
+
+  glVertex3f(-1.0, -1.0,  1.0);
+  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f(-1.0,  1.0, -1.0);
+  glVertex3f(-1.0, -1.0, -1.0);
+
+  glEnd();
+
+  glBegin(GL_TRIANGLES);
+
+  glVertex3f( 1.0,  0.0,  1.0);
+  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f(-1.0, -1.0,  1.0);
+
+  glVertex3f( 1.0,  0.0, -1.0);
+  glVertex3f(-1.0, -1.0, -1.0);
+  glVertex3f(-1.0,  1.0, -1.0);
+
+  glEnd();
+
+  return true;
+  }

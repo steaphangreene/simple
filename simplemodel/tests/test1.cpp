@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
   times.push_back(SDL_GetTicks());
 
   int quit = 0;
+  float yaw = 0.0, pitch = 0.0;
   while(!quit) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
@@ -136,11 +137,19 @@ int main(int argc, char **argv) {
         else if(event.key.keysym.sym == SDLK_SEMICOLON) SetAnim(LEGS_IDLE);
         else if(event.key.keysym.sym == SDLK_QUOTE) SetAnim(LEGS_IDLECR);
         else if(event.key.keysym.sym == SDLK_RETURN) SetAnim(LEGS_TURN);
+
+        else if(event.key.keysym.sym == SDLK_RIGHT)	yaw += 5.0;
+        else if(event.key.keysym.sym == SDLK_LEFT)	yaw -= 5.0;
+        else if(event.key.keysym.sym == SDLK_UP)	pitch += 5.0;
+        else if(event.key.keysym.sym == SDLK_DOWN)	pitch -= 5.0;
+
         else {
           }
         }
       }
     start_scene();
+    glRotatef(yaw, 0.0, 0.0, 1.0);
+    glRotatef(pitch, 0.0, 1.0, 0.0);
     mod->Render(SDL_GetTicks(), anims, times);
     finish_scene();
     }
