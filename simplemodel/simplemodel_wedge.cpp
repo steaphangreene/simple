@@ -44,31 +44,49 @@ bool SimpleModel_Wedge::Render(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const {
   glBegin(GL_QUADS);
 
+  glTexCoord2f(0.0, 0.0);
   glVertex3f(-1.0,  1.0, -1.0);
+  glTexCoord2f(0.0, 0.5);
   glVertex3f(-1.0,  1.0,  1.0);
+  glTexCoord2f(0.4, 0.5);
   glVertex3f( 1.0,  0.0,  1.0);
+  glTexCoord2f(0.4, 0.0);
   glVertex3f( 1.0,  0.0, -1.0);
 
+  glTexCoord2f(0.8, 0.0);
   glVertex3f(-1.0, -1.0, -1.0);
+  glTexCoord2f(0.4, 0.0);
   glVertex3f( 1.0,  0.0, -1.0);
+  glTexCoord2f(0.4, 0.5);
   glVertex3f( 1.0,  0.0,  1.0);
+  glTexCoord2f(0.8, 0.5);
   glVertex3f(-1.0, -1.0,  1.0);
 
+  glTexCoord2f(0.8, 0.5);
   glVertex3f(-1.0, -1.0,  1.0);
+  glTexCoord2f(1.0, 0.5);
   glVertex3f(-1.0,  1.0,  1.0);
+  glTexCoord2f(1.0, 0.0);
   glVertex3f(-1.0,  1.0, -1.0);
+  glTexCoord2f(0.8, 0.0);
   glVertex3f(-1.0, -1.0, -1.0);
 
   glEnd();
 
   glBegin(GL_TRIANGLES);
 
+  glTexCoord2f(0.4, 0.5);
   glVertex3f( 1.0,  0.0,  1.0);
+  glTexCoord2f(0.0, 0.5);
   glVertex3f(-1.0,  1.0,  1.0);
+  glTexCoord2f(0.0, 1.0);
   glVertex3f(-1.0, -1.0,  1.0);
 
+  glTexCoord2f(0.4, 0.5);
   glVertex3f( 1.0,  0.0, -1.0);
+  glTexCoord2f(0.8, 0.5);
   glVertex3f(-1.0, -1.0, -1.0);
+  glTexCoord2f(0.8, 1.0);
   glVertex3f(-1.0,  1.0, -1.0);
 
   glEnd();
