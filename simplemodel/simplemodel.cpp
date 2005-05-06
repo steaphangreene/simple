@@ -32,17 +32,17 @@ using namespace std;
 #include "simplemodel_3ds.h"
 #include "simplemodel_sphere.h"
 
-SimpleModel *SM_LoadModel(const string &filename) {
+SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
   FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
   if(cfg) {
     fclose(cfg);
-    return new SimpleModel_Q3Dir(filename);
+    if(skinname.length() <= 0) return new SimpleModel_Q3Dir(filename);
+    else return new SimpleModel_Q3Dir(filename, skinname);
     }
-
 
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
-    return new SimpleModel_3DS(filename);
+    return new SimpleModel_3DS(filename, skinname);
     }      
 	
   fprintf(stderr,
@@ -67,9 +67,8 @@ bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
   return false;
   }
 
-void SimpleModel::SetAnimation(int anim) {
+const vector<string> &SimpleModel::GetSkinList() {
+  static vector<string> skins;
+  return skins;
   }
 
-int SimpleModel::GetAnimation() {
-  return 0;
-  }

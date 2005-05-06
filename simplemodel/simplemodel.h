@@ -42,16 +42,15 @@ public:
 	const vector<int> &anim = vector<int>(),
 	const vector<Uint32> &start_time = vector<Uint32>()) const;
 
-  virtual void SetAnimation(int anim);	//Depricated!  Don't use!
-
-  virtual int GetAnimation();		//Depricated!  Don't use!
+  virtual const vector<string> &GetSkinList();
+  virtual void AddSkin(const string &skinnm) {};
 
 protected:
   string filename;
   vector<SM_Texture *> texture;
   };
 
-SimpleModel *SM_LoadModel(const string &filename);
+SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
 
 #endif	//SIMPLEMODEL_H
 

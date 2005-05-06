@@ -47,10 +47,3 @@ bool SimpleModel_Sphere::Render(Uint32 cur_time, const vector<int> &anim,
   gluDeleteQuadric(quad);
   return true;
   }
-
-void SimpleModel_Sphere::SetAnimation(int anim) {
-  }
-
-int SimpleModel_Sphere::GetAnimation() {
-  return 0;
-  }

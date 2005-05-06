@@ -65,11 +65,11 @@ struct MD3Mesh {
 class SimpleModel_MD3 : public SimpleModel {
 public:
   SimpleModel_MD3(const string &filenm,
-	const string &modelnm, const string &skinnm = "");
+	const string &modelnm, const string &defskin = "default");
   virtual ~SimpleModel_MD3();
 
   virtual bool Load(const string &filenm,
-	const string &filenm, const string &skinnm = "");
+	const string &filenm, const string &defskin = "default");
 
   virtual bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
@@ -85,9 +85,8 @@ public:
     return MoveToTag(TagNameToIndex(tagname), cur_time, anim, start_time);
     }
 
-  virtual void SetAnimation(int anim);
-
-  virtual int GetAnimation();
+  virtual const vector<string> &GetSkinList();
+  virtual void AddSkin(const string &skinnm);
 
   int AddAnimation(int start, int end, int loop, int fps);
 
@@ -102,6 +101,7 @@ protected:
   vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames
   vector<MD3Mesh> meshes;
   vector<MD3AnimationData> animations;
+  vector<string> skins;
   };
 
 #endif	//SIMPLEMODEL_MD3_H

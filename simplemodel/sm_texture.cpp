@@ -53,6 +53,22 @@ SM_Texture::SM_Texture(const string &filenm) {
   src = IMG_Load(filenm.c_str());
   if(!src) {
     // Judging by many of the models I've see, this is not an error.
+    src = IMG_Load((filenm + ".bmp").c_str());
+    }
+  if(!src) {
+    // Judging by many of the models I've see, this is not an error.
+    src = IMG_Load((filenm + ".BMP").c_str());
+    }
+  if(!src) {
+    // Judging by many of the models I've see, this is not an error.
+    src = IMG_Load((filenm + ".tga").c_str());
+    }
+  if(!src) {
+    // Judging by many of the models I've see, this is not an error.
+    src = IMG_Load((filenm + ".TGA").c_str());
+    }
+  if(!src) {
+    // Judging by many of the models I've see, even this is not an error.
     type = SM_TEXTURE_NONE;
     dirty = 0;
     return;

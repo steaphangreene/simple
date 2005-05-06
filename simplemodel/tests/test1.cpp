@@ -60,7 +60,8 @@ int main(int argc, char **argv) {
   char *modname = "models/players/trooper";
 
   if(argc > 3) {
-    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
+    //fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
+    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [skin]\n", argv[0]);
     exit(1);
     }
   else if(argc >= 2) {
@@ -71,22 +72,28 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
     }
 
-  SimpleModel_MD3 *weap = NULL; //Created below
-  SimpleModel *mod = SM_LoadModel(modname);
+  char * skinname = ""; // Use Default Skin
+  if(argc == 3) {
+    skinname = argv[2];
+    }
+
+  SimpleModel *mod = SM_LoadModel(modname, skinname);
   if(!mod) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
     }
-  if(argc == 3) {
-    weap = new SimpleModel_MD3(argv[2],
-	(string(argv[2]) + "/machinegun.md3").c_str(),
-	(string(argv[2]) + "/m41a.jpg").c_str());
-    if(!weap) {
-      fprintf(stderr, "ERROR: Weapon model load failed\n");
-      exit(1);
-      }
-    ((SimpleModel_Q3Dir*)mod)->SetWeapon(weap);
-    }
+
+//  SimpleModel_MD3 *weap = NULL; //Created below
+//  if(argc == 3) {
+//    weap = new SimpleModel_MD3(argv[2],
+//	(string(argv[2]) + "/machinegun.md3").c_str(),
+//	(string(argv[2]) + "/m41a.jpg").c_str());
+//    if(!weap) {
+//      fprintf(stderr, "ERROR: Weapon model load failed\n");
+//      exit(1);
+//      }
+//    ((SimpleModel_Q3Dir*)mod)->SetWeapon(weap);
+//    }
 
   anims.push_back(LEGS_IDLE);
   anims.push_back(TORSO_STAND);

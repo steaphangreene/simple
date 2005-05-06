@@ -182,10 +182,3 @@ bool SimpleModel_3DS::Render(Uint32 cur_time, const vector<int> &anim,
   glCallList(display_list);
   return true;
   }
-
-void SimpleModel_3DS::SetAnimation(int anim) {
-  }
-
-int SimpleModel_3DS::GetAnimation() {
-  return 0;
-  }

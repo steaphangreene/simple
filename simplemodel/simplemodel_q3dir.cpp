@@ -28,12 +28,13 @@ using namespace std;
 #include "sm_q3anim.h"
 #include "simplemodel_q3dir.h"
 
-SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &filenm) {
+SimpleModel_Q3Dir::SimpleModel_Q3Dir(
+	const string &filenm, const string &defskin) {
   head = NULL;
   torso = NULL;
   legs = NULL;
   weapon = NULL;
-  Load(filenm);
+  Load(filenm, defskin);
   }
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir() {
@@ -51,14 +52,14 @@ SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
   if(weapon) weapon = NULL;	// Not mine!
   }
 
-bool SimpleModel_Q3Dir::Load(const string &filenm) {
+bool SimpleModel_Q3Dir::Load(const string &filenm, const string &defskin) {
   filename = filenm;
   head = new SimpleModel_MD3(
-	filename, filename + "/head.md3", filename + "/head_default.skin");
+	filename, filename + "/head.md3", defskin);
   torso = new SimpleModel_MD3(
-	filename, filename + "/upper.md3", filename + "/upper_default.skin");
+	filename, filename + "/upper.md3", defskin);
   legs = new SimpleModel_MD3(
-	filename, filename + "/lower.md3", filename + "/lower_default.skin");
+	filename, filename + "/lower.md3", defskin);
 
   if(!LoadCFG(filename + "/animation.cfg")) return false;
 
@@ -171,15 +172,14 @@ bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim,
   return false;
   }
 
-void SimpleModel_Q3Dir::SetAnimation(int anim) {
-  fprintf(stderr, "WARNING: Calling unsupported old function SetAnimation()\n");
-  }
-
-int SimpleModel_Q3Dir::GetAnimation() {
-  fprintf(stderr, "WARNING: Calling unsupported old function GetAnimation()\n");
-  return 0;
-  }
-
 void SimpleModel_Q3Dir::SetWeapon(SimpleModel_MD3 *weap) {
   weapon = weap;
+  }
+
+const vector<string> &SimpleModel_Q3Dir::GetSkinList() {
+  return skins;
+  }
+
+void SimpleModel_Q3Dir::AddSkin(const string &skinnm) {
+  skins.push_back(skinnm);
   }

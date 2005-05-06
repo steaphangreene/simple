@@ -68,10 +68,6 @@ public:
 	const vector<int> &anim = vector<int>(),
 	const vector<Uint32> &start_time = vector<Uint32>()) const;
 
-  virtual void SetAnimation(int part);
-
-  virtual int GetAnimation();
-
 protected:
     GLuint display_list;
 	vector<MAXMesh> mesh;

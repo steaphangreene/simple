@@ -27,18 +27,17 @@
 
 class SimpleModel_Q3Dir : public SimpleModel {
 public:
-  SimpleModel_Q3Dir(const string &filenm);
+  SimpleModel_Q3Dir(const string &filenm, const string &defskin = "default");
   virtual ~SimpleModel_Q3Dir();
 
-  virtual bool Load(const string &filenm);
+  virtual bool Load(const string &filenm, const string &defskin = "default");
 
   virtual bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
 	const vector<Uint32> &start_time = vector<Uint32>()) const;
 
-  virtual void SetAnimation(int part);
-
-  virtual int GetAnimation();
+  virtual const vector<string> &GetSkinList();
+  virtual void AddSkin(const string &skinnm);
 
   void SetWeapon(SimpleModel_MD3 *weap);
 
@@ -47,6 +46,8 @@ protected:
 
   SimpleModel_Q3Dir();
   SimpleModel_MD3 *head, *torso, *legs, *weapon;
+
+  vector<string> skins;
   };
 
 #endif	//SIMPLEMODEL_Q3DIR_H

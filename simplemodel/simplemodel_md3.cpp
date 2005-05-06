@@ -32,8 +32,8 @@ using namespace std;
 #include "saferead.h"
 
 SimpleModel_MD3::SimpleModel_MD3(const string &filenm,
-	const string &modelnm, const string &skinnm) {
-  Load(filenm, modelnm, skinnm);
+	const string &modelnm, const string &defskin) {
+  Load(filenm, modelnm, defskin);
   }
 
 SimpleModel_MD3::SimpleModel_MD3() {
@@ -43,11 +43,13 @@ SimpleModel_MD3::~SimpleModel_MD3() {
   }
 
 bool SimpleModel_MD3::Load(const string &filenm,
-	const string &modelnm, const string &skinnm) {
+	const string &modelnm, const string &defskin) {
   filename = filenm;
   modelname = modelnm;
-  if(skinnm.length() >  0) skinname = skinnm;
-  else skinname = modelname.substr(0, skinname.length() - 4) + "_default.skin";
+
+  skinname = defskin;
+  skinname = modelname.substr(0, modelname.length() - 4) + "_"
+	+ skinname+ ".skin";
 
   FILE *model = fopen(modelname.c_str(), "rb");
   if(!model) {
@@ -124,7 +126,9 @@ bool SimpleModel_MD3::Load(const string &filenm,
     Uint32 num_mframes;
     freadLE(num_mframes, model);
 
-    fseek(model, 4, SEEK_CUR);		//I'm skipping the number of skins here
+    Uint32 num_shaders;
+    freadLE(num_shaders, model);
+//    fprintf(stderr, "num_shaders = %d\n", num_shaders);
 
     Uint32 num_vertices;
     freadLE(num_vertices, model);
@@ -135,7 +139,8 @@ bool SimpleModel_MD3::Load(const string &filenm,
     Sint32 face_offset;
     freadLE(face_offset, model);
 
-    fseek(model, 4, SEEK_CUR);		//I'm skipping the header size here
+    Sint32 shader_offset;
+    freadLE(shader_offset, model);
 
     Sint32 uv_offset;
     freadLE(uv_offset, model);
@@ -150,7 +155,13 @@ bool SimpleModel_MD3::Load(const string &filenm,
     meshes[meshnum].coords.resize(num_vertices);
     meshes[meshnum].triangles.resize(num_vertices * num_mframes);
 
-    //FIXME: We skip the skin names here
+	// Seek to the start of the face data, then read it in
+    fseek(model, offset + shader_offset, SEEK_SET);
+    for(unsigned int shader=0; shader < num_shaders; ++shader) {
+      Sint8 buf[65] = {0};
+      fread(buf, 64, 1, model);
+      AddSkin((char*)buf);
+      }
 
 	// Seek to the start of the face data, then read it in
     fseek(model, offset + face_offset, SEEK_SET);
@@ -258,15 +269,6 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
   return false;
   }
 
-void SimpleModel_MD3::SetAnimation(int anim) {
-  fprintf(stderr, "WARNING: Calling unsupported old function SetAnimation()\n");
-  }
-
-int SimpleModel_MD3::GetAnimation() {
-  fprintf(stderr, "WARNING: Calling unsupported old function GetAnimation()\n");
-  return 0;
-  }
-
 int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
   MD3AnimationData anim;
 
@@ -329,4 +331,14 @@ int SimpleModel_MD3::CalcFrame(Uint32 cur_time, const vector<int> &anim,
     }
 
   return frame;
+  }
+
+
+const vector<string> &SimpleModel_MD3::GetSkinList() {
+  return skins;
+  }
+
+void SimpleModel_MD3::AddSkin(const string &skinnm) {
+  skins.push_back(skinnm);
+//  fprintf(stderr, "Added Skin '%s'\n", skinnm.c_str());
   }
