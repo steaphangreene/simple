@@ -43,6 +43,7 @@ bool SimpleModel_Sphere::Load(const string &filenm) {
 bool SimpleModel_Sphere::Render(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const {
   GLUquadric *quad = gluNewQuadric();
+  gluQuadricTexture(quad, true);
   gluSphere(quad, 1.0, 16, 16);
   gluDeleteQuadric(quad);
   return true;
