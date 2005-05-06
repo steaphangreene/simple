@@ -39,6 +39,9 @@ using namespace std;
 int user_quit = 0;	//Don't need to mutex this one - no race condition
 static SimpleGUI *gui;
 
+static bool go_left = false, go_right = false, go_up = false, go_down = false;
+static SG_Tabs *tabs = NULL;
+
 int event_thread_handler(void *arg) {
   int click = audio_buildsound(click_data, sizeof(click_data));
 
@@ -55,6 +58,22 @@ int event_thread_handler(void *arg) {
 	if(event.key.keysym.sym == SDLK_ESCAPE) {
 	  user_quit = 1;
 	  }
+	else if(event.key.keysym.sym == SDLK_LEFT) {
+	  while(go_left) SDL_Delay(10);
+	  go_left = true;
+	  }
+	else if(event.key.keysym.sym == SDLK_RIGHT) {
+	  while(go_right) SDL_Delay(10);
+	  go_right = true;
+	  }
+	else if(event.key.keysym.sym == SDLK_UP) {
+	  while(go_up) SDL_Delay(10);
+	  go_up = true;
+	  }
+	else if(event.key.keysym.sym == SDLK_DOWN) {
+	  while(go_down) SDL_Delay(10);
+	  go_down = true;
+	  }
 	}
       else if(event.type == SDL_QUIT) {
 	user_quit = 1;
@@ -68,6 +87,12 @@ int event_thread_handler(void *arg) {
 int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
   while(!user_quit) {
     unsigned long cur_time = SDL_GetTicks();
+
+    if(go_left)  { tabs->Left();  go_left = false;  }
+    if(go_right) { tabs->Right(); go_right = false; }
+    if(go_up)    { tabs->Up();    go_up = false;    }
+    if(go_down)  { tabs->Down();  go_down = false;  }
+
     start_scene();
     gui->RenderStart(cur_time, true);
     gui->RenderFinish(cur_time, true);
@@ -129,18 +154,22 @@ int main(int argc, char **argv) {
   SG_Table *split = new SG_Table(4, 1);
   gui->MasterWidget()->AddWidget(split);
 
-  SG_Table *btab = new SG_Table(3, 12, 0.0625, 0.0625);
-  split->AddWidget(btab, 3, 0);
-
-  SG_Panel *btab_bg = new SG_Panel;
-  btab->SetBackground(btab_bg);
-
-  for(int n=0; n < 3*12; ++n) {
+  vector<string> buttons;
+  for(int n=0; n < 4*16; ++n) {
     static char buf[8] = { 0 };
     sprintf(buf, "B:%d%c", n+1, 0);  //I don't trust sprintf() to null term.
-    btab->AddWidget(new SG_Button(buf));
+    buttons.push_back(buf);
     }
+  SG_Scrollable *scr = new SG_Scrollable(3.0, 12.0);
+  split->AddWidget(scr, 3, 0);
 
+  tabs = new SG_Tabs(buttons, 4, 16);
+  tabs->SetBorder(0.0625, 0.0625);
+  scr->AddWidget(tabs);
+
+  SG_Panel *btab_bg = new SG_Panel;
+  tabs->SetBackground(btab_bg);
+  
   SDL_Thread *ev_t, *game_t;
 
   ev_t = SDL_CreateThread(event_thread_handler, NULL);
