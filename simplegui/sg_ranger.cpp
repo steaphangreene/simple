@@ -37,6 +37,15 @@ SG_Ranger::~SG_Ranger() {
     }
   }
 
+void SG_Ranger::SetActive(float st, float en) {
+  float val = Value();
+  if(val + Span() < en) val = en - Span();
+  if(val > st) val = st;
+  if(val != Value()) {
+    SetValue(val);
+    }
+  }
+
 void SG_Ranger::SetLimits(float mn, float mx) {
   min = mn;
   max = mx;

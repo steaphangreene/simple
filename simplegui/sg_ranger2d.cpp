@@ -62,6 +62,22 @@ void SG_Ranger2D::SetYValue(float yval) {
   RangerChanged();
   }
 
+void SG_Ranger2D::SetActive(float xst, float yst, float xen, float yen) {
+  xranger.SetActive(xst, xen);
+  yranger.SetActive(yst, yen);
+  RangerChanged();
+  }
+
+void SG_Ranger2D::SetXActive(float xst, float xen) {
+  xranger.SetActive(xst, xen);
+  RangerChanged();
+  }
+
+void SG_Ranger2D::SetYActive(float yst, float yen) {
+  yranger.SetActive(yst, yen);
+  RangerChanged();
+  }
+
 void SG_Ranger2D::SetLimits(float xmn, float ymn, float xmx, float ymx) {
   xranger.SetLimits(xmn, xmx);
   yranger.SetLimits(ymn, ymx);

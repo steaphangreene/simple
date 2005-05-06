@@ -41,6 +41,9 @@ public:
   void SetLimits(float xmn, float ymn, float xmx, float ymx);
   void SetXLimits(float xmn, float xmx);
   void SetYLimits(float ymn, float ymx);
+  void SetActive(float xst, float yst, float xen, float yen);
+  void SetXActive(float xst, float xen);
+  void SetYActive(float yst, float yen);
 
   float XSpan() { return xranger.Span(); };
   float YSpan() { return yranger.Span(); };

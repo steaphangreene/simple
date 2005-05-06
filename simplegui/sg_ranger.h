@@ -36,6 +36,7 @@ public:
   void SetValue(float val);
   void SetSpan(float spn);
   void SetLimits(float mn, float mx);
+  void SetActive(float st, float en);
 
   float Span() { return span; };
   float Value() { return value; };
