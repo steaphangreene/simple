@@ -30,8 +30,10 @@ using namespace std;
 #include "simplemodel.h"
 #include "simplemodel_q3dir.h"
 #include "simplemodel_3ds.h"
-#include "simplemodel_sphere.h"
+
+#include "simplemodel_cone.h"
 #include "simplemodel_wedge.h"
+#include "simplemodel_sphere.h"
 
 SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
   FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
@@ -46,6 +48,7 @@ SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
     return new SimpleModel_3DS(filename, skinname);
     }      
 	
+  if(filename == "SimpleModel:Cone") return new SimpleModel_Cone();
   if(filename == "SimpleModel:Wedge") return new SimpleModel_Wedge();
   if(filename == "SimpleModel:Sphere") return new SimpleModel_Sphere();
 
