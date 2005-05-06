@@ -399,3 +399,12 @@ void SG_Table::SendYResize() {
     }
   }
 
+void SG_Table::SetActive(float xst, float yst, float xen, float yen) {
+  set<SG_Ranger *>::iterator itr;
+  for(itr = xrangers.begin(); itr != xrangers.end(); ++itr) {
+    (*itr)->SetActive(xst, xen);
+    }
+  for(itr = yrangers.begin(); itr != yrangers.end(); ++itr) {
+    (*itr)->SetActive(yst, yen);
+    }
+  }

@@ -80,6 +80,10 @@ void SG_Tabs::Set(int which) {
     if(*itrw) (*itrw)->TurnOff();
     }
   widgets[which]->TurnOn();
+  SetActive(wgeom[which].xpos, wgeom[which].ypos,
+	wgeom[which].xpos + wgeom[which].xsize,
+	wgeom[which].ypos + wgeom[which].ysize
+	);
   cur_on = which;
   }
 

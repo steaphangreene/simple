@@ -64,6 +64,8 @@ public:
   void LinkYResize(SG_Ranger2D *ranger);
   void LinkXResize(SG_Ranger *ranger);
   void LinkYResize(SG_Ranger *ranger);
+
+  void SetActive(float xst, float yst, float xen, float yen);
   
 protected:
   void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
