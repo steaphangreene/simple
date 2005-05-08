@@ -33,6 +33,7 @@
 SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
 	: SG_Compound(xsz, ysz, 0.0, 0.0) {
   present.resize(xsize*ysize, false);
+  occupied.resize(xsize*ysize, false);
   basecell.resize(xsize*ysize, false);
   invalids.resize(xsize*ysize, 0);
   cellids.resize(xsize*ysize, 0);
@@ -105,6 +106,14 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
   return ret;
   }
 
+void SG_DNDBoxes::UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) {
+  for(int x = x1; x < x1+xs; ++x) {
+    for(int y = y1; y < y1+ys; ++y) {
+      occupied[y*xsize + x] = false;
+      }
+    }
+  }
+
 void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) {
   float mnx, mny, mxx, mxy;	//Limits
   mnx = -(float)(x1) / (float)(xs);
@@ -117,6 +126,12 @@ void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) 
 
   SG_Table::RemoveWidget(drag);
   SG_Table::AddWidget(drag, x1, y1, xs, ys);
+
+  for(int x = x1; x < x1+xs; ++x) {
+    for(int y = y1; y < y1+ys; ++y) {
+      occupied[y*xsize + x] = true;
+      }
+    }
   }
 
 bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
@@ -130,6 +145,7 @@ bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
   for(int x = x1; x < x1+xs; ++x) {
     for(int y = y1; y < y1+ys; ++y) {
       if(!present[y*xsize + x]) return false;
+      if(occupied[y*xsize + x]) return false;
       if((invalids[y*xsize + x] & tps) != 0) return false;
       }
     }
@@ -162,6 +178,7 @@ void SG_DNDBoxes::RemoveItem(int x1, int y1) {
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     if(itrg->xpos == x1 && itrg->ypos == y1) {
       SG_Dragable *drag = (SG_Dragable*)(*itrw);
+      UnconfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
       to_delete.push_back(drag);
       }
     }
@@ -204,6 +221,7 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
       }
 
     bool allowed = false;
+    UnconfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
     if(CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
       allowed = true;
       }
@@ -229,6 +247,7 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
       return true;
       }
     else {
+      ConfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
       drag->SetValues(0.0, 0.0);
       event->user.code = SG_EVENT_DNDDENIED;
       return true;

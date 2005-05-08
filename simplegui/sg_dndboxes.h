@@ -53,10 +53,12 @@ public:
   
 protected:
   bool CanFit(int x1, int y1, int xs=1, int ys=1, Uint32 tps = 0);
+  void UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
   void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
 
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<bool> present;		// Is this potential cell present?
+  vector<bool> occupied;	// Is this cell full?
   vector<bool> basecell;	// Is this the cell a base cell?
   vector<Uint32> invalids;	// Bitvector of invalid types
   vector<Uint32> cellids;	// (Non-Unique) ID of cell area
