@@ -151,7 +151,28 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
 
   return true;
   }
-                                                                                
+
+void SG_DNDBoxes::RemoveItem(int x1, int y1) {
+  vector<SG_Dragable *> to_delete;
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(itrg->xpos == x1 && itrg->ypos == y1) {
+      SG_Dragable *drag = (SG_Dragable*)(*itrw);
+      to_delete.push_back(drag);
+      }
+    }
+
+  vector<SG_Dragable *>::iterator itrd = to_delete.begin();
+  for(; itrd != to_delete.end(); ++itrd) {
+    SG_Dragable *drag = (*itrd);
+    SG_Table::RemoveWidget(drag);
+    itemmap.erase(drag);
+    delete drag;
+    }
+  }
+
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_DRAGRELEASE) {
     vector<SG_Widget *>::iterator itrw = widgets.begin();
