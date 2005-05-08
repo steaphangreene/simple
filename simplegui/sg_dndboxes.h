@@ -49,7 +49,6 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<bool> present;
-  float cur_offx, cur_offy;
   };
 
 #endif // SG_DNDBOXES_H

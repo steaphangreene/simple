@@ -129,9 +129,6 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
   }
                                                                                 
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    current_sg->GetMousePos(cur_offx, cur_offy);
-    }
   return 0; // Silence children doing other things
   }
 
