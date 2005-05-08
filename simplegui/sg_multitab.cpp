@@ -68,7 +68,7 @@ bool SG_MultiTab::ChildEvent(SDL_Event *event) {
     event->user.data1 = (void*)(SG_Compound*)this;  //Now it's MY select event
     return 1;
     }
-  return 0; // Silence children doing other things
+  return 1; // Don't silence children doing other things
   }
 
 //  bool SG_MultiTab::SetDefaultCursor(GL_MODEL *cur);

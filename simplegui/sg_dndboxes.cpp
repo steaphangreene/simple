@@ -135,7 +135,7 @@ bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
   }
 
 bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
-	Uint32 tps) {
+	Uint32 id, Uint32 tps) {
   if(!CanFit(x1, y1, xs, ys, tps)) {
     fprintf(stderr, "Illegal DND add, (%d,%d) %dx%d (0x%.8X).\n",
 	x1, y1, xs, ys, tps);
@@ -146,6 +146,8 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
   drag->SetTransparent();
 
   ConfigDrag(drag, x1, y1, xs, ys);
+  ItemInfo info = { id, tps };
+  itemmap[drag] = info;
 
   return true;
   }
@@ -163,6 +165,8 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
       exit(1);
       }
 
+    SG_Dragable *drag = (SG_Dragable*)(*itrw);
+
     double offx = ((float*)(event->user.data2))[0] * itrg->xsize;
     double offy = ((float*)(event->user.data2))[1] * itrg->ysize;
     int targx = (int)(offx + itrg->xpos + 0.5);
@@ -170,35 +174,46 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
 
     bool allowed = false;
     if(targx != itrg->xpos || targy != itrg->ypos) {
-      if(CanFit(targx, targy, itrg->xsize, itrg->ysize)) {
+      if(CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
         allowed = true;
 	}
       }
 
+    static SG_Event_DataType event_data;
+    event_data.i[0] = itemmap[drag].id;
+    event_data.i[1] = targx;
+    event_data.i[2] = targy;
+    event_data.i[3] = itrg->xpos;
+    event_data.i[4] = itrg->ypos;
+
+    event->type = SDL_SG_EVENT;
+    event->user.data1 = (SG_Compound*)(this);
+    event->user.data2 = (void*)&event_data;
+
     if(!allowed) {
-      ((SG_Ranger2D*)(event->user.data1))->SetValues(0.0, 0.0);
-      event->user.code = SG_EVENT_NEEDTORENDER;
-      event->user.data1 = NULL;
-      event->user.data2 = NULL;
+      drag->SetValues(0.0, 0.0);
+      event->user.code = SG_EVENT_DNDDENIED;
+
 //      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - DENIED\n",
 //		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
-      return 1;
+
+      return true;
       }
     else {
-      ConfigDrag(((SG_Dragable*)(SG_Ranger2D*)(event->user.data1)),
-		targx, targy, itrg->xsize, itrg->ysize);
-      ((SG_Ranger2D*)(event->user.data1))->SetValues(0.0, 0.0);
+      ConfigDrag(drag, targx, targy, itrg->xsize, itrg->ysize);
+      drag->SetValues(0.0, 0.0);
+      event->user.code = SG_EVENT_DND;
+
 //      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - Allowed\n",
 //		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
-      event->user.code = SG_EVENT_NEEDTORENDER;
-      event->user.data1 = NULL;
-      event->user.data2 = NULL;
-      return 1;
+
+      return true;
       }
     }
   else if(event->user.code == SG_EVENT_MOVE2D) {
+    // Fixme - dynamic highlighting?
     }
-  return 0; // Silence children doing other things
+  return false; // Silence children doing other things
   }
 
 //  bool SG_DNDBoxes::SetDefaultCursor(GL_MODEL *cur);

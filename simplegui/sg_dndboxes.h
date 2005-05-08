@@ -43,7 +43,7 @@ public:
   void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1,
 	Uint32 id = 0, Uint32 inv = 0);
   bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1,
-	Uint32 tps = 0);
+	Uint32 id = 0, Uint32 tps = 0);
 
   //Handle all these to disable them!
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);

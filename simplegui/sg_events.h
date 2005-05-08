@@ -80,6 +80,10 @@
 //SG_FileBrowser Actions
 #define	SG_EVENT_FILEOPEN	2101
 
+//SG_DNDBoxes Actions
+#define	SG_EVENT_DND		2900
+#define	SG_EVENT_DNDDENIED	2901
+
 #define SG_EVENT_SELECT_ITEM	3000
 #define SG_EVENT_UNSELECT_ITEM	3001
 
