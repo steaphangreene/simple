@@ -172,11 +172,17 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
     int targx = (int)(offx + itrg->xpos + 0.5);
     int targy = (int)(offy + itrg->ypos + 0.5);
 
+    if(targx == itrg->xpos && targy == itrg->ypos) {
+      event->type = SDL_SG_EVENT;
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
+      event->user.data2 = NULL;
+      return true;
+      }
+
     bool allowed = false;
-    if(targx != itrg->xpos || targy != itrg->ypos) {
-      if(CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
-        allowed = true;
-	}
+    if(CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
+      allowed = true;
       }
 
     static SG_Event_DataType event_data;
@@ -190,23 +196,18 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
     event->user.data1 = (SG_Compound*)(this);
     event->user.data2 = (void*)&event_data;
 
-    if(!allowed) {
+    if(allowed) {
+      event->user.code = SG_EVENT_DND;
+      event_data.i[5] = cellids[targy*xsize + targx];
+      event_data.i[6] = cellids[itrg->ypos*xsize + itrg->xpos];
+
+      ConfigDrag(drag, targx, targy, itrg->xsize, itrg->ysize);
       drag->SetValues(0.0, 0.0);
-      event->user.code = SG_EVENT_DNDDENIED;
-
-//      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - DENIED\n",
-//		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
-
       return true;
       }
     else {
-      ConfigDrag(drag, targx, targy, itrg->xsize, itrg->ysize);
       drag->SetValues(0.0, 0.0);
-      event->user.code = SG_EVENT_DND;
-
-//      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - Allowed\n",
-//		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
-
+      event->user.code = SG_EVENT_DNDDENIED;
       return true;
       }
     }
