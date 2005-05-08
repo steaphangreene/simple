@@ -33,6 +33,7 @@
 SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
 	: SG_Compound(xsz, ysz, 0.0, 0.0) {
   present.resize(xsize*ysize, false);
+  basecell.resize(xsize*ysize, false);
   }
 
 SG_DNDBoxes::~SG_DNDBoxes() {
@@ -57,33 +58,47 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
       num_cells = 0;
       if(x < xsize && y < ysize && present[y*xsize+x]) ++num_cells; 
       if(x < xsize && y > 0 && present[(y-1)*xsize+x]) ++num_cells; 
+      if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
-	double bor_col = 1.0, bor_dep = 0.0;
+	int xrun = 1;
+	double bor_col = 1.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
-	  bor_dep = -0.015625;
+	  while((x+xrun) < xsize && present[y*xsize+x+xrun]
+		&& (!basecell[y*xsize+x+xrun])) ++xrun;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
-	glVertex3f(-1.0 + (2.0*((float)(x+1))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
+	glVertex3f(-1.0 + (2.0*((float)(x+xrun))/((float)(xsize))), 
+		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
+		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
 	}
 
       num_cells = 0;
       if(y < ysize && x < xsize && present[y*xsize+x]) ++num_cells; 
       if(y < ysize && x > 0 && present[y*xsize+x-1]) ++num_cells; 
+      if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
-	double bor_col = 1.0, bor_dep = 0.0;
+	int yrun = 1;
+	double bor_col = 1.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
-	  bor_dep = -0.015625;
+	  while((y+yrun) < ysize && present[(y+yrun)*xsize+x]
+		&& (!basecell[(y+yrun)*xsize+x])) ++yrun;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), bor_dep);
+		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y+1))/((float)(ysize))), bor_dep);
+		1.0 - (2.0*((float)(y+yrun))/((float)(ysize))), 0.0);
+	}
+
+      if(x < xsize && y < ysize && basecell[y*xsize+x]) {
+	glColor3f(0.5, 0.5, 0.5);
+	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
+		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
+	glVertex3f(-1.0 + (2.0*((float)(x+1))/((float)(xsize))), 
+		1.0 - (2.0*((float)(y+1))/((float)(ysize))), 0.0);
 	}
       }
     }
@@ -165,7 +180,7 @@ void SG_DNDBoxes::Exclude(int x1, int y1, int xs, int ys) {
     }
   }
 
-void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys) {
+void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys, int xcs, int ycs) {
   if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
         || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
     fprintf(stderr, "Illegal DNDBox Include, (%d,%d)/%dx%d in (%dx%d)\n",
@@ -176,6 +191,9 @@ void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys) {
   for(int x = x1; x < x1+xs; ++x) {
     for(int y = y1; y < y1+ys; ++y) {
       present[y*xsize + x] = true;
+      if((x - x1) % xcs == 0 && (y - y1) % ycs == 0) {	//Is it a base cell?
+	basecell[y*xsize + x] = true;
+	}
       }
     }
   }

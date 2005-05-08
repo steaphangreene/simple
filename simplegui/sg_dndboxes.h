@@ -37,8 +37,8 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool Render(unsigned long cur_time);
   virtual bool ChildEvent(SDL_Event *event);
-  void Exclude(int xp, int yp, int xsz = 1, int ysz = 1);
-  void Include(int xp, int yp, int xsz = 1, int ysz = 1);
+  void Exclude(int xp, int yp, int xs = 1, int ys = 1);
+  void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1);
   bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1);
 
   //Handle all these to disable them!
@@ -48,7 +48,8 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  vector<bool> present;
+  vector<bool> present;		// Is this potential cell present?
+  vector<bool> basecell;	// Is this the cell a base cell?
   };
 
 #endif // SG_DNDBOXES_H
