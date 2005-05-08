@@ -94,14 +94,6 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
 		1.0 - (2.0*((float)(y+yrun))/((float)(ysize))), 0.0);
 	}
-
-      if(x < xsize && y < ysize && basecell[y*xsize+x]) {
-	glColor3f(0.5, 0.5, 0.5);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	glVertex3f(-1.0 + (2.0*((float)(x+1))/((float)(xsize))), 
-		1.0 - (2.0*((float)(y+1))/((float)(ysize))), 0.0);
-	}
       }
     }
   glEnd();
@@ -113,45 +105,96 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
   return ret;
   }
 
-bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
-  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
-        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
-    fprintf(stderr, "Illegal DND add, (%d,%d)/%dx%d in (%dx%d)\n",
-        x1, y1, xs, ys, xsize, ysize);
-    return 0;
-    }
-
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      if(!present[y*xsize + x]) {
-	fprintf(stderr, "Illegal DND add, cell (%d,%d) not present.\n", x, y);
-	return 0;
-	}
-      }
-    }
-
+void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) {
   float mnx, mny, mxx, mxy;	//Limits
   mnx = -(float)(x1) / (float)(xs);
   mny = -(float)(y1) / (float)(ys);
   mxx = (float)(xsize-(x1+xs)) / (float)(xs);
   mxy = (float)(ysize-(y1+ys)) / (float)(ys);
 
-  SG_Dragable *but = new SG_Dragable(icon);
-  but->SetLimits(mnx, mny, mxx, mxy);
-  but->SetDisplayLimits(mnx * 2.0, mny * 2.0, mxx * 2.0, mxy * 2.0);
-  but->SetTransparent();
+  drag->SetLimits(mnx, mny, mxx, mxy);
+  drag->SetDisplayLimits(mnx * 2.0, mny * 2.0, mxx * 2.0, mxy * 2.0);
 
-  SG_Table::AddWidget(but, x1, y1, xs, ys);
-  return 0;
+  SG_Table::RemoveWidget(drag);
+  SG_Table::AddWidget(drag, x1, y1, xs, ys);
+  }
+
+bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
+  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
+        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
+    return false;
+    }
+
+  for(int x = x1; x < x1+xs; ++x) {
+    for(int y = y1; y < y1+ys; ++y) {
+      if(!present[y*xsize + x]) return false;
+      if((invalids[y*xsize + x] | tps) != 0) return false;
+      }
+    }
+  return true;
+  }
+
+bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
+	Uint32 tps) {
+  if(!CanFit(x1, y1, xs, ys, tps)) {
+    fprintf(stderr, "Illegal DND add, (%d,%d) %dx%d (0x%.8X).\n",
+	x1, y1, xs, ys, tps);
+    return false;
+    }
+
+  SG_Dragable *drag = new SG_Dragable(icon);
+  drag->SetTransparent();
+
+  ConfigDrag(drag, x1, y1, xs, ys);
+
+  return true;
   }
                                                                                 
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_DRAGRELEASE) {
-    ((SG_Ranger2D*)event->user.data1)->SetValues(0.0, 0.0);
-    event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = NULL;
-    event->user.data2 = NULL;
-    return 1;
+    vector<SG_Widget *>::iterator itrw = widgets.begin();
+    vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+    for(; itrw != widgets.end(); ++itrw, ++itrg) {
+      if(((SG_Ranger2D*)(event->user.data1))
+		== (SG_Ranger2D*)(SG_Dragable*)(*itrw)) break;
+      }
+    if(itrw == widgets.end()) {
+      fprintf(stderr, "ERROR: DNDBoxes got an event from a non-child child!\n");
+      exit(1);
+      }
+
+    double offx = ((float*)(event->user.data2))[0] * itrg->xsize;
+    double offy = ((float*)(event->user.data2))[1] * itrg->ysize;
+    int targx = (int)(offx + itrg->xpos + 0.5);
+    int targy = (int)(offy + itrg->ypos + 0.5);
+
+    bool allowed = false;
+    if(targx != itrg->xpos || targy != itrg->ypos) {
+      if(CanFit(targx, targy, itrg->xsize, itrg->ysize)) {
+        allowed = true;
+	}
+      }
+
+    if(!allowed) {
+      ((SG_Ranger2D*)(event->user.data1))->SetValues(0.0, 0.0);
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
+      event->user.data2 = NULL;
+//      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - DENIED\n",
+//		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
+      return 1;
+      }
+    else {
+      ConfigDrag(((SG_Dragable*)(SG_Ranger2D*)(event->user.data1)),
+		targx, targy, itrg->xsize, itrg->ysize);
+      ((SG_Ranger2D*)(event->user.data1))->SetValues(0.0, 0.0);
+//      fprintf(stderr, "DEBUG: Got (%d,%d) - %dx%d to (%d,%d) - Allowed\n",
+//		itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize, targx, targy);
+      event->user.code = SG_EVENT_NEEDTORENDER;
+      event->user.data1 = NULL;
+      event->user.data2 = NULL;
+      return 1;
+      }
     }
   else if(event->user.code == SG_EVENT_MOVE2D) {
     }

@@ -26,6 +26,7 @@
 #define SG_DNDBOXES_H
 
 #include "sg_compound.h"
+#include "sg_dragable.h"
 
 #include <map>
 #include <vector>
@@ -41,7 +42,8 @@ public:
   void Exclude(int xp, int yp, int xs = 1, int ys = 1);
   void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1,
 	Uint32 id = 0, Uint32 inv = 0);
-  bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1);
+  bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1,
+	Uint32 tps = 0);
 
   //Handle all these to disable them!
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
@@ -49,6 +51,9 @@ public:
   virtual void RemoveWidget(SG_Widget *wid);
   
 protected:
+  bool CanFit(int x1, int y1, int xs=1, int ys=1, Uint32 tps = 0);
+  void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<bool> present;		// Is this potential cell present?
   vector<bool> basecell;	// Is this the cell a base cell?
