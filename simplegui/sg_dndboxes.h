@@ -27,6 +27,7 @@
 
 #include "sg_compound.h"
 
+#include <map>
 #include <vector>
 using namespace std;
 
@@ -38,7 +39,8 @@ public:
   virtual bool Render(unsigned long cur_time);
   virtual bool ChildEvent(SDL_Event *event);
   void Exclude(int xp, int yp, int xs = 1, int ys = 1);
-  void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1);
+  void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1,
+	Uint32 id = 0, Uint32 inv = 0);
   bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1);
 
   //Handle all these to disable them!
@@ -50,6 +52,12 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<bool> present;		// Is this potential cell present?
   vector<bool> basecell;	// Is this the cell a base cell?
+  vector<Uint32> invalids;	// Bitvector of invalid types
+  vector<Uint32> cellids;	// (Non-Unique) ID of cell area
+
+  // Maps items to [item id, item types bitvec]
+  struct ItemInfo { Uint32 id; Uint32 types; };
+  map<SG_Widget *, ItemInfo> itemmap;
   };
 
 #endif // SG_DNDBOXES_H

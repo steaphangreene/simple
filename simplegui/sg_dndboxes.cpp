@@ -34,6 +34,8 @@ SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
 	: SG_Compound(xsz, ysz, 0.0, 0.0) {
   present.resize(xsize*ysize, false);
   basecell.resize(xsize*ysize, false);
+  invalids.resize(xsize*ysize, 0);
+  cellids.resize(xsize*ysize, 0);
   }
 
 SG_DNDBoxes::~SG_DNDBoxes() {
@@ -144,6 +146,15 @@ bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys) {
   }
                                                                                 
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
+  if(event->user.code == SG_EVENT_DRAGRELEASE) {
+    ((SG_Ranger2D*)event->user.data1)->SetValues(0.0, 0.0);
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  else if(event->user.code == SG_EVENT_MOVE2D) {
+    }
   return 0; // Silence children doing other things
   }
 
@@ -180,7 +191,8 @@ void SG_DNDBoxes::Exclude(int x1, int y1, int xs, int ys) {
     }
   }
 
-void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys, int xcs, int ycs) {
+void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys, int xcs, int ycs,
+	Uint32 id, Uint32 inv) {
   if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
         || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
     fprintf(stderr, "Illegal DNDBox Include, (%d,%d)/%dx%d in (%dx%d)\n",
@@ -194,6 +206,8 @@ void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys, int xcs, int ycs) {
       if((x - x1) % xcs == 0 && (y - y1) % ycs == 0) {	//Is it a base cell?
 	basecell[y*xsize + x] = true;
 	}
+      cellids[y*xsize + x] = id;
+      invalids[y*xsize + x] = inv;
       }
     }
   }
