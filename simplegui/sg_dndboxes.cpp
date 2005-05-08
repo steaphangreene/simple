@@ -128,7 +128,7 @@ bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
   for(int x = x1; x < x1+xs; ++x) {
     for(int y = y1; y < y1+ys; ++y) {
       if(!present[y*xsize + x]) return false;
-      if((invalids[y*xsize + x] | tps) != 0) return false;
+      if((invalids[y*xsize + x] & tps) != 0) return false;
       }
     }
   return true;
