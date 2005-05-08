@@ -302,6 +302,7 @@ void SimpleConnect::Config() {
     }
   mode = SC_MODE_CONFIG;
   slots_dirty = true;
+  AddWidget(startb, 6, 0, 1, 1);
   }
 
 void SimpleConnect::Reset() {
