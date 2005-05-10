@@ -24,6 +24,7 @@
 
 #include <map>
 #include <set>
+#include <list>
 using namespace std;
 
 #include "SDL.h"
@@ -59,6 +60,9 @@ public:
   float xfact, yfact;	//Portion of texture actually shown
   bool dirty; //Does the system need to rebuild this texture?
 
+  //For Internal Use Only!
+  static void EmptyTrash();
+
 protected:
   void Clear();
   void CopyFrom(const SG_Texture &in);
@@ -68,6 +72,9 @@ protected:
   void UpdateCache();
   static map<SDL_Surface *, set<SG_Texture *> > trans_cache;
   static map<SDL_Surface *, set<SG_Texture *> > def_cache;
+
+  static list<SDL_Surface *> trash_surf;
+  static list<GLuint> trash_tex;
   };
 
 extern unsigned char sg_col_u32b1[4];

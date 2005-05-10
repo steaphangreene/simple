@@ -83,10 +83,9 @@ void SG_Texture::Clear() {
     trans_cache[src].erase(this);
     if(trans_cache[src].size() < 1) {
       trans_cache.erase(src);
-      if(texture != 0) glDeleteTextures(1, &texture);
+      if(texture != 0) trash_tex.push_back(texture);
       if(cur) {
-	glFinish();	// Don't yank the rug out from under GL
-	SDL_FreeSurface(cur);
+	trash_surf.push_back(cur);
 	cur = NULL;
 	}
       }
@@ -95,21 +94,41 @@ void SG_Texture::Clear() {
     def_cache[src].erase(this);
     if(def_cache[src].size() < 1) {
       def_cache.erase(src);
-      if(texture != 0) glDeleteTextures(1, &texture);
+      if(texture != 0) trash_tex.push_back(texture);
       if(cur) {
-	glFinish();	// Don't yank the rug out from under GL
-	SDL_FreeSurface(cur);
+	trash_surf.push_back(cur);
 	cur = NULL;
 	}
       }
     }
   else {
-    if(texture != 0) glDeleteTextures(1, &texture);
+    if(texture != 0) trash_tex.push_back(texture);
     if(cur) {
-      glFinish();	// Don't yank the rug out from under GL
-      SDL_FreeSurface(cur);
+      trash_surf.push_back(cur);
       cur = NULL;
       }
+    }
+  }
+
+list<SDL_Surface *> SG_Texture::trash_surf;
+
+list<GLuint> SG_Texture::trash_tex;
+
+void SG_Texture::EmptyTrash() {
+  if(trash_tex.size() > 0 || trash_surf.size() > 0) {
+    list<GLuint>::iterator itri = trash_tex.begin();
+    for(; itri != trash_tex.end(); ++itri) {
+      glDeleteTextures(1, &(*itri));
+      }
+    trash_tex.clear();
+
+    glFinish();	// Don't yank the rug out from under GL
+
+    list<SDL_Surface *>::iterator itrs = trash_surf.begin();
+    for(; itrs != trash_surf.end(); ++itrs) {
+      SDL_FreeSurface(*itrs);
+      }
+    trash_surf.clear();
     }
   }
 

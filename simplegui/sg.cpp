@@ -114,6 +114,7 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   }
 
 SimpleGUI::~SimpleGUI() {
+  SG_Texture::EmptyTrash();
   glFinish();
 
   delete mWid;
@@ -251,6 +252,8 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
     SDL_mutexV(Mutex());
     SDL_PumpEvents();
     }
+
+  SG_Texture::EmptyTrash();
   return 1;
   }
 
