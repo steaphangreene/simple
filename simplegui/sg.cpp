@@ -122,7 +122,7 @@ SimpleGUI::~SimpleGUI() {
   popWid = NULL;
 
   if(fontfile) {		//Only close if WE opened
-    delete fontfile;
+    delete [] fontfile;
     fontfile = NULL;
     map<int, TTF_Font *>::iterator itrf = cur_font.begin();
     for(; itrf != cur_font.end(); ++itrf) {
@@ -469,7 +469,7 @@ void SimpleGUI::SetFont(TTF_Font *font) {
     atexit(TTF_Quit);
     }
 
-  if(fontfile) delete fontfile;
+  if(fontfile) delete [] fontfile;
   fontfile = NULL;
   cur_font[0] = font;
   fontyratio = 1.0;
@@ -481,7 +481,7 @@ void SimpleGUI::SetDefaultFontSize(int pxsz) {
   }
 
 void SimpleGUI::LoadFont(const char *fontfn, int pxsz) {
-  if(fontfile) delete fontfile;
+  if(fontfile) delete [] fontfile;
   fontfile = new char[strlen(fontfn)+1];
   strcpy(fontfile, fontfn);
 
