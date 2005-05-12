@@ -19,10 +19,10 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_keysym.h>
+#include "SDL.h"
+#include "SDL_thread.h"
+#include "SDL_ttf.h"
+#include "SDL_keysym.h"
 #include <cstdio>
 #include <cstring>
 #include <map>

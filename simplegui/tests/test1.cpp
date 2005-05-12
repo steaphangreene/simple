@@ -22,10 +22,10 @@
 int NUM_FRAMES = 32;	//Not #defines so they can be capped later.
 int FRAME_DIM = 128;
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_keysym.h>
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "SDL_ttf.h"
+#include "SDL_keysym.h"
 #include <cstdio>
 #include <cstring>
 #include <map>
