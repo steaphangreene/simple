@@ -165,8 +165,28 @@ bool SG_Texture::CheckCache() {
 void SG_Texture::Update() {
   if(texture == 0) glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4,
-	cur->w, cur->h, 0, GL_RGBA,
+
+  int xsize = cur->w, ysize = cur->h;
+
+  glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
+	GL_UNSIGNED_BYTE, cur->pixels );
+  GLint res;
+  glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
+  while(res == 0) {
+    if(xsize >= ysize) xsize /= 2;
+    else ysize /= 2;
+    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
+	GL_UNSIGNED_BYTE, cur->pixels );
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
+    }
+  if(xsize != cur->w || ysize != cur->h) {
+    SDL_Surface *tmp = cur;
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SG_SDL_RGBA_COLFIELDS);
+    gluScaleImage(GL_RGBA, tmp->w, tmp->h, GL_UNSIGNED_BYTE, tmp->pixels,
+	cur->w, cur->h, GL_UNSIGNED_BYTE, cur->pixels);
+    SDL_FreeSurface(tmp);
+    }
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, cur->w, cur->h, 0, GL_RGBA,
 	GL_UNSIGNED_BYTE, cur->pixels );
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
