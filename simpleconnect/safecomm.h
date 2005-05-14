@@ -19,15 +19,13 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include <cstring>
-
 #include "SDL.h"
 
 template <class Tp>
 static void ReadNBO(Tp &var, void *buf) {
+  var = *((Tp*)(buf));
+#if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  std::memcpy(&var, buf, sizeof(Tp));
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
   int i1=0, i2=sizeof(Tp)-1;
   while(i1 < i2) {
     swap(((DTp *)(&var))->b[i1], ((DTp *)(&var))->b[i2]);
@@ -38,9 +36,9 @@ static void ReadNBO(Tp &var, void *buf) {
 
 template <class Tp>
 static void WriteNBO(Tp &var, void *buf) {
+  *((Tp*)(buf)) = var;
+#if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  std::memcpy(buf, &var, sizeof(Tp));
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
   int i1=0, i2=sizeof(Tp)-1;
   while(i1 < i2) {
     swap(((DTp *)(buf))->b[i1], ((DTp *)(buf))->b[i2]);
