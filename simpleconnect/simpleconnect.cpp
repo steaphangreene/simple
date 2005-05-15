@@ -29,11 +29,12 @@ using namespace std;
 #include "../simplegui/sg_globals.h"
 #include "../simplegui/sg_button.h"
 #include "../simplegui/sg_dragable.h"
+#include "../simplegui/sg_editable.h"
 
 #define HEADER_SIZE	1
-#define WIDGET_WIDTH	16
+#define WIDGET_WIDTH	10
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0005:"
+#define BASE_TAG	"SC-0006:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -65,6 +66,9 @@ SimpleConnect::SimpleConnect()
   AddWidget(labelb, 0, 0, 6, 1);
   scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
   startb = new SG_Button("Start", SG_COL_RAISED, SG_COL_LOW);
+  namep = new SG_TextArea("Name:", SG_COL_BG, SG_COL_BG);
+  nameb = new SG_Editable("Noobie", SG_COL_LOW, SG_COL_BG, SG_COL_HIGH);
+  nameb->SetVisibleSize(SG_AUTOSIZE, 1.0);
 
   port = DEFAULT_PORT;
 
@@ -85,6 +89,8 @@ SimpleConnect::~SimpleConnect() {
   CleanupNet();
   delete startb;
   delete scanb;
+  delete nameb;
+  delete namep;
   }
 
 bool SimpleConnect::Render(unsigned long cur_time) {
@@ -265,7 +271,9 @@ void SimpleConnect::Host() {
   slots_dirty = true;
   slots_send = true;
   StartNet();
-  AddWidget(startb, 6, 0, 1, 1);
+  AddWidget(namep, 6, 0, 1, 1);
+  AddWidget(nameb, 7, 0, 2, 1);
+  AddWidget(startb, 9, 0, 1, 1);
   }
 
 void SimpleConnect::Search() {
@@ -277,7 +285,9 @@ void SimpleConnect::Search() {
   mode = SC_MODE_SEARCH;
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   StartNet();
-  AddWidget(scanb, 6, 0, 1, 1);
+  AddWidget(namep, 6, 0, 1, 1);
+  AddWidget(nameb, 7, 0, 2, 1);
+  AddWidget(scanb, 9, 0, 1, 1);
   }
 
 void SimpleConnect::Connect(const IPaddress &location) {
@@ -302,7 +312,9 @@ void SimpleConnect::Config() {
     }
   mode = SC_MODE_CONFIG;
   slots_dirty = true;
-  AddWidget(startb, 6, 0, 1, 1);
+  AddWidget(namep, 6, 0, 1, 1);
+  AddWidget(nameb, 7, 0, 2, 1);
+  AddWidget(startb, 9, 0, 1, 1);
   }
 
 void SimpleConnect::Reset() {
@@ -385,6 +397,9 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	event->user.data2 = NULL;
 	return 1;
 	}
+      }
+    else if(event->user.code == SG_EVENT_NEWTEXT) {
+      SetPlayerName(((SG_Text*)(event->user.data1))->Text());
       }
     else if(event->user.code == SG_EVENT_DRAGRELEASE) {
       if(pnamemap.count((SG_Ranger2D*)(event->user.data1)) > 0) {
@@ -881,6 +896,8 @@ void SimpleConnect::CleanupNet() {
 
   RemoveWidget(startb);
   RemoveWidget(scanb);
+  RemoveWidget(nameb);
+  RemoveWidget(namep);
   }
 
 void SimpleConnect::StartNet() {
@@ -973,4 +990,29 @@ void SimpleConnect::SetSlotTeams(const vector<int> &teams) {
     conn.slots[slot].team = teams[slot];
     }
   if(net_mutex) SDL_mutexV(net_mutex);
+  }
+
+void SimpleConnect::SetPlayerName(const string &pln) {
+  nameb->SetText(pln);
+
+  if(mode == SC_MODE_HOST || mode == SC_MODE_CONFIG) {
+    if(mode == SC_MODE_HOST) {
+      SDL_mutexP(net_mutex);
+      }
+    for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
+      if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) {
+	strncpy(((char *)(conn.slots[slot].playername)), pln.c_str(), 15);
+	conn.slots[slot].playername[15] = 0;
+	}
+      slots_dirty = true;
+      }
+    if(mode == SC_MODE_HOST) {
+      slots_send = true;
+      SDL_mutexV(net_mutex);
+      }
+    }
+  }
+
+const string &SimpleConnect::PlayerName() {
+  return nameb->Text();
   }

@@ -43,6 +43,7 @@ using namespace std;
 
 class SG_Button;
 class SG_TextArea;
+class SG_Editable;
 
 enum SC_SlotType {
   SC_SLOT_NONE = 0,
@@ -126,6 +127,9 @@ public:
   void Connect(const IPaddress &location);	//Connect to active game
   void Reset();
 
+  void SetPlayerName(const string &pln);
+  const string &PlayerName();
+
   void SetMapName(const string &mp) { mapname = mp; };
   const string &MapName() { return mapname; };
 
@@ -138,6 +142,8 @@ protected:
   vector<int> colors;
 
 //  static GL_MODEL Default_Mouse_Cursor;
+  SG_Editable *nameb;
+  SG_TextArea *namep;
   SG_Button *scanb;
   SG_Button *startb;
 
