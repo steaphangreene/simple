@@ -54,7 +54,13 @@ int SG_TextArea::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
 
-  return 0;	//This widget eats all events all the time
+  if(event->type == SDL_MOUSEBUTTONDOWN
+	&& (event->button.button == 4 || event->button.button == 5)) {
+		// Allow mousewheel events to pass through
+    return -1;
+    }
+
+  return 0;	//This widget eats all other events all the time
   }
 
 //  bool SG_TextArea::SetDefaultCursor(GL_MODEL *cur);

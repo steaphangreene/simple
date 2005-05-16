@@ -50,6 +50,11 @@ int SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data2 = NULL;
     return 1;
     }
+  else if(event->type == SDL_MOUSEBUTTONDOWN
+	&& (event->button.button == 4 || event->button.button == 5)) {
+		// Allow mousewheel events to pass through
+    return -1;
+    }
   else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
     return 0;
     }

@@ -27,6 +27,7 @@ using namespace std;
 #include "sg_scrollable.h"
 #include "sg_textarea.h"
 #include "sg_table.h"
+#include "sg_events.h"
 
 SG_Scrollable::SG_Scrollable(float xspn, float yspn, float xval, float yval,
 	float xmin, float ymin, float xmax, float ymax)
@@ -60,15 +61,33 @@ int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
 	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
-      
+
       x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
       y -= cur_geom.yp;
       x /= cur_geom.xs;
       y /= cur_geom.ys;
-      return widgets[0]->HandleEvent(event, x, y);
+      ret = widgets[0]->HandleEvent(event, x, y);
+      if(ret != -1) return ret;
 
       x = back_x; y = back_y;
       }
+    }
+
+  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 4) {
+    SetYValue(YValue() - 0.5);
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  else if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 5) {
+    SetYValue(YValue() + 0.5);
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
     }
 
   if(background) {

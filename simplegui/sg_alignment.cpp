@@ -67,6 +67,12 @@ int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
       }
     }
 
+  if(event->type == SDL_MOUSEBUTTONDOWN
+	&& (event->button.button == 4 || event->button.button == 5)) {
+		// Allow mousewheel events to pass through
+    return -1;
+    }
+
   if(background) {
     ret = background->HandleEvent(event, x, y);
     if(ret != -1) return ret;

@@ -35,6 +35,13 @@ SG_Widget::~SG_Widget() {
 int SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  if(event->type == SDL_MOUSEBUTTONDOWN
+	&& (event->button.button == 4 || event->button.button == 5)) {
+		// Allow mousewheel events to pass through
+    return -1;
+    }
+
   return 1;
   }
 
