@@ -782,10 +782,15 @@ int SimpleConnect::HandleHostThread() {
       vector<SlotData>::iterator slot = conn.slots.begin();
       for(; slot != conn.slots.end(); ++slot) {
 	if(slot->sock == *sock) {
-	  if(slot->type >= SC_SLOT_OPTPLAYER)
+	  if(slot->type >= SC_SLOT_OPTPLAYER) {
 	    slot->ptype = SC_PLAYER_NONE;
-	  else
+	    sprintf((char*)(slot->playername), "<Missing>%c", 0);
+	    }
+	  else {
 	    slot->ptype = SC_PLAYER_AI;
+	    sprintf((char*)(slot->playername), "Player %d%c",
+		slot + 1 - conn.slots.begin(), 0);
+	    }
 	  slot->sock = NULL;
 	  slots_dirty = true;
 	  break;
