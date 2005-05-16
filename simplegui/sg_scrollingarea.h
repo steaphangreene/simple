@@ -43,6 +43,7 @@ public:
 	float xvs = SG_AUTOSIZE, float yvs = SG_AUTOSIZE);
   virtual ~SG_ScrollingArea();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual bool AddWidget(SG_Widget *wid);

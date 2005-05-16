@@ -47,6 +47,33 @@ SG_ScrollingArea::SG_ScrollingArea(float xsz, float ysz, float xvs, float yvs)
 SG_ScrollingArea::~SG_ScrollingArea() {
   }
 
+int SG_ScrollingArea::HandleEvent(SDL_Event *event, float x, float y) {
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  int ret = SG_Compound::HandleEvent(event, x, y);
+  if(ret != -1) return ret;
+
+  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 4) {
+    SetYValue(YValue() - 0.5);    //FIXME: Use Increment Size?
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  else if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 5) {
+    SetYValue(YValue() + 0.5);    //FIXME: Use Increment Size?
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+
+  return ret;
+  }
+
 bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
   if(event->user.data1 == (void*)(SG_Ranger*)horiz) {
     event->user.code = SG_EVENT_NEEDTORENDER;

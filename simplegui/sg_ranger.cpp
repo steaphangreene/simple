@@ -93,36 +93,61 @@ void SG_Ranger::SetValue(float val) {
   }
 
 void SG_Ranger::LinkTo(SG_Ranger *other) {
-  other->linked.insert(this);
-  linked.insert(other);
-  set<SG_Ranger *>::iterator itr = other->linked.begin();
-  for(; itr != other->linked.end(); ++itr) if((*itr) != this) {
-    (*itr)->linked.insert(this);
-    linked.insert(*itr);
+  set<SG_Ranger *> allofem;
+  set<SG_Ranger *>::iterator mitr, oitr;
 
-    (*itr)->value = value;
-    (*itr)->span = span;
-    (*itr)->min = min;
-    (*itr)->max = max;
-    (*itr)->RangerChanged();
+  allofem.insert(this);
+  allofem.insert(other);
+  for(mitr = linked.begin(); mitr != linked.end(); ++mitr) {
+    allofem.insert(*mitr);
+    }
+  for(oitr = other->linked.begin(); oitr != other->linked.end(); ++oitr) {
+    allofem.insert(*oitr);
+    }
+
+  for(mitr = allofem.begin(); mitr != allofem.end(); ++mitr) {
+    for(oitr = mitr; oitr != allofem.end(); ++oitr) {
+      if((*mitr) != (*oitr)) {
+	(*oitr)->linked.insert(*mitr);
+	(*mitr)->linked.insert(*oitr);
+	}
+      }
+    if((*mitr) != this) {
+      (*mitr)->value = value;
+      (*mitr)->span = span;
+      (*mitr)->min = min;
+      (*mitr)->max = max;
+      (*mitr)->RangerChanged();
+      }
     }
   }
 
 void SG_Ranger::LinkFrom(SG_Ranger *other) {
-  set<SG_Ranger *>::iterator itr = other->linked.begin();
-  for(; itr != other->linked.end(); ++itr) if((*itr) != this) {
-    (*itr)->linked.insert(this);
-    linked.insert(*itr);
+  set<SG_Ranger *> allofem;
+  set<SG_Ranger *>::iterator mitr, oitr;
 
+  allofem.insert(this);
+  allofem.insert(other);
+  for(mitr = linked.begin(); mitr != linked.end(); ++mitr) {
+    allofem.insert(*mitr);
     }
-  other->linked.insert(this);
-  linked.insert(other);
+  for(oitr = other->linked.begin(); oitr != other->linked.end(); ++oitr) {
+    allofem.insert(*oitr);
+    }
+
+  for(mitr = allofem.begin(); mitr != allofem.end(); ++mitr) {
+    for(oitr = mitr; oitr != allofem.end(); ++oitr) {
+      if((*mitr) != (*oitr)) {
+	(*oitr)->linked.insert(*mitr);
+	(*mitr)->linked.insert(*oitr);
+	}
+      }
+    }
 
   value = other->value;
   span = other->span;
   min = other->min;
   max = other->max;
-
   RangerChanged();
   }
 

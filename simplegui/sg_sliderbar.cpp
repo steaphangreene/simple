@@ -66,6 +66,29 @@ SG_SliderBar::~SG_SliderBar() {
 
 static SG_Event_DataType event_data;
 
+int SG_SliderBar::HandleEvent(SDL_Event *event, float x, float y) {
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 4) {
+    SetValue(Value() - 0.5);	//FIXME: Use Increment Size
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  else if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 5) {
+    SetValue(Value() + 0.5);	//FIXME: Use Increment Size
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  return SG_Compound::HandleEvent(event, x, y);
+  }
+
 bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     // FIXME: Unimplemented

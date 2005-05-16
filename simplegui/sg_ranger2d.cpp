@@ -104,7 +104,7 @@ void SG_Ranger2D::LinkXTo(SG_Ranger2D *other) {
   }
 
 void SG_Ranger2D::LinkYTo(SG_Ranger2D *other) {
-  yranger.LinkFrom(&(other->yranger));
+  yranger.LinkTo(&(other->yranger));
   }
 
 void SG_Ranger2D::LinkXTo(SG_Ranger *other) {

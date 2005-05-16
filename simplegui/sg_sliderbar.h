@@ -44,6 +44,7 @@ public:
 	SG_Texture handtex = SG_COL_FG, SG_Texture bgtex = SG_COL_BG);
   virtual ~SG_SliderBar();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
   virtual bool Render(unsigned long cur_time);
   
