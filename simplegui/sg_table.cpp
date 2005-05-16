@@ -22,11 +22,10 @@
 #include "SDL_opengl.h"
 
 #include "sg_table.h"
-#include "sg_ranger.h"
-#include "sg_ranger2d.h"
 
 SG_Table::SG_Table(int xsz, int ysz, float xbor, float ybor)
-	: SG_Alignment(xbor, ybor) {
+	: SG_Alignment(xbor, ybor),
+	  ranger(xsz, ysz, 0.0, 0.0, 0.0, 0.0, xsz, ysz) {
   if(ysz < 0 || xsz < 0) {
     fprintf(stderr, "Illegal table geometry, (%dx%d)\n", xsz, ysz);
     exit(1);
@@ -360,57 +359,43 @@ void SG_Table::Substitute(SG_Widget *oldwid, SG_Widget *newwid) {
     }
   }
 
-void SG_Table::LinkResize(SG_Ranger2D *ranger) {
-  xrangers.insert(ranger->XRanger());
-  yrangers.insert(ranger->YRanger());
+void SG_Table::LinkResize(SG_Ranger2D *rang) {
+  ranger.LinkFrom(rang);
   SendResize();
   }
 
-void SG_Table::LinkXResize(SG_Ranger2D *ranger) {
-  xrangers.insert(ranger->XRanger());
+void SG_Table::LinkXResize(SG_Ranger2D *rang) {
+  ranger.LinkXFrom(rang);
   SendXResize();
   }
 
-void SG_Table::LinkYResize(SG_Ranger2D *ranger) {
-  yrangers.insert(ranger->YRanger());
+void SG_Table::LinkYResize(SG_Ranger2D *rang) {
+  ranger.LinkYFrom(rang);
   SendYResize();
   }
 
-void SG_Table::LinkXResize(SG_Ranger *ranger) {
-  xrangers.insert(ranger);
+void SG_Table::LinkXResize(SG_Ranger *rang) {
+  ranger.LinkXFrom(rang);
   SendXResize();
   }
 
-void SG_Table::LinkYResize(SG_Ranger *ranger) {
-  yrangers.insert(ranger);
+void SG_Table::LinkYResize(SG_Ranger *rang) {
+  ranger.LinkYFrom(rang);
   SendYResize();
   }
 
 void SG_Table::SendResize() {
-  SendXResize();
-  SendYResize();
+  ranger.SetLimits(0.0, 0.0, xsize, ysize);
   }
 
 void SG_Table::SendXResize() {
-  set<SG_Ranger *>::iterator itr = xrangers.begin();
-  for(; itr != xrangers.end(); ++itr) {
-    (*itr)->SetLimits(0, xsize);
-    }
+  ranger.SetXLimits(0.0, xsize);
   }
 
 void SG_Table::SendYResize() {
-  set<SG_Ranger *>::iterator itr = yrangers.begin();
-  for(; itr != yrangers.end(); ++itr) {
-    (*itr)->SetLimits(0, ysize);
-    }
+  ranger.SetYLimits(0.0, ysize);
   }
 
 void SG_Table::SetActive(float xst, float yst, float xen, float yen) {
-  set<SG_Ranger *>::iterator itr;
-  for(itr = xrangers.begin(); itr != xrangers.end(); ++itr) {
-    (*itr)->SetActive(xst, xen);
-    }
-  for(itr = yrangers.begin(); itr != yrangers.end(); ++itr) {
-    (*itr)->SetActive(yst, yen);
-    }
+  ranger.SetActive(xst, yst, xen, yen);
   }

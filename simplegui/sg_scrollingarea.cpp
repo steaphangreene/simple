@@ -19,19 +19,17 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-// This file was created from (or actually IS) a basic compound widget
-// def, so it's not defined and is really just a place-holder for now.
-
 #include "SDL_opengl.h"
 
 #include "sg_scrollingarea.h"
 #include "sg_textarea.h"
 #include "sg_events.h"
 
-SG_ScrollingArea::SG_ScrollingArea(float xsz, float ysz, float xvs, float yvs)
+SG_ScrollingArea::SG_ScrollingArea(float xvs, float yvs, float xsz, float ysz)
 	: SG_Compound(41, 41, 0.0, 0.0) {
-  scroll = new SG_Scrollable((xvs < 1.0) ? xsz : xvs, (yvs < 1.0) ? ysz : yvs,
-	0.0, 0.0, 0.0, 0.0, xsz, ysz);
+  if(xsz < 0.0) xsz = 0.0;
+  if(ysz < 0.0) ysz = 0.0;
+  scroll = new SG_Scrollable(xvs, yvs, 0.0, 0.0, 0.0, 0.0, xsz, ysz);
   LinkFrom(scroll);
   SG_Compound::AddWidget(scroll, 0, 0, 40, 40);
 

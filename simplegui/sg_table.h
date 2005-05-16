@@ -22,6 +22,8 @@
 #ifndef SG_TABLE_H
 #define SG_TABLE_H
 
+#include "sg_ranger.h"
+#include "sg_ranger2d.h"
 #include "sg_alignment.h"
 
 #include <set>
@@ -32,9 +34,6 @@ struct SG_TableGeometry {
   int xpos, ypos;	//Starting X/Y Position (Cell)
   int xsize, ysize;	//X/Y Size (in Cells)
   };
-
-class SG_Ranger;
-class SG_Ranger2D;
 
 class SG_Table : public SG_Alignment {
 public:
@@ -78,8 +77,7 @@ protected:
   void SendResize();
   void SendXResize();
   void SendYResize();
-  set<SG_Ranger *> xrangers;
-  set<SG_Ranger *> yrangers;
+  SG_Ranger2D ranger;
   };
 
 #endif // SG_TABLE_H

@@ -38,10 +38,10 @@ public:
   void SetLimits(float mn, float mx);
   void SetActive(float st, float en);
 
-  float Span() { return span; };
-  float Value() { return value; };
-  float Min() { return min; };
-  float Max() { return max; };
+  float Span();
+  float Value();
+  float Min();
+  float Max();
 
   void LinkTo(SG_Ranger *other);
   void LinkFrom(SG_Ranger *other);

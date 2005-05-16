@@ -39,8 +39,8 @@ class SG_TextArea;
 
 class SG_ScrollingArea : public SG_Compound, public SG_Ranger2D {
 public:
-  SG_ScrollingArea(float xsz, float ysz,
-	float xvs = SG_AUTOSIZE, float yvs = SG_AUTOSIZE);
+  SG_ScrollingArea(float xvs = SG_AUTOSIZE, float yvs = SG_AUTOSIZE,
+	float xsz = SG_AUTOSIZE, float ysz = SG_AUTOSIZE);
   virtual ~SG_ScrollingArea();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);

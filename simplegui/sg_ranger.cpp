@@ -62,7 +62,6 @@ void SG_Ranger::SetLimits(float mn, float mx) {
 
 void SG_Ranger::SetSpan(float spn) {
   span = spn;
-  if(span < 0.0) span = 0.0;
   SetValue(value);	//To check the limits -vs- value & call RangerChanged()
 
   set<SG_Ranger *>::iterator itr = linked.begin();
@@ -77,11 +76,11 @@ void SG_Ranger::SetValue(float val) {
   value = val;
   if(min < max) {
     if(value < min) value = min;
-    else if(value > max - span) value = max - span;
+    else if(value > max - Span()) value = max - Span();
     }
   else {
     if(value > min) value = min;
-    else if(value < max + span) value = max + span;
+    else if(value < max + Span()) value = max + Span();
     }
   RangerChanged();
 
@@ -90,6 +89,24 @@ void SG_Ranger::SetValue(float val) {
     (*itr)->value = value;
     (*itr)->RangerChanged();
     }
+  }
+
+float SG_Ranger::Span() {
+  if(span < 0.0 && min <= max) return max - min;
+  if(span < 0.0) return min - max;
+  return span;
+  }
+
+float SG_Ranger::Value() {
+  return value;
+  }
+
+float SG_Ranger::Min() {
+  return min;
+  }
+
+float SG_Ranger::Max() {
+  return max;
   }
 
 void SG_Ranger::LinkTo(SG_Ranger *other) {
