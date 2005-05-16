@@ -301,7 +301,9 @@ void SimpleConnect::Connect(const IPaddress &location) {
   mode = SC_MODE_SLAVE;
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   ClearRow(0);		//Clear header if present
-  AddWidget(new SG_TextArea("Connecting..."), 1, 0, 6, 1);
+  AddWidget(new SG_TextArea("Connecting..."), 1, 0, 5, 1);
+  AddWidget(namep, 6, 0, 1, 1);
+  AddWidget(nameb, 7, 0, 2, 1);
   StartNet();
   }
 
