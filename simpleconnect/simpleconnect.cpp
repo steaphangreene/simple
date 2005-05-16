@@ -34,7 +34,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	10
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0007:"
+#define BASE_TAG	"SC-0008:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -637,6 +637,10 @@ int SimpleConnect::HandleHostThread() {
 
       slots_send = true;
 
+      Sint8 data[16];
+      SDLNet_TCP_Recv(tmpsock, data, 16);
+      fprintf(stderr, "Got Name '%s'\n", (char*)(data));
+
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
 	SDLNet_TCP_AddSocket(conn.tcpset, tmpsock);
@@ -833,6 +837,11 @@ int SimpleConnect::HandleSlaveThread() {
       return 1;
       }
     conn.sock = sock;
+
+    Sint8 data[16];
+    strncpy((char*)(data), PlayerName().c_str(), 15);
+    data[15] = 0;
+    SDLNet_TCP_Send(conn.sock, data, 16);
     }
 
   conn.tcpset = SDLNet_AllocSocketSet(1);
