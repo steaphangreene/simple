@@ -637,9 +637,8 @@ int SimpleConnect::HandleHostThread() {
 
       slots_send = true;
 
-      Sint8 data[16];
-      SDLNet_TCP_Recv(tmpsock, data, 16);
-      fprintf(stderr, "Got Name '%s'\n", (char*)(data));
+      Sint8 name[16];
+      SDLNet_TCP_Recv(tmpsock, name, 16);
 
       tcpset.insert(tmpsock);
       if((int)(tcpset.size()) <= tcpset_cap) {
@@ -664,6 +663,7 @@ int SimpleConnect::HandleHostThread() {
 		slot->type == SC_SLOT_OPTHUMANONLY)
 		) {
 	  slot->ptype = SC_PLAYER_REMOTE;
+	  memcpy(slot->playername, name, 16);
 	  slot->sock = tmpsock;
 	  slots_dirty = true;
 	  break;
@@ -838,10 +838,10 @@ int SimpleConnect::HandleSlaveThread() {
       }
     conn.sock = sock;
 
-    Sint8 data[16];
-    strncpy((char*)(data), PlayerName().c_str(), 15);
-    data[15] = 0;
-    SDLNet_TCP_Send(conn.sock, data, 16);
+    Sint8 name[16];
+    strncpy((char*)(name), PlayerName().c_str(), 15);
+    name[15] = 0;
+    SDLNet_TCP_Send(conn.sock, name, 16);
     }
 
   conn.tcpset = SDLNet_AllocSocketSet(1);
