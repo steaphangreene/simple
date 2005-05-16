@@ -186,7 +186,7 @@ protected:
   bool needtoscan;
   map<Uint64, SC_Host> hosts;
 
-  struct Request { int size; Uint8 data[4]; };
+  struct Request { int size; Uint8 data[20]; };
   list<Request> reqs;
   };
 

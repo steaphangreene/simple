@@ -34,7 +34,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	10
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0006:"
+#define BASE_TAG	"SC-0007:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
@@ -45,6 +45,7 @@ enum SCAct {
   SC_ACT_CHANGESLOT,
   SC_ACT_CHANGETEAM,
   SC_ACT_CHANGECOLOR,
+  SC_ACT_CHANGEPNAME,
   SC_ACT_MAX
   };
 
@@ -432,7 +433,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
   else if(mode == SC_MODE_SLAVE) {
     Request req;
     if(event->user.code == SG_EVENT_BUTTONPRESS) {
-      if(colmap.count((SG_Widget*)event->user.data1)) {
+      if(colmap.count((SG_Widget*)(event->user.data1))) {
 	req.size = 3;
 	req.data[0] = SC_ACT_CHANGECOLOR;
 	req.data[1] = colmap[(SG_Widget*)event->user.data1];
@@ -446,7 +447,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	event->user.data2 = NULL;
 	return 1;
 	}
-      else if(teammap.count((SG_Widget*)event->user.data1)) {
+      else if(teammap.count((SG_Widget*)(event->user.data1))) {
 	req.size = 3;
 	req.data[0] = SC_ACT_CHANGETEAM;
 	req.data[1] = teammap[(SG_Widget*)event->user.data1];
@@ -454,6 +455,30 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
 	SDL_mutexP(net_mutex);
 	reqs.push_back(req);
 	SDL_mutexV(net_mutex);
+
+	event->user.code = SG_EVENT_NEEDTORENDER;
+	event->user.data1 = NULL;
+	event->user.data2 = NULL;
+	return 1;
+	}
+      }
+    else if(event->user.code == SG_EVENT_NEWTEXT) {
+      if((SG_Text*)(event->user.data1) == nameb) {
+	unsigned int slot = 0;
+	for(; slot < conn.slots.size(); ++slot) {
+	  if(conn.slots[slot].ptype == SC_PLAYER_LOCAL) break;
+	  }
+	if(slot <= conn.slots.size()) {
+	  req.size = 18;
+	  req.data[0] = SC_ACT_CHANGEPNAME;
+	  req.data[1] = slot;
+	  strncpy((char*)(req.data+2),
+		((SG_Text*)(event->user.data1))->Text().c_str(), 15);
+	  req.data[17] = 0;
+	  SDL_mutexP(net_mutex);
+	  reqs.push_back(req);
+	  SDL_mutexV(net_mutex);
+	  }
 
 	event->user.code = SG_EVENT_NEEDTORENDER;
 	event->user.data1 = NULL;
@@ -718,6 +743,15 @@ int SimpleConnect::HandleHostThread() {
 	    SlotData tmp = conn.slots[data[1]];
 	    conn.slots[data[1]] = conn.slots[data[0]];
 	    conn.slots[data[0]] = tmp;
+	    slots_dirty = true;
+	    slots_send = true;
+	    SDL_mutexV(net_mutex);
+	    }
+	  else if(type == SC_ACT_CHANGEPNAME) {
+	    Uint8 data[17];
+	    SDLNet_TCP_Recv(*sock, data, 17);
+	    SDL_mutexP(net_mutex);
+	    memcpy(conn.slots[data[0]].playername, (char*)(data+1), 16);
 	    slots_dirty = true;
 	    slots_send = true;
 	    SDL_mutexV(net_mutex);
@@ -1004,8 +1038,8 @@ void SimpleConnect::SetPlayerName(const string &pln) {
 	strncpy(((char *)(conn.slots[slot].playername)), pln.c_str(), 15);
 	conn.slots[slot].playername[15] = 0;
 	}
-      slots_dirty = true;
       }
+    slots_dirty = true;
     if(mode == SC_MODE_HOST) {
       slots_send = true;
       SDL_mutexV(net_mutex);
