@@ -34,7 +34,7 @@ using namespace std;
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	10
 #define VERT_MARGIN	0.1
-#define BASE_TAG	"SC-0008:"
+#define BASE_TAG	"SC-0009:"
 
 enum SCAct {
   SC_ACT_QUERYING = 0,
