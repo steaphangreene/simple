@@ -3,8 +3,6 @@ Need a way to handle sounds for compounds' buttons
 Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
 Fix positioning of events on offset popups (Noah).
-Be able to safely unlink table from resize targets, and handle deletions.
-Fully Ranger-ize SG_Tables.
 Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 Clean up mulitple redundant calls to RangerChanged during SG_Ranger2D events.
 
