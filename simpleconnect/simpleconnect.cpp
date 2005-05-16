@@ -172,15 +172,18 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
     if(cur_col >= (int)(colors.size())) cur_col = 1;
     if((!placed_local) && (data.type < SC_SLOT_AIONLY)) {
       data.ptype = SC_PLAYER_LOCAL;
+      strncpy((char*)(data.playername), PlayerName().c_str(), 15);
+      data.playername[15] = 0;
       placed_local = true;
       }
     else if(data.type < SC_SLOT_OPTPLAYER) {
       data.ptype = SC_PLAYER_AI;
+      sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
       }
     else {
       data.ptype = SC_PLAYER_NONE;
+      sprintf((char*)(data.playername), "<Missing>%c", 0);
       }
-    sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
     conn.slots.push_back(data);
     }
   }
@@ -789,7 +792,7 @@ int SimpleConnect::HandleHostThread() {
 	  else {
 	    slot->ptype = SC_PLAYER_AI;
 	    sprintf((char*)(slot->playername), "Player %d%c",
-		slot + 1 - conn.slots.begin(), 0);
+		slot-conn.slots.begin()+1, 0);
 	    }
 	  slot->sock = NULL;
 	  slots_dirty = true;
