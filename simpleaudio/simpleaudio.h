@@ -28,8 +28,8 @@ using namespace std;
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-class Sound;
 typedef int PlayingSound;
+typedef int LoadedSound;
 
 class SimpleAudio {
 public:

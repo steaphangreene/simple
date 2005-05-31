@@ -34,106 +34,28 @@ using namespace std;
 SimpleAudio *SimpleAudio::current = NULL;
 
 //////////////////////////////////////////////Temporary
-static int audio_initialized = 0;
+static bool audio_initialized = false;
 
 #define SOUND_LOOP	1
 #define SOUND_TERMINATE	2
 #define SOUND_STEREO	4
 
-struct Sound {
+struct SoundData {
   Uint32 pos;
   Uint32 vol;
   Uint32 pan;
   Mix_Chunk *sound;
   Uint32 flags;
-  Sound *next;
+  SoundData *next;
   };
 
-Sound SFX[128];
-int num_sounds = 0;
-Sound *free_blocks = NULL;
-Sound *play_blocks = NULL;
+SoundData SFX[128];
+LoadedSound num_sounds = 0;
+SoundData *free_blocks = NULL;
+SoundData *play_blocks = NULL;
 ////////////////////////////////////////////////End Temporary
 
-/*	DISABLED!
-void SimpleAudio::Callback(void *userdata, Uint8 *stream, int len) {
-
-  if(play_blocks == NULL)  {
-    memset(stream, 0, len);
-    return;
-    }
-
-  for(int ctr=0; ctr<len; ctr+=4) {
-    long buf_l = 0, buf_r = 0;
-    Sound **sptr = &play_blocks;
-    while((*sptr) != NULL) {
-      if((*sptr)->flags & SOUND_TERMINATE) {
-	Sound *it = (*sptr);
-	(*sptr) = (*sptr)->next;
-	it->next = free_blocks;
-	free_blocks = it;
-	continue;
-	}
-      if((*sptr)->vol > 0) {
-	if((*sptr)->flags & SOUND_STEREO) { // Stereo Source
-	  if((*sptr)->pos+ctr >= (*sptr)->length) {
-	    sptr = &((*sptr)->next);
-	    continue;
-	    }
-	  long val_l = Sint8((*sptr)->data[(*sptr)->pos+ctr+1]);
-	  val_l <<= 8;
-	  val_l |= (*sptr)->data[(*sptr)->pos+ctr+0] & 0xFF;
-	  buf_l += val_l * (*sptr)->vol * 16;
-	  long val_r = Sint8((*sptr)->data[(*sptr)->pos+ctr+3]);
-	  val_r <<= 8;
-	  val_r |= (*sptr)->data[(*sptr)->pos+ctr+2] & 0xFF;
-	  buf_r += val_r * (*sptr)->vol * 16;
-	  }
-        else { // Mono Source with software panning
-	  if((*sptr)->pos+(ctr>>1) >= (*sptr)->length) {
-	    sptr = &((*sptr)->next);
-	    continue;
-	    }
-	  long val = Sint8((*sptr)->data[(*sptr)->pos+(ctr>>1)+1]);
-	  val <<= 8;
-	  val |= (*sptr)->data[(*sptr)->pos+(ctr>>1)+0] & 0xFF;
-	  buf_l += val * (*sptr)->vol * (16-(*sptr)->pan);
-	  buf_r += val * (*sptr)->vol * (16+(*sptr)->pan);
-	  }
-	}
-
-      sptr = &((*sptr)->next);
-      }
-    if(buf_l > SHRT_MAX<<8) buf_l = SHRT_MAX<<8;
-    if(buf_l < SHRT_MIN<<8) buf_l = SHRT_MIN<<8;
-    if(buf_r > SHRT_MAX<<8) buf_r = SHRT_MAX<<8;
-    if(buf_r < SHRT_MIN<<8) buf_r = SHRT_MIN<<8;
-    stream[ctr+0] = (buf_l >> 8);
-    stream[ctr+1] = (buf_l >> 16);
-    stream[ctr+2] = (buf_r >> 8);
-    stream[ctr+3] = (buf_r >> 16);
-    }
-
-  Sound **sptr = &play_blocks;
-  while((*sptr) != NULL) {
-    if((*sptr)->flags & SOUND_STEREO) (*sptr)->pos += len;
-    else (*sptr)->pos += len>>1;
-    if((*sptr)->pos >= (*sptr)->length) {
-      if((*sptr)->flags & SOUND_LOOP) (*sptr)->pos = 0;
-      else {
-	Sound *it = (*sptr);
-	(*sptr) = (*sptr)->next;
-	it->next = free_blocks;
-	free_blocks = it;
-	continue;
-	}
-      }
-    sptr = &((*sptr)->next);
-    }
-  }
-*/
-
-int SimpleAudio::BuildSound(const unsigned char *data, unsigned long len) {
+LoadedSound SimpleAudio::BuildSound(const unsigned char *data, unsigned long len) {
   if(!audio_initialized) return 0;
 
   SFX[num_sounds].sound = Mix_QuickLoad_RAW((Uint8*)data, len);
@@ -147,7 +69,7 @@ int SimpleAudio::BuildSound(const unsigned char *data, unsigned long len) {
   return num_sounds;
   }
 
-int SimpleAudio::LoadSound(const string &fn) {
+LoadedSound SimpleAudio::LoadSound(const string &fn) {
   if(!audio_initialized) return 0;
 
   SFX[num_sounds].sound = Mix_LoadWAV(fn.c_str());
@@ -161,20 +83,20 @@ int SimpleAudio::LoadSound(const string &fn) {
   return num_sounds;
   }
 
-int SimpleAudio::LoadMusic(const string &fn) {
-  int ret = LoadSound(fn.c_str());
+LoadedSound SimpleAudio::LoadMusic(const string &fn) {
+  LoadedSound ret = LoadSound(fn.c_str());
   SFX[ret-1].flags |= SOUND_STEREO;
   return ret;
   }
 
-Sound *get_block() {
-  Sound *s;
+SoundData *get_block() {
+  SoundData *s;
   if(free_blocks) { s = free_blocks; free_blocks = s->next; }
-  else { s = new Sound; }
+  else { s = new SoundData; }
   return s;
   }
 
-PlayingSound SimpleAudio::Play(int snd, float vol, float pan) {
+PlayingSound SimpleAudio::Play(LoadedSound snd, float vol, float pan) {
   if((!audio_initialized) || snd < 1) return -1;
 
   PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, 0);
@@ -185,7 +107,7 @@ PlayingSound SimpleAudio::Play(int snd, float vol, float pan) {
   return ret;
   }
 
-PlayingSound SimpleAudio::Loop(int snd, float vol, float pan, int loops) {
+PlayingSound SimpleAudio::Loop(LoadedSound snd, float vol, float pan, int loops) {
   if((!audio_initialized) || snd < 1) return -1;
 
   PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, loops);
@@ -231,5 +153,5 @@ SimpleAudio::SimpleAudio(int bufsize) {
     return;
     }
   Mix_AllocateChannels(16);	//FIXME: Make this dynamic
-  audio_initialized = 1;
+  audio_initialized = true;
   }
