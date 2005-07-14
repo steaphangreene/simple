@@ -34,6 +34,7 @@ SG_PassThrough::SG_PassThrough(int lact, int mact, int ract)
   button_menu[2] = NULL;
   cur_action = SG_PT_IGNORE;
   cur_button = 0;
+  send_motion = false;
   }
 
 void SG_PassThrough::SetBehavior(int lact, int mact, int ract) {
@@ -138,7 +139,8 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       cur_y = y;
       return 0;
       }
-    else if(button_action[event->button.button - 1] == SG_PT_MENU) {
+    else if(button_action[event->button.button - 1] == SG_PT_MENU
+	&& button_menu[event->button.button - 1]) {
       cur_action = SG_PT_MENU;
       cur_button = event->button.button;
       act_x = x;
@@ -150,9 +152,14 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 	}
       return 0;
       }
+    else if(button_action[event->button.button - 1] == SG_PT_MENU) {
+      fprintf(stderr, "WARNING: No menu defined for button %d!\n",
+	event->button.button);
+      exit(1);
+      }
     else {
-      fprintf(stderr, "Unknown setting for button handler (%d)\n",
-		button_action[event->button.button - 1]);
+      fprintf(stderr, "ERROR: Unknown setting for button handler (%d)\n",
+	button_action[event->button.button - 1]);
       exit(1);
       }
     }
@@ -195,8 +202,16 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
     else if(cur_action == SG_PT_CLICK) {
       return 0; // Eat these events in this case
       }
+    else {
+      if(send_motion) {
+	event->type = SDL_SG_EVENT;
+	event->user.code = SG_EVENT_MOTION;
+	event->user.data1 = (void*)(SG_PassThrough*)this;
+	event->user.data2 = (void*)&event_data;
+	return 1;
+	}
+      }
     }  
-
   return 1;
   }
 

@@ -36,8 +36,10 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetBehavior(int lact, int mact, int ract);
   void SetMenu(int but, const vector<string> itms);
+  void SetSendMotion(bool val = true) { send_motion = val; };
   
 protected:
+  bool send_motion;		//Send SG_EVENT_MOTION Events?
   int button_action[3];		//Auto-Handling of the three main buttons
   SG_Menu *button_menu[3];	//Click Menus for the three main buttons
   int cur_action, cur_button;

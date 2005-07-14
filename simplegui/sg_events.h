@@ -73,6 +73,8 @@
 #define	SG_EVENT_RIGHTBOX	1035
 #define	SG_EVENT_BOXMAX		1064	//Max of 31 mouse buttons!
 
+#define	SG_EVENT_MOTION		1099	//Mouse Motion
+
 //SG_Compound Actions
 #define	SG_EVENT_OK		2000
 #define	SG_EVENT_SELECT		2001
