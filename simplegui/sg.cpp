@@ -84,29 +84,29 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   text_col.g = 0;
   text_col.b = 0;
 
-  col[SG_COL_BG*2 + 0].r = 60;
-  col[SG_COL_BG*2 + 0].g = 60;
-  col[SG_COL_BG*2 + 0].b = 60;
+  col[SG_COL_BG*2 + 0].r = 120;
+  col[SG_COL_BG*2 + 0].g = 120;
+  col[SG_COL_BG*2 + 0].b = 120;
   col[SG_COL_BG*2 + 1] = text_col;
 
-  col[SG_COL_FG*2 + 0].r = 90;
-  col[SG_COL_FG*2 + 0].g = 90;
-  col[SG_COL_FG*2 + 0].b = 90;
+  col[SG_COL_FG*2 + 0].r = 160;
+  col[SG_COL_FG*2 + 0].g = 160;
+  col[SG_COL_FG*2 + 0].b = 160;
   col[SG_COL_FG*2 + 1] = text_col;
 
-  col[SG_COL_RAISED*2 + 0].r = 150;
-  col[SG_COL_RAISED*2 + 0].g = 150;
-  col[SG_COL_RAISED*2 + 0].b = 150;
+  col[SG_COL_RAISED*2 + 0].r = 200;
+  col[SG_COL_RAISED*2 + 0].g = 200;
+  col[SG_COL_RAISED*2 + 0].b = 200;
   col[SG_COL_RAISED*2 + 1] = text_col;
 
-  col[SG_COL_LOW*2 + 0].r = 30;
-  col[SG_COL_LOW*2 + 0].g = 30;
-  col[SG_COL_LOW*2 + 0].b = 30;
+  col[SG_COL_LOW*2 + 0].r = 90;
+  col[SG_COL_LOW*2 + 0].g = 90;
+  col[SG_COL_LOW*2 + 0].b = 90;
   col[SG_COL_LOW*2 + 1] = text_col;
 
-  col[SG_COL_HIGH*2 + 0].r = 90;
-  col[SG_COL_HIGH*2 + 0].g = 90;
-  col[SG_COL_HIGH*2 + 0].b = 150;
+  col[SG_COL_HIGH*2 + 0].r = 160;
+  col[SG_COL_HIGH*2 + 0].g = 160;
+  col[SG_COL_HIGH*2 + 0].b = 250;
   col[SG_COL_HIGH*2 + 1] = text_col;
 
   fontfile = NULL;
