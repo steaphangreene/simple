@@ -50,32 +50,56 @@ SM_Texture::SM_Texture(const string &filenm) {
   type = SM_TEXTURE_DEFINED;
   texture = 0;
   cur = NULL;
-  src = IMG_Load(filenm.c_str());
-  if(!src) {
-    // Judging by many of the models I've see, this is not an error.
-    src = IMG_Load((filenm + ".bmp").c_str());
+  src = NULL;
+
+  SDL_RWops *file = SDL_RWFromFile(filenm.c_str(), "rb");
+  if(file && tolower(filenm[filenm.length()-2]) == 'g'
+	&& tolower(filenm[filenm.length()-3]) == 't'
+	&& tolower(filenm[filenm.length()-1]) == 'a') {
+    src = IMG_LoadTyped_RW(file, true, "TGA");
     }
-  if(!src) {
+
+  if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    src = IMG_Load((filenm + ".BMP").c_str());
+    file = SDL_RWFromFile((filenm + ".png").c_str(), "rb");
     }
-  if(!src) {
+  if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    src = IMG_Load((filenm + ".tga").c_str());
+    file = SDL_RWFromFile((filenm + ".PNG").c_str(), "rb");
     }
-  if(!src) {
+  if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    src = IMG_Load((filenm + ".TGA").c_str());
+    file = SDL_RWFromFile((filenm + ".bmp").c_str(), "rb");
     }
-  if(!src) {
+  if(!file) {
+    // Judging by many of the models I've see, this is not an error.
+    file = SDL_RWFromFile((filenm + ".BMP").c_str(), "rb");
+    }
+  if(!file) {
+    // Judging by many of the models I've see, this is not an error.
+    file = SDL_RWFromFile((filenm + ".tga").c_str(), "rb");
+    if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
+    }
+  if(!file) {
+    // Judging by many of the models I've see, this is not an error.
+    file = SDL_RWFromFile((filenm + ".TGA").c_str(), "rb");
+    if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
+    }
+
+  if(!file) {
     // Judging by many of the models I've see, even this is not an error.
     type = SM_TEXTURE_NONE;
     dirty = 0;
-    return;
     }
-  xfact = 1.0;
-  yfact = 1.0;
-  dirty = 1;
+  else {
+    if(!src) src = IMG_Load_RW(file, true);
+    xfact = 1.0;
+    yfact = 1.0;
+    dirty = 1;
+//    if(!src) {
+//      //FIXME: Error Handling!
+//      }
+    }
   }
 
 SM_Texture::~SM_Texture() {
