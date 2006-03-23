@@ -43,8 +43,7 @@ SimpleModel_3DS::~SimpleModel_3DS() {
   }
 
 bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
-  FILE *model = fopen(filenm.c_str(), "rb");
-  struct stat buf;
+  SDL_RWops *model = SDL_RWFromFile(filenm.c_str(), "rb");
   Sint32 filelen = 0;
   Uint16 chunk_id = 0;		// Chunk's ID (3DS files are structured in chunks. We only want some of them.)
   Uint32 chunk_length = 0;	// Length of a chunk
@@ -63,9 +62,10 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
     return false;
     }
   
-  fstat(fileno(model), &buf);
-  filelen = buf.st_size;
-  while(ftell(model) < filelen) {
+  SDL_RWseek(model, 0, SEEK_END);
+  filelen = SDL_RWtell(model);
+  SDL_RWseek(model, 0, SEEK_SET);
+  while(SDL_RWtell(model) < filelen) {
   	freadLE(chunk_id, model);
 	freadLE(chunk_length, model);
 	
@@ -132,10 +132,10 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
 		break;
 	  
 	  default:
-	    fseek(model, chunk_length - 6, SEEK_CUR);		
+	    SDL_RWseek(model, chunk_length - 6, SEEK_CUR);		
 	  }
     }
-  fclose(model);
+  SDL_RWclose(model);
   // Push on the last mesh
   mesh.push_back(current_mesh);
   

@@ -37,9 +37,9 @@ using namespace std;
 #include "simplemodel_sphere.h"
 
 SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
-  FILE *cfg = fopen((filename + "/animation.cfg").c_str(), "r");
+  SDL_RWops *cfg = SDL_RWFromFile((filename + "/animation.cfg").c_str(), "r");
   if(cfg) {
-    fclose(cfg);
+    SDL_RWclose(cfg);
     if(skinname.length() <= 0) return new SimpleModel_Q3Dir(filename);
     else return new SimpleModel_Q3Dir(filename, skinname);
     }

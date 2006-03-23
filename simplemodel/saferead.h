@@ -22,9 +22,9 @@
 #include "SDL.h"
 
 template <class Tp>
-static void freadLE(Tp &var, FILE *fl) {
+static void freadLE(Tp &var, SDL_RWops *fl) {
   union { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  fread(&data.v, 1, sizeof(Tp), fl);
+  SDL_RWread(fl, &data.v, 1, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
   int i1=0, i2=sizeof(Tp)-1;
   while(i1 < i2) {
@@ -36,9 +36,9 @@ static void freadLE(Tp &var, FILE *fl) {
   };
 
 template <class Tp>
-static void freadBE(Tp &var, FILE *fl) {
+static void freadBE(Tp &var, SDL_RWops *fl) {
   union { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  fread(&data.v, 1, sizeof(Tp), fl);
+  SDL_RWread(fl, &data.v, 1, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   int i1=0, i2=sizeof(Tp)-1;
   while(i1 < i2) {

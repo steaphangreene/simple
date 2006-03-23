@@ -51,7 +51,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   skinname = modelname.substr(0, modelname.length() - 4) + "_"
 	+ skinname+ ".skin";
 
-  FILE *model = fopen(modelname.c_str(), "rb");
+  SDL_RWops *model = SDL_RWFromFile(modelname.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
 	modelname.c_str());
@@ -65,7 +65,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   Uint32 num_frames;
 
   //Read parts of the header of the MD3 file
-  fread(&magic, 1, sizeof(magic), model);
+  SDL_RWread(model, &magic, 1, sizeof(magic));
   if(strncmp((char *)magic, "IDP3", 4)) {
     fprintf(stderr, "WARNING: File '%s' is not an MD3 file!\n",
 	skinname.c_str());
@@ -77,7 +77,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
 	skinname.c_str());
     return false;
     }
-  fseek(model, 68, SEEK_CUR); // Skip the name of the file
+  SDL_RWseek(model, 68, SEEK_CUR); // Skip the name of the file
 
   freadLE(num_frames, model);
   freadLE(num_tags, model);
@@ -85,16 +85,16 @@ bool SimpleModel_MD3::Load(const string &filenm,
   freadLE(num_meshes, model);
   meshes.resize(num_meshes);
 
-  fseek(model, 20, SEEK_CUR); // Skip the rest of the header (FIXME: Skins!)
+  SDL_RWseek(model, 20, SEEK_CUR); // Skip the rest of the header (FIXME: Skins!)
 
 
   //FIXME: This skips the bones, do we want to actually use them?
-  fseek(model, 56 * num_frames, SEEK_CUR);
+  SDL_RWseek(model, 56 * num_frames, SEEK_CUR);
 
 
   pTags.resize(num_frames * num_tags);
   for(unsigned int tag = 0; tag < num_frames * num_tags; ++tag) {
-    fread(pTags[tag].name, 64, 1, model);
+    SDL_RWread(model, pTags[tag].name, 64, 1);
     freadLE(pTags[tag].pos.data[12], model);	// Location vector
     freadLE(pTags[tag].pos.data[13], model);	// Location vector
     freadLE(pTags[tag].pos.data[14], model);	// Location vector
@@ -114,14 +114,14 @@ bool SimpleModel_MD3::Load(const string &filenm,
 
 
   // Get the current offset into the file
-  long offset = ftell(model);
+  long offset = SDL_RWtell(model);
 
   // Go through all of the sub-objects in this mesh
   for (unsigned int meshnum = 0; meshnum < meshes.size(); meshnum++) {
 	// Seek to the start of this mesh and read in it's header
-    fseek(model, offset+4, SEEK_SET);	//I'm skipping the meshID here
+    SDL_RWseek(model, offset+4, SEEK_SET);	//I'm skipping the meshID here
 
-    fread(meshes[meshnum].name, 68, 1, model);
+    SDL_RWread(model, meshes[meshnum].name, 68, 1);
 
     Uint32 num_mframes;
     freadLE(num_mframes, model);
@@ -156,15 +156,15 @@ bool SimpleModel_MD3::Load(const string &filenm,
     meshes[meshnum].triangles.resize(num_vertices * num_mframes);
 
 	// Seek to the start of the face data, then read it in
-    fseek(model, offset + shader_offset, SEEK_SET);
+    SDL_RWseek(model, offset + shader_offset, SEEK_SET);
     for(unsigned int shader=0; shader < num_shaders; ++shader) {
       Sint8 buf[65] = {0};
-      fread(buf, 64, 1, model);
+      SDL_RWread(model, buf, 64, 1);
       AddSkin((char*)buf);
       }
 
 	// Seek to the start of the face data, then read it in
-    fseek(model, offset + face_offset, SEEK_SET);
+    SDL_RWseek(model, offset + face_offset, SEEK_SET);
     for(unsigned int face=0; face < meshes[meshnum].faces.size(); ++face) {
       freadLE(meshes[meshnum].faces[face].vertices[0], model);
       freadLE(meshes[meshnum].faces[face].vertices[1], model);
@@ -172,14 +172,14 @@ bool SimpleModel_MD3::Load(const string &filenm,
       }
 
 	// Seek to the start of the texture coordinate data, then read it in
-    fseek(model, offset + uv_offset, SEEK_SET);
+    SDL_RWseek(model, offset + uv_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].coords.size(); ++vert) {
       freadLE(meshes[meshnum].coords[vert].coord[0], model);
       freadLE(meshes[meshnum].coords[vert].coord[1], model);
       }
 
 	// Seek to the start of the triangle information, then read it in.
-    fseek(model, offset + vertex_offset, SEEK_SET);
+    SDL_RWseek(model, offset + vertex_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].triangles.size(); ++vert) {
       Sint16 tmp;
       freadLE(tmp, model);
@@ -189,17 +189,17 @@ bool SimpleModel_MD3::Load(const string &filenm,
       freadLE(tmp, model);
       meshes[meshnum].triangles[vert].vertex[2] = float(tmp) / 64.0F;
 
-      fread(meshes[meshnum].triangles[vert].normal, 1, 2, model); // FIXME: What are these for?
+      SDL_RWread(model, meshes[meshnum].triangles[vert].normal, 1, 2); // FIXME: What are these for?
       }
 
     // Point offset to the next mesh location in the file
     offset += mesh_size;
     }
-  fclose(model);
+  SDL_RWclose(model);
 
 
   // Here we load the requested skin (FIXME: without checking the skin list!)
-  FILE *skin = fopen(skinname.c_str(), "r");
+  SDL_RWops *skin = SDL_RWFromFile(skinname.c_str(), "r");
   if(!skin) {
     fprintf(stderr, "WARNING: Unable to open skin file '%s'!\n",
 	skinname.c_str());
@@ -207,9 +207,26 @@ bool SimpleModel_MD3::Load(const string &filenm,
     return false;
     }
 
+  SDL_RWseek(skin, 0, SEEK_END);
+  int filesz = SDL_RWtell(skin);
+  SDL_RWseek(skin, 0, SEEK_SET);
+  char *filedata = new char[filesz+1]; //FIXME: Handle Error!
+  char *fileptr = filedata;
+  while(fileptr < (filedata+filesz)) {
+    fileptr += SDL_RWread(skin, fileptr, 1, filesz);
+    //FIXME: Handle Error!
+    }
+  *fileptr = 0;
+  SDL_RWclose(skin);
+  fileptr = filedata;
+
   Sint8 obj[256] = {0}, tex[256] = {0};
   while(1) {
-    int num = fscanf(skin, " %[^ \n\t\r,],%[^ \n\t\r]\n", obj, tex);
+    int num = sscanf(fileptr, " %[^ \n\t\r,],%[^ \n\t\r]\n", obj, tex);
+
+    //Skip to next whitespace
+    while((*fileptr) && !isspace(*fileptr)) ++fileptr;
+
     if(num < 1) break;
     else if(num == 1) {
       //FIXME: What do these lines mean?  Don't know what to do here.
@@ -229,7 +246,6 @@ bool SimpleModel_MD3::Load(const string &filenm,
     memset((char*)obj, 0, 256);
     memset((char*)tex, 0, 256);
     }
-  fclose(skin);
 
   return false;
   }
