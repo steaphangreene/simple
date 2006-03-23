@@ -29,7 +29,7 @@
 
 class SimpleVideo {
 public:
-  SimpleVideo(int xs, int ys, double asp);
+  SimpleVideo(int xs, int ys, double asp, bool fullscr = false);
   ~SimpleVideo();
 
   void SetOrtho();
@@ -70,7 +70,7 @@ protected:
   int xsize, ysize;
   int hgap, vgap;
 
-  int fullscreen_mode;
+  bool fullscreen_mode;
   unsigned int flags;
 
   double aspect;

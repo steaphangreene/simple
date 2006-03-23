@@ -41,7 +41,7 @@ using namespace std;
 
 SimpleVideo *SimpleVideo::current = NULL;
 
-SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
+SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
   if(current) {
     fprintf(stderr, "ERROR: Created mulitple SimpleVideo instances!\n");
     exit(1);
@@ -56,7 +56,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp) {
   videoFlags = 0;
   xsize=0; ysize=0;
   hgap=0; vgap=0;
-  fullscreen_mode = 0;
+  fullscreen_mode = fullscr;
   
   const SDL_VideoInfo *videoInfo;
 //  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
