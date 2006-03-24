@@ -247,6 +247,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
     memset((char*)tex, 0, 256);
     }
 
+  delete [] filedata;
   return false;
   }
 

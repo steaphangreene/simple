@@ -67,64 +67,66 @@ bool SimpleModel_Q3Dir::Load(const string &filenm, const string &defskin) {
   }
 
 bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
-    SDL_RWops *cfg = SDL_RWFromFile(filenm.c_str(), "r");
-    if(!cfg) {
-      fprintf(stderr, "WARNING: Could not open model animations file '%s'!\n",
+  SDL_RWops *cfg = SDL_RWFromFile(filenm.c_str(), "r");
+  if(!cfg) {
+    fprintf(stderr, "WARNING: Could not open model animations file '%s'!\n",
 	filenm.c_str());
-      return false;
-      }
+    return false;
+    }
 
-    SDL_RWseek(cfg, 0, SEEK_END);
-    int filesz = SDL_RWtell(cfg);
-    SDL_RWseek(cfg, 0, SEEK_SET);
-    char *filedata = new char[filesz+1]; //FIXME: Handle Error!
-    char *fileptr = filedata;
-    while(fileptr < (filedata+filesz)) {
-      fileptr += SDL_RWread(cfg, fileptr, 1, filesz);
-      //FIXME: Handle Error!
-      }
-    *fileptr = 0;
-    SDL_RWclose(cfg);
-    fileptr = filedata;
+  SDL_RWseek(cfg, 0, SEEK_END);
+  int filesz = SDL_RWtell(cfg);
+  SDL_RWseek(cfg, 0, SEEK_SET);
+  char *filedata = new char[filesz+1]; //FIXME: Handle Error!
+  char *fileptr = filedata;
+  while(fileptr < (filedata+filesz)) {
+    fileptr += SDL_RWread(cfg, fileptr, 1, filesz);
+    //FIXME: Handle Error!
+    }
+  *fileptr = 0;
+  SDL_RWclose(cfg);
+  fileptr = filedata;
 
-    int start=0, num=0, loop=0, fps=0;
-    int torso_first = -1, legs_offset = -1;
-    for(int anim = ANIM_START; anim < ANIM_MAX; ++anim) {
-      while(sscanf(fileptr, "%d %d %d %d", &start, &num, &loop, &fps) < 4) {
-	//Skip irrelevant lines
-	while((*fileptr) && (*fileptr) != '\n') ++fileptr;
-	if((*fileptr)) ++fileptr;
-	}
-
-      //Advance to next line
-      while((*fileptr) && isspace(*fileptr)) ++fileptr;
-      while((*fileptr) && isdigit(*fileptr)) ++fileptr;
-      while((*fileptr) && isspace(*fileptr)) ++fileptr;
-      while((*fileptr) && isdigit(*fileptr)) ++fileptr;
-      while((*fileptr) && isspace(*fileptr)) ++fileptr;
-      while((*fileptr) && isdigit(*fileptr)) ++fileptr;
-      while((*fileptr) && isspace(*fileptr)) ++fileptr;
-      while((*fileptr) && isdigit(*fileptr)) ++fileptr;
+  int start=0, num=0, loop=0, fps=0;
+  int torso_first = -1, legs_offset = -1;
+  for(int anim = ANIM_START; anim < ANIM_MAX; ++anim) {
+    while(sscanf(fileptr, "%d %d %d %d", &start, &num, &loop, &fps) < 4) {
+      //Skip irrelevant lines
       while((*fileptr) && (*fileptr) != '\n') ++fileptr;
-
-      if(anim < BOTH_MAX) {
-        torso->AddAnimation(start, start + num, loop, fps);
-	legs->AddAnimation(start, start + num, loop, fps);
-        }
-      else if(anim < TORSO_MAX) {
-	if(torso_first < 0) torso_first = start;
-        torso->AddAnimation(start, start + num, loop, fps);
-        }
-      else if(anim < LEGS_MAX) {
-	if(legs_offset < 0) legs_offset = start - torso_first;
-	start -= legs_offset;
-	legs->AddAnimation(start, start + num, loop, fps);
-        }
-      else {
-	fprintf(stderr, "WARNING: Too many animations for Q3 in '%s'!\n",
-		filenm.c_str());
-	}
+      if((*fileptr)) ++fileptr;
       }
+
+    //Advance to next line
+    while((*fileptr) && isspace(*fileptr)) ++fileptr;
+    while((*fileptr) && isdigit(*fileptr)) ++fileptr;
+    while((*fileptr) && isspace(*fileptr)) ++fileptr;
+    while((*fileptr) && isdigit(*fileptr)) ++fileptr;
+    while((*fileptr) && isspace(*fileptr)) ++fileptr;
+    while((*fileptr) && isdigit(*fileptr)) ++fileptr;
+    while((*fileptr) && isspace(*fileptr)) ++fileptr;
+    while((*fileptr) && isdigit(*fileptr)) ++fileptr;
+    while((*fileptr) && (*fileptr) != '\n') ++fileptr;
+
+    if(anim < BOTH_MAX) {
+      torso->AddAnimation(start, start + num, loop, fps);
+      legs->AddAnimation(start, start + num, loop, fps);
+      }
+    else if(anim < TORSO_MAX) {
+      if(torso_first < 0) torso_first = start;
+      torso->AddAnimation(start, start + num, loop, fps);
+      }
+    else if(anim < LEGS_MAX) {
+      if(legs_offset < 0) legs_offset = start - torso_first;
+      start -= legs_offset;
+      legs->AddAnimation(start, start + num, loop, fps);
+      }
+    else {
+      fprintf(stderr, "WARNING: Too many animations for Q3 in '%s'!\n",
+		filenm.c_str());
+      }
+    }
+
+  delete [] filedata;
   return true;
   }
 
