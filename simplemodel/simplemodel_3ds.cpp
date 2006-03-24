@@ -139,7 +139,7 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
   // Push on the last mesh
   mesh.push_back(current_mesh);
   
-  //mesh.texture = new SM_Texture(texnm);
+  //mesh.texture = new SimpleTexture(texnm);
   //mesh.texture->Update();
   
   Uint32 mesh_index = 0;

@@ -235,7 +235,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
     else {
       for(unsigned int i = 0; i < meshes.size(); i++) {
 	if(!strcasecmp((char*)obj, (char*)meshes[i].name)) {
-	  SM_Texture *tmptex = new SM_Texture((char*)tex);
+	  SimpleTexture *tmptex = new SimpleTexture((char*)tex);
 	  texture.push_back(tmptex);
 
           tmptex->Update();

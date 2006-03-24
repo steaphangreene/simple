@@ -22,7 +22,6 @@
 #ifndef	SIMPLEMODEL_MD3_H
 #define	SIMPLEMODEL_MD3_H
 
-#include "sm_texture.h"
 #include "simplemodel.h"
 
 struct Quaternion {
@@ -59,7 +58,7 @@ struct MD3Mesh {
   vector<MD3Face> faces;
   vector<MD3TexCoord> coords;
   vector<MD3Triangle> triangles;
-  SM_Texture *texture;
+  SimpleTexture *texture;
   };
 
 class SimpleModel_MD3 : public SimpleModel {

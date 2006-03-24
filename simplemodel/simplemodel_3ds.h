@@ -53,7 +53,7 @@ struct MAXMesh{
     vector<MAXPolygon> polygon;
     vector<MAXTexCoord> tex_coord;
 	bool has_texture;
-    SM_Texture *texture;
+    SimpleTexture *texture;
 };
 
 class SimpleModel_3DS : public SimpleModel {

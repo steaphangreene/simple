@@ -29,7 +29,7 @@ using namespace std;
 #include "SDL.h"
 #include "SDL_opengl.h"
 
-#include "sm_texture.h"
+#include "../simpletexture/simpletexture.h"
 
 class SimpleModel {
 public:
@@ -47,7 +47,7 @@ public:
 
 protected:
   string filename;
-  vector<SM_Texture *> texture;
+  vector<SimpleTexture *> texture;
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
