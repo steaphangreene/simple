@@ -19,8 +19,8 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SM_TEXTURE_H
-#define SM_TEXTURE_H
+#ifndef SIMPLETEXTURE_H
+#define SIMPLETEXTURE_H
 
 #include <map>
 #include <set>
@@ -30,14 +30,14 @@ using namespace std;
 #include "SDL.h"
 
 enum SimpleTextureType {
-   SM_TEXTURE_NONE = 0,
-   SM_TEXTURE_COLOR,
-   SM_TEXTURE_TRANSCOLOR,
-   SM_TEXTURE_DEFINED,
-   SM_TEXTURE_TRANS,
-   SM_TEXTURE_FILE,
-   SM_TEXTURE_TRANSFILE,
-   SM_TEXTURE_MAX
+   SIMPLETEXTURE_NONE = 0,
+   SIMPLETEXTURE_COLOR,
+   SIMPLETEXTURE_TRANSCOLOR,
+   SIMPLETEXTURE_DEFINED,
+   SIMPLETEXTURE_TRANS,
+   SIMPLETEXTURE_FILE,
+   SIMPLETEXTURE_TRANSFILE,
+   SIMPLETEXTURE_MAX
    };
 
 class SimpleTexture {
@@ -53,8 +53,8 @@ public:
 
   SimpleTextureType type;
   SDL_Surface *cur;	//Current texture buffer
-  SDL_Surface *src;	//Only for SM_TEXTURE_DEFINED/SM_TEXTURE_FILE
-  SDL_Color col;	//Only for SM_TEXTURE_COLOR
+  SDL_Surface *src;	//Only for SIMPLETEXTURE_DEFINED/SIMPLETEXTURE_FILE
+  SDL_Color col;	//Only for SIMPLETEXTURE_COLOR
   float xfact, yfact;	//Portion of texture actually shown
   bool dirty; //Does the system need to rebuild this texture?
 
@@ -80,4 +80,4 @@ extern unsigned char sm_col_u32b4[4];
 
 #define SM_SDL_RGBA_COLFIELDS SM_COL_U32B1, SM_COL_U32B2, SM_COL_U32B3, SM_COL_U32B4
 
-#endif // SM_TEXTURE_H
+#endif // SIMPLETEXTURE_H

@@ -36,7 +36,7 @@ static int nextpoweroftwo(int x) {
   }
 
 SimpleTexture::SimpleTexture(SDL_Surface *tex) {
-  type = SM_TEXTURE_DEFINED;
+  type = SIMPLETEXTURE_DEFINED;
   texture = 0;
   cur = NULL;
   src = tex;
@@ -47,7 +47,7 @@ SimpleTexture::SimpleTexture(SDL_Surface *tex) {
 
 SimpleTexture::SimpleTexture(const string &filenm) {
   filename = filenm;
-  type = SM_TEXTURE_DEFINED;
+  type = SIMPLETEXTURE_DEFINED;
   texture = 0;
   cur = NULL;
   src = NULL;
@@ -88,7 +88,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 
   if(!file) {
     // Judging by many of the models I've see, even this is not an error.
-    type = SM_TEXTURE_NONE;
+    type = SIMPLETEXTURE_NONE;
     dirty = 0;
     }
   else {
@@ -142,7 +142,7 @@ bool SimpleTexture::CheckCache() {
     return false; // Temporary - don't currently handle this case with cache
     }
 
-  if(type == SM_TEXTURE_TRANS) {
+  if(type == SIMPLETEXTURE_TRANS) {
     if(trans_cache.count(src) > 0) {
       (*this) = *(*(trans_cache[src].begin()));
       UpdateCache();
@@ -152,7 +152,7 @@ bool SimpleTexture::CheckCache() {
       return false;
       }
     }
-  else if(type == SM_TEXTURE_DEFINED) {
+  else if(type == SIMPLETEXTURE_DEFINED) {
     if(def_cache.count(src) > 0) {
       (*this) = *(*(def_cache[src].begin()));
       UpdateCache();
@@ -168,7 +168,7 @@ bool SimpleTexture::CheckCache() {
   }
 
 void SimpleTexture::Update() {
-  if(type == SM_TEXTURE_DEFINED) {
+  if(type == SIMPLETEXTURE_DEFINED) {
     int xsize = nextpoweroftwo(src->w);
     int ysize = nextpoweroftwo(src->h);
     cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SM_SDL_RGBA_COLFIELDS);
@@ -197,10 +197,10 @@ void SimpleTexture::Update() {
   }
 
 void SimpleTexture::UpdateCache() {
-  if(type == SM_TEXTURE_TRANS) {
+  if(type == SIMPLETEXTURE_TRANS) {
     trans_cache[src].insert(this);
     }
-  else if(type == SM_TEXTURE_DEFINED) {
+  else if(type == SIMPLETEXTURE_DEFINED) {
     def_cache[src].insert(this);
     }
   else {
