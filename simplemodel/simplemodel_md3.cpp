@@ -224,8 +224,9 @@ bool SimpleModel_MD3::Load(const string &filenm,
   while(1) {
     int num = sscanf(fileptr, " %[^ \n\t\r,],%[^ \n\t\r]\n", obj, tex);
 
-    //Skip to next whitespace
+    //Skip to past next whitespace
     while((*fileptr) && !isspace(*fileptr)) ++fileptr;
+    while((*fileptr) && isspace(*fileptr)) ++fileptr;
 
     if(num < 1) break;
     else if(num == 1) {
