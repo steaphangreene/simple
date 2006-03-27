@@ -28,8 +28,8 @@
 #include "sg_stickybutton.h"
 #include "sg_events.h"
 
-SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SG_Texture tex,
-	SG_Texture dis_tex, SG_Texture click_tex, SG_Texture down_tex)
+SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SimpleTexture tex,
+	SimpleTexture dis_tex, SimpleTexture click_tex, SimpleTexture down_tex)
 	: SG_Compound(
 		(x<=0) ? items.size(): x,
 		(y<=0) ? items.size(): y,

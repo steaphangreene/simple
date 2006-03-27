@@ -150,11 +150,11 @@ int main(int argc, char **argv) {
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxdim);
   if(FRAME_DIM > maxdim) FRAME_DIM = maxdim;
 
-  vector<SG_Texture> cols;
+  vector<SimpleTexture> cols;
   cols.resize(NUM_FRAMES, (SDL_Surface *)(NULL));
   for(int tx=0; tx < NUM_FRAMES; ++tx) {  //Create NUM_FRAMES actual textures
     cols[tx].src = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_FillRect(cols[tx].src, NULL, SDL_MapRGB(cols[tx].src->format, 0, 0, 0));
     unsigned long colwht = SDL_MapRGB(cols[tx].src->format, 255, 255, 255);
     for(int x=0; x < FRAME_DIM; ++x) {
@@ -167,14 +167,14 @@ int main(int argc, char **argv) {
     }
 /*
   int black = gui->NewColor(0.0, 0.0, 0.0);
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(white));
-  cols.push_back(SG_Texture(black));
-  cols.push_back(SG_Texture(white));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(white));
+  cols.push_back(SimpleTexture(black));
+  cols.push_back(SimpleTexture(white));
 */
   anim = new SG_AnimatedPanel(cols, 12.5f);
 

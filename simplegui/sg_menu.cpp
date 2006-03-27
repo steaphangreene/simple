@@ -26,7 +26,7 @@
 #include "sg_events.h"
 
 SG_Menu::SG_Menu(const vector<string> &itms,
-	SG_Texture tex, SG_Texture dis_tex, SG_Texture click_tex)
+	SimpleTexture tex, SimpleTexture dis_tex, SimpleTexture click_tex)
 	: SG_Button("", tex, dis_tex, click_tex) {
   SetItems(itms);
   menu_id = 0;

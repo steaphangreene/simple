@@ -28,7 +28,7 @@
 
 #include <math.h>
 
-SG_TextArea::SG_TextArea(string mes, SG_Texture tex, SG_Texture dis_tex,
+SG_TextArea::SG_TextArea(string mes, SimpleTexture tex, SimpleTexture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   texture.push_back(dis_tex);
   rendered_text = NULL;
@@ -119,7 +119,7 @@ void SG_TextArea::BuildTexture(int st) {
 
   int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
-  if(texture[st].type == SG_TEXTURE_DEFINED) {
+  if(texture[st].type == SIMPLETEXTURE_DEFINED) {
     bxsize = texture[st].src->w;
     bysize = texture[st].src->h;
 
@@ -178,25 +178,25 @@ void SG_TextArea::BuildTexture(int st) {
   if(texture[st].cur) SDL_FreeSurface(texture[st].cur);
   texture[st].cur = NULL;
 
-  if(texture[st].type == SG_TEXTURE_COLOR) {
+  if(texture[st].type == SIMPLETEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
     }
-  else if(texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+  else if(texture[st].type == SIMPLETEXTURE_TRANSCOLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     }
-  else if(texture[st].type == SG_TEXTURE_DEFINED) {
+  else if(texture[st].type == SIMPLETEXTURE_DEFINED) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
-  else if(texture[st].type == SG_TEXTURE_TRANS) {
+  else if(texture[st].type == SIMPLETEXTURE_TRANS) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     }
@@ -204,7 +204,7 @@ void SG_TextArea::BuildTexture(int st) {
   if(rendered_text == NULL) {	// Create persistent text surface
     SDL_Rect drec = { 0, 0, 0, 0 };
     rendered_text = SDL_CreateRGBSurface(0, text_xsize, text_ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     for(int ln = 0; ln < int(lines.size()); ++ln) {
       if(lines[ln].length() > 0) {
 	SDL_Surface *tmp_text = TTF_RenderText_Blended(
@@ -247,8 +247,8 @@ void SG_TextArea::BuildTexture(int st) {
       srec.h = (int)(fsz * (YSpan() + YSpan()) + 0.5);
       }
 
-    if(texture[st].type == SG_TEXTURE_TRANS
-		|| texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+    if(texture[st].type == SIMPLETEXTURE_TRANS
+		|| texture[st].type == SIMPLETEXTURE_TRANSCOLOR) {
       SDL_SetAlpha(rendered_text, 0, SDL_ALPHA_TRANSPARENT);
       }
     SDL_BlitSurface(rendered_text, &srec, texture[st].cur, &drec);

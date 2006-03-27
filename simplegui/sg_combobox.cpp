@@ -33,9 +33,9 @@
 const int binvpro = 8; //FIXME: Changable?
 
 SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
-        SG_Texture btex, SG_Texture btex_dis, SG_Texture btex_click,
-        SG_Texture ttex, SG_Texture ttex_dis, SG_Texture ttex_fg,
-	SG_Texture mtex, SG_Texture mtex_dis, SG_Texture mtex_sel)
+        SimpleTexture btex, SimpleTexture btex_dis, SimpleTexture btex_click,
+        SimpleTexture ttex, SimpleTexture ttex_dis, SimpleTexture ttex_fg,
+	SimpleTexture mtex, SimpleTexture mtex_dis, SimpleTexture mtex_sel)
 	: SG_Compound(binvpro, 1, 0.0, 0.0) {
 
   opb = new SG_Button("v", btex, btex_dis, btex_click);

@@ -29,7 +29,7 @@
 using namespace std;
 
 #include "sg_colors.h"
-#include "sg_texture.h"
+#include "../simpletexture/simpletexture.h"
 #include "sg_widget.h"
 
 #define SG_STATE_DEFAULT	0
@@ -37,14 +37,14 @@ using namespace std;
 
 class SG_Panel : public SG_Widget {
 public:
-  SG_Panel(SG_Texture tex = SG_COL_BG);
+  SG_Panel(SimpleTexture tex = SG_COL_BG);
   virtual ~SG_Panel();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);
 
-  void SetTexture(SG_Texture tex, int st = SG_STATE_DEFAULT);
+  void SetTexture(SimpleTexture tex, int st = SG_STATE_DEFAULT);
 
   //For Internal Use Only!
   void SetState(int st) { state = st; };
@@ -55,7 +55,7 @@ protected:
 
   virtual void BuildTexture(int st);
 
-  vector<SG_Texture> texture;
+  vector<SimpleTexture> texture;
   int state; //Which texture to use - for multi-state support
   };
 

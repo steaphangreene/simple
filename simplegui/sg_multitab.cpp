@@ -30,8 +30,8 @@
 
 SG_MultiTab::SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
 	int tinvpro,
-	SG_Texture ttex, SG_Texture dis_ttex, SG_Texture click_ttex,
-	SG_Texture down_ttex) : SG_Compound(1, tinvpro, 0.0, 0.0) {
+	SimpleTexture ttex, SimpleTexture dis_ttex, SimpleTexture click_ttex,
+	SimpleTexture down_ttex) : SG_Compound(1, tinvpro, 0.0, 0.0) {
   if(items.size() != areas.size()) {
     fprintf(stderr, "ERROR: SG_MultiTab given vectors of different sizes!\n");
     exit(1);

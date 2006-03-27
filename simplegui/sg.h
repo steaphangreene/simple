@@ -44,7 +44,7 @@ using namespace std;
 class SG_Widget;
 class SG_Alignment;
 class SG_Editable;
-class SG_Texture;
+class SimpleTexture;
 
 class SimpleGUI {
 public:
@@ -118,7 +118,7 @@ protected:
   float popxpos, popypos;
   bool pop_modal;
 
-  SG_Texture *mouse_cursor;
+  SimpleTexture *mouse_cursor;
   float mouse_xscale, mouse_yscale;
 
   SG_Widget *current_widget;
@@ -144,9 +144,6 @@ protected:
   int default_pxsize;
   float fontyratio;
   char *fontfile;
-
-  vector<SDL_Color> col;
-  SDL_Color text_col;
 
   SDL_mutex *Mutex();
   SDL_mutex *mutex;

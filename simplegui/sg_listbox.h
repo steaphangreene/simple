@@ -31,7 +31,7 @@
 using namespace std;
 
 #include "sg_compound.h"
-#include "sg_texture.h"
+#include "../simpletexture/simpletexture.h"
 #include "sg_panel.h"
 #include "sg_stickybutton.h"
 
@@ -40,8 +40,8 @@ class SG_TextArea;
 
 class SG_ListBox : public SG_Compound {
 public:
-  SG_ListBox(const vector<SG_Widget*>& items, SG_Texture desel, 
-		  SG_Texture sel, SG_Texture click, SG_Texture disable, 
+  SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel, 
+		  SimpleTexture sel, SimpleTexture click, SimpleTexture disable, 
 		  unsigned int min=1, unsigned int max=1,
 		  bool vert=true, float border=0.1);
   virtual ~SG_ListBox();
@@ -77,7 +77,7 @@ protected:
   unsigned int listsize;
   unsigned int minsel,maxsel;
   float alignborder;
-  SG_Texture texdesel, texsel, texclick, texdisable; 
+  SimpleTexture texdesel, texsel, texclick, texdisable; 
   deque<int> selhistory;
   vector<SG_StickyButton*> stickies;
   vector<SG_Alignment*> aligns;

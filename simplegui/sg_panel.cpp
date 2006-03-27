@@ -25,13 +25,13 @@
 #include "sg_colors.h"
 #include "sg_panel.h"
 
-SG_Panel::SG_Panel(SG_Texture tex) : SG_Widget() {
+SG_Panel::SG_Panel(SimpleTexture tex) : SG_Widget() {
   texture.push_back(tex);
   state = 0;
   }
 
 SG_Panel::~SG_Panel() {
-// Deletion of SG_Texture objects takes care of everything.
+// Deletion of SimpleTexture objects takes care of everything.
   }
 
 int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
@@ -63,33 +63,33 @@ void SG_Panel::BuildTexture(int st) {
     SDL_FreeSurface(texture[st].cur);
     }
 
-  if(texture[st].type == SG_TEXTURE_COLOR) {
+  if(texture[st].type == SIMPLETEXTURE_COLOR) {
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
 	texture[st].col.r, texture[st].col.g, texture[st].col.b));
     }
-  else if(texture[st].type == SG_TEXTURE_TRANSCOLOR) {
+  else if(texture[st].type == SIMPLETEXTURE_TRANSCOLOR) {
     //A TRANSCOLOR widget with no text is totally invisible.
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     }
-  else if(texture[st].type == SG_TEXTURE_DEFINED) {
+  else if(texture[st].type == SIMPLETEXTURE_DEFINED) {
     xsize = nextpoweroftwo(texture[st].src->w);
     ysize = nextpoweroftwo(texture[st].src->h);
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     memset(texture[st].cur->pixels, 0, xsize*ysize*4);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     texture[st].xfact = (float)(texture[st].src->w) / (float)(xsize);
     texture[st].yfact = (float)(texture[st].src->h) / (float)(ysize);
     }
-  else if(texture[st].type == SG_TEXTURE_TRANS) {
+  else if(texture[st].type == SIMPLETEXTURE_TRANS) {
     xsize = nextpoweroftwo(texture[st].src->w);
     ysize = nextpoweroftwo(texture[st].src->h);
     texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
     texture[st].xfact = (float)(texture[st].src->w) / (float)(xsize);
@@ -108,8 +108,8 @@ bool SG_Panel::Render(unsigned long cur_time) {
 
   glPushMatrix();
 
-  if(texture[state].type == SG_TEXTURE_TRANS
-	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
+  if(texture[state].type == SIMPLETEXTURE_TRANS
+	|| texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
     glEnable(GL_BLEND);
     }
 
@@ -132,8 +132,8 @@ bool SG_Panel::Render(unsigned long cur_time) {
   glBindTexture(GL_TEXTURE_2D, 0);
   glDisable(GL_TEXTURE_2D);
 
-  if(texture[state].type == SG_TEXTURE_TRANS
-	|| texture[state].type == SG_TEXTURE_TRANSCOLOR) {
+  if(texture[state].type == SIMPLETEXTURE_TRANS
+	|| texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
     glDisable(GL_BLEND);
     }
 
@@ -144,13 +144,13 @@ bool SG_Panel::Render(unsigned long cur_time) {
 
 void SG_Panel::SetTransparent(bool val) {
   for(int tx = 0; tx < int(texture.size()); ++tx) {
-    if(texture[tx].type == SG_TEXTURE_COLOR
-	|| texture[tx].type == SG_TEXTURE_TRANSCOLOR) {
-      texture[tx].type = (val) ? SG_TEXTURE_TRANSCOLOR : SG_TEXTURE_COLOR;
+    if(texture[tx].type == SIMPLETEXTURE_COLOR
+	|| texture[tx].type == SIMPLETEXTURE_TRANSCOLOR) {
+      texture[tx].type = (val) ? SIMPLETEXTURE_TRANSCOLOR : SIMPLETEXTURE_COLOR;
       }
-    else if(texture[tx].type == SG_TEXTURE_TRANS
-	|| texture[tx].type == SG_TEXTURE_DEFINED) {
-      texture[tx].type = (val) ? SG_TEXTURE_TRANS : SG_TEXTURE_DEFINED;
+    else if(texture[tx].type == SIMPLETEXTURE_TRANS
+	|| texture[tx].type == SIMPLETEXTURE_DEFINED) {
+      texture[tx].type = (val) ? SIMPLETEXTURE_TRANS : SIMPLETEXTURE_DEFINED;
       }
     }
   }
@@ -159,7 +159,7 @@ void SG_Panel::SetTransparent(bool val) {
   
 //  static GL_MODEL SG_Panel::Default_Mouse_Cursor = NULL;
 
-void SG_Panel::SetTexture(SG_Texture tex, int st) {
+void SG_Panel::SetTexture(SimpleTexture tex, int st) {
   if(st < 0 || st >= (int)(texture.size())) return;
   texture[st] = tex;
   }

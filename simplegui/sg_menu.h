@@ -30,8 +30,8 @@ using namespace std;
 
 class SG_Menu : public SG_Button, SG_MultiText {
 public:
-  SG_Menu(const vector<string> &itms, SG_Texture tex = SG_COL_RAISED,
-        SG_Texture dis_tex = SG_COL_LOW, SG_Texture click_tex = SG_COL_LOW);
+  SG_Menu(const vector<string> &itms, SimpleTexture tex = SG_COL_RAISED,
+        SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_Menu();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);

@@ -25,8 +25,8 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_Editable::SG_Editable(string mes, SG_Texture c, 
-		SG_Texture dc, SG_Texture fc)
+SG_Editable::SG_Editable(string mes, SimpleTexture c, 
+		SimpleTexture dc, SimpleTexture fc)
 	: SG_TextArea(mes, c) {
   texture.push_back(dc);
   texture.push_back(fc);

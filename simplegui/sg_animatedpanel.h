@@ -30,7 +30,7 @@ using namespace std;
 
 class SG_AnimatedPanel : public SG_Panel {
 public:
-  SG_AnimatedPanel(const vector<SG_Texture> &txtrs, float mspf);
+  SG_AnimatedPanel(const vector<SimpleTexture> &txtrs, float mspf);
   virtual ~SG_AnimatedPanel();
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

@@ -28,7 +28,7 @@
 #include "sg_menu.h"
 
 SG_PullDown::SG_PullDown(const string &mes, const vector<string> &itms,
-	SG_Texture tex, SG_Texture dis_tex, SG_Texture click_tex)
+	SimpleTexture tex, SimpleTexture dis_tex, SimpleTexture click_tex)
 	: SG_Compound(1, 1, 0.0, 0.0) {
   but = new SG_Button(mes, tex, dis_tex, click_tex);
   AddWidget(but, 0, 0);

@@ -27,7 +27,7 @@
 
 class SG_Dragable : public SG_Panel, public SG_Ranger2D {
 public:
-  SG_Dragable(SG_Texture tex = SG_COL_RAISED);
+  SG_Dragable(SimpleTexture tex = SG_COL_RAISED);
   virtual ~SG_Dragable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);

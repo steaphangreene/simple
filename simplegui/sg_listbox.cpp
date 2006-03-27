@@ -26,8 +26,8 @@
 #include "sg_button.h"
 #include "sg_events.h"
 
-SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SG_Texture desel,
-			SG_Texture sel, SG_Texture click, SG_Texture dis, unsigned int min, unsigned int max, bool vert,
+SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
+			SimpleTexture sel, SimpleTexture click, SimpleTexture dis, unsigned int min, unsigned int max, bool vert,
 			float border)
 	: SG_Compound( (!vert?(items.size()==0?1:items.size()):1), (vert?(items.size()==0?1:items.size()):1), 0, 0), 
 	  texdesel(desel), texsel(sel), texclick(click), texdisable(dis) {

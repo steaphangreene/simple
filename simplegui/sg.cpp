@@ -29,7 +29,7 @@ using namespace std;
 #include "sg.h"
 #include "sg_alignment.h"
 #include "sg_events.h"
-#include "sg_texture.h"
+#include "../simpletexture/simpletexture.h"
 
 SimpleGUI *current_sg = NULL;
 
@@ -78,43 +78,18 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   mouse_xscale = 0.0625;
   mouse_yscale = 0.0625;
 
-  col.resize(SG_COL_MAX * 2);
-
-  text_col.r = 0;
-  text_col.g = 0;
-  text_col.b = 0;
-
-  col[SG_COL_BG*2 + 0].r = 120;
-  col[SG_COL_BG*2 + 0].g = 120;
-  col[SG_COL_BG*2 + 0].b = 120;
-  col[SG_COL_BG*2 + 1] = text_col;
-
-  col[SG_COL_FG*2 + 0].r = 160;
-  col[SG_COL_FG*2 + 0].g = 160;
-  col[SG_COL_FG*2 + 0].b = 160;
-  col[SG_COL_FG*2 + 1] = text_col;
-
-  col[SG_COL_RAISED*2 + 0].r = 200;
-  col[SG_COL_RAISED*2 + 0].g = 200;
-  col[SG_COL_RAISED*2 + 0].b = 200;
-  col[SG_COL_RAISED*2 + 1] = text_col;
-
-  col[SG_COL_LOW*2 + 0].r = 90;
-  col[SG_COL_LOW*2 + 0].g = 90;
-  col[SG_COL_LOW*2 + 0].b = 90;
-  col[SG_COL_LOW*2 + 1] = text_col;
-
-  col[SG_COL_HIGH*2 + 0].r = 160;
-  col[SG_COL_HIGH*2 + 0].g = 160;
-  col[SG_COL_HIGH*2 + 0].b = 250;
-  col[SG_COL_HIGH*2 + 1] = text_col;
+  SimpleTexture::SetColor(SG_COL_BG,     0.500, 0.500, 0.500);
+  SimpleTexture::SetColor(SG_COL_FG,     0.625, 0.625, 0.625);
+  SimpleTexture::SetColor(SG_COL_RAISED, 0.750, 0.750, 0.750);
+  SimpleTexture::SetColor(SG_COL_LOW,    0.375, 0.375, 0.375);
+  SimpleTexture::SetColor(SG_COL_HIGH,   0.625, 0.625, 1.000);
 
   fontfile = NULL;
   fontyratio = 1.0;
   }
 
 SimpleGUI::~SimpleGUI() {
-  SG_Texture::EmptyTrash();
+  SimpleTexture::EmptyTrash();
   glFinish();
 
   delete mWid;
@@ -253,7 +228,7 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
     SDL_PumpEvents();
     }
 
-  SG_Texture::EmptyTrash();
+  SimpleTexture::EmptyTrash();
   return 1;
   }
 
@@ -531,76 +506,6 @@ TTF_Font *SimpleGUI::Font(int pxsz) {
   return cur_font[pxsz];
   }
 
-float SimpleGUI::Red(int c) {
-  return col[c*2 + 0].r / 255.0f;
-  }
-
-float SimpleGUI::Green(int c) {
-  return col[c*2 + 0].g / 255.0f;
-  }
-
-float SimpleGUI::Blue(int c) {
-  return col[c*2 + 0].b / 255.0f;
-  }
-
-float SimpleGUI::TextRed(int c) {
-  return col[c*2 + 1].r / 255.0f;
-  }
-
-float SimpleGUI::TextGreen(int c) {
-  return col[c*2 + 1].g / 255.0f;
-  }
-
-float SimpleGUI::TextBlue(int c) {
-  return col[c*2 + 1].b / 255.0f;
-  }
-
-const SDL_Color *SimpleGUI::BGColor(int c) {
-  return &col[c*2 + 0];
-  }
-
-const SDL_Color *SimpleGUI::TextColor(int c) {
-  return &col[c*2 + 1];
-  }
-
-void SimpleGUI::SetDefaultTextColor(float tr, float tg, float tb) {
-  text_col.r = (Uint8)(tr*255.0f);
-  text_col.g = (Uint8)(tg*255.0f);
-  text_col.b = (Uint8)(tb*255.0f);
-  }
-
-const SDL_Color *SimpleGUI::DefaultTextColor() {
-  return &text_col;
-  }
-
-void SimpleGUI::SetColor(int c, float r, float g, float b,
-	float tr, float tg, float tb) {
-  col[c*2 + 0].r = (Uint8)(r*255.0f);
-  col[c*2 + 0].g = (Uint8)(g*255.0f);
-  col[c*2 + 0].b = (Uint8)(b*255.0f);
-  if(r == -1.0) {
-    col[c*2 + 1] = text_col;
-    }
-  else {
-    col[c*2 + 1].r = (Uint8)(tr*255.0f);
-    col[c*2 + 1].g = (Uint8)(tg*255.0f);
-    col[c*2 + 1].b = (Uint8)(tb*255.0f);
-    }
-  };
-
-int SimpleGUI::NewColor() {
-  int ret = col.size();
-  col.resize(ret+2);
-  return ret/2;
-  }
-
-int SimpleGUI::NewColor(float r, float g, float b,
-	float tr, float tg, float tb) {
-  int ret = NewColor();
-  SetColor(ret, r, g, b, tr, tg, tb);
-  return ret;
-  }
-
 void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
 	float posx, float posy) {
   popWid = wid;
@@ -621,14 +526,14 @@ extern int nextpoweroftwo(int);
 
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   if(mouse_cursor) delete mouse_cursor;
-  mouse_cursor = new SG_Texture(cur);
+  mouse_cursor = new SimpleTexture(cur);
   mouse_xscale = xsc;
   mouse_yscale = ysc;
 
   int xsize = nextpoweroftwo(mouse_cursor->src->w);
   int ysize = nextpoweroftwo(mouse_cursor->src->h);
   mouse_cursor->cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	SG_SDL_RGBA_COLFIELDS);
+	ST_SDL_RGBA_COLFIELDS);
   SDL_SetAlpha(mouse_cursor->src, 0, SDL_ALPHA_TRANSPARENT);
   SDL_BlitSurface(mouse_cursor->src, NULL, mouse_cursor->cur, NULL);
   mouse_cursor->xfact = (float)(mouse_cursor->src->w) / (float)(xsize);
@@ -644,4 +549,58 @@ SimpleGUI *SimpleGUI::Current() {
 SDL_mutex *SimpleGUI::Mutex() {
   if(!mutex) mutex = SDL_CreateMutex();
   return mutex;
+  }
+
+float SimpleGUI::Red(int c) {
+  return SimpleTexture::Red(c);
+  }
+
+float SimpleGUI::Green(int c) {
+  return SimpleTexture::Green(c);
+  }
+
+float SimpleGUI::Blue(int c) {
+  return SimpleTexture::Blue(c);
+  }
+
+float SimpleGUI::TextRed(int c) {
+  return SimpleTexture::TextRed(c);
+  }
+
+float SimpleGUI::TextGreen(int c) {
+  return SimpleTexture::TextGreen(c);
+  }
+
+float SimpleGUI::TextBlue(int c) {
+  return SimpleTexture::TextBlue(c);
+  }
+
+const SDL_Color *SimpleGUI::BGColor(int c) {
+  return SimpleTexture::BGColor(c);
+  }
+
+const SDL_Color *SimpleGUI::TextColor(int c) {
+  return SimpleTexture::TextColor(c);
+  }
+
+void SimpleGUI::SetDefaultTextColor(float tr, float tg, float tb) {
+  SimpleTexture::SetDefaultTextColor(tr, tg, tb);
+  }
+
+const SDL_Color *SimpleGUI::DefaultTextColor() {
+  return SimpleTexture::DefaultTextColor();
+  }
+
+void SimpleGUI::SetColor(int c, float r, float g, float b,
+	float tr, float tg, float tb) {
+  SimpleTexture::SetColor(c, r, g, b, tr, tg, tb);
+  }
+
+int SimpleGUI::NewColor() {
+  return SimpleTexture::NewColor();
+  }
+
+int SimpleGUI::NewColor(float r, float g, float b,
+	float tr, float tg, float tb) {
+  return SimpleTexture::NewColor(r, g, b, tr, tg, tb);
   }

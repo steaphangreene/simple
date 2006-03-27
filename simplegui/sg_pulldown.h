@@ -24,7 +24,7 @@
 
 #include "sg_compound.h"
 #include "sg_multitext.h"
-#include "sg_texture.h"
+#include "../simpletexture/simpletexture.h"
 #include "sg_colors.h"
 
 class SG_Button;
@@ -33,8 +33,8 @@ class SG_Menu;
 class SG_PullDown : public SG_Compound, public SG_MultiText{
 public:
   SG_PullDown(const string &mes, const vector<string> &itms,
-	SG_Texture tex = SG_COL_RAISED, SG_Texture dis_tex = SG_COL_LOW,
-	SG_Texture click_tex = SG_COL_LOW);
+	SimpleTexture tex = SG_COL_RAISED, SimpleTexture dis_tex = SG_COL_LOW,
+	SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_PullDown();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);

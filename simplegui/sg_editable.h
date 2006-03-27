@@ -26,8 +26,8 @@
 
 class SG_Editable : public SG_TextArea {
 public:
-  SG_Editable(string mes, SG_Texture c = SG_COL_LOW, 
-	SG_Texture dc = SG_COL_BG, SG_Texture fc = SG_COL_HIGH);
+  SG_Editable(string mes, SimpleTexture c = SG_COL_LOW, 
+	SimpleTexture dc = SG_COL_BG, SimpleTexture fc = SG_COL_HIGH);
   virtual ~SG_Editable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool Render(unsigned long cur_time);

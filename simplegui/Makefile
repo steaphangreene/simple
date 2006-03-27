@@ -28,35 +28,34 @@ win32:	libsimplegui.win32_a
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -framework OpenGL
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lefence -lSDL_ttf -lGL -lGLU
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lefence -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_ttf -lGL -lGLU
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
-OBJS:=	sg.o sg_widget.o sg_texture.o \
-	sg_ranger.o sg_ranger2d.o \
+OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 	sg_alignment.o sg_table.o sg_scrollable.o sg_autoscroll.o \
 	sg_panel.o sg_animatedpanel.o \
 	sg_textarea.o sg_progressbar.o sg_editable.o \
@@ -69,10 +68,9 @@ OBJS:=	sg.o sg_widget.o sg_texture.o \
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lglu32 -lopengl32
+WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lglu32 -lpng -ljpeg -lz -lpng -lopengl32
 
-WOBJS:=	sg.win32_o sg_widget.win32_o sg_texture.win32_o \
-	sg_ranger.win32_o sg_ranger2d.win32_o \
+WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_table.win32_o sg_scrollable.win32_o sg_autoscroll.win32_o \
 	sg_panel.win32_o sg_animatedpanel.win32_o \
 	sg_textarea.win32_o sg_progressbar.win32_o sg_editable.win32_o \

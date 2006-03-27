@@ -29,7 +29,7 @@ using namespace std;
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Dragable::SG_Dragable(SG_Texture tex) : SG_Panel(tex),
+SG_Dragable::SG_Dragable(SimpleTexture tex) : SG_Panel(tex),
 	SG_Ranger2D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
   SetDisplayLimits(0.0, 0.0, 0.0, 0.0);
   start_x = 0.0;

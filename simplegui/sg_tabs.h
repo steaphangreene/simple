@@ -30,7 +30,7 @@
 using namespace std;
 
 #include "sg_compound.h"
-#include "sg_texture.h"
+#include "../simpletexture/simpletexture.h"
 #include "sg_colors.h"
 
 #ifndef SG_AUTOSIZE
@@ -42,8 +42,8 @@ class SG_StickyButton;
 class SG_Tabs : public SG_Compound {
 public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
   SG_Tabs(vector<string> items, int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
-	SG_Texture tex = SG_COL_RAISED, SG_Texture dis_tex = SG_COL_LOW,
-	SG_Texture click_tex = SG_COL_LOW, SG_Texture down_tex = SG_COL_HIGH);
+	SimpleTexture tex = SG_COL_RAISED, SimpleTexture dis_tex = SG_COL_LOW,
+	SimpleTexture click_tex = SG_COL_LOW, SimpleTexture down_tex = SG_COL_HIGH);
   virtual ~SG_Tabs();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
