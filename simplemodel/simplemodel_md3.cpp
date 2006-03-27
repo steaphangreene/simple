@@ -259,7 +259,7 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
   int frame = CalcFrame(cur_time, anim, start_time);
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
-    if(meshes[obj].texture && meshes[obj].texture->type != SM_TEXTURE_NONE) {
+    if(meshes[obj].texture && meshes[obj].texture->type != SIMPLETEXTURE_NONE) {
       glBindTexture(GL_TEXTURE_2D, meshes[obj].texture->GLTexture());
 
       glBegin(GL_TRIANGLES);
