@@ -25,6 +25,8 @@
 
 #include "simpletexture.h"
 
+#define	ST_NUM_SYSTEM_COLORS	32
+
 static int nextpoweroftwo(int x) {
   if(x <= 2) return 2;
 
@@ -35,22 +37,47 @@ static int nextpoweroftwo(int x) {
   return x;
   }
 
-SimpleTexture::SimpleTexture(SDL_Surface *tex) {
-  type = SIMPLETEXTURE_DEFINED;
-  texture = 0;
+void SimpleTexture::InitStatic() {
+  if(color.size() < (ST_NUM_SYSTEM_COLORS * 2)) {
+    color.resize(ST_NUM_SYSTEM_COLORS * 2);
+    }
+  }
+
+void SimpleTexture::Init(const SimpleTextureType tp) {
+  SimpleTexture::InitStatic();
+  type = tp;
   cur = NULL;
-  src = tex;
+  src = NULL;
   xfact = 1.0;
   yfact = 1.0;
+  texture = 0;
+  dirty = 0;	//Since it's not ready to be "cleaned" yet.
+  }
+
+
+SimpleTexture::SimpleTexture(SDL_Surface *tex) {
+  Init(SIMPLETEXTURE_DEFINED);
+  fg = default_text_color;
+  src = tex;
+  dirty = 1;
+  }
+
+SimpleTexture::SimpleTexture(const int col_index) {
+  Init(SIMPLETEXTURE_COLOR);
+  if((int)(color.size()) > (col_index*2 + 1)) {
+    col = color[col_index*2];
+    fg = color[col_index*2 + 1];
+    }
+  else {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
   dirty = 1;
   }
 
 SimpleTexture::SimpleTexture(const string &filenm) {
+  Init(SIMPLETEXTURE_DEFINED);
   filename = filenm;
-  type = SIMPLETEXTURE_DEFINED;
-  texture = 0;
-  cur = NULL;
-  src = NULL;
 
   SDL_RWops *file = SDL_RWFromFile(filenm.c_str(), "rb");
   if(file && tolower(filenm[filenm.length()-2]) == 'g'
@@ -102,15 +129,45 @@ SimpleTexture::SimpleTexture(const string &filenm) {
     }
   }
 
+SimpleTexture::SimpleTexture(const SimpleTexture &in) {
+  CopyFrom(in);
+  }
+
+const SimpleTexture &SimpleTexture::operator = (const SimpleTexture &in) {
+  Clear();
+  CopyFrom(in);
+  return *this;
+  }
+
 SimpleTexture::~SimpleTexture() {
+  Clear();
+  }
+
+void SimpleTexture::CopyFrom(const SimpleTexture &in) {
+  memcpy(this, &in, sizeof(SimpleTexture));	//WARNING! Shallow Copy
+  if(trans_cache.count(src) > 0) {
+    UpdateCache();			//Use cache to make it deep
+    }
+  else if(def_cache.count(src) > 0) {
+    UpdateCache();			//Use cache to make it deep
+    }
+  else {
+    cur = NULL;			//Don't use cache, make it recreate itself
+    texture = 0;
+    xfact = 1.0;
+    yfact = 1.0;
+    dirty = 1;
+    }
+  }
+
+void SimpleTexture::Clear() {
   if(trans_cache.count(src) > 0) {
     trans_cache[src].erase(this);
     if(trans_cache[src].size() < 1) {
       trans_cache.erase(src);
-      if(texture != 0) glDeleteTextures(1, &texture);
+      if(texture != 0) trash_tex.push_back(texture);
       if(cur) {
-	glFinish();	// Don't yank the rug out from under GL
-	SDL_FreeSurface(cur);
+	trash_surf.push_back(cur);
 	cur = NULL;
 	}
       }
@@ -119,21 +176,37 @@ SimpleTexture::~SimpleTexture() {
     def_cache[src].erase(this);
     if(def_cache[src].size() < 1) {
       def_cache.erase(src);
-      if(texture != 0) glDeleteTextures(1, &texture);
+      if(texture != 0) trash_tex.push_back(texture);
       if(cur) {
-	glFinish();	// Don't yank the rug out from under GL
-	SDL_FreeSurface(cur);
+	trash_surf.push_back(cur);
 	cur = NULL;
 	}
       }
     }
   else {
-    if(texture != 0) glDeleteTextures(1, &texture);
+    if(texture != 0) trash_tex.push_back(texture);
     if(cur) {
-      glFinish();	// Don't yank the rug out from under GL
-      SDL_FreeSurface(cur);
+      trash_surf.push_back(cur);
       cur = NULL;
       }
+    }
+  }
+
+void SimpleTexture::EmptyTrash() {
+  if(trash_tex.size() > 0 || trash_surf.size() > 0) {
+    list<GLuint>::iterator itri = trash_tex.begin();
+    for(; itri != trash_tex.end(); ++itri) {
+      glDeleteTextures(1, &(*itri));
+      }
+    trash_tex.clear();
+
+    glFinish();	// Don't yank the rug out from under GL
+
+    list<SDL_Surface *>::iterator itrs = trash_surf.begin();
+    for(; itrs != trash_surf.end(); ++itrs) {
+      SDL_FreeSurface(*itrs);
+      }
+    trash_surf.clear();
     }
   }
 
@@ -168,26 +241,57 @@ bool SimpleTexture::CheckCache() {
   }
 
 void SimpleTexture::Update() {
-  if(type == SIMPLETEXTURE_DEFINED) {
-    int xsize = nextpoweroftwo(src->w);
-    int ysize = nextpoweroftwo(src->h);
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, SM_SDL_RGBA_COLFIELDS);
-    memset(cur->pixels, 0, xsize*ysize*4);
-    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
-    SDL_BlitSurface(src, NULL, cur, NULL);
+  if(type != SIMPLETEXTURE_NONE) {
+    int xsize, ysize;
+    if(src) {
+      xsize = nextpoweroftwo(src->w);
+      ysize = nextpoweroftwo(src->h);
+      if(cur) SDL_FreeSurface(cur); //FIXME!
+      cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+      memset(cur->pixels, 0, xsize*ysize*4);
+      SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+      SDL_BlitSurface(src, NULL, cur, NULL);
+      }
+    else {
+      xsize = nextpoweroftwo(cur->w);
+      ysize = nextpoweroftwo(cur->h);
+      }
+
+    //This is the automatic downsizing code - originally from SimpleGUI
+    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
+	GL_UNSIGNED_BYTE, cur->pixels );
+    GLint res;
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
+    while(res == 0) {
+      if(xsize >= ysize) xsize /= 2;
+      else ysize /= 2;
+      glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
+	GL_UNSIGNED_BYTE, cur->pixels );
+      glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
+      }
+    if(xsize != cur->w || ysize != cur->h) {
+      SDL_Surface *tmp = cur;
+      cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+      gluScaleImage(GL_RGBA, tmp->w, tmp->h, GL_UNSIGNED_BYTE, tmp->pixels,
+	cur->w, cur->h, GL_UNSIGNED_BYTE, cur->pixels);
+      SDL_FreeSurface(tmp);
+      }
 
     if(texture == 0) glGenTextures(1, &texture);
 
     glBindTexture(GL_TEXTURE_2D, texture);
-//    glTexImage2D(GL_TEXTURE_2D, 0, 4,
-//	cur->w, cur->h, 0, GL_RGBA,
-//	GL_UNSIGNED_BYTE, cur->pixels );
 
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cur->w, cur->h, GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
+    //This is how SimpleGUI did it (for 2-D usage).
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, cur->w, cur->h, 0, GL_RGBA,
+	GL_UNSIGNED_BYTE, cur->pixels );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    //This is how SimpleModel did it (for 3-D usage).
+//    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cur->w, cur->h, GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
+//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -204,13 +308,150 @@ void SimpleTexture::UpdateCache() {
     def_cache[src].insert(this);
     }
   else {
+    // Temporary - don't currently handle this case with cache
     }
+  }
+
+float SimpleTexture::Red(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 0].r / 255.0f;
+  }
+
+float SimpleTexture::Green(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 0].g / 255.0f;
+  }
+
+float SimpleTexture::Blue(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 0].b / 255.0f;
+  }
+
+float SimpleTexture::TextRed(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 1].r / 255.0f;
+  }
+
+float SimpleTexture::TextGreen(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 1].g / 255.0f;
+  }
+
+float SimpleTexture::TextBlue(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return color[col_index*2 + 1].b / 255.0f;
+  }
+
+const SDL_Color *SimpleTexture::BGColor(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return &color[col_index*2 + 0];
+  }
+
+const SDL_Color *SimpleTexture::TextColor(const int col_index) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  return &color[col_index*2 + 1];
+  }
+
+void SimpleTexture::SetColor(const int col_index, const SDL_Color &col,
+	const SDL_Color &text) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  color[col_index*2 + 0] = col;
+  color[col_index*2 + 1] = text;
+  }
+
+void SimpleTexture::SetColor(const int col_index,
+	const float r, const float g, const float b,
+	const float tr, const float tg, const float tb) {
+  SimpleTexture::InitStatic();
+  if((int)(color.size()) <= (col_index*2 + 1)) {
+    fprintf(stderr, "ERROR: Color index '%d' out of range!\n", col_index);
+    exit(1);
+    }
+  color[col_index*2 + 0].r = (Uint8)(r*255.0f);
+  color[col_index*2 + 0].g = (Uint8)(g*255.0f);
+  color[col_index*2 + 0].b = (Uint8)(b*255.0f);
+  if(r == -1.0) {
+    color[col_index*2 + 1] = default_text_color;
+    }
+  else {
+    color[col_index*2 + 1].r = (Uint8)(tr*255.0f);
+    color[col_index*2 + 1].g = (Uint8)(tg*255.0f);
+    color[col_index*2 + 1].b = (Uint8)(tb*255.0f);
+    }
+  }
+
+int SimpleTexture::NewColor() {
+  SimpleTexture::InitStatic();
+  int ret = color.size();
+  color.resize(ret+2);
+  return ret/2;
+  }
+
+int SimpleTexture::NewColor(const float r, const float g, const float b,
+        const float tr, const float tg, const float tb) {
+  SimpleTexture::InitStatic();
+  int ret = NewColor();
+  SetColor(ret, r, g, b, tr, tg, tb);
+  return ret;
+  }
+
+void SimpleTexture::SetDefaultTextColor(
+	const float tr, const float tg, const float tb) {
+  default_text_color.r = (Uint8)(tr*255.0f);
+  default_text_color.g = (Uint8)(tg*255.0f);
+  default_text_color.b = (Uint8)(tb*255.0f);
+  }
+
+const SDL_Color *SimpleTexture::DefaultTextColor() {
+  return &default_text_color;
   }
 
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::trans_cache;
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::def_cache;
 
-unsigned char sm_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
-unsigned char sm_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
-unsigned char sm_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
-unsigned char sm_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
+unsigned char st_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
+unsigned char st_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
+unsigned char st_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
+unsigned char st_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
+
+list<SDL_Surface *> SimpleTexture::trash_surf;
+list<GLuint> SimpleTexture::trash_tex;
+
+vector<SDL_Color> SimpleTexture::color;
+SDL_Color SimpleTexture::default_text_color = {0, 0, 0, 0};
