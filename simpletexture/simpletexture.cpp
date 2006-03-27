@@ -281,15 +281,13 @@ void SimpleTexture::Update() {
 
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    //This is how SimpleGUI did it (for 2-D usage).
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, cur->w, cur->h, 0, GL_RGBA,
-	GL_UNSIGNED_BYTE, cur->pixels );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    //This is how SimpleModel did it (for 3-D usage).
-//    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, cur->w, cur->h, GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
-//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+    //FIXME: Don't use GLU, already resized and fitted to GL implementation!
+    //FIXME: Not every texture needs an alpha!
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cur->w, cur->h, 0,
+//	GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, cur->w, cur->h,
+	GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
 //    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 //    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
