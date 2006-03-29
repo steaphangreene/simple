@@ -21,6 +21,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include "SDL_opengl.h"
 
 #include "simpletexture.h"
@@ -30,12 +31,45 @@
 static int nextpoweroftwo(int x) {
   if(x <= 2) return 2;
 
-  --x;          //Hitch it down in case it's exactly a power of 2
+  --x;		//Hitch it down in case it's exactly a power of 2
   int p = 1;
   for(; x != 1; ++p, x>>=1);
   x <<= p;
   return x;
   }
+
+struct SimpleTexture::TextData {
+  TextData() {
+    count = 0;
+    rendered_text = NULL;
+    text_xsize = 0;
+    text_ysize = 0;
+    visible_xlines = ST_AUTOSIZE;
+    visible_ylines = ST_AUTOSIZE;
+    visible_xoffset = 0.0;
+    visible_yoffset = 0.0;
+    xmargin = 0.0;
+    ymargin = 0.0;
+    font_size = ST_AUTOSIZE;
+    alignment = ST_ALIGN_LEFT;
+    };
+
+  int count;
+
+  //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
+  SDL_Surface *rendered_text;
+  int text_xsize, text_ysize;
+
+  //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
+  string message;
+  vector<string> lines;
+  float xmargin, ymargin;
+  float visible_xlines, visible_ylines;
+  float visible_xoffset, visible_yoffset;
+  int font_size;
+  int alignment;
+  };
+
 
 void SimpleTexture::InitStatic() {
   if(color.size() < (ST_NUM_SYSTEM_COLORS * 2)) {
@@ -51,6 +85,7 @@ void SimpleTexture::Init(const SimpleTextureType tp) {
   xfact = 1.0;
   yfact = 1.0;
   texture = 0;
+  text = NULL;
   dirty = 0;	//Since it's not ready to be "cleaned" yet.
   }
 
@@ -141,10 +176,74 @@ const SimpleTexture &SimpleTexture::operator = (const SimpleTexture &in) {
 
 SimpleTexture::~SimpleTexture() {
   Clear();
+
+//FIXME: This is static, need a ref counter.
+//  if(fontfile) {                //Only close if WE opened
+//    delete [] fontfile;
+//    fontfile = NULL;
+//    map<int, TTF_Font *>::iterator itrf = cur_font.begin();
+//    for(; itrf != cur_font.end(); ++itrf) {
+//      TTF_CloseFont(itrf->second);
+//      }
+//    }
+//  cur_font.clear();
+  }
+
+void SimpleTexture::AttachTextData(TextData *in) {
+//  fprintf(stderr, "Attached %p (%s) to %p\n", in, in->message.c_str(), this);
+
+  if(text) DetachTextData();
+  if(!in) {
+    text = new TextData;
+    }
+  else {
+    text = in;
+    }
+  ++(text->count);
+  };
+
+void SimpleTexture::DetachTextData() {
+//  fprintf(stderr, "Detached %p (%s) from %p\n", text, text->message.c_str(), this);
+  if(text) {
+    --(text->count);
+    if(text->count <= 0) {
+      if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+      text->rendered_text = NULL;
+      delete text;
+      }
+    text = NULL;
+    }
+  }
+
+void SimpleTexture::SetTexture(const SimpleTexture &in) {
+  TextData *tmptxt = text;
+  text = NULL;
+  Clear();
+  CopyFrom(in);
+  if(text) DetachTextData();
+  text = tmptxt;
+  dirty = 1;
   }
 
 void SimpleTexture::CopyFrom(const SimpleTexture &in) {
-  memcpy(this, &in, sizeof(SimpleTexture));	//WARNING! Shallow Copy
+  Init(in.type);
+
+  //WARNING! Shallow Copy
+  cur = in.cur;
+  src = in.src;
+  col = in.col;
+  fg = in.fg;
+  xfact = in.xfact;
+  yfact = in.yfact;
+  dirty = in.dirty;
+
+  //WARNING! Shallow Copy
+  texture = in.texture;
+
+  filename = in.filename;
+
+  if(in.text) AttachTextData(in.text);
+
   if(trans_cache.count(src) > 0) {
     UpdateCache();			//Use cache to make it deep
     }
@@ -190,6 +289,8 @@ void SimpleTexture::Clear() {
       cur = NULL;
       }
     }
+
+  if(text) DetachTextData();
   }
 
 void SimpleTexture::EmptyTrash() {
@@ -240,8 +341,202 @@ bool SimpleTexture::CheckCache() {
     }
   }
 
+void SimpleTexture::BuildTexture() {
+  if((!text) || text->message.length() <= 0) {
+    BuildBlankTexture();
+    }
+  else if(Font() == NULL) {
+    fprintf(stderr, "WARNING: No Font Loaded!\n");
+    BuildBlankTexture();
+    }
+  else {
+    BuildTextTexture();
+    }
+  }
+
+void SimpleTexture::BuildBlankTexture() {
+  int xsize = 16, ysize = 16;
+
+  if(CheckCache()) {
+    return;
+    }
+
+  if(cur) {
+    glFinish();
+    SDL_FreeSurface(cur);
+    }
+
+  if(type == SIMPLETEXTURE_COLOR) {
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format, col.r, col.g, col.b));
+    }
+  else if(type == SIMPLETEXTURE_TRANSCOLOR) {
+    //A TRANSCOLOR widget with no text is totally invisible.
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    }
+  else if(type == SIMPLETEXTURE_DEFINED) {
+    xsize = nextpoweroftwo(src->w);
+    ysize = nextpoweroftwo(src->h);
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    memset(cur->pixels, 0, xsize*ysize*4);
+    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+    SDL_BlitSurface(src, NULL, cur, NULL);
+    xfact = (float)(src->w) / (float)(xsize);
+    yfact = (float)(src->h) / (float)(ysize);
+    }
+  else if(type == SIMPLETEXTURE_TRANS) {
+    xsize = nextpoweroftwo(src->w);
+    ysize = nextpoweroftwo(src->h);
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
+    SDL_BlitSurface(src, NULL, cur, NULL);
+    xfact = (float)(src->w) / (float)(xsize);
+    yfact = (float)(src->h) / (float)(ysize);
+    }
+  }
+
+void SimpleTexture::BuildTextTexture() {
+  int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
+
+  if(type == SIMPLETEXTURE_DEFINED) {
+    bxsize = src->w;
+    bysize = src->h;
+
+			//Used temporarilly - not final values
+    xsize = int((float)(bxsize) * (1.0f - text->xmargin * 2.0f) + 0.5f);
+    ysize = int((float)(bysize) * (1.0f - text->ymargin * 2.0f) + 0.5f);
+
+    if(text->font_size != (int)((double)(ysize) / text->visible_ylines + 0.5)) {
+      SetFontSize((int)((double)(ysize) / text->visible_ylines + 0.5));
+      }
+
+    if(text->text_xsize < xsize) {
+      text->text_xsize = xsize;  //To be sure alignment works!
+//      UpdateRange();
+      }
+
+    if(Font(text->font_size) == NULL) {
+      fprintf(stderr, "WARNING: Couldn't resize font to ptsize %d\n", text->font_size);
+      BuildBlankTexture();
+      return;
+      }
+
+    xoff = (bxsize-xsize)/2;
+    yoff = (bysize-ysize)/2;
+
+    //OpenGL Needs a power of two size - grow to next
+    xsize = nextpoweroftwo(bxsize);	// Final values
+    ysize = nextpoweroftwo(bysize);
+
+    xfact = (float)(bxsize) / (float)(xsize);
+    yfact = (float)(bysize) / (float)(ysize);
+    }
+  else {
+    double fsz = (double)(TTF_FontHeight(Font(text->font_size)));
+    bxsize = (int)(fsz * text->visible_xlines + 0.5);
+    bysize = (int)(fsz * text->visible_ylines + 0.5);
+
+    xsize = bxsize;	//Used temporarilly - not final values
+    ysize = bysize;
+    bxsize = int((float)(bxsize) / (1.0f - text->xmargin * 2.0f) + 0.5f);
+    bysize = int((float)(bysize) / (1.0f - text->ymargin * 2.0f) + 0.5f);
+    xoff = (bxsize-xsize)/2;
+    yoff = (bysize-ysize)/2;
+
+    //OpenGL Needs a power of two size - grow to next
+    xsize = nextpoweroftwo(bxsize);	// Final values
+    ysize = nextpoweroftwo(bysize);
+
+    int max;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
+
+    xfact = (float)(bxsize) / (float)(xsize);
+    yfact = (float)(bysize) / (float)(ysize);
+    }
+
+  if(cur) SDL_FreeSurface(cur);
+  cur = NULL;
+
+  if(type == SIMPLETEXTURE_COLOR) {
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
+	ST_SDL_RGBA_COLFIELDS);
+    SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format,
+	col.r, col.g, col.b));
+    }
+  else if(type == SIMPLETEXTURE_TRANSCOLOR) {
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+	ST_SDL_RGBA_COLFIELDS);
+    }
+  else if(type == SIMPLETEXTURE_DEFINED) {
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+	ST_SDL_RGBA_COLFIELDS);
+    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+    SDL_BlitSurface(src, NULL, cur, NULL);
+    }
+  else if(type == SIMPLETEXTURE_TRANS) {
+    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
+	ST_SDL_RGBA_COLFIELDS);
+    SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
+    SDL_BlitSurface(src, NULL, cur, NULL);
+    }
+
+  if(text->rendered_text == NULL) {	// Create persistent text surface
+    SDL_Rect drec = { 0, 0, 0, 0 };
+    text->rendered_text = SDL_CreateRGBSurface(0,
+	text->text_xsize, text->text_ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    for(int ln = 0; ln < int(text->lines.size()); ++ln) {
+      if(text->lines[ln].length() > 0) {
+	SDL_Surface *tmp_text = TTF_RenderText_Blended(
+		Font(text->font_size), text->lines[ln].c_str(), fg);
+	if(!tmp_text) {
+	  fprintf(stderr, "ERROR: Failed to render font: %s\n", TTF_GetError());
+	  exit(1);
+	  }
+
+	if(text->alignment == ST_ALIGN_RIGHT) {
+	  int xs = 0, ys = 0;
+	  TTF_SizeText(Font(text->font_size), text->lines[ln].c_str(), &xs, &ys);
+	  drec.x = text->text_xsize - xs;
+	  }
+	else if(text->alignment == ST_ALIGN_CENTER) {
+	  int xs = 0, ys = 0;
+	  TTF_SizeText(Font(text->font_size), text->lines[ln].c_str(), &xs, &ys);
+	  drec.x = (text->text_xsize - xs)/2;
+	  }
+
+	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
+	SDL_BlitSurface(tmp_text, NULL, text->rendered_text, &drec);
+	SDL_FreeSurface(tmp_text);
+	}
+      drec.y += TTF_FontHeight(Font(text->font_size));
+      }
+    }
+
+  { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
+    double fsz = (double)(TTF_FontHeight(Font(text->font_size)));
+    srec.x = (int)(fsz * text->visible_xoffset + 0.5);
+    srec.w = (int)(fsz * text->visible_xlines + 0.5);
+
+    if(text->visible_yoffset >= 0.0) {
+      srec.y = (int)(fsz * text->visible_yoffset + 0.5);
+      srec.h = (int)(fsz * text->visible_ylines + 0.5);
+      }
+    else {
+      drec.y += (int)(fsz * -text->visible_yoffset + 0.5);
+      srec.h = (int)(fsz * (text->visible_ylines + text->visible_ylines) + 0.5);
+      }
+
+    if(type == SIMPLETEXTURE_TRANS
+		|| type == SIMPLETEXTURE_TRANSCOLOR) {
+      SDL_SetAlpha(text->rendered_text, 0, SDL_ALPHA_TRANSPARENT);
+      }
+    SDL_BlitSurface(text->rendered_text, &srec, cur, &drec);
+    }
+  }
+
 void SimpleTexture::Update() {
   if(type != SIMPLETEXTURE_NONE) {
+    BuildTexture();
     int xsize, ysize;
     if(src) {
       xsize = nextpoweroftwo(src->w);
@@ -308,6 +603,60 @@ void SimpleTexture::UpdateCache() {
   else {
     // Temporary - don't currently handle this case with cache
     }
+  }
+
+void SimpleTexture::SetMargins(const float xmar, const float ymar) {
+  if(!text) AttachTextData();
+  text->xmargin = xmar;
+  text->ymargin = ymar;
+  dirty = 1;
+  }
+
+void SimpleTexture::SetFontSize(const int sz) {
+  if(!text) AttachTextData();
+  text->font_size = sz;
+  dirty = 1;
+  }
+
+void SimpleTexture::SetText(const string txt,
+	const float ylines, const float xlines,
+	const float yoff, const float xoff) {
+
+  if(!text) AttachTextData();
+
+  text->message = txt;
+  text->lines.clear();
+
+  text->text_xsize = 0;
+  int pos = 0, lpos = 0;
+  while(lpos < (int)(text->message.length())) {
+    pos = text->message.find('\n', lpos);
+    if(pos < lpos) pos = text->message.length();
+    text->lines.push_back(text->message.substr(lpos, pos - lpos));
+    int xs = 0, ys = 0;
+    TTF_SizeText(Font(text->font_size), text->lines.back().c_str(), &xs, &ys);
+    if(text->text_xsize < xs) text->text_xsize = xs;
+    lpos = pos+1;
+    }
+  text->text_ysize = TTF_FontHeight(Font(text->font_size)) * text->lines.size();
+
+  //FIXME: Improper Apect Ratio Calculations!
+  text->visible_ylines = ylines;
+  if(ylines <= 0.0) text->visible_ylines = text->lines.size();
+  text->visible_xlines = xlines;
+  if(xlines <= 0.0) text->visible_xlines = text->message.length();
+
+  text->visible_xoffset = xoff;
+  text->visible_yoffset = yoff;
+
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
+  dirty = 1;
+  }
+
+GLuint SimpleTexture::GLTexture() {
+  if(dirty) Update();
+  return texture;
   }
 
 float SimpleTexture::Red(const int col_index) {
@@ -422,7 +771,7 @@ int SimpleTexture::NewColor() {
   }
 
 int SimpleTexture::NewColor(const float r, const float g, const float b,
-        const float tr, const float tg, const float tb) {
+	const float tr, const float tg, const float tb) {
   SimpleTexture::InitStatic();
   int ret = NewColor();
   SetColor(ret, r, g, b, tr, tg, tb);
@@ -440,6 +789,75 @@ const SDL_Color *SimpleTexture::DefaultTextColor() {
   return &default_text_color;
   }
 
+void SimpleTexture::SetFont(TTF_Font *font) {
+  if(!TTF_WasInit()) {
+    if(TTF_Init()) {
+      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
+	fontfile, TTF_GetError());
+      exit(1);
+      }
+    atexit(TTF_Quit);
+    }
+
+  if(fontfile) delete [] fontfile;
+  fontfile = NULL;
+  cur_font[0] = font;
+  fontyratio = 1.0;
+  default_pxsize = 0;
+  }
+
+void SimpleTexture::SetDefaultFontSize(const int pxsz) {
+  default_pxsize = pxsz;
+  }
+
+void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
+  if(fontfile) delete [] fontfile;
+  fontfile = new char[strlen(fontfn)+1];
+  strcpy(fontfile, fontfn);
+
+  fontyratio = 1.0;
+  int load_pxsz = 100;
+  Font(load_pxsz); //Initialize font
+  int act_height = TTF_FontHeight(cur_font[load_pxsz]);
+  if(act_height != load_pxsz) { //Non-true-pixel font
+    cur_font[act_height] = cur_font[load_pxsz];
+    cur_font.erase(load_pxsz);
+    fontyratio = (float)(load_pxsz) / (float)(act_height);
+    Font(load_pxsz); //Create the REAL default font size
+//    fprintf(stderr, "FontYRatio = %f\n", fontyratio);
+    }
+
+  SetDefaultFontSize(pxsz);
+  }
+
+TTF_Font *SimpleTexture::Font(int pxsz) {
+  if(pxsz < 1) pxsz = default_pxsize;
+  if(cur_font.count(pxsz)) return cur_font[pxsz];
+  else if(!fontfile) {
+//    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
+    return NULL;
+    }
+
+  if(!TTF_WasInit()) {
+    if(TTF_Init()) {
+      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
+	fontfile, TTF_GetError());
+      exit(1);
+      }
+    atexit(TTF_Quit);
+    }
+
+  int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);   //Scale to real ptsize
+
+  cur_font[pxsz] = TTF_OpenFont(fontfile, ptsz);
+  if(!cur_font[pxsz]) {
+    fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
+    exit(1);
+    }
+
+  return cur_font[pxsz];
+  }
+
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::trans_cache;
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::def_cache;
 
@@ -453,3 +871,8 @@ list<GLuint> SimpleTexture::trash_tex;
 
 vector<SDL_Color> SimpleTexture::color;
 SDL_Color SimpleTexture::default_text_color = {0, 0, 0, 0};
+map<int, TTF_Font *> SimpleTexture::cur_font;
+int SimpleTexture::default_pxsize;
+float SimpleTexture::fontyratio = 1.0;
+char *SimpleTexture::fontfile = NULL;
+

@@ -31,6 +31,15 @@ using namespace std;
 
 #include "SDL.h"
 
+#define ST_ALIGN_LEFT   0
+#define ST_ALIGN_CENTER 1
+#define ST_ALIGN_RIGHT  2
+
+#define ST_AUTOSIZE     -1
+
+struct _TTF_Font;
+typedef struct _TTF_Font TTF_Font;
+
 enum SimpleTextureType {
    SIMPLETEXTURE_NONE = 0,
    SIMPLETEXTURE_COLOR,
@@ -42,6 +51,7 @@ enum SimpleTextureType {
    SIMPLETEXTURE_MAX
    };
 
+
 class SimpleTexture {
 public:
   SimpleTexture(SDL_Surface *tex);
@@ -51,11 +61,18 @@ public:
   ~SimpleTexture();
 
   const SimpleTexture &operator = (const SimpleTexture &in);
+  void SetTexture(const SimpleTexture &in);
 
   bool CheckCache();
   void Update();
 
-  GLuint GLTexture() { return texture; };
+  void SetText(const string txt,
+	const float ylines=-1.0, const float xlines=-1.0,
+	const float yoff=0.0, const float xoff=0.0);
+  void SetMargins(const float xmar, const float ymar);
+  void SetFontSize(const int sz);
+
+  GLuint GLTexture();
 
   SimpleTextureType type;
   SDL_Surface *cur;	//Current texture buffer
@@ -64,8 +81,6 @@ public:
   SDL_Color fg;		//Text Color
   float xfact, yfact;	//Portion of texture actually shown
   bool dirty; //Does the system need to rebuild this texture?
-
-  string filename;
 
   //Color Code (originally from SimpleGUI)
   static float Red(const int c);
@@ -88,12 +103,29 @@ public:
 	);
   static const SDL_Color *DefaultTextColor();
 
+  //Font Code (originally from SimpleGUI)
+  static void LoadFont(const char *fontfn, int pxsz = 20);
+  static void SetDefaultFontSize(const int pxsz);
+  static void SetFont(TTF_Font *f);
+  static void UnsetFont() { SetFont(NULL); };
+  static TTF_Font *Font(const int pxsz = -1);
+
   //For Internal Use Only!
   static void EmptyTrash();
 
 protected:
+  struct TextData;
+  TextData *text;
+
   void Init(const SimpleTextureType tp);
   static void InitStatic();
+
+  void BuildTexture();
+  void BuildBlankTexture();
+  void BuildTextTexture();
+
+  void AttachTextData(TextData *in = NULL);
+  void DetachTextData();
 
   void Clear();
   void CopyFrom(const SimpleTexture &in);
@@ -101,6 +133,8 @@ protected:
   GLuint texture;	//Current texture (when active)
 
   void UpdateCache();
+
+  string filename;
 
   static map<SDL_Surface *, set<SimpleTexture *> > trans_cache;
   static map<SDL_Surface *, set<SimpleTexture *> > def_cache;
@@ -110,6 +144,10 @@ protected:
 
   static vector<SDL_Color> color;
   static SDL_Color default_text_color;
+  static map<int, TTF_Font *> cur_font;
+  static int default_pxsize;
+  static float fontyratio;
+  static char *fontfile;
   };
 
 extern unsigned char st_col_u32b1[4];
