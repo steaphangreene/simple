@@ -83,9 +83,6 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
   SimpleTexture::SetColor(SG_COL_RAISED, 0.750, 0.750, 0.750);
   SimpleTexture::SetColor(SG_COL_LOW,    0.375, 0.375, 0.375);
   SimpleTexture::SetColor(SG_COL_HIGH,   0.625, 0.625, 1.000);
-
-  fontfile = NULL;
-  fontyratio = 1.0;
   }
 
 SimpleGUI::~SimpleGUI() {
@@ -96,16 +93,6 @@ SimpleGUI::~SimpleGUI() {
   mWid = NULL;
   if(popWid) delete popWid;
   popWid = NULL;
-
-  if(fontfile) {		//Only close if WE opened
-    delete [] fontfile;
-    fontfile = NULL;
-    map<int, TTF_Font *>::iterator itrf = cur_font.begin();
-    for(; itrf != cur_font.end(); ++itrf) {
-      TTF_CloseFont(itrf->second);
-      }
-    }
-  cur_font.clear();
 
   if(mutex) SDL_DestroyMutex(mutex);
   mutex = NULL;
@@ -438,72 +425,19 @@ int SimpleGUI::ScreenToRelative(float &x, float &y) {
   }
 
 void SimpleGUI::SetFont(TTF_Font *font) {
-  if(!TTF_WasInit()) {
-    if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
-	fontfile, TTF_GetError());
-      exit(1);
-      }
-    atexit(TTF_Quit);
-    }
-
-  if(fontfile) delete [] fontfile;
-  fontfile = NULL;
-  cur_font[0] = font;
-  fontyratio = 1.0;
-  default_pxsize = 0;
+  SimpleTexture::SetFont(font);
   }
 
 void SimpleGUI::SetDefaultFontSize(int pxsz) {
-  default_pxsize = pxsz;
+  SimpleTexture::SetDefaultFontSize(pxsz);
   }
 
 void SimpleGUI::LoadFont(const char *fontfn, int pxsz) {
-  if(fontfile) delete [] fontfile;
-  fontfile = new char[strlen(fontfn)+1];
-  strcpy(fontfile, fontfn);
-
-  fontyratio = 1.0;
-  int load_pxsz = 100;
-  Font(load_pxsz); //Initialize font
-  int act_height = TTF_FontHeight(cur_font[load_pxsz]);
-  if(act_height != load_pxsz) { //Non-true-pixel font
-    cur_font[act_height] = cur_font[load_pxsz];
-    cur_font.erase(load_pxsz);
-    fontyratio = (float)(load_pxsz) / (float)(act_height);
-    Font(load_pxsz); //Create the REAL default font size
-//    fprintf(stderr, "FontYRatio = %f\n", fontyratio);
-    }
-
-  SetDefaultFontSize(pxsz);
+  SimpleTexture::LoadFont(fontfn, pxsz);
   }
 
-TTF_Font *SimpleGUI::Font(int pxsz) {
-  if(pxsz < 1) pxsz = default_pxsize;
-  if(cur_font.count(pxsz)) return cur_font[pxsz];
-  else if(!fontfile) {
-//    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
-    return NULL;
-    }
-
-  if(!TTF_WasInit()) {
-    if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
-	fontfile, TTF_GetError());
-      exit(1);
-      }
-    atexit(TTF_Quit);
-    }
-
-  int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);	//Scale to real ptsize
-
-  cur_font[pxsz] = TTF_OpenFont(fontfile, ptsz);
-  if(!cur_font[pxsz]) {
-    fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
-    exit(1);
-    }
-
-  return cur_font[pxsz];
+const TTF_Font *SimpleGUI::Font(int pxsz) {
+  return SimpleTexture::Font(pxsz);
   }
 
 void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
@@ -522,11 +456,11 @@ void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,
   pop_modal = true;
   }
   
-extern int nextpoweroftwo(int);
-
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   if(mouse_cursor) delete mouse_cursor;
   mouse_cursor = new SimpleTexture(cur);
+
+/*
   mouse_xscale = xsc;
   mouse_yscale = ysc;
 
@@ -540,6 +474,7 @@ void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   mouse_cursor->yfact = (float)(mouse_cursor->src->h) / (float)(ysize);
 
   mouse_cursor->Update();
+*/
   }
 
 SimpleGUI *SimpleGUI::Current() {

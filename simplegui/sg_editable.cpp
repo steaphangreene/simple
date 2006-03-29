@@ -83,23 +83,23 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
       }
     else if(event->key.keysym.sym == SDLK_RETURN
 	|| event->key.keysym.sym == SDLK_KP_ENTER) {
-      if(visible_ylines == 1.0) {
+//      if(visible_ylines == 1.0) {
 	current_sg->UnsetFocusWidget();
 	event->type = SDL_SG_EVENT;
 	event->user.code = SG_EVENT_NEWTEXT;
 	event->user.data1 = (void*)(SG_Text*)this;
 	event->user.data2 = NULL;
 	return 1;
-	}
-      else {
-	string newmes = message.append(1, '\n');
-	SetText(newmes);
-	event->type = SDL_SG_EVENT;
-	event->user.code = SG_EVENT_EDIT;
-	event->user.data1 = (void*)(SG_Text*)this;
-	event->user.data2 = NULL;
-	return 1;
-	}
+//	}
+//      else {
+//	string newmes = message.append(1, '\n');
+//	SetText(newmes);
+//	event->type = SDL_SG_EVENT;
+//	event->user.code = SG_EVENT_EDIT;
+//	event->user.data1 = (void*)(SG_Text*)this;
+//	event->user.data2 = NULL;
+//	return 1;
+//	}
       }
     else if(event->key.keysym.unicode < 0x80) {
       if(isgraph(event->key.keysym.unicode)) {

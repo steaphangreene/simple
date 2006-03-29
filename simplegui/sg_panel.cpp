@@ -49,62 +49,10 @@ int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
   return 0;	// This widget eats all other mouse events all the time
   }
 
-extern int nextpoweroftwo(int);
-
-void SG_Panel::BuildTexture(int st) {
-  int xsize = 16, ysize = 16;
-
-  if(texture[st].CheckCache()) {
-    return;
-    }
-
-  if(texture[st].cur) {
-    glFinish();
-    SDL_FreeSurface(texture[st].cur);
-    }
-
-  if(texture[st].type == SIMPLETEXTURE_COLOR) {
-    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
-    SDL_FillRect(texture[st].cur, NULL, SDL_MapRGB(texture[st].cur->format,
-	texture[st].col.r, texture[st].col.g, texture[st].col.b));
-    }
-  else if(texture[st].type == SIMPLETEXTURE_TRANSCOLOR) {
-    //A TRANSCOLOR widget with no text is totally invisible.
-    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
-    }
-  else if(texture[st].type == SIMPLETEXTURE_DEFINED) {
-    xsize = nextpoweroftwo(texture[st].src->w);
-    ysize = nextpoweroftwo(texture[st].src->h);
-    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
-    memset(texture[st].cur->pixels, 0, xsize*ysize*4);
-    SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_OPAQUE);
-    SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
-    texture[st].xfact = (float)(texture[st].src->w) / (float)(xsize);
-    texture[st].yfact = (float)(texture[st].src->h) / (float)(ysize);
-    }
-  else if(texture[st].type == SIMPLETEXTURE_TRANS) {
-    xsize = nextpoweroftwo(texture[st].src->w);
-    ysize = nextpoweroftwo(texture[st].src->h);
-    texture[st].cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
-    SDL_SetAlpha(texture[st].src, 0, SDL_ALPHA_TRANSPARENT);
-    SDL_BlitSurface(texture[st].src, NULL, texture[st].cur, NULL);
-    texture[st].xfact = (float)(texture[st].src->w) / (float)(xsize);
-    texture[st].yfact = (float)(texture[st].src->h) / (float)(ysize);
-    }
-
-  texture[st].Update();
-  }
-
 bool SG_Panel::Render(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
-
-  if(texture[state].dirty) BuildTexture(state);
 
   glPushMatrix();
 
@@ -161,5 +109,5 @@ void SG_Panel::SetTransparent(bool val) {
 
 void SG_Panel::SetTexture(SimpleTexture tex, int st) {
   if(st < 0 || st >= (int)(texture.size())) return;
-  texture[st] = tex;
+  texture[st].SetTexture(tex);
   }

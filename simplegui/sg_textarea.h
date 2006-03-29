@@ -30,14 +30,13 @@
 #include <string>
 using namespace std;
 
-#define SG_ALIGN_LEFT	0
-#define SG_ALIGN_CENTER	1
-#define SG_ALIGN_RIGHT	2
+#define SG_ALIGN_LEFT	ST_ALIGN_LEFT
+#define SG_ALIGN_CENTER	ST_ALIGN_CENTER
+#define SG_ALIGN_RIGHT	ST_ALIGN_RIGHT
 
 #ifndef SG_AUTOSIZE
 #define SG_AUTOSIZE	-1
 #endif
-
 
 using namespace std;
 
@@ -62,24 +61,13 @@ public:
   virtual const string &Text();
 
   virtual void RangerChanged();
-  unsigned int NumLines() { return lines.size(); };
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 
-  void UpdateLines();
   void UpdateRange();
 
-  virtual void BuildTexture(int st);
-  SDL_Surface *rendered_text;
-  int text_xsize, text_ysize;
-
-  float xmargin, ymargin;
-  float visible_xlines, visible_ylines;
   string message;
-  vector<string> lines;
-  int font_size;
-  int alignment;
   };
 
 #endif // SG_TEXTAREA_H

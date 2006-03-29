@@ -81,7 +81,7 @@ public:
   void SetDefaultFontSize(int pxsz);
   void SetFont(TTF_Font *f);
   void UnsetFont() { SetFont(NULL); };
-  TTF_Font *Font(int pxsz = -1);
+  const TTF_Font *Font(int pxsz = -1);
 
   float Red(int c);
   float Green(int c);
@@ -140,11 +140,6 @@ protected:
 
   unsigned long mb_state;	// Bit Vector of Mouse Button States
 				// Can't handle more than 32 Buttons
-  map<int, TTF_Font *> cur_font;
-  int default_pxsize;
-  float fontyratio;
-  char *fontfile;
-
   SDL_mutex *Mutex();
   SDL_mutex *mutex;
   };

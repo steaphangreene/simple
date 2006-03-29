@@ -71,14 +71,6 @@ bool SG_Menu::Render(unsigned long cur_time) {
   if(current_sg->CurrentWidget() != this) return true;
 
   glPushMatrix();
-  while(texture.size() < items.size() * 3) {
-    texture.push_back(texture[0]);
-    texture.back().dirty = true;
-    texture.push_back(texture[1]);
-    texture.back().dirty = true;
-    texture.push_back(texture[2]);
-    texture.back().dirty = true;
-    }
   for(unsigned int item = 0; item < items.size(); ++item) {
     state = (state % 3) + item * 3;
     if(texture[state].dirty) SetText(items[item]);
@@ -95,6 +87,21 @@ bool SG_Menu::Render(unsigned long cur_time) {
 
 void SG_Menu::SetItems(const vector<string> &itms) {
   items = itms;
+  while(texture.size() < items.size() * 3) {
+    texture.push_back(texture[0]);
+    texture.push_back(texture[1]);
+    texture.push_back(texture[2]);
+    }
+  while(texture.size() > items.size() * 3) {
+    texture.pop_back();
+    texture.pop_back();
+    texture.pop_back();
+    }
+  for(unsigned int itm=0; itm < items.size(); ++itm) {
+    texture[itm*3 + 0].SetText(items[itm]);
+    texture[itm*3 + 1].SetText(items[itm]);
+    texture[itm*3 + 2].SetText(items[itm]);
+    }
   }
 
 void SG_Menu::SetID(int id) {

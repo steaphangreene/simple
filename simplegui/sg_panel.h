@@ -53,8 +53,6 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 
-  virtual void BuildTexture(int st);
-
   vector<SimpleTexture> texture;
   int state; //Which texture to use - for multi-state support
   };
