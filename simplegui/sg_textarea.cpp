@@ -93,43 +93,47 @@ void SG_TextArea::Enable() {
 
 void SG_TextArea::SetVisibleSize(double xs, double ys) {
   for(int tx=0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetText(message, ys, xs);
+    texture[tx].SetTextVisibleSize(ys, xs);
     }
+
   UpdateRange();
   }
 
 void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
   for(int tx=0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetText(message, numlns);
+    texture[tx].SetTextVisibleSize(numlns);
     }
   UpdateRange();
   }
 
 void SG_TextArea::UpdateRange() {
-/*
-  double font_height = TTF_FontHeight(current_sg->Font(font_size));
-  if(visible_xlines > 0) {
-    SetXLimits(0.0, (double)(text_xsize) / font_height);
-    SetXSpan((double)(visible_xlines));
+  double font_height = TTF_FontHeight(texture[0].CurrentFont());
+  const TextGeometry *tgeom = texture[0].GetTextGeometry();
+
+  if(tgeom->visible_xlines > 0) {
+    SetXLimits(0.0, (double)(tgeom->text_xsize) / font_height);
+    SetXSpan((double)(tgeom->visible_xlines));
     }
   else {
-    SetXLimits(0.0, (double)(text_xsize) / font_height);
-    SetXSpan((double)(text_xsize) / font_height);
+    SetXLimits(0.0, (double)(tgeom->text_xsize) / font_height);
+    SetXSpan((double)(tgeom->text_xsize) / font_height);
     }
 
-  if(visible_ylines > 0) {	//Allows scrolling before/after text vertically
-    SetYLimits(-(double)(visible_ylines), (double)(lines.size()) + (double)(visible_ylines));
-    SetYSpan((double)(visible_ylines));
+  if(tgeom->visible_ylines > 0) {	//Allows scrolling before/after text vertically
+    SetYLimits(-(double)(tgeom->visible_ylines), (double)(NumLines()) + (double)(tgeom->visible_ylines));
+    SetYSpan((double)(tgeom->visible_ylines));
     }
   else {
-    SetYLimits(-(double)(lines.size()), (double)(lines.size()) * 2.0);
-    SetYSpan((double)(lines.size()));
+    SetYLimits(-(double)(NumLines()), (double)(NumLines()) * 2.0);
+    SetYSpan((double)(NumLines()));
     }
-*/
   }
 
 void SG_TextArea::RangerChanged() {
-  for(int tx=0; tx < int(texture.size()); ++tx) texture[tx].dirty = 1;
+  for(int tx=0; tx < int(texture.size()); ++tx) {
+    texture[tx].SetTextVisibleSize(YSpan(), XSpan());
+    texture[tx].SetTextPosition(YValue(), XValue());
+    }
   }
 
 void SG_TextArea::SetAlignment(int align) {
