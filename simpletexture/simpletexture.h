@@ -52,6 +52,12 @@ enum SimpleTextureType {
    };
 
 
+struct TextGeometry {	//FIXME: Onle needed temporarily!
+  double visible_xlines;
+  double visible_ylines;
+  int text_xsize;
+  };
+
 class SimpleTexture {
 public:
   SimpleTexture(SDL_Surface *tex);
@@ -66,11 +72,14 @@ public:
   bool CheckCache();
   void Update();
 
-  void SetText(const string txt,
-	const float ylines=-1.0, const float xlines=-1.0,
-	const float yoff=0.0, const float xoff=0.0);
+  TextGeometry *GetTextGeometry();
+
+  void SetText(const string txt);
+  void SetTextVisibleSize(const float ylines=-1.0, const float xlines=-1.0);
+  void SetTextPosition(const float yoff=0.0, const float xoff=0.0);
   void SetMargins(const float xmar, const float ymar);
   void SetFontSize(const int sz);
+  TTF_Font *CurrentFont();	// FIXME: Make this const somehow?
 
   GLuint GLTexture();
 

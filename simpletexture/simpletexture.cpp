@@ -54,6 +54,10 @@ struct SimpleTexture::TextData {
     alignment = ST_ALIGN_LEFT;
     };
 
+  ~TextData() {
+    if(rendered_text) SDL_FreeSurface(rendered_text);
+    };
+
   int count;
 
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
@@ -206,11 +210,7 @@ void SimpleTexture::DetachTextData() {
 //  fprintf(stderr, "Detached %p (%s) from %p\n", text, text->message.c_str(), this);
   if(text) {
     --(text->count);
-    if(text->count <= 0) {
-      if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
-      text->rendered_text = NULL;
-      delete text;
-      }
+    if(text->count <= 0) delete text;
     text = NULL;
     }
   }
@@ -367,17 +367,20 @@ void SimpleTexture::BuildBlankTexture() {
     }
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format, col.r, col.g, col.b));
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
     //A TRANSCOLOR widget with no text is totally invisible.
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
     xsize = nextpoweroftwo(src->w);
     ysize = nextpoweroftwo(src->h);
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     memset(cur->pixels, 0, xsize*ysize*4);
     SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(src, NULL, cur, NULL);
@@ -387,7 +390,8 @@ void SimpleTexture::BuildBlankTexture() {
   else if(type == SIMPLETEXTURE_TRANS) {
     xsize = nextpoweroftwo(src->w);
     ysize = nextpoweroftwo(src->h);
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(src, NULL, cur, NULL);
     xfact = (float)(src->w) / (float)(xsize);
@@ -458,31 +462,32 @@ void SimpleTexture::BuildTextTexture() {
   cur = NULL;
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    if(!cur) fprintf(stderr, "Bah, %dx%dx4 (%d) failed!\n", xsize, ysize, xsize*ysize*4);
     SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format,
 	col.r, col.g, col.b));
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(src, NULL, cur, NULL);
     }
   else if(type == SIMPLETEXTURE_TRANS) {
-    cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, 
-	ST_SDL_RGBA_COLFIELDS);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(src, NULL, cur, NULL);
     }
 
   if(text->rendered_text == NULL) {	// Create persistent text surface
     SDL_Rect drec = { 0, 0, 0, 0 };
-    text->rendered_text = SDL_CreateRGBSurface(0,
+    text->rendered_text = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	text->text_xsize, text->text_ysize, 32, ST_SDL_RGBA_COLFIELDS);
     for(int ln = 0; ln < int(text->lines.size()); ++ln) {
       if(text->lines[ln].length() > 0) {
@@ -542,7 +547,8 @@ void SimpleTexture::Update() {
       xsize = nextpoweroftwo(src->w);
       ysize = nextpoweroftwo(src->h);
       if(cur) SDL_FreeSurface(cur); //FIXME!
-      cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+      cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
       memset(cur->pixels, 0, xsize*ysize*4);
       SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
       SDL_BlitSurface(src, NULL, cur, NULL);
@@ -566,7 +572,8 @@ void SimpleTexture::Update() {
       }
     if(xsize != cur->w || ysize != cur->h) {
       SDL_Surface *tmp = cur;
-      cur = SDL_CreateRGBSurface(0, xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+      cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
       gluScaleImage(GL_RGBA, tmp->w, tmp->h, GL_UNSIGNED_BYTE, tmp->pixels,
 	cur->w, cur->h, GL_UNSIGNED_BYTE, cur->pixels);
       SDL_FreeSurface(tmp);
@@ -618,10 +625,7 @@ void SimpleTexture::SetFontSize(const int sz) {
   dirty = 1;
   }
 
-void SimpleTexture::SetText(const string txt,
-	const float ylines, const float xlines,
-	const float yoff, const float xoff) {
-
+void SimpleTexture::SetText(const string txt) {
   if(!text) AttachTextData();
 
   text->message = txt;
@@ -640,11 +644,27 @@ void SimpleTexture::SetText(const string txt,
     }
   text->text_ysize = TTF_FontHeight(Font(text->font_size)) * text->lines.size();
 
-  //FIXME: Improper Apect Ratio Calculations!
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
+  dirty = 1;
+  }
+
+void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
+  if(!text) AttachTextData();
+
   text->visible_ylines = ylines;
   if(ylines <= 0.0) text->visible_ylines = text->lines.size();
   text->visible_xlines = xlines;
-  if(xlines <= 0.0) text->visible_xlines = text->message.length();
+  if(xlines <= 0.0) text->visible_xlines = double(text->text_xsize) /
+	double(text->font_size);
+
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
+  dirty = 1;
+  }
+
+void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
+  if(!text) AttachTextData();
 
   text->visible_xoffset = xoff;
   text->visible_yoffset = yoff;
@@ -830,6 +850,11 @@ void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
   SetDefaultFontSize(pxsz);
   }
 
+TTF_Font *SimpleTexture::CurrentFont() {
+  if(text) return Font(text->font_size);
+  else return Font(default_pxsize);
+  }
+
 TTF_Font *SimpleTexture::Font(int pxsz) {
   if(pxsz < 1) pxsz = default_pxsize;
   if(cur_font.count(pxsz)) return cur_font[pxsz];
@@ -876,3 +901,17 @@ int SimpleTexture::default_pxsize;
 float SimpleTexture::fontyratio = 1.0;
 char *SimpleTexture::fontfile = NULL;
 
+TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
+  static TextGeometry ret;
+  if(text) {
+    ret.visible_xlines = text->visible_xlines;
+    ret.visible_ylines = text->visible_ylines;
+    ret.text_xsize = text->text_xsize;
+    }
+  else {
+    ret.visible_xlines = 0.0;
+    ret.visible_ylines = 0.0;
+    ret.text_xsize = 0;
+    }
+  return &ret;
+  }
