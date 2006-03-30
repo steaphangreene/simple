@@ -535,6 +535,7 @@ void SimpleTexture::BuildTextTexture() {
 		|| type == SIMPLETEXTURE_TRANSCOLOR) {
       SDL_SetAlpha(text->rendered_text, 0, SDL_ALPHA_TRANSPARENT);
       }
+
     SDL_BlitSurface(text->rendered_text, &srec, cur, &drec);
     }
   }
@@ -543,10 +544,9 @@ void SimpleTexture::Update() {
   if(type != SIMPLETEXTURE_NONE) {
     BuildTexture();
     int xsize, ysize;
-    if(src) {
+    if(src && (!cur)) {
       xsize = nextpoweroftwo(src->w);
       ysize = nextpoweroftwo(src->h);
-      if(cur) SDL_FreeSurface(cur); //FIXME!
       cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
       memset(cur->pixels, 0, xsize*ysize*4);
@@ -616,13 +616,17 @@ void SimpleTexture::SetMargins(const float xmar, const float ymar) {
   if(!text) AttachTextData();
   text->xmargin = xmar;
   text->ymargin = ymar;
+
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
   dirty = 1;
   }
 
 void SimpleTexture::SetFontSize(const int sz) {
   if(!text) AttachTextData();
   text->font_size = sz;
-  dirty = 1;
+
+  SetText(text->message);
   }
 
 void SimpleTexture::SetText(const string txt) {
