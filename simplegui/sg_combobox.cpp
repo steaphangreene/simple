@@ -45,7 +45,7 @@ SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
   if(options.size() > 0) message = options[0];
   if(edit) text = new SG_Editable(message, ttex, ttex_dis, ttex_fg);
   else text = new SG_TextArea(message, ttex, ttex_dis);
-  text->SetVisibleSize(binvpro, 1.0); //FIXME: Don't Lock X Vis Size!
+//  text->SetVisibleSize(binvpro, 1.0); //FIXME: Don't Lock X Vis Size!
   AddWidget(text, 0, 0, binvpro-1, 1);
 
   menu = new SG_Menu(options, mtex, mtex_dis, mtex_sel);
