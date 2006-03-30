@@ -98,7 +98,6 @@ void SG_TextArea::SetVisibleSize(double xs, double ys) {
   for(int tx=0; tx < int(texture.size()); ++tx) {
     texture[tx].SetTextVisibleSize(ys, xs);
     }
-
   UpdateRange();
   }
 
@@ -134,7 +133,9 @@ void SG_TextArea::UpdateRange() {
 
 void SG_TextArea::RangerChanged() {
   for(int tx=0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetTextVisibleSize(YSpan(), XSpan());
+//    texture[tx].SetTextVisibleSize(YSpan(), XSpan());
+	//FIXME: Need to tranmit these changes somehow!
+
     texture[tx].SetTextPosition(YValue(), XValue());
     }
   }
