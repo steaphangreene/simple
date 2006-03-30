@@ -60,6 +60,8 @@ public:
   virtual void SetText(const string &txt);
   virtual const string &Text();
 
+  unsigned int NumLines();
+
   virtual void RangerChanged();
 
 protected:

@@ -168,14 +168,13 @@ bool SG_Scrollable::Render(unsigned long cur_time) {
     if(*itrw) {
       glPushMatrix();
       CalcGeometry();
-      widgets[0]->AdjustGeometry(&cur_geom);
+      widgets[0]->AdjustGeometry(&cur_geom); //FIXME: Should be itrw?
       glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
       glScalef(cur_geom.xs, cur_geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
       }
     }
-
 
   glClipPlane(GL_CLIP_PLANE0, oeq0);
   glClipPlane(GL_CLIP_PLANE1, oeq1);

@@ -137,3 +137,15 @@ void SG_TextArea::SetAlignment(int align) {
 //    texture[tx].SetAlignment(align);
     }
   }
+
+unsigned int SG_TextArea::NumLines() {
+  vector<string> lines;
+  int pos = 0, lpos = 0;
+  while(lpos < (int)(message.length())) {
+    pos = message.find('\n', lpos);
+    if(pos < lpos) pos = message.length();
+    lines.push_back(message.substr(lpos, pos - lpos));
+    lpos = pos+1;
+    }
+  return lines.size();
+  }
