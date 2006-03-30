@@ -4,10 +4,11 @@ Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
 Fix positioning of events on offset popups (Noah).
 Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
-Clean up mulitple redundant calls to RangerChanged during SG_Ranger2D events.
+Clean up multiple redundant calls to RangerChanged during SG_Ranger2D events.
 
 -=TODO=-
-SG_Menu should be paralell to, not derrived from SG_Button.
+Implement inherited aspect-ratio intelligence.
+SG_Menu should be parallel to, not derived from SG_Button.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s
