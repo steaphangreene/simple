@@ -30,6 +30,7 @@
 
 SG_TextArea::SG_TextArea(string mes, SimpleTexture tex, SimpleTexture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
+  dis_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(dis_tex);
   SetText(mes);
   }
@@ -64,15 +65,17 @@ void SG_TextArea::SetMargins(float xmar, float ymar) {
 
 void SG_TextArea::SetText(const string &mes) {
   message = mes;
-  for(int tx=0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetText(message);
+  texture[0].SetText(message);
+  for(int tx=1; tx < int(texture.size()); ++tx) {
+    texture[tx].LinkTextFrom(&(texture[0]));
     }
   UpdateRange();
   }
 
 void SG_TextArea::SetFontSize(int sz) {
+  texture[0].SetFontSize(sz);
   for(int tx=0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetFontSize(sz);
+    texture[tx].LinkTextFrom(&(texture[0]));
     }
   UpdateRange();
   }

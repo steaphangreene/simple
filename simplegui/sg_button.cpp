@@ -27,6 +27,7 @@
 
 SG_Button::SG_Button(const string &mes, SimpleTexture tex, SimpleTexture dis_tex,
 	SimpleTexture click_tex) : SG_TextArea(mes, tex, dis_tex) {
+  click_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(click_tex);
   }
 

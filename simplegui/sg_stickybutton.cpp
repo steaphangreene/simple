@@ -28,6 +28,7 @@
 SG_StickyButton::SG_StickyButton(string mes, SimpleTexture tex,
 	SimpleTexture dis_tex, SimpleTexture click_tex, SimpleTexture down_tex)
 	: SG_Button(mes, tex, dis_tex, click_tex) {
+  down_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(down_tex);
   }
 
