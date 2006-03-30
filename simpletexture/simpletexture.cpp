@@ -922,3 +922,14 @@ TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
     }
   return &ret;
   }
+
+void SimpleTexture::LinkTextTo(SimpleTexture *other) {
+  if(!text) AttachTextData();
+  other->AttachTextData(text);
+  }
+
+void SimpleTexture::LinkTextFrom(SimpleTexture *other) {
+  if(!other->text) other->AttachTextData();
+  AttachTextData(other->text);
+  }
+

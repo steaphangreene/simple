@@ -81,6 +81,9 @@ public:
   void SetFontSize(const int sz);
   TTF_Font *CurrentFont();	// FIXME: Make this const somehow?
 
+  void LinkTextTo(SimpleTexture *other);
+  void LinkTextFrom(SimpleTexture *other);
+
   GLuint GLTexture();
 
   SimpleTextureType type;
