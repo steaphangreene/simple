@@ -402,6 +402,13 @@ void SimpleTexture::BuildBlankTexture() {
 void SimpleTexture::BuildTextTexture() {
   int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
+  double ylines = text->visible_ylines;
+  double xlines = text->visible_xlines;
+  double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
+
+  if(ylines <= 0.0) ylines = text->lines.size();
+  if(xlines <= 0.0) xlines = double(text->text_xsize) /	fsz;
+
   if(type == SIMPLETEXTURE_DEFINED) {
     bxsize = src->w;
     bysize = src->h;
@@ -410,8 +417,8 @@ void SimpleTexture::BuildTextTexture() {
     xsize = int((float)(bxsize) * (1.0f - text->xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - text->ymargin * 2.0f) + 0.5f);
 
-    if(text->font_size != (int)((double)(ysize) / text->visible_ylines + 0.5)) {
-      SetFontSize((int)((double)(ysize) / text->visible_ylines + 0.5));
+    if(text->font_size != (int)((double)(ysize) / ylines + 0.5)) {
+      SetFontSize((int)((double)(ysize) / ylines + 0.5));
       }
 
     if(text->text_xsize < xsize) {
@@ -436,9 +443,8 @@ void SimpleTexture::BuildTextTexture() {
     yfact = (float)(bysize) / (float)(ysize);
     }
   else {
-    double fsz = (double)(TTF_FontHeight(Font(text->font_size)));
-    bxsize = (int)(fsz * text->visible_xlines + 0.5);
-    bysize = (int)(fsz * text->visible_ylines + 0.5);
+    bxsize = (int)(fsz * xlines + 0.5);
+    bysize = (int)(fsz * ylines + 0.5);
 
     xsize = bxsize;	//Used temporarilly - not final values
     ysize = bysize;
@@ -513,22 +519,22 @@ void SimpleTexture::BuildTextTexture() {
 	SDL_BlitSurface(tmp_text, NULL, text->rendered_text, &drec);
 	SDL_FreeSurface(tmp_text);
 	}
-      drec.y += TTF_FontHeight(Font(text->font_size));
+      drec.y += TTF_FontLineSkip(Font(text->font_size));
       }
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
-    double fsz = (double)(TTF_FontHeight(Font(text->font_size)));
+    double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
     srec.x = (int)(fsz * text->visible_xoffset + 0.5);
-    srec.w = (int)(fsz * text->visible_xlines + 0.5);
+    srec.w = (int)(fsz * xlines + 0.5);
 
     if(text->visible_yoffset >= 0.0) {
       srec.y = (int)(fsz * text->visible_yoffset + 0.5);
-      srec.h = (int)(fsz * text->visible_ylines + 0.5);
+      srec.h = (int)(fsz * ylines + 0.5);
       }
     else {
       drec.y += (int)(fsz * -text->visible_yoffset + 0.5);
-      srec.h = (int)(fsz * (text->visible_ylines + text->visible_ylines) + 0.5);
+      srec.h = (int)(fsz * (ylines + ylines) + 0.5);
       }
 
     if(type == SIMPLETEXTURE_TRANS
@@ -646,7 +652,7 @@ void SimpleTexture::SetText(const string txt) {
     if(text->text_xsize < xs) text->text_xsize = xs;
     lpos = pos+1;
     }
-  text->text_ysize = TTF_FontHeight(Font(text->font_size)) * text->lines.size();
+  text->text_ysize = TTF_FontLineSkip(Font(text->font_size)) * text->lines.size();
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
@@ -657,10 +663,7 @@ void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
   if(!text) AttachTextData();
 
   text->visible_ylines = ylines;
-  if(ylines <= 0.0) text->visible_ylines = text->lines.size();
   text->visible_xlines = xlines;
-  if(xlines <= 0.0) text->visible_xlines = double(text->text_xsize) /
-	double(text->font_size);
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
@@ -842,7 +845,7 @@ void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
   fontyratio = 1.0;
   int load_pxsz = 100;
   Font(load_pxsz); //Initialize font
-  int act_height = TTF_FontHeight(cur_font[load_pxsz]);
+  int act_height = TTF_FontLineSkip(cur_font[load_pxsz]);
   if(act_height != load_pxsz) { //Non-true-pixel font
     cur_font[act_height] = cur_font[load_pxsz];
     cur_font.erase(load_pxsz);
