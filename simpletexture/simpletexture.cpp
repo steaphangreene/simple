@@ -524,7 +524,6 @@ void SimpleTexture::BuildTextTexture() {
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
-    double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
     srec.x = (int)(fsz * text->visible_xoffset + 0.5);
     srec.w = (int)(fsz * xlines + 0.5);
 
