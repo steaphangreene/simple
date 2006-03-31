@@ -409,8 +409,12 @@ void SimpleTexture::BuildTextTexture() {
   double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
 
   if(ylines <= 0.0) ylines = text->lines.size();
-//  if(xlines <= 0.0) xlines = double(text->text_xsize) / fsz;
-  if(xlines <= 0.0) xlines = ylines * text->aspect_ratio;
+  if(xlines <= 0.0 && text->aspect_ratio != 0.0) {
+    xlines = ylines * text->aspect_ratio;
+    }
+  else if(xlines <= 0.0) {
+    xlines = double(text->text_xsize) / fsz;
+    }
 
   if(type == SIMPLETEXTURE_DEFINED) {
     bxsize = src->w;
