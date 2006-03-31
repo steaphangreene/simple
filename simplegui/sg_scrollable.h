@@ -46,6 +46,8 @@ public:
   virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
   virtual bool AddWidget(SG_TextArea *text);	//Special Handler for TextAreas
 
+  virtual void SetAspectRatio(const double asp);
+
 protected:
   void CalcGeometry();
   bool subwidget_handles;

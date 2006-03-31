@@ -218,7 +218,8 @@ void SG_Alignment::CalcGeometry() {
 
 void SG_Alignment::SetAspectRatio(double asp) {
   aspect_ratio = asp;
-  double newaspect = aspect_ratio * (1.0 - xborder) / (1.0 - yborder);
+  CalcGeometry();
+  double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   for(; itrw != widgets.end(); ++itrw) {
     (*itrw)->SetAspectRatio(newaspect);

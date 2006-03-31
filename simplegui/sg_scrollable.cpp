@@ -248,3 +248,14 @@ bool SG_Scrollable::AddWidget(SG_TextArea *text) {
   if(ret) text->LinkTo(this);				//Link its sizing in
   return ret;
   }
+
+void SG_Scrollable::SetAspectRatio(double asp) {
+  aspect_ratio = asp;
+  CalcGeometry();
+  double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    if(subwidget_handles) (*itrw)->SetAspectRatio(aspect_ratio);
+    else (*itrw)->SetAspectRatio(newaspect);
+    }
+  }
