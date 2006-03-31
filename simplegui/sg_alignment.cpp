@@ -218,8 +218,9 @@ void SG_Alignment::CalcGeometry() {
 
 void SG_Alignment::SetAspectRatio(double asp) {
   aspect_ratio = asp;
+  double newaspect = aspect_ratio * (1.0 - xborder) / (1.0 - yborder);
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   for(; itrw != widgets.end(); ++itrw) {
-    (*itrw)->SetAspectRatio(asp); //FIXME: Calculate for real!
+    (*itrw)->SetAspectRatio(newaspect);
     }
   }
