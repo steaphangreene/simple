@@ -679,6 +679,10 @@ void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
 void SimpleTexture::SetAspectRatio(const double asp) {
   if(!text) AttachTextData();
   text->aspect_ratio = asp;
+
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
+  dirty = 1;
   }
 
 void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
