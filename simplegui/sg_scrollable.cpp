@@ -108,6 +108,7 @@ bool SG_Scrollable::HandEventTo(SG_Widget *targ, SDL_Event *event,
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
       CalcGeometry();
+	//FIXME: Do I need widgets[0]->AdjustGeometry(&cur_geom) here?
       x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
       y -= cur_geom.yp;
       x /= cur_geom.xs;
@@ -251,11 +252,11 @@ bool SG_Scrollable::AddWidget(SG_TextArea *text) {
 
 void SG_Scrollable::SetAspectRatio(double asp) {
   aspect_ratio = asp;
-  CalcGeometry();
-  double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
-  vector<SG_Widget *>::iterator itrw = widgets.begin();
-  for(; itrw != widgets.end(); ++itrw) {
-    if(subwidget_handles) (*itrw)->SetAspectRatio(aspect_ratio);
-    else (*itrw)->SetAspectRatio(newaspect);
+  if(widgets.size() > 0) {
+    CalcGeometry();
+    widgets[0]->AdjustGeometry(&cur_geom);
+    double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    if(subwidget_handles) widgets[0]->SetAspectRatio(aspect_ratio);
+    else widgets[0]->SetAspectRatio(newaspect);
     }
   }

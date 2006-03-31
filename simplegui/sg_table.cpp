@@ -412,6 +412,7 @@ void SG_Table::SetAspectRatio(double asp) {
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     CalcGeometry(itrg);
+    (*itrw)->AdjustGeometry(&cur_geom);
     (*itrw)->SetAspectRatio(aspect_ratio * cur_geom.xs / cur_geom.ys);
     }
   }
