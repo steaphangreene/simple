@@ -48,6 +48,8 @@ public:
 
   virtual void SetAspectRatio(const double asp);
 
+  virtual void RangerChanged();
+
 protected:
   void CalcGeometry();
   bool subwidget_handles;

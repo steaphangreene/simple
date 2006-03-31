@@ -416,3 +416,8 @@ void SG_Table::SetAspectRatio(double asp) {
     (*itrw)->SetAspectRatio(aspect_ratio * cur_geom.xs / cur_geom.ys);
     }
   }
+
+void SG_Table::RangerChanged() {
+  SetAspectRatio(aspect_ratio);
+  }
+

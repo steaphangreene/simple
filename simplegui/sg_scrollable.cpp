@@ -260,3 +260,7 @@ void SG_Scrollable::SetAspectRatio(double asp) {
     else widgets[0]->SetAspectRatio(newaspect);
     }
   }
+
+void SG_Scrollable::RangerChanged() {
+  SetAspectRatio(aspect_ratio);
+  }
