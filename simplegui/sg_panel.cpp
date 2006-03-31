@@ -111,3 +111,10 @@ void SG_Panel::SetTexture(SimpleTexture tex, int st) {
   if(st < 0 || st >= (int)(texture.size())) return;
   texture[st].SetTexture(tex);
   }
+
+void SG_Panel::SetAspectRatio(double asp) {
+  aspect_ratio = asp;
+  for(int tx = 0; tx < int(texture.size()); ++tx) {
+    texture[tx].SetAspectRatio(asp);
+    }
+  }

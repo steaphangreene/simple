@@ -33,7 +33,7 @@ using namespace std;
 
 SimpleGUI *current_sg = NULL;
 
-SimpleGUI::SimpleGUI(int aspmeth, float asp) {
+SimpleGUI::SimpleGUI(int aspmeth, const double asp) {
   if(current_sg) {
     fprintf(stderr, "ERROR: Attempted to create multiple SimpleGUI instances.\n");
     exit(1);
@@ -45,16 +45,17 @@ SimpleGUI::SimpleGUI(int aspmeth, float asp) {
 
   flags = 0;
 
-  mWid = new SG_Alignment();
-  popWid = NULL;
-  popx = 0.5, popy = 0.5;
-  popxpos = 0.0, popypos = 0.0;
-  pop_modal = false;
-
   aspect = asp;
   aspect_actual = 1.0;
   aspect_method = aspmeth;
   newaspect_actual = aspect_actual;
+
+  mWid = new SG_Alignment();
+  mWid->SetAspectRatio(asp);
+  popWid = NULL;
+  popx = 0.5, popy = 0.5;
+  popxpos = 0.0, popypos = 0.0;
+  pop_modal = false;
 
   int screen_geom[4];
   glGetIntegerv(GL_VIEWPORT, screen_geom);
@@ -104,6 +105,8 @@ bool SimpleGUI::Render(unsigned long cur_time) {
   }
 
 bool SimpleGUI::RenderStart(unsigned long cur_time, bool ts) {
+  mWid->SetAspectRatio(aspect); //FIXME: Temporary
+
   if(ts) SDL_mutexP(Mutex());
   if(newxunused != xunused || newyunused != yunused || newxsize != xsize
 	|| newysize != ysize || newaspect_actual != aspect_actual) {

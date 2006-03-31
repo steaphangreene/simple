@@ -51,6 +51,8 @@ public:
   virtual void RemoveWidget(SG_Widget *wid);
   void SetBackground(SG_Widget *wid) { background = wid; };
   void UnsetBackground() { background = NULL; };
+
+  virtual void SetAspectRatio(double asp);
   
 protected:
   void CalcGeometry();

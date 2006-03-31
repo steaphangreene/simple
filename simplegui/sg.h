@@ -48,7 +48,7 @@ class SimpleTexture;
 
 class SimpleGUI {
 public:
-  SimpleGUI(int aspmeth, float asp);
+  SimpleGUI(int aspmeth, const double asp);
   ~SimpleGUI();
 
   static SimpleGUI *Current();
@@ -125,8 +125,8 @@ protected:
   SG_Widget *focus_widget;
 
   int aspect_method;
-  float aspect, aspect_actual;
-  float newaspect_actual;
+  double aspect, aspect_actual;
+  double newaspect_actual;
 
   int ScreenToRelative(float &x, float &y);
   int xunused, yunused;	//Current Screen Geometry

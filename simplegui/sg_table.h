@@ -58,6 +58,8 @@ public:
   virtual void RemoveRows(const vector<int> &yels);
   virtual void Substitute(SG_Widget *oldwid, SG_Widget *newwid);
 
+  virtual void SetAspectRatio(double asp);
+
   void LinkResize(SG_Ranger2D *ranger);
   void LinkXResize(SG_Ranger2D *ranger);
   void LinkYResize(SG_Ranger2D *ranger);

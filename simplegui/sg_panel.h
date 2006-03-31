@@ -50,6 +50,8 @@ public:
   void SetState(int st) { state = st; };
   int State() { return state; };
 
+  virtual void SetAspectRatio(double asp);
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 

@@ -399,3 +399,11 @@ void SG_Table::SendYResize() {
 void SG_Table::SetActive(float xst, float yst, float xen, float yen) {
   ranger.SetActive(xst, yst, xen, yen);
   }
+
+void SG_Table::SetAspectRatio(double asp) {
+  aspect_ratio = asp;
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    (*itrw)->SetAspectRatio(asp); //FIXME: Calculate for real!
+    }
+  }

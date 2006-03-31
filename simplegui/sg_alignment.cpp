@@ -215,3 +215,11 @@ void SG_Alignment::CalcGeometry() {
   cur_geom.xs = 1.0 - xborder;
   cur_geom.ys = 1.0 - yborder;
   }
+
+void SG_Alignment::SetAspectRatio(double asp) {
+  aspect_ratio = asp;
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  for(; itrw != widgets.end(); ++itrw) {
+    (*itrw)->SetAspectRatio(asp); //FIXME: Calculate for real!
+    }
+  }
