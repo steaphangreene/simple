@@ -443,6 +443,12 @@ const TTF_Font *SimpleGUI::Font(int pxsz) {
   return SimpleTexture::Font(pxsz);
   }
 
+void SimpleGUI::SendPopupAspectRatio() {
+  if(popWid) {
+    popWid->SetAspectRatio(aspect * popx / popy);
+    }
+  }
+
 void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
 	float posx, float posy) {
   popWid = wid;
@@ -451,6 +457,7 @@ void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
   popx = px;
   popy = py;
   pop_modal = false;
+  SendPopupAspectRatio();
   }
   
 void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,

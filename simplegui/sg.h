@@ -113,6 +113,8 @@ public:
   void EnableMouse() { flags &= (~SIMPLEGUI_NOMOUSE); };
 
 protected:
+  void SendPopupAspectRatio();
+
   SG_Alignment *mWid, *popWid;
   float popx, popy;
   float popxpos, popypos;
