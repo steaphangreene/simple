@@ -105,8 +105,6 @@ bool SimpleGUI::Render(unsigned long cur_time) {
   }
 
 bool SimpleGUI::RenderStart(unsigned long cur_time, bool ts) {
-  mWid->SetAspectRatio(aspect); //FIXME: Temporary
-
   if(ts) SDL_mutexP(Mutex());
   if(newxunused != xunused || newyunused != yunused || newxsize != xsize
 	|| newysize != ysize || newaspect_actual != aspect_actual) {

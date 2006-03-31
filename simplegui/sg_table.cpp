@@ -162,6 +162,7 @@ bool SG_Table::AddWidget(SG_Widget *wid) {
     xpos = 0; ++ypos;
     if(ypos >= ysize) ypos = 0;
     }
+  SetAspectRatio(aspect_ratio); //FIXME: Only need to send to new widget!
   return true;
   }
 
@@ -176,6 +177,7 @@ bool SG_Table::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
   SG_TableGeometry geom = { x1, y1, xs, ys };
   widgets.push_back(wid);
   wgeom.push_back(geom);
+  SetAspectRatio(aspect_ratio); //FIXME: Only need to send to new widget!
   return true;
   }
 
@@ -386,14 +388,17 @@ void SG_Table::LinkYResize(SG_Ranger *rang) {
 
 void SG_Table::SendResize() {
   ranger.SetLimits(0.0, 0.0, xsize, ysize);
+  SetAspectRatio(aspect_ratio);
   }
 
 void SG_Table::SendXResize() {
   ranger.SetXLimits(0.0, xsize);
+  SetAspectRatio(aspect_ratio);
   }
 
 void SG_Table::SendYResize() {
   ranger.SetYLimits(0.0, ysize);
+  SetAspectRatio(aspect_ratio);
   }
 
 void SG_Table::SetActive(float xst, float yst, float xen, float yen) {

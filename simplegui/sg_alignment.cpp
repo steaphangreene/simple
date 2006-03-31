@@ -192,6 +192,7 @@ bool SG_Alignment::AddWidget(SG_Widget *wid) {
     return 0;
     }
   widgets.push_back(wid);
+  SetAspectRatio(aspect_ratio); //FIXME: Only need to send to new widget!
   return 1;
   }
 
