@@ -52,6 +52,7 @@ struct SimpleTexture::TextData {
     ymargin = 0.0;
     font_size = ST_AUTOSIZE;
     alignment = ST_ALIGN_LEFT;
+    aspect_ratio = 0.0;
     };
 
   ~TextData() {
@@ -70,6 +71,7 @@ struct SimpleTexture::TextData {
   float xmargin, ymargin;
   float visible_xlines, visible_ylines;
   float visible_xoffset, visible_yoffset;
+  double aspect_ratio;
   int font_size;
   int alignment;
   };
@@ -407,7 +409,8 @@ void SimpleTexture::BuildTextTexture() {
   double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
 
   if(ylines <= 0.0) ylines = text->lines.size();
-  if(xlines <= 0.0) xlines = double(text->text_xsize) /	fsz;
+//  if(xlines <= 0.0) xlines = double(text->text_xsize) / fsz;
+  if(xlines <= 0.0) xlines = ylines * text->aspect_ratio;
 
   if(type == SIMPLETEXTURE_DEFINED) {
     bxsize = src->w;
@@ -669,6 +672,11 @@ void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
   dirty = 1;
   }
 
+void SimpleTexture::SetAspectRatio(const double asp) {
+  if(!text) AttachTextData();
+  text->aspect_ratio = asp;
+  }
+
 void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
   if(!text) AttachTextData();
 
@@ -912,11 +920,13 @@ TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
   if(text) {
     ret.visible_xlines = text->visible_xlines;
     ret.visible_ylines = text->visible_ylines;
+    ret.aspect_ratio = text->aspect_ratio;
     ret.text_xsize = text->text_xsize;
     }
   else {
     ret.visible_xlines = 0.0;
     ret.visible_ylines = 0.0;
+    ret.aspect_ratio = 0.0;
     ret.text_xsize = 0;
     }
   return &ret;
@@ -931,4 +941,3 @@ void SimpleTexture::LinkTextFrom(SimpleTexture *other) {
   if(!other->text) other->AttachTextData();
   AttachTextData(other->text);
   }
-

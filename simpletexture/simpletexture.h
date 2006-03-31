@@ -55,6 +55,7 @@ enum SimpleTextureType {
 struct TextGeometry {	//FIXME: Onle needed temporarily!
   double visible_xlines;
   double visible_ylines;
+  double aspect_ratio;
   int text_xsize;
   };
 
@@ -68,6 +69,8 @@ public:
 
   const SimpleTexture &operator = (const SimpleTexture &in);
   void SetTexture(const SimpleTexture &in);
+
+  void SetAspectRatio(const double asp);
 
   bool CheckCache();
   void Update();
@@ -86,6 +89,7 @@ public:
 
   GLuint GLTexture();
 
+  //FIXME: All this should be protected!
   SimpleTextureType type;
   SDL_Surface *cur;	//Current texture buffer
   SDL_Surface *src;	//Only for SIMPLETEXTURE_DEFINED/SIMPLETEXTURE_FILE
