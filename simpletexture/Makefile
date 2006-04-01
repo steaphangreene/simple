@@ -70,8 +70,8 @@ libsimpletexture.a:	$(OBJS)
 libsimpletexture.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimpletexture.win32_a $(WOBJS)
 
-ChangeLog:	*.cpp *.h TODO COPYING Makefile CVS scripts/*
-	./scripts/cvs2cl.pl --hide-filenames --no-wrap --stdout | tr '\t' '@' | sed 's-^@-@* -g' | tr '@' '\t' | sed 's-stea-sgreene-g' > ChangeLog
+ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/*
+	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
