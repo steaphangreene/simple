@@ -25,5 +25,7 @@
 #include "st.h"
 #include "stt.h"
 #include "stt_default.h"
+#include "stt_buttonup.h"
+#include "stt_buttondown.h"
 
 #endif  //SIMPLETEXTURE_H

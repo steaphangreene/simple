@@ -29,12 +29,12 @@ public:
   ST_Texturator();
   virtual ~ST_Texturator();
 
-  SDL_Surface *Generate(const Uint32 xsize, const Uint32 ysize,
-	const SDL_Color &col);
+  SDL_Surface *Generate(SDL_Surface *surf,
+	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col);
 
 protected:
-  virtual SDL_Surface *BuildTexture(const Uint32 xsize, const Uint32 ysize,
-	const SDL_Color &col);
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
+	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col);
   };
 
 extern unsigned char st_col_u32b1[4];

@@ -21,10 +21,9 @@
 
 #include "stt_default.h"
 
-SDL_Surface *STT_Default::BuildTexture(
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  SDL_Surface *ret = SDL_CreateRGBSurface(SDL_SWSURFACE, xsize, ysize,
-	32, ST_SDL_RGBA_COLFIELDS);
-  SDL_FillRect(ret, NULL, SDL_MapRGB(ret->format, col.r, col.g, col.b));
-  return ret;
+SDL_Surface *STT_Default::BuildTexture(SDL_Surface *surf,
+	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
+	) {
+  SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, col.r, col.g, col.b));
+  return surf;
   }

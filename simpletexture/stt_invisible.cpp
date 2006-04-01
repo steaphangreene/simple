@@ -21,9 +21,8 @@
 
 #include "stt_invisible.h"
 
-SDL_Surface *STT_Invisible::BuildTexture(
+SDL_Surface *STT_Invisible::BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  SDL_Surface *ret = SDL_CreateRGBSurface(SDL_SWSURFACE, xsize, ysize,
-	32, ST_SDL_RGBA_COLFIELDS);
-  return ret;
+  //FIXME: Actually clear surface!
+  return surf;
   }

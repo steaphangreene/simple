@@ -53,14 +53,16 @@ LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 
-OBJS:=	st.o stt.o stt_default.o stt_invisible.o
+OBJS:=	st.o stt.o stt_default.o stt_invisible.o \
+	stt_button.o stt_buttonup.o stt_buttondown.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
-WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o
+WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
+	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
 
 libsimpletexture.a:	$(OBJS)
 	ar rcs libsimpletexture.a $(OBJS)

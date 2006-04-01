@@ -19,28 +19,16 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include "stt.h"
+#ifndef STT_BUTTONUP_H
+#define STT_BUTTONUP_H
 
-ST_Texturator::ST_Texturator() {
-  }
+#include "stt_button.h"
 
-ST_Texturator::~ST_Texturator() {
-  }
-
-SDL_Surface *ST_Texturator::Generate(SDL_Surface *surf,
+class STT_ButtonUp : public STT_Button {
+protected:
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
-  return BuildTexture(surf, xsize, ysize, col);
-  }
+	);
+  };
 
-SDL_Surface *ST_Texturator::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
-  fprintf(stderr, "WARNING: Abstract class ST_Texturator called!\n");
-  return NULL;
-  }
-
-unsigned char st_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
-unsigned char st_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
-unsigned char st_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
-unsigned char st_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
+#endif // STT_BUTTONUP_H

@@ -27,6 +27,8 @@
 #include "st.h"
 #include "stt_default.h"
 #include "stt_invisible.h"
+#include "stt_buttonup.h"
+#include "stt_buttondown.h"
 
 #define	ST_NUM_SYSTEM_COLORS	32
 
@@ -374,11 +376,15 @@ void SimpleTexture::BuildBlankTexture() {
     }
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = texturator->Generate(xsize, ysize, col);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = texturator->Generate(cur, xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
     //A TRANSCOLOR widget with no text is totally invisible.
-    cur = invisible_texturator->Generate(xsize, ysize, col);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = invisible_texturator->Generate(cur, xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
     xsize = nextpoweroftwo(src->w);
@@ -477,10 +483,16 @@ void SimpleTexture::BuildTextTexture() {
   cur = NULL;
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = texturator->Generate(xsize, ysize, col);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = texturator->Generate(cur,
+	Uint32(xsize*xfact), Uint32(ysize*yfact), col);
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
-    cur = invisible_texturator->Generate(xsize, ysize, col);
+    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = invisible_texturator->Generate(cur,
+	Uint32(xsize*xfact), Uint32(ysize*yfact), col);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
@@ -598,7 +610,11 @@ void SimpleTexture::Update() {
 //	GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, cur->w, cur->h,
 	GL_RGBA, GL_UNSIGNED_BYTE, cur->pixels);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+	GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 //    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 //    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
