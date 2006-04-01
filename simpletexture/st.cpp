@@ -25,6 +25,8 @@
 #include "SDL_opengl.h"
 
 #include "st.h"
+#include "stt_default.h"
+#include "stt_invisible.h"
 
 #define	ST_NUM_SYSTEM_COLORS	32
 
@@ -82,6 +84,7 @@ void SimpleTexture::InitStatic() {
     color.resize(ST_NUM_SYSTEM_COLORS * 2);
     }
   if(!default_texturator) default_texturator = new STT_Default;
+  if(!invisible_texturator) invisible_texturator = new STT_Invisible;
   }
 
 void SimpleTexture::Init(const SimpleTextureType tp) {
@@ -375,8 +378,7 @@ void SimpleTexture::BuildBlankTexture() {
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
     //A TRANSCOLOR widget with no text is totally invisible.
-    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = invisible_texturator->Generate(xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
     xsize = nextpoweroftwo(src->w);
@@ -478,8 +480,7 @@ void SimpleTexture::BuildTextTexture() {
     cur = texturator->Generate(xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
-    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
+    cur = invisible_texturator->Generate(xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_DEFINED) {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
@@ -915,6 +916,7 @@ float SimpleTexture::fontyratio = 1.0;
 char *SimpleTexture::fontfile = NULL;
 
 ST_Texturator *SimpleTexture::default_texturator = NULL;
+ST_Texturator *SimpleTexture::invisible_texturator = NULL;
 
 TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
   static TextGeometry ret;

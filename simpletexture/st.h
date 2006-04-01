@@ -31,7 +31,7 @@ using namespace std;
 
 #include "SDL.h"
 
-#include "stt_default.h"
+#include "stt.h"
 
 #define ST_ALIGN_LEFT   0
 #define ST_ALIGN_CENTER 1
@@ -137,6 +137,7 @@ protected:
 
   ST_Texturator *texturator;
   static ST_Texturator *default_texturator;
+  static ST_Texturator *invisible_texturator;
 
   void Init(const SimpleTextureType tp);
   static void InitStatic();
