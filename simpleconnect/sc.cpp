@@ -24,7 +24,7 @@ using namespace std;
 
 #include "SDL_opengl.h"
 
-#include "simpleconnect.h"
+#include "sc.h"
 #include "../simplegui/sg_events.h"
 #include "../simplegui/sg_globals.h"
 #include "../simplegui/sg_button.h"
