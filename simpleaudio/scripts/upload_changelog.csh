@@ -22,4 +22,4 @@
 # *************************************************************************
 
 make ChangeLog
-scp ChangeLog opal:public_html/simpleaudio/ChangeLog.txt
+scp ChangeLog optimus:public_html/simpleaudio/ChangeLog.txt
