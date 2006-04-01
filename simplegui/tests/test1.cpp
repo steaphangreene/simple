@@ -184,16 +184,22 @@ int main(int argc, char **argv) {
   align[0]->AddWidget(pass[1]);
 
   button[0] = new SG_Button("Red",
-	gui->NewColor(1.0, 0.0, 0.0), gui->NewColor(1.0, 0.5, 0.5));
+	gui->NewColor(1.0, 0.0, 0.0), gui->NewColor(1.0, 0.5, 0.5),
+	gui->NewColor(1.0, 0.0, 0.0));
   button[1] = new SG_Button("Green",
-	gui->NewColor(0.0, 1.0, 0.0), gui->NewColor(0.5, 1.0, 0.5));
+	gui->NewColor(0.0, 1.0, 0.0), gui->NewColor(0.5, 1.0, 0.5),
+	gui->NewColor(0.0, 1.0, 0.0));
   button[2] = new SG_Button("Blue",
-	gui->NewColor(0.0, 0.0, 1.0), gui->NewColor(0.5, 0.5, 1.0));
+	gui->NewColor(0.0, 0.0, 1.0), gui->NewColor(0.5, 0.5, 1.0),
+	gui->NewColor(0.0, 0.0, 1.0));
   button[3] = new SG_StickyButton("Yellow",
+	gui->NewColor(1.0, 1.0, 0.0), gui->NewColor(0.5, 0.5, 0.0),
 	gui->NewColor(1.0, 1.0, 0.0), gui->NewColor(0.5, 0.5, 0.0));
   button[4] = new SG_StickyButton("Cyan",
+	gui->NewColor(0.0, 1.0, 1.0), gui->NewColor(0.0, 0.5, 0.5),
 	gui->NewColor(0.0, 1.0, 1.0), gui->NewColor(0.0, 0.5, 0.5));
   button[5] = new SG_StickyButton("", //Blank!
+	gui->NewColor(1.0, 0.0, 1.0), gui->NewColor(0.5, 0.0, 0.5),
 	gui->NewColor(1.0, 0.0, 1.0), gui->NewColor(0.5, 0.0, 0.5));
 
   name[button[0]] = "red";
