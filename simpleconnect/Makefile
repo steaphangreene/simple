@@ -1,7 +1,7 @@
 # *************************************************************************
 #  This file is part of the SimpleConnect Example Module by Steaphan Greene
 #
-#  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
+#  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
 #
 #  SimpleConnect is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
