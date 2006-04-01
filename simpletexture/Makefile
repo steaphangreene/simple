@@ -1,7 +1,7 @@
 # *************************************************************************
 #  This file is part of the SimpleTexture Example Module by Steaphan Greene
 #
-#  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
+#  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
 #
 #  SimpleTexture is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -53,14 +53,14 @@ LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
 #LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
 
-OBJS:=	simpletexture.o 
+OBJS:=	st.o 
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
-WOBJS:=	simpletexture.win32_o
+WOBJS:=	st.win32_o
 
 libsimpletexture.a:	$(OBJS)
 	ar rcs libsimpletexture.a $(OBJS)

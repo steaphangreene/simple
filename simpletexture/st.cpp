@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleTexture Example Module by Steaphan Greene
 //
-//  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
 //
 //  SimpleTexture is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "SDL_ttf.h"
 #include "SDL_opengl.h"
 
-#include "simpletexture.h"
+#include "st.h"
 
 #define	ST_NUM_SYSTEM_COLORS	32
 

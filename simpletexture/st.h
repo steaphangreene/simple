@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleTexture Example Module by Steaphan Greene
 //
-//  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
 //
 //  SimpleTexture is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#ifndef SIMPLETEXTURE_H
-#define SIMPLETEXTURE_H
+#ifndef ST_H
+#define ST_H
 
 #include <map>
 #include <set>
@@ -178,4 +178,4 @@ extern unsigned char st_col_u32b4[4];
 
 #define ST_SDL_RGBA_COLFIELDS ST_COL_U32B1, ST_COL_U32B2, ST_COL_U32B3, ST_COL_U32B4
 
-#endif // SIMPLETEXTURE_H
+#endif // ST_H
