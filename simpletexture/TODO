@@ -1,5 +1,6 @@
 -=To FIX=-
 Import margins from old SimpleGUI code.
+Import alignment correctly from old SimpleGUI code.
 
 -=TODO=-
 Handle multiple simultanoeus fonts.
