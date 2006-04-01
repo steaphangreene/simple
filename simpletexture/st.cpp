@@ -237,6 +237,8 @@ void SimpleTexture::SetTexture(const SimpleTexture &in) {
 void SimpleTexture::CopyFrom(const SimpleTexture &in) {
   Init(in.type);
 
+  texturator = in.texturator;
+
   //WARNING! Shallow Copy
   cur = in.cur;
   src = in.src;
@@ -959,4 +961,9 @@ void SimpleTexture::LinkTextTo(SimpleTexture *other) {
 void SimpleTexture::LinkTextFrom(SimpleTexture *other) {
   if(!other->text) other->AttachTextData();
   AttachTextData(other->text);
+  }
+
+void SimpleTexture::SetTexturator(ST_Texturator *ttr) {
+  if(ttr == NULL) texturator = default_texturator;
+  else texturator = ttr;
   }

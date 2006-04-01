@@ -128,6 +128,8 @@ public:
   static void UnsetFont() { SetFont(NULL); };
   static TTF_Font *Font(const int pxsz = -1);
 
+  void SetTexturator(ST_Texturator *ttr);
+
   //For Internal Use Only!
   static void EmptyTrash();
 
