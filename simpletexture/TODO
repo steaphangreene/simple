@@ -1,1 +1,10 @@
-Just about everything.
+-=To FIX=-
+Import margins from old SimpleGUI code.
+
+-=TODO=-
+Handle multiple simultanoeus fonts.
+
+-=To Flush Out=-
+Finalize interface for texturators (include margins?  etc.).
+
+-=Wishlist=-

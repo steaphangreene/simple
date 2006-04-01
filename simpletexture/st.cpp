@@ -48,7 +48,7 @@ struct SimpleTexture::TextData {
     rendered_text = NULL;
     text_xsize = 0;
     text_ysize = 0;
-    visible_xlines = ST_AUTOSIZE;
+    visible_xlines = ST_KEEPASPECT;
     visible_ylines = ST_AUTOSIZE;
     visible_xoffset = 0.0;
     visible_yoffset = 0.0;
@@ -203,8 +203,6 @@ SimpleTexture::~SimpleTexture() {
   }
 
 void SimpleTexture::AttachTextData(TextData *in) {
-//  fprintf(stderr, "Attached %p (%s) to %p\n", in, in->message.c_str(), this);
-
   if(text) DetachTextData();
   if(!in) {
     text = new TextData;
@@ -216,7 +214,6 @@ void SimpleTexture::AttachTextData(TextData *in) {
   };
 
 void SimpleTexture::DetachTextData() {
-//  fprintf(stderr, "Detached %p (%s) from %p\n", text, text->message.c_str(), this);
   if(text) {
     --(text->count);
     if(text->count <= 0) delete text;
@@ -419,7 +416,7 @@ void SimpleTexture::BuildTextTexture() {
   double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
 
   if(ylines <= 0.0) ylines = text->lines.size();
-  if(xlines <= 0.0 && text->aspect_ratio != 0.0) {
+  if(xlines == 0.0 && text->aspect_ratio != 0.0) {
     xlines = ylines * text->aspect_ratio;
     }
   else if(xlines <= 0.0) {

@@ -33,11 +33,12 @@ using namespace std;
 
 #include "stt.h"
 
-#define ST_ALIGN_LEFT   0
-#define ST_ALIGN_CENTER 1
-#define ST_ALIGN_RIGHT  2
+#define ST_ALIGN_LEFT	0
+#define ST_ALIGN_CENTER	1
+#define ST_ALIGN_RIGHT	2
 
-#define ST_AUTOSIZE     -1
+#define ST_AUTOSIZE	-1
+#define ST_KEEPASPECT	0
 
 struct _TTF_Font;
 typedef struct _TTF_Font TTF_Font;
