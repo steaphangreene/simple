@@ -31,6 +31,8 @@ using namespace std;
 
 #include "SDL.h"
 
+#include "stt_default.h"
+
 #define ST_ALIGN_LEFT   0
 #define ST_ALIGN_CENTER 1
 #define ST_ALIGN_RIGHT  2
@@ -133,6 +135,9 @@ protected:
   struct TextData;
   TextData *text;
 
+  ST_Texturator *texturator;
+  static ST_Texturator *default_texturator;
+
   void Init(const SimpleTextureType tp);
   static void InitStatic();
 
@@ -165,17 +170,5 @@ protected:
   static float fontyratio;
   static char *fontfile;
   };
-
-extern unsigned char st_col_u32b1[4];
-extern unsigned char st_col_u32b2[4];
-extern unsigned char st_col_u32b3[4];
-extern unsigned char st_col_u32b4[4];
-
-#define ST_COL_U32B1 (*((unsigned long *)(st_col_u32b1)))
-#define ST_COL_U32B2 (*((unsigned long *)(st_col_u32b2)))
-#define ST_COL_U32B3 (*((unsigned long *)(st_col_u32b3)))
-#define ST_COL_U32B4 (*((unsigned long *)(st_col_u32b4)))
-
-#define ST_SDL_RGBA_COLFIELDS ST_COL_U32B1, ST_COL_U32B2, ST_COL_U32B3, ST_COL_U32B4
 
 #endif // ST_H

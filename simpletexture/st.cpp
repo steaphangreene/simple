@@ -81,6 +81,7 @@ void SimpleTexture::InitStatic() {
   if(color.size() < (ST_NUM_SYSTEM_COLORS * 2)) {
     color.resize(ST_NUM_SYSTEM_COLORS * 2);
     }
+  if(!default_texturator) default_texturator = new STT_Default;
   }
 
 void SimpleTexture::Init(const SimpleTextureType tp) {
@@ -92,6 +93,7 @@ void SimpleTexture::Init(const SimpleTextureType tp) {
   yfact = 1.0;
   texture = 0;
   text = NULL;
+  texturator = default_texturator;
   dirty = 0;	//Since it's not ready to be "cleaned" yet.
   }
 
@@ -369,9 +371,7 @@ void SimpleTexture::BuildBlankTexture() {
     }
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
-    SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format, col.r, col.g, col.b));
+    cur = texturator->Generate(xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
     //A TRANSCOLOR widget with no text is totally invisible.
@@ -475,11 +475,7 @@ void SimpleTexture::BuildTextTexture() {
   cur = NULL;
 
   if(type == SIMPLETEXTURE_COLOR) {
-    cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
-    if(!cur) fprintf(stderr, "Bah, %dx%dx4 (%d) failed!\n", xsize, ysize, xsize*ysize*4);
-    SDL_FillRect(cur, NULL, SDL_MapRGB(cur->format,
-	col.r, col.g, col.b));
+    cur = texturator->Generate(xsize, ysize, col);
     }
   else if(type == SIMPLETEXTURE_TRANSCOLOR) {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
@@ -908,11 +904,6 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::trans_cache;
 map<SDL_Surface *, set<SimpleTexture *> > SimpleTexture::def_cache;
 
-unsigned char st_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
-unsigned char st_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
-unsigned char st_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
-unsigned char st_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
-
 list<SDL_Surface *> SimpleTexture::trash_surf;
 list<GLuint> SimpleTexture::trash_tex;
 
@@ -922,6 +913,8 @@ map<int, TTF_Font *> SimpleTexture::cur_font;
 int SimpleTexture::default_pxsize;
 float SimpleTexture::fontyratio = 1.0;
 char *SimpleTexture::fontfile = NULL;
+
+ST_Texturator *SimpleTexture::default_texturator = NULL;
 
 TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
   static TextGeometry ret;
