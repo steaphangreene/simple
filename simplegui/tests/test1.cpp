@@ -195,6 +195,7 @@ int main(int argc, char **argv) {
   button[3] = new SG_StickyButton("Yellow",
 	gui->NewColor(1.0, 1.0, 0.0), gui->NewColor(0.5, 0.5, 0.0),
 	gui->NewColor(1.0, 1.0, 0.0), gui->NewColor(0.5, 0.5, 0.0));
+  button[3]->SetVisibleSize(SG_AUTOSIZE, SG_AUTOSIZE);
   button[4] = new SG_StickyButton("Cyan",
 	gui->NewColor(0.0, 1.0, 1.0), gui->NewColor(0.0, 0.5, 0.5),
 	gui->NewColor(0.0, 1.0, 1.0), gui->NewColor(0.0, 0.5, 0.5));
