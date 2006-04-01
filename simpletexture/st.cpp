@@ -942,8 +942,8 @@ TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
     ret.text_xsize = text->text_xsize;
     }
   else {
-    ret.visible_xlines = 0.0;
-    ret.visible_ylines = 0.0;
+    ret.visible_xlines = ST_KEEPASPECT;
+    ret.visible_ylines = ST_AUTOSIZE;
     ret.aspect_ratio = 0.0;
     ret.text_xsize = 0;
     }
