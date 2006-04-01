@@ -30,6 +30,7 @@ SG_StickyButton::SG_StickyButton(string mes, SimpleTexture tex,
 	: SG_Button(mes, tex, dis_tex, click_tex) {
   down_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(down_tex);
+  texture[3].SetTexturator(buttondown_texturator);
   }
 
 SG_StickyButton::~SG_StickyButton() {
