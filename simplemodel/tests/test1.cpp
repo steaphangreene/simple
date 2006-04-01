@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleModel Example Module by Steaphan Greene
 //
-//  Copyright 2005 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
 //
 //  SimpleModel is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ static void SetAnim(int anim) {
   }
 
 int main(int argc, char **argv) {
-  int xs=640, ys=480;
+  int xs=1200, ys=900;
 
   char *modname = "models/players/trooper";
 
@@ -148,8 +148,10 @@ int main(int argc, char **argv) {
         }
       }
     start_scene();
+    glTranslatef(2.0, 0.0, 0.0);
     glRotatef(yaw, 0.0, 0.0, 1.0);
     glRotatef(pitch, 0.0, 1.0, 0.0);
+    glTranslatef(0.0, 0.0, -2.0);
     mod->Render(SDL_GetTicks(), anims, times);
     finish_scene();
     }
