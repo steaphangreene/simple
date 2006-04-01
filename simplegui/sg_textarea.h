@@ -35,7 +35,11 @@ using namespace std;
 #define SG_ALIGN_RIGHT	ST_ALIGN_RIGHT
 
 #ifndef SG_AUTOSIZE
-#define SG_AUTOSIZE	-1
+#define SG_AUTOSIZE	ST_AUTOSIZE
+#endif
+
+#ifndef SG_KEEPASPECT
+#define SG_KEEPASPECT	ST_KEEPASPECT
 #endif
 
 using namespace std;
