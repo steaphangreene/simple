@@ -34,6 +34,9 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+
+  static ST_Texturator *buttonup_texturator;
+  static ST_Texturator *buttondown_texturator;
   };
 
 #endif // SG_BUTTON_H

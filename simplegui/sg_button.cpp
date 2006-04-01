@@ -29,6 +29,12 @@ SG_Button::SG_Button(const string &mes, SimpleTexture tex, SimpleTexture dis_tex
 	SimpleTexture click_tex) : SG_TextArea(mes, tex, dis_tex) {
   click_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(click_tex);
+
+  if(!buttonup_texturator) buttonup_texturator = new STT_ButtonUp;
+  if(!buttondown_texturator) buttondown_texturator = new STT_ButtonDown;
+
+  texture[0].SetTexturator(buttonup_texturator);
+  texture[2].SetTexturator(buttondown_texturator);
   }
 
 SG_Button::~SG_Button() {
@@ -79,3 +85,5 @@ int SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
   
 //  static GL_MODEL SG_Button::Default_Mouse_Cursor = NULL;
 
+ST_Texturator *SG_Button::buttonup_texturator = NULL;
+ST_Texturator *SG_Button::buttondown_texturator = NULL;
