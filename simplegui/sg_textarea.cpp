@@ -33,7 +33,7 @@ SG_TextArea::SG_TextArea(string mes, SimpleTexture tex, SimpleTexture dis_tex,
   dis_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(dis_tex);
   SetText(mes);
-  texture[0].SetMargins(mx, my);
+  texture[0].SetTextMargins(mx, my);
   }
 
 SG_TextArea::~SG_TextArea() {
@@ -59,7 +59,7 @@ int SG_TextArea::HandleEvent(SDL_Event *event, float x, float y) {
 //  static GL_MODEL SG_TextArea::Default_Mouse_Cursor = NULL;
 
 void SG_TextArea::SetMargins(float xmar, float ymar) {
-  texture[0].SetMargins(xmar, ymar);
+  texture[0].SetTextMargins(xmar, ymar);
   }
 
 void SG_TextArea::SetText(const string &mes) {
@@ -72,7 +72,7 @@ void SG_TextArea::SetText(const string &mes) {
   }
 
 void SG_TextArea::SetFontSize(int sz) {
-  texture[0].SetFontSize(sz);
+  texture[0].SetTextFontSize(sz);
   UpdateRange();
   }
 
@@ -133,7 +133,7 @@ void SG_TextArea::RangerChanged() {
   }
 
 void SG_TextArea::SetAlignment(int align) {
-  texture[0].SetAlignment(align);
+  texture[0].SetTextAlignment(align);
   }
 
 unsigned int SG_TextArea::NumLines() {

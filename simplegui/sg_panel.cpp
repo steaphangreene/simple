@@ -115,6 +115,6 @@ void SG_Panel::SetTexture(SimpleTexture tex, int st) {
 void SG_Panel::SetAspectRatio(double asp) {
   aspect_ratio = asp;
   for(int tx = 0; tx < int(texture.size()); ++tx) {
-    texture[tx].SetAspectRatio(asp);
+    texture[tx].SetTextAspectRatio(asp);
     }
   }
