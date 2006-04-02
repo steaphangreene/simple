@@ -33,6 +33,7 @@ SG_TextArea::SG_TextArea(string mes, SimpleTexture tex, SimpleTexture dis_tex,
   dis_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(dis_tex);
   SetText(mes);
+  texture[0].SetMargins(mx, my);
   }
 
 SG_TextArea::~SG_TextArea() {
