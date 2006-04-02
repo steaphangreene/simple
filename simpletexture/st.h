@@ -73,19 +73,18 @@ public:
   const SimpleTexture &operator = (const SimpleTexture &in);
   void SetTexture(const SimpleTexture &in);
 
-  void SetAspectRatio(const double asp);
-
   bool CheckCache();
   void Update();
 
   TextGeometry *GetTextGeometry();
 
   void SetText(const string txt);
+  void SetTextAspectRatio(const double asp);
   void SetTextVisibleSize(const float ylines=-1.0, const float xlines=-1.0);
   void SetTextPosition(const float yoff=0.0, const float xoff=0.0);
-  void SetMargins(const float xmar, const float ymar);
-  void SetAlignment(int align);
-  void SetFontSize(const int sz);
+  void SetTextMargins(const float xmar, const float ymar);
+  void SetTextAlignment(int align);
+  void SetTextFontSize(const int sz);
   TTF_Font *CurrentFont();	// FIXME: Make this const somehow?
 
   void LinkTextTo(SimpleTexture *other);

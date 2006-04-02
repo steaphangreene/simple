@@ -57,6 +57,7 @@ struct SimpleTexture::TextData {
     font_size = ST_AUTOSIZE;
     alignment = ST_ALIGN_LEFT;
     aspect_ratio = 0.0;
+    dirty = 0;	//Not yet ready to be "cleaned"
     };
 
   ~TextData() {
@@ -78,6 +79,7 @@ struct SimpleTexture::TextData {
   double aspect_ratio;
   int font_size;
   int alignment;
+  int dirty;
   };
 
 
@@ -432,12 +434,11 @@ void SimpleTexture::BuildTextTexture() {
     ysize = int((float)(bysize) * (1.0f - text->ymargin * 2.0f) + 0.5f);
 
     if(text->font_size != (int)((double)(ysize) / ylines + 0.5)) {
-      SetFontSize((int)((double)(ysize) / ylines + 0.5));
+      SetTextFontSize((int)((double)(ysize) / ylines + 0.5));
       }
 
     if(text->text_xsize < xsize) {
-      text->text_xsize = xsize;  //To be sure alignment works!
-//      UpdateRange();
+      text->text_xsize = xsize;  //Needed for non-left alignments to work!
       }
 
     if(Font(text->font_size) == NULL) {
@@ -536,6 +537,7 @@ void SimpleTexture::BuildTextTexture() {
 	}
       drec.y += TTF_FontLineSkip(Font(text->font_size));
       }
+    text->dirty = 0;
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
@@ -636,17 +638,17 @@ void SimpleTexture::UpdateCache() {
     }
   }
 
-void SimpleTexture::SetMargins(const float xmar, const float ymar) {
+void SimpleTexture::SetTextMargins(const float xmar, const float ymar) {
   if(!text) AttachTextData();
   text->xmargin = xmar;
   text->ymargin = ymar;
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
-void SimpleTexture::SetFontSize(const int sz) {
+void SimpleTexture::SetTextFontSize(const int sz) {
   if(!text) AttachTextData();
   text->font_size = sz;
 
@@ -674,7 +676,7 @@ void SimpleTexture::SetText(const string txt) {
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
 void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
@@ -685,16 +687,16 @@ void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
-void SimpleTexture::SetAspectRatio(const double asp) {
+void SimpleTexture::SetTextAspectRatio(const double asp) {
   if(!text) AttachTextData();
   text->aspect_ratio = asp;
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
 void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
@@ -705,21 +707,21 @@ void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
-void SimpleTexture::SetAlignment(int align) {
+void SimpleTexture::SetTextAlignment(int align) {
   if(!text) AttachTextData();
 
   text->alignment = align;
 
   if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
   text->rendered_text = NULL;
-  dirty = 1;
+  text->dirty = 1;
   }
 
 GLuint SimpleTexture::GLTexture() {
-  if(dirty) Update();
+  if(dirty || (text && text->dirty)) Update();
   return texture;
   }
 
