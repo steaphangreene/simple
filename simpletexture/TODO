@@ -2,6 +2,7 @@
 
 -=TODO=-
 Handle multiple simultanoeus fonts.
+Add "_STRETCH" alignments.
 
 -=To Flush Out=-
 Finalize interface for texturators (include margins?  etc.).
