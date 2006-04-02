@@ -265,6 +265,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       newyunused = (event->resize.h - newysize);
       }
     newaspect_actual = asp / aspect;
+    SimpleTexture::NeedToReaquireContext(event->resize.w, event->resize.h);
     return 0; //Event Handled
     }
 
