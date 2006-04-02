@@ -708,6 +708,16 @@ void SimpleTexture::SetTextPosition(const float yoff, const float xoff) {
   dirty = 1;
   }
 
+void SimpleTexture::SetAlignment(int align) {
+  if(!text) AttachTextData();
+
+  text->alignment = align;
+
+  if(text->rendered_text != NULL) SDL_FreeSurface(text->rendered_text);
+  text->rendered_text = NULL;
+  dirty = 1;
+  }
+
 GLuint SimpleTexture::GLTexture() {
   if(dirty) Update();
   return texture;

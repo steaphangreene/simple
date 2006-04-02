@@ -84,6 +84,7 @@ public:
   void SetTextVisibleSize(const float ylines=-1.0, const float xlines=-1.0);
   void SetTextPosition(const float yoff=0.0, const float xoff=0.0);
   void SetMargins(const float xmar, const float ymar);
+  void SetAlignment(int align);
   void SetFontSize(const int sz);
   TTF_Font *CurrentFont();	// FIXME: Make this const somehow?
 
