@@ -27,39 +27,39 @@ win32:	libsimplevideo.win32_a
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -framework OpenGL
+#LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
+#LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simpletexture/libsimpletexture.a -lSDL_image -lGL -lGLU
 
 OBJS:=	sv.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` ../simpletexture/libsimpletexture.win32_a -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
 WOBJS:=	sv.win32_o
 

@@ -38,6 +38,7 @@
 using namespace std;
 
 #include "sv.h"
+#include "../simpletexture/st.h"
 
 SimpleVideo *SimpleVideo::current = NULL;
 
@@ -199,6 +200,13 @@ SimpleVideo::~SimpleVideo() {
 
 bool SimpleVideo::StartScene() {
   Uint32 real_time = SDL_GetTicks();
+
+  int nxsize, nysize;
+  if(SimpleTexture::ReaquireNeeded(nxsize, nysize)) {
+    SDL_SetVideoMode(nxsize, nysize, 0, videoFlags);
+    Resize(nxsize, nysize);
+    SimpleTexture::ReaquireContext();
+    }
 
   double x = 0.0, y = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
   CalcMove(xoff, yoff, real_time);
