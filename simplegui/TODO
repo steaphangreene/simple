@@ -1,7 +1,8 @@
 -=To FIX=-
 Fold draggable concept back into Panel, all visibles can be draggable
 (Remove the hack which puts disjointed text labels on blank draggables)
-Remove the popup window hack, make it a real GUI element
+Create SG_Positional container widget.
+Handle offset popup windows.
 Need a way to handle sounds for compounds' buttons
 Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
