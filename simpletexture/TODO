@@ -1,5 +1,4 @@
 -=To FIX=-
-Fix the problem of one cleaning the text when not all have updated.
 
 -=TODO=-
 Handle multiple simultanoeus fonts.

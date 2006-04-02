@@ -44,7 +44,6 @@ static int nextpoweroftwo(int x) {
 
 struct SimpleTexture::TextData {
   TextData() {
-    count = 0;
     rendered_text = NULL;
     text_xsize = 0;
     text_ysize = 0;
@@ -64,8 +63,6 @@ struct SimpleTexture::TextData {
     if(rendered_text) SDL_FreeSurface(rendered_text);
     };
 
-  int count;
-
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
   SDL_Surface *rendered_text;
   int text_xsize, text_ysize;
@@ -80,6 +77,7 @@ struct SimpleTexture::TextData {
   int font_size;
   int alignment;
   int dirty;
+  set<SimpleTexture *> clients;
   };
 
 
@@ -212,13 +210,13 @@ void SimpleTexture::AttachTextData(TextData *in) {
   else {
     text = in;
     }
-  ++(text->count);
+  text->clients.insert(this);
   };
 
 void SimpleTexture::DetachTextData() {
   if(text) {
-    --(text->count);
-    if(text->count <= 0) delete text;
+    text->clients.erase(this);
+    if(text->clients.size() <= 0) delete text;
     text = NULL;
     }
   }
@@ -538,6 +536,10 @@ void SimpleTexture::BuildTextTexture() {
       drec.y += TTF_FontLineSkip(Font(text->font_size));
       }
     text->dirty = 0;
+    set<SimpleTexture *>::iterator itr = text->clients.begin();
+    for(; itr != text->clients.end(); ++itr) {
+      (*itr)->dirty = 1;
+      }
     }
 
   { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
