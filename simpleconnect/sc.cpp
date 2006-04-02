@@ -32,7 +32,7 @@ using namespace std;
 #include "../simplegui/sg_editable.h"
 
 #define HEADER_SIZE	1
-#define WIDGET_WIDTH	10
+#define WIDGET_WIDTH	12
 #define VERT_MARGIN	0.1
 #define BASE_TAG	"SC-0009:"
 
@@ -63,13 +63,13 @@ SimpleConnect::SimpleConnect()
 
   background = new SG_Panel(SG_COL_FG);
   SG_Widget *labelb =
-	new SG_TextArea("SimpleConnect", SG_COL_LOW);
-  AddWidget(labelb, 0, 0, 6, 1);
+	new SG_TextArea("Current Game", SG_COL_LOW);
+  AddWidget(labelb, 0, 0, 5, 1);
   scanb = new SG_Button("Rescan", SG_COL_RAISED, SG_COL_LOW);
   startb = new SG_Button("Start", SG_COL_RAISED, SG_COL_LOW);
   namep = new SG_TextArea("Name:", SG_COL_BG, SG_COL_BG);
   nameb = new SG_Editable("Noobie", SG_COL_LOW, SG_COL_BG, SG_COL_HIGH);
-  nameb->SetVisibleSize(SG_AUTOSIZE, 1.0);
+  nameb->SetVisibleSize(SG_KEEPASPECT, 1.0);
 
   port = DEFAULT_PORT;
 
@@ -211,12 +211,12 @@ void SimpleConnect::InitSlots() {
     pnamec->SetDisplayLimits(
 	0.0, -2.0 * slot / (1.0 - VERT_MARGIN),
 	0.0, 2.0 * (conn.slots.size() - slot - 1) / (1.0 - VERT_MARGIN));
-    AddWidget(pnamec, xp, slot+HEADER_SIZE, 3, 1);
+    AddWidget(pnamec, xp, slot+HEADER_SIZE, 4, 1);
     SG_TextArea *pname = new SG_TextArea((char*)(conn.slots[slot].playername));
     pname->Ignore();
     pnamec->SetLabel(pname);
     pnamemap[pnamec] = slot;
-    xp += 3;
+    xp += 4;
 
     SG_Button *teamb = NULL;
     if(true) {	//FIXME: Check for team support
@@ -247,8 +247,8 @@ void SimpleConnect::InitSlots() {
     else {
       name = new SG_TextArea("<Unknown>");
       }
-    AddWidget(name, xp, slot+HEADER_SIZE, 4, 1);
-    xp += 4;
+    AddWidget(name, xp, slot+HEADER_SIZE, 5, 1);
+    xp += 5;
     Resize(xp, ysize);
 
     if(mode == SC_MODE_SLAVE) {
@@ -275,9 +275,9 @@ void SimpleConnect::Host() {
   slots_dirty = true;
   slots_send = true;
   StartNet();
-  AddWidget(namep, 6, 0, 1, 1);
-  AddWidget(nameb, 7, 0, 2, 1);
-  AddWidget(startb, 9, 0, 1, 1);
+  AddWidget(namep, 5, 0, 2, 1);
+  AddWidget(nameb, 7, 0, 3, 1);
+  AddWidget(startb, 10, 0, 2, 1);
   }
 
 void SimpleConnect::Search() {
@@ -289,9 +289,9 @@ void SimpleConnect::Search() {
   mode = SC_MODE_SEARCH;
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   StartNet();
-  AddWidget(namep, 6, 0, 1, 1);
-  AddWidget(nameb, 7, 0, 2, 1);
-  AddWidget(scanb, 9, 0, 1, 1);
+  AddWidget(namep, 5, 0, 2, 1);
+  AddWidget(nameb, 7, 0, 3, 1);
+  AddWidget(scanb, 10, 0, 2, 1);
   }
 
 void SimpleConnect::Connect(const IPaddress &location) {
@@ -305,8 +305,8 @@ void SimpleConnect::Connect(const IPaddress &location) {
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   ClearRow(0);		//Clear header if present
   AddWidget(new SG_TextArea("Connecting..."), 1, 0, 5, 1);
-  AddWidget(namep, 6, 0, 1, 1);
-  AddWidget(nameb, 7, 0, 2, 1);
+  AddWidget(namep, 5, 0, 2, 1);
+  AddWidget(nameb, 7, 0, 3, 1);
   StartNet();
   }
 
@@ -318,9 +318,9 @@ void SimpleConnect::Config() {
     }
   mode = SC_MODE_CONFIG;
   slots_dirty = true;
-  AddWidget(namep, 6, 0, 1, 1);
-  AddWidget(nameb, 7, 0, 2, 1);
-  AddWidget(startb, 9, 0, 1, 1);
+  AddWidget(namep, 5, 0, 2, 1);
+  AddWidget(nameb, 7, 0, 3, 1);
+  AddWidget(startb, 10, 0, 2, 1);
   }
 
 void SimpleConnect::Reset() {
