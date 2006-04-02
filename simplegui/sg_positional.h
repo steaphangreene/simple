@@ -28,9 +28,9 @@
 #include <vector>
 using namespace std;
 
-class SG_Positional : public SG_Alignment, public SG_Ranger2D {
+class SG_Positional : public SG_Alignment {
 public:
-  SG_Positional(float xbor = 0.0, float ybor = 0.0);
+  SG_Positional();
   virtual ~SG_Positional();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
@@ -38,14 +38,20 @@ public:
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-  virtual bool AddWidget(SG_Widget *wid);
+  virtual bool AddWidget(SG_Widget *wid,
+	const float xoff = 0.0, const float yoff = 0.0,
+	const float xsize = 0.5, const float ysize = 0.5,
+	bool modal = false);
+
+  virtual void RemoveWidget(SG_Widget *wid);
 
   virtual void SetAspectRatio(const double asp);
 
-  virtual void RangerChanged();
-
 protected:
-  void CalcGeometry();
+  vector<SG_AlignmentGeometry> wgeom;
+  void CalcGeometry(const vector<SG_AlignmentGeometry>::iterator &geom);
+
+  SG_Ranger2D ranger;
 
 //  static GL_MODEL Default_Mouse_Cursor;
   };

@@ -408,11 +408,11 @@ void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
   if(pop_modal) mainWid->Listen();
   if(popWid) mWid->RemoveWidget(popWid);
   popWid = wid;
-//  if(popWid) mWid->AddWidget(popWid, posx, posy, px, py, pop_modal);
-  if(popWid) {
-    mWid->AddWidget(popWid);
-    mWid->SetBorder(1.0 - px, 1.0 - py);
-    }
+  if(popWid) mWid->AddWidget(popWid, posx, posy, px, py, pop_modal);
+//  if(popWid) {
+//    mWid->AddWidget(popWid);
+//    mWid->SetBorder(1.0 - px, 1.0 - py);
+//    }
   }
   
 void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,

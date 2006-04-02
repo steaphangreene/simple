@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
 	    text->SetTexture(gui->NewColor(r, g, b));
 	    }
 	  else if(event.user.data1 == (void*)button[5])
-	    gui->SetPopupWidget(popup, 0.3, 0.3); 
+	    gui->SetPopupWidget(popup, 0.3, 0.3, -0.25, 0.0); 
 	  }
 	else if(event.user.code == SG_EVENT_STICKYOFF) {
 	  printf("Received SG_EVENT_STICKYOFF from %s button.\n",

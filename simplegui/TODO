@@ -1,12 +1,12 @@
 -=To FIX=-
+Fix the editable widget to use new text code correctly.
+Implement modal popups in the new setup
+Implement full window stacking in SG_Positional
 Fold draggable concept back into Alignment, must be able to contain widgets
  (Remove the hack which puts disjointed text labels on blank draggables)
-Implement SG_Positional container widget.
-Handle offset popup windows.
 Need a way to handle sounds for compounds' buttons
 Overload AddWidget/RemoveWidget in SG_Compound to block those for compounds.
 Figure out a way to do regex without posix regex.
-Fix positioning of events on offset popups (Noah).
 Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 Clean up multiple redundant calls to RangerChanged during SG_Ranger2D events.
 
