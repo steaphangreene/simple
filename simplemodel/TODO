@@ -1,15 +1,13 @@
 -=To FIX=-
 Finish normalizing scale and test/fix lighting/normals.
-Unify SM_Texture and SG_Texture to SimpleTexture
 
 -=TODO=-
 Implement Q3 Model Frame Interpolation
 Add Q3PK3 Support
-Implement 3DS Models
 Take care of all FIXMEs in code
 
 -=To Flush Out=-
 
 -=Wishlist=-
 Add OBJ Support
-
+Add Surface Reduction Code
