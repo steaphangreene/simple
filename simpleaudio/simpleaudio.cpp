@@ -39,12 +39,18 @@ static bool audio_initialized = false;
 #define SOUND_LOOP	1
 #define SOUND_TERMINATE	2
 #define SOUND_STEREO	4
+#define SOUND_MUSIC	128
+
+#define	CHANNEL_MUSIC	32767
 
 struct SoundData {
   Uint32 pos;
   Uint32 vol;
   Uint32 pan;
-  Mix_Chunk *sound;
+  union {
+    Mix_Chunk *sound;
+    Mix_Music *music;
+    } s;
   Uint32 flags;
   SoundData *next;
   };
@@ -58,9 +64,9 @@ SoundData *play_blocks = NULL;
 LoadedSound SimpleAudio::BuildSound(const unsigned char *data, unsigned long len) {
   if(!audio_initialized) return 0;
 
-  SFX[num_sounds].sound = Mix_QuickLoad_RAW((Uint8*)data, len);
+  SFX[num_sounds].s.sound = Mix_QuickLoad_RAW((Uint8*)data, len);
 
-  if(!SFX[num_sounds].sound) {
+  if(!SFX[num_sounds].s.sound) {
     fprintf(stderr, "Warning: Can't build sound!\n");
     return 0;
     }
@@ -72,21 +78,32 @@ LoadedSound SimpleAudio::BuildSound(const unsigned char *data, unsigned long len
 LoadedSound SimpleAudio::LoadSound(const string &fn) {
   if(!audio_initialized) return 0;
 
-  SFX[num_sounds].sound = Mix_LoadWAV(fn.c_str());
+  SFX[num_sounds].s.sound = Mix_LoadWAV(fn.c_str());
 
-  if(!SFX[num_sounds].sound) {
+  if(!SFX[num_sounds].s.sound) {
     fprintf(stderr, "Warning: Can't load \"%s\"!\n", fn.c_str());
     return 0;
     }
+
+  SFX[num_sounds].flags = 0;
 
   ++num_sounds;
   return num_sounds;
   }
 
 LoadedSound SimpleAudio::LoadMusic(const string &fn) {
-  LoadedSound ret = LoadSound(fn.c_str());
-  SFX[ret-1].flags |= SOUND_STEREO;
-  return ret;
+  if(!audio_initialized) return 0;
+  SFX[num_sounds].s.music = Mix_LoadMUS(fn.c_str());
+
+  if(!SFX[num_sounds].s.music) {
+    fprintf(stderr, "Warning: Can't load \"%s\"!\n", fn.c_str());
+    return 0;
+    }
+
+  SFX[num_sounds].flags = (SOUND_STEREO|SOUND_MUSIC);
+
+  ++num_sounds;
+  return num_sounds;
   }
 
 SoundData *get_block() {
@@ -99,7 +116,15 @@ SoundData *get_block() {
 PlayingSound SimpleAudio::Play(LoadedSound snd, float vol, float pan) {
   if((!audio_initialized) || snd < 1) return -1;
 
-  PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, 0);
+  PlayingSound ret;
+
+  if(SFX[snd-1].flags & SOUND_MUSIC) {
+    ret = Mix_PlayMusic(SFX[snd-1].s.music, 0);
+    if(ret >= 0) ret = CHANNEL_MUSIC;
+    }
+  else {
+    ret = Mix_PlayChannel(-1, SFX[snd-1].s.sound, 0);
+    }
   if(ret >= 0) {
     SetVol(ret, vol);
     SetPan(ret, pan);
@@ -110,7 +135,16 @@ PlayingSound SimpleAudio::Play(LoadedSound snd, float vol, float pan) {
 PlayingSound SimpleAudio::Loop(LoadedSound snd, float vol, float pan, int loops) {
   if((!audio_initialized) || snd < 1) return -1;
 
-  PlayingSound ret = Mix_PlayChannel(-1, SFX[snd-1].sound, loops);
+  PlayingSound ret;
+
+  if(SFX[snd-1].flags & SOUND_MUSIC) {
+    ret = Mix_PlayMusic(SFX[snd-1].s.music, loops);
+    //ret = Mix_FadeInMusic(SFX[snd-1].s.music, loops, 100);
+    if(ret >= 0) ret = CHANNEL_MUSIC;
+    }
+  else {
+    ret = Mix_PlayChannel(-1, SFX[snd-1].s.sound, loops);
+    }
   if(ret >= 0) {
     SetVol(ret, vol);
     SetPan(ret, pan);
@@ -121,11 +155,18 @@ PlayingSound SimpleAudio::Loop(LoadedSound snd, float vol, float pan, int loops)
 void SimpleAudio::SetVol(PlayingSound s, float vol) {
   if(!audio_initialized || s < 0) return;
 
-  Mix_Volume(s, (int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
+  if(s == CHANNEL_MUSIC) {
+    Mix_VolumeMusic((int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
+    }
+  else {
+    Mix_Volume(s, (int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
+    }
   }
 
 void SimpleAudio::SetPan(PlayingSound s, float pan) {
   if(!audio_initialized || s < 0) return;
+
+  if(s == CHANNEL_MUSIC) return;
 
   if(pan == 0.0) Mix_SetPanning(s, 255, 255);
   else if(pan >=  1.0) Mix_SetPanning(s, 0, 255);
@@ -137,7 +178,13 @@ void SimpleAudio::SetPan(PlayingSound s, float pan) {
 void SimpleAudio::Stop(PlayingSound s) {
   if(!audio_initialized) return;
 
-  Mix_HaltChannel(s);
+  if(s == CHANNEL_MUSIC) {
+    //Mix_FadeOutMusic(100);
+    Mix_HaltMusic();
+    }
+  else {
+    Mix_HaltChannel(s);
+    }
   }
 
 SimpleAudio::SimpleAudio(int bufsize) {

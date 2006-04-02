@@ -36,16 +36,17 @@ public:
   SimpleAudio(int bufsize=512);
   ~SimpleAudio();
 
-  PlayingSound Play(int snd, float vol = 1.0, float pan = 0.0);
-  PlayingSound Loop(int snd, float vol = 1.0, float pan = 0.0, int loops = -1);
+  PlayingSound Play(LoadedSound snd, float vol = 1.0, float pan = 0.0);
+  PlayingSound Loop(LoadedSound snd, float vol = 1.0, float pan = 0.0,
+	int loops = -1);
   void Stop(PlayingSound);
 
   void SetVol(PlayingSound, float vol = 1.0);
   void SetPan(PlayingSound, float pan = 0.0);
 
-  int BuildSound(const unsigned char *, unsigned long);
-  int LoadSound(const string &);
-  int LoadMusic(const string &);
+  LoadedSound BuildSound(const unsigned char *, unsigned long);
+  LoadedSound LoadSound(const string &);
+  LoadedSound LoadMusic(const string &);
 
   static SimpleAudio *Current() { return current; };
 
