@@ -57,7 +57,7 @@ struct SimpleTexture::TextData {
     font_size = ST_AUTOSIZE;
     alignment = ST_ALIGN_LEFT;
     aspect_ratio = 0.0;
-    dirty = 0;	//Not yet ready to be "cleaned"
+    dirty = 0; //Not yet ready to be "cleaned"
     };
 
   ~TextData() {
