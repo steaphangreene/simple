@@ -59,10 +59,9 @@ public:
   bool PollEvent(SDL_Event *event, bool ts = false);
   bool WaitEvent(SDL_Event *event, bool ts = false);
 
-  SG_Alignment *MasterWidget() { return mWid; };
+  SG_Alignment *MasterWidget(); //Returns APPARENT master widget
+  SG_Alignment *PopupWidget();
 
-  //Popup Widgets MUST have solid backgrounds!
-  SG_Alignment *PopupWidget() { return mWid; };
   void SetPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5,
 	float posx = 0.0, float posy = 0.0);
   void SetModalPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5,
@@ -113,11 +112,9 @@ public:
   void EnableMouse() { flags &= (~SIMPLEGUI_NOMOUSE); };
 
 protected:
-  void SendPopupAspectRatio();
-
-  SG_Alignment *mWid, *popWid;
-  float popx, popy;
-  float popxpos, popypos;
+  SG_Alignment *mWid;		// REAL master widget
+  SG_Alignment *mainWid;	// Apparent master widget
+  SG_Alignment *popWid;		// Apparent popup widget
   bool pop_modal;
 
   SimpleTexture *mouse_cursor;

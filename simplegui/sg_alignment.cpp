@@ -219,6 +219,7 @@ void SG_Alignment::CalcGeometry() {
 
 void SG_Alignment::SetAspectRatio(double asp) {
   aspect_ratio = asp;
+  if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
     CalcGeometry();
     widgets[0]->AdjustGeometry(&cur_geom);
@@ -226,3 +227,13 @@ void SG_Alignment::SetAspectRatio(double asp) {
     widgets[0]->SetAspectRatio(newaspect);
     }
   }
+
+void SG_Alignment::SetBackground(SG_Widget *wid) {
+  background = wid;
+  if(background) background->SetAspectRatio(aspect_ratio);
+  }
+
+void SG_Alignment::UnsetBackground() {
+  background = NULL;
+  }
+

@@ -407,6 +407,7 @@ void SG_Table::SetActive(float xst, float yst, float xen, float yen) {
 
 void SG_Table::SetAspectRatio(double asp) {
   aspect_ratio = asp;
+  if(background) background->SetAspectRatio(aspect_ratio);
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();

@@ -52,9 +52,10 @@ SimpleGUI::SimpleGUI(int aspmeth, const double asp) {
 
   mWid = new SG_Alignment();
   mWid->SetAspectRatio(asp);
+  mainWid = new SG_Alignment();
+  mWid->SetBackground(mainWid);
+
   popWid = NULL;
-  popx = 0.5, popy = 0.5;
-  popxpos = 0.0, popypos = 0.0;
   pop_modal = false;
 
   int screen_geom[4];
@@ -92,8 +93,6 @@ SimpleGUI::~SimpleGUI() {
 
   delete mWid;
   mWid = NULL;
-  if(popWid) delete popWid;
-  popWid = NULL;
 
   if(mutex) SDL_DestroyMutex(mutex);
   mutex = NULL;
@@ -151,16 +150,6 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
     }
 
   mWid->Render(cur_time);
-
-  glTranslatef(0.0, 0.0, 0.5);		//Move out in front
-
-  if(popWid) {
-    glPushMatrix();
-	glTranslatef(popxpos, popypos, 0.0);
-    glScalef(popx, popy, 1.0);
-    popWid->Render(cur_time);
-    glPopMatrix();
-    }
 
   //Now we draw the mouse cursor
   //- if it's enabled and at least one axis is within coord system
@@ -283,9 +272,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       if(mWid->HasWidget(focus_widget)) {
 	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
 	}
-      if(popWid->HasWidget(focus_widget)) {
-	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
       focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
       }
     }
@@ -294,9 +280,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     if(focus_widget) {
       if(mWid->HasWidget(focus_widget)) {
 	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      if(popWid->HasWidget(focus_widget)) {
-	return popWid->HandEventTo(focus_widget, event, mousex, mousey);
 	}
       focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
       }
@@ -314,14 +297,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     mousey = float(event->button.y);
     ScreenToRelative(mousex, mousey);
 
-    if(popWid && mousex < popx && mousey < popy
-	&& mousex > -popx && mousey > -popy) {
-      return popWid->HandleEvent(event, mousex/popx, mousey/popy);
-      }
-    else if(popWid && pop_modal) {
-      return 0;	//Eat button events that miss a modal popup
-      }
-
     return mWid->HandleEvent(event, mousex, mousey);
     }
 
@@ -336,10 +311,6 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
       int ret = 0;
       ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
-      if(popWid && ret && event->type != SDL_SG_EVENT) {
-	ret = popWid->HandEventTo(current_widget, event,
-		mousex/popx, mousey/popy);
-	}
       if(current_widget && ret && event->type != SDL_SG_EVENT) {
 	ret = current_widget->HandleEvent(event, 0.0, 0.0);
 	}
@@ -356,22 +327,12 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     int ret = 1;
     if(current_widget) {
       ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
-      if(popWid && ret && event->type != SDL_SG_EVENT) {
-	ret = popWid->HandEventTo(current_widget, event,
-		mousex/popx, mousey/popy);
-	}
       if(current_widget && ret && event->type != SDL_SG_EVENT) {
 	ret = current_widget->HandleEvent(event, 0.0, 0.0);
 	}
       }
 
-    if(popWid && ret && event->type != SDL_SG_EVENT
-	&& mousex < popx && mousey < popy
-	&& mousex > -popx && mousey > -popy) {
-      ret = popWid->HandleEvent(event, mousex/popx, mousey/popy);
-      }
-
-    if(ret && event->type != SDL_SG_EVENT && ((!popWid) || (!pop_modal)))
+    if(ret && event->type != SDL_SG_EVENT)
       ret = mWid->HandleEvent(event, mousex, mousey);
 
     if(!ret) {	//Mouse DID move, so render is needed
@@ -441,27 +402,23 @@ const TTF_Font *SimpleGUI::Font(int pxsz) {
   return SimpleTexture::Font(pxsz);
   }
 
-void SimpleGUI::SendPopupAspectRatio() {
-  if(popWid) {
-    popWid->SetAspectRatio(aspect * popx / popy);
-    }
-  }
-
 void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
 	float posx, float posy) {
+  if(pop_modal) mainWid->Listen();
+  if(popWid) mWid->RemoveWidget(popWid);
   popWid = wid;
-  popxpos = posx;
-  popypos = posy;
-  popx = px;
-  popy = py;
-  pop_modal = false;
-  SendPopupAspectRatio();
+//  if(popWid) mWid->AddWidget(popWid, posx, posy, px, py, pop_modal);
+  if(popWid) {
+    mWid->AddWidget(popWid);
+    mWid->SetBorder(1.0 - px, 1.0 - py);
+    }
   }
   
 void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,
 	float posx, float posy) {
   SetPopupWidget(wid, px, py, posx, posy);
   pop_modal = true;
+  mainWid->Ignore();
   }
   
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
@@ -547,3 +504,12 @@ int SimpleGUI::NewColor(float r, float g, float b,
 	float tr, float tg, float tb) {
   return SimpleTexture::NewColor(r, g, b, tr, tg, tb);
   }
+
+SG_Alignment *SimpleGUI::MasterWidget() {
+  return mainWid;
+  }
+
+SG_Alignment *SimpleGUI::PopupWidget() {
+  return popWid;
+  }
+

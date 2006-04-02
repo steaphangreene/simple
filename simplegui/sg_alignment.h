@@ -49,9 +49,8 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
-  void SetBackground(SG_Widget *wid) { background = wid; };
-  void UnsetBackground() { background = NULL; };
-
+  void SetBackground(SG_Widget *wid);
+  void UnsetBackground();
   virtual void SetAspectRatio(double asp);
   
 protected:

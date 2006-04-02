@@ -252,6 +252,7 @@ bool SG_Scrollable::AddWidget(SG_TextArea *text) {
 
 void SG_Scrollable::SetAspectRatio(double asp) {
   aspect_ratio = asp;
+  if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
     CalcGeometry();
     widgets[0]->AdjustGeometry(&cur_geom);
