@@ -64,15 +64,12 @@ void SG_TextArea::SetMargins(float xmar, float ymar) {
 
 void SG_TextArea::SetText(const string &mes) {
   message = mes;
-  texture[0].SetText(message);
-  for(int tx=1; tx < int(texture.size()); ++tx) {
-    texture[tx].LinkTextFrom(&(texture[0]));
-    }
+  texture[state].SetText(message);
   UpdateRange();
   }
 
 void SG_TextArea::SetFontSize(int sz) {
-  texture[0].SetTextFontSize(sz);
+  texture[state].SetTextFontSize(sz);
   UpdateRange();
   }
 
@@ -91,18 +88,18 @@ void SG_TextArea::Enable() {
   }
 
 void SG_TextArea::SetVisibleSize(double xs, double ys) {
-  texture[0].SetTextVisibleSize(ys, xs);
+  texture[state].SetTextVisibleSize(ys, xs);
   UpdateRange();
   }
 
 void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
-  texture[0].SetTextVisibleSize(numlns);
+  texture[state].SetTextVisibleSize(numlns);
   UpdateRange();
   }
 
 void SG_TextArea::UpdateRange() {
-  double font_height = TTF_FontHeight(texture[0].CurrentFont());
-  const TextGeometry *tgeom = texture[0].GetTextGeometry();
+  double font_height = TTF_FontHeight(texture[state].CurrentFont());
+  const TextGeometry *tgeom = texture[state].GetTextGeometry();
 
   if(tgeom->visible_xlines > 0) {
     SetXLimits(0.0, (double)(tgeom->text_xsize) / font_height);
@@ -133,7 +130,7 @@ void SG_TextArea::RangerChanged() {
   }
 
 void SG_TextArea::SetAlignment(int align) {
-  texture[0].SetTextAlignment(align);
+  texture[state].SetTextAlignment(align);
   }
 
 unsigned int SG_TextArea::NumLines() {
