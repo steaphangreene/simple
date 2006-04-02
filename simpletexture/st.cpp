@@ -100,6 +100,7 @@ void SimpleTexture::Init(const SimpleTextureType tp) {
   text = NULL;
   texturator = default_texturator;
   dirty = 0;	//Since it's not ready to be "cleaned" yet.
+  all_textures.insert(this);	// So I can be invalidated!
   }
 
 
@@ -188,6 +189,7 @@ const SimpleTexture &SimpleTexture::operator = (const SimpleTexture &in) {
   }
 
 SimpleTexture::~SimpleTexture() {
+  all_textures.erase(this);	// So I can no longer be invalidated!
   Clear();
 
 //FIXME: This is static, need a ref counter.
@@ -978,3 +980,32 @@ void SimpleTexture::SetTexturator(ST_Texturator *ttr) {
   if(ttr == NULL) texturator = default_texturator;
   else texturator = ttr;
   }
+
+void SimpleTexture::NeedToReaquireContext(const int xsize, const int ysize) {
+  new_xsize = xsize;
+  new_ysize = ysize;
+  need_to_reaquire = true;
+  }
+
+bool SimpleTexture::ReaquireNeeded(int &xsize, int &ysize) {
+  if(need_to_reaquire) {
+    xsize = new_xsize;
+    ysize = new_ysize;
+    return true;
+    }
+  return false;
+  }
+
+void SimpleTexture::ReaquireContext() {
+  need_to_reaquire = false;
+  set<SimpleTexture*>::iterator itr = all_textures.begin();
+  for(; itr != all_textures.end(); ++itr) {
+    (*itr)->dirty = 1;
+    }
+  }
+
+set<SimpleTexture *> SimpleTexture::all_textures;
+bool SimpleTexture::need_to_reaquire;
+int SimpleTexture::new_xsize;
+int SimpleTexture::new_ysize;
+

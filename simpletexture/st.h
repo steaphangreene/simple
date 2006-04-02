@@ -54,8 +54,7 @@ enum SimpleTextureType {
    SIMPLETEXTURE_MAX
    };
 
-
-struct TextGeometry {	//FIXME: Onle needed temporarily!
+struct TextGeometry {	//FIXME: Only needed temporarily!
   double visible_xlines;
   double visible_ylines;
   double aspect_ratio;
@@ -69,6 +68,13 @@ public:
   SimpleTexture(int col_index);
   SimpleTexture(const SimpleTexture &in);
   ~SimpleTexture();
+
+// Tell us to prep to renew ourselves
+  static void NeedToReaquireContext(const int xsize, const int ysize);
+// Are we preparing?
+  static bool ReaquireNeeded(int &xsize, int &ysize);
+// Go ahead and do it!
+  static void ReaquireContext();
 
   const SimpleTexture &operator = (const SimpleTexture &in);
   void SetTexture(const SimpleTexture &in);
@@ -173,6 +179,10 @@ protected:
   static int default_pxsize;
   static float fontyratio;
   static char *fontfile;
+
+  static set<SimpleTexture *> all_textures;	//For invalidation
+  static bool need_to_reaquire;
+  static int new_xsize, new_ysize;
   };
 
 #endif // ST_H
