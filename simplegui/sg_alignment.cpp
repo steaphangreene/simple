@@ -236,4 +236,3 @@ void SG_Alignment::SetBackground(SG_Widget *wid) {
 void SG_Alignment::UnsetBackground() {
   background = NULL;
   }
-

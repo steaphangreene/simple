@@ -28,6 +28,7 @@ using namespace std;
 
 #include "sg.h"
 #include "sg_alignment.h"
+#include "sg_positional.h"
 #include "sg_events.h"
 #include "../simpletexture/simpletexture.h"
 
@@ -50,9 +51,9 @@ SimpleGUI::SimpleGUI(int aspmeth, const double asp) {
   aspect_method = aspmeth;
   newaspect_actual = aspect_actual;
 
-  mWid = new SG_Alignment();
+  mWid = new SG_Positional;
   mWid->SetAspectRatio(asp);
-  mainWid = new SG_Alignment();
+  mainWid = new SG_Alignment;
   mWid->SetBackground(mainWid);
 
   popWid = NULL;

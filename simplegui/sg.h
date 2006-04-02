@@ -43,6 +43,7 @@ using namespace std;
 
 class SG_Widget;
 class SG_Alignment;
+class SG_Positional;
 class SG_Editable;
 class SimpleTexture;
 
@@ -112,9 +113,9 @@ public:
   void EnableMouse() { flags &= (~SIMPLEGUI_NOMOUSE); };
 
 protected:
-  SG_Alignment *mWid;		// REAL master widget
+  SG_Positional *mWid;		// REAL master widget
   SG_Alignment *mainWid;	// Apparent master widget
-  SG_Alignment *popWid;		// Apparent popup widget
+  SG_Alignment *popWid;		// Apparent master popup widget
   bool pop_modal;
 
   SimpleTexture *mouse_cursor;
