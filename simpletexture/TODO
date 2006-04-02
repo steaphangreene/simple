@@ -1,4 +1,5 @@
 -=To FIX=-
+Find/fix segfault on opening non-existant bmps!
 
 -=TODO=-
 Handle multiple simultanoeus fonts.
