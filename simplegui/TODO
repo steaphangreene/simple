@@ -1,4 +1,5 @@
 -=To FIX=-
+Fix text alignment code.
 Draw current widget LAST (on top).
 Implement scalability in SG_PassThrough's click-menus.
 Implement modal popups in the new setup
