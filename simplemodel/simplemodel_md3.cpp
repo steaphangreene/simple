@@ -213,8 +213,12 @@ bool SimpleModel_MD3::Load(const string &filenm,
   char *filedata = new char[filesz+1]; //FIXME: Handle Error!
   char *fileptr = filedata;
   while(fileptr < (filedata+filesz)) {
-    fileptr += SDL_RWread(skin, fileptr, 1, filesz);
-    //FIXME: Handle Error!
+    int res = SDL_RWread(skin, fileptr, 1, filesz);
+    if(res <= 0) {
+      fprintf(stderr, "ERROR: Could not read from '%s'\n", skinname.c_str());
+      return false;
+      }
+    fileptr += res;
     }
   *fileptr = 0;
   SDL_RWclose(skin);
