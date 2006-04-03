@@ -47,8 +47,8 @@ SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
     return new SimpleModel_3DS(filename, skinname);
-    }      
-	
+    }
+
   if(filename == "SimpleModel:Cone") return new SimpleModel_Cone();
   if(filename == "SimpleModel:Cube") return new SimpleModel_Cube();
   if(filename == "SimpleModel:Wedge") return new SimpleModel_Wedge();
