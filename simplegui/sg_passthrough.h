@@ -34,6 +34,8 @@ public:
 		float x, float y);
   virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual void SetAspectRatio(double asp);
+
   void SetBehavior(int lact, int mact, int ract);
   void SetMenu(int but, const vector<string> itms);
   void SetSendMotion(bool val = true) { send_motion = val; };

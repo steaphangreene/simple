@@ -197,6 +197,9 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       return 0;
       }
     else if(cur_action == SG_PT_MENU) {
+      RemoveWidget(button_menu[cur_button-1]);
+      cur_action = SG_PT_IGNORE;
+      cur_button = 0;
       return 0; // Eat these events in this case // FIXME: ?
       }
     else if(cur_action == SG_PT_CLICK) {
@@ -262,7 +265,7 @@ void SG_PassThrough::CalcGeometry() {
     cur_geom.xp = act_x;
     cur_geom.yp = act_y;
     cur_geom.xs = 0.125 - xborder;	//Hardcoded for now
-    cur_geom.ys = 0.0625 - yborder;
+    cur_geom.ys = 0.03125 - yborder;
     }
   else {
     cur_geom.xp = 0.0; // Not used by SG_PassThrough widget
@@ -283,5 +286,16 @@ void SG_PassThrough::SetMenu(int but, const vector<string> itms) {
     }
   else {
     button_menu[but-1]->SetItems(itms);
+    }
+  }
+
+void SG_PassThrough::SetAspectRatio(double asp) {
+  aspect_ratio = asp;
+  if(background) background->SetAspectRatio(aspect_ratio);
+  if(widgets.size() > 0) {
+    CalcGeometry();
+    widgets[0]->AdjustGeometry(&cur_geom);
+    double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    widgets[0]->SetAspectRatio(newaspect);
     }
   }

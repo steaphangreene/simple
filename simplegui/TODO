@@ -1,4 +1,5 @@
 -=To FIX=-
+Implement scalability in SG_PassThrough's click-menus.
 Implement modal popups in the new setup
 Implement full window stacking in SG_Positional
 Fold draggable concept back into Alignment, must be able to contain widgets
