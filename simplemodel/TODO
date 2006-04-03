@@ -2,7 +2,6 @@
 Finish normalizing scale and test/fix lighting/normals.
 
 -=TODO=-
-Implement Q3 Model Frame Interpolation
 Add Q3PK3 Support
 Take care of all FIXMEs in code
 
