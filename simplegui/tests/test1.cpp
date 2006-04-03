@@ -257,8 +257,8 @@ int main(int argc, char **argv) {
 
   popup = new SG_Table(6, 6);
   popup->SetBackground(new SG_Panel());
-//  popup->AddWidget(new SG_Button("Popup!\nHere!"), 1, 1, 4, 4);
-  popup->AddWidget(new SG_Editable("Popup!\nHere!"), 1, 1, 4, 4);
+  SG_Editable *edit = new SG_Editable("Popup!\nHere!");
+  popup->AddWidget(edit, 1, 1, 4, 4);
 
   SDL_Event event;
   int user_quit = 0;
@@ -273,6 +273,13 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EVENT_BUTTONPRESS from %s button.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str());
 	  audio_play(click, 8, 8);
+	  if(event.user.data1 == (void*)button[2]) {
+	    static int anum=0;
+	    ++anum;  anum %= 3;
+	    if(anum == 0) edit->SetAlignment(SG_ALIGN_LEFT);
+	    else if(anum == 1) edit->SetAlignment(SG_ALIGN_CENTER);
+	    else if(anum == 2) edit->SetAlignment(SG_ALIGN_RIGHT);
+	    }
 	  }
 	else if(event.user.code == SG_EVENT_STICKYON) {
 	  printf("Received SG_EVENT_STICKYON from %s button.\n",
@@ -376,7 +383,6 @@ int main(int argc, char **argv) {
 	else if(event.user.code == SG_EVENT_EDIT) {
 	  printf("Received SG_EVENT_EDIT - value = '%s'.\n",
 	  	((SG_Text*)(event.user.data1))->Text().c_str());
-	  ((SG_TextArea*)(SG_Text*)(event.user.data1))->SetAlignment(SG_ALIGN_CENTER);
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_EDITABORT) {
