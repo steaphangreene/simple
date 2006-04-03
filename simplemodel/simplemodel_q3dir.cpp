@@ -67,7 +67,7 @@ bool SimpleModel_Q3Dir::Load(const string &filenm, const string &defskin) {
   }
 
 bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
-  SDL_RWops *cfg = SDL_RWFromFile(filenm.c_str(), "r");
+  SDL_RWops *cfg = SDL_RWFromFile(filenm.c_str(), "rb");
   if(!cfg) {
     fprintf(stderr, "WARNING: Could not open model animations file '%s'!\n",
 	filenm.c_str());

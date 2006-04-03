@@ -199,7 +199,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
 
 
   // Here we load the requested skin (FIXME: without checking the skin list!)
-  SDL_RWops *skin = SDL_RWFromFile(skinname.c_str(), "r");
+  SDL_RWops *skin = SDL_RWFromFile(skinname.c_str(), "rb");
   if(!skin) {
     fprintf(stderr, "WARNING: Unable to open skin file '%s'!\n",
 	skinname.c_str());
@@ -215,6 +215,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   while(fileptr < (filedata+filesz)) {
     int res = SDL_RWread(skin, fileptr, 1, filesz);
     if(res <= 0) {
+      fprintf(stderr, "%d\n", filesz);
       fprintf(stderr, "ERROR: Could not read from '%s'\n", skinname.c_str());
       return false;
       }
