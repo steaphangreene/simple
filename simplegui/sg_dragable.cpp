@@ -195,3 +195,9 @@ void SG_Dragable::AdjustGeometry(SG_AlignmentGeometry *geom) {
 void SG_Dragable::SetLabel(SG_Widget *lab) {
   label = lab;
   }
+
+void SG_Dragable::SetAspectRatio(double asp) {
+  SG_Panel::SetAspectRatio(asp);
+  if(label) label->SetAspectRatio(asp);
+  }
+
