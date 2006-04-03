@@ -562,6 +562,23 @@ void SimpleTexture::BuildTextTexture() {
       SDL_SetAlpha(text->rendered_text, 0, SDL_ALPHA_TRANSPARENT);
       }
 
+    if(srec.w < text->text_xsize) {
+      if(text->alignment == ST_ALIGN_CENTER) {
+	srec.x += ((text->text_xsize - srec.w) / 2);
+	}
+      else if(text->alignment == ST_ALIGN_RIGHT) {
+	srec.x += (text->text_xsize - srec.w);
+	}
+      }
+    else if(srec.w > text->text_xsize) {
+      if(text->alignment == ST_ALIGN_CENTER) {
+	drec.x -= ((text->text_xsize - srec.w) / 2);
+	}
+      else if(text->alignment == ST_ALIGN_RIGHT) {
+	drec.x -= (text->text_xsize - srec.w);
+	}
+      }
+
     SDL_BlitSurface(text->rendered_text, &srec, cur, &drec);
     }
   }
