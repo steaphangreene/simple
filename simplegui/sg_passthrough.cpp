@@ -153,7 +153,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       return 0;
       }
     else if(button_action[event->button.button - 1] == SG_PT_MENU) {
-      fprintf(stderr, "WARNING: No menu defined for button %d!\n",
+      fprintf(stderr, "ERROR: No menu defined for button %d!\n",
 	event->button.button);
       exit(1);
       }
@@ -197,9 +197,6 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
       return 0;
       }
     else if(cur_action == SG_PT_MENU) {
-      RemoveWidget(button_menu[cur_button-1]);
-      cur_action = SG_PT_IGNORE;
-      cur_button = 0;
       return 0; // Eat these events in this case // FIXME: ?
       }
     else if(cur_action == SG_PT_CLICK) {

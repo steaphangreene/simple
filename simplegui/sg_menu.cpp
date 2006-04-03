@@ -63,7 +63,6 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
       return 1;
       }
     }  
-
   return 1;
   }
 
