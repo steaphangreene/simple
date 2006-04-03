@@ -48,9 +48,26 @@ public:
 protected:
   string filename;
   vector<SimpleTexture *> texture;
+
+  struct Matrix4x4 {
+    float data[16];
+    };
+
+  struct Quaternion {
+    float data[4];
+    };
+
+  //Conversions
+  static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat);
+  static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
+
+  //Interpolations
+  static void SLERP(Matrix4x4 &res,
+	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
+  static void SLERP(Quaternion &res,
+	const Quaternion &q1, const Quaternion &q2, const float t);
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
 
 #endif	//SIMPLEMODEL_H
-

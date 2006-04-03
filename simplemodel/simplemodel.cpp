@@ -23,6 +23,7 @@
 
 #include <dirent.h>
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 using namespace std;
@@ -81,3 +82,116 @@ const vector<string> &SimpleModel::GetSkinList() {
   return skins;
   }
 
+void SimpleModel::SLERP(Matrix4x4 &res,
+	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t) {
+  Quaternion q1 = {{0.0}}, q2 = {{0.0}}, qres = {{0.0}};
+  Matrix4x4ToQuaternion(q1, m1);
+  Matrix4x4ToQuaternion(q2, m2);
+  SLERP(qres, q1, q2, t);
+  QuaternionToMatrix4x4(res, qres);
+  res.data[12] = (1.0f - t) * m1.data[12] + t * m2.data[12];
+  res.data[13] = (1.0f - t) * m1.data[13] + t * m2.data[13];
+  res.data[14] = (1.0f - t) * m1.data[14] + t * m2.data[14];
+  }
+
+void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
+  mat.data[0] = 1.0f - 2.0f *
+	(quat.data[2] * quat.data[2] + quat.data[3] * quat.data[3]);
+  mat.data[1] = 2.0f *
+	(quat.data[1] * quat.data[2] - quat.data[0] * quat.data[3]);
+  mat.data[2] = 2.0f *
+	(quat.data[1] * quat.data[3] + quat.data[0] * quat.data[2]);
+  mat.data[3] = 0.0f;
+
+  mat.data[4] = 2.0f *
+	(quat.data[1] * quat.data[2] + quat.data[0] * quat.data[3]);
+  mat.data[5] = 1.0f - 2.0f *
+	(quat.data[1] * quat.data[1] + quat.data[3] * quat.data[3]);
+  mat.data[6] = 2.0f *
+	(quat.data[2] * quat.data[3] - quat.data[0] * quat.data[1]);
+  mat.data[7] = 0.0f;
+
+  mat.data[8] = 2.0f *
+	(quat.data[1] * quat.data[3] - quat.data[0] * quat.data[2]);
+  mat.data[9] = 2.0f *
+	(quat.data[2] * quat.data[3] + quat.data[0] * quat.data[1]);
+  mat.data[10] = 1.0f - 2.0f *
+	(quat.data[1] * quat.data[1] + quat.data[2] * quat.data[2]);
+  mat.data[11] = 0.0f;
+
+  mat.data[12] = 0;
+  mat.data[13] = 0;
+  mat.data[14] = 0;
+  mat.data[15] = 1.0f;
+  }
+
+void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat) {
+  float trace, scale;
+
+  trace = 1 + mat.data[0] + mat.data[5] + mat.data[10];
+
+  if(trace > 0.00000001f) {
+    scale = sqrt(trace) * 2.0f;
+    quat.data[1] = (mat.data[9] - mat.data[6]) / scale;
+    quat.data[2] = (mat.data[2] - mat.data[8]) / scale;
+    quat.data[3] = (mat.data[4] - mat.data[1]) / scale;
+    quat.data[0] = 0.25 * scale;
+    }
+  else {
+    if(mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
+      scale  = sqrt(1.0f + mat.data[0] - mat.data[5] - mat.data[10]) * 2.0f;
+      quat.data[1] = 0.25f * scale;
+      quat.data[2] = (mat.data[1] + mat.data[4]) / scale;
+      quat.data[3] = (mat.data[2] + mat.data[8]) / scale;
+      quat.data[0] = (mat.data[9] - mat.data[6]) / scale;
+      }
+    else if(mat.data[5] > mat.data[10]) {
+      scale  = sqrt(1.0f + mat.data[5] - mat.data[0] - mat.data[10]) * 2.0f;
+      quat.data[1] = (mat.data[1] + mat.data[4]) / scale;
+      quat.data[2] = 0.25f * scale;
+      quat.data[3] = (mat.data[6] + mat.data[9]) / scale;
+      quat.data[0] = (mat.data[2] - mat.data[8]) / scale;
+      }
+    else {
+      scale  = sqrt(1.0f + mat.data[10] - mat.data[0] - mat.data[5]) * 2.0f;
+      quat.data[1] = (mat.data[2] + mat.data[8]) / scale;
+      quat.data[2] = (mat.data[6] + mat.data[9]) / scale;
+      quat.data[3] = 0.25f * scale;
+      quat.data[0] = (mat.data[4] - mat.data[1]) / scale;
+      }
+    }
+  }
+
+
+void SimpleModel::SLERP(Quaternion &res,
+	const Quaternion &q1, const Quaternion &q2, const float t) {
+  float cos_theta, ab_cos_theta, s1, s2;
+
+  cos_theta = q1.data[1] * q2.data[1] + q1.data[2] * q2.data[2]
+	+ q1.data[3] * q2.data[3] + q1.data[0] * q2.data[0];
+  ab_cos_theta = fabsf(cos_theta);
+
+  // Calculate the coefficients s1 and s2
+  if(ab_cos_theta < 0.9f) {	// Not close, do full-blown SLERP
+    float theta = acos(ab_cos_theta);
+    float sin_theta = sin(theta);
+    s1 = sin((1.0 - t) * theta) / sin_theta;
+    s2 = sin(t * theta) / sin_theta;
+    }
+  else {			// Pretty close, go linear
+    s1 = 1.0 - t;
+    s2 = t;
+    }
+  if(cos_theta < 0.0) {
+    res.data[0] = s1 * q1.data[0] - s2 * q2.data[0];	// W
+    res.data[1] = s1 * q1.data[1] - s2 * q2.data[1];	// X
+    res.data[2] = s1 * q1.data[2] - s2 * q2.data[2];	// Y
+    res.data[3] = s1 * q1.data[3] - s2 * q2.data[3];	// Z
+    }
+  else {
+    res.data[0] = s1 * q1.data[0] + s2 * q2.data[0];	// W
+    res.data[1] = s1 * q1.data[1] + s2 * q2.data[1];	// X
+    res.data[2] = s1 * q1.data[2] + s2 * q2.data[2];	// Y
+    res.data[3] = s1 * q1.data[3] + s2 * q2.data[3];	// Z
+    }
+  }

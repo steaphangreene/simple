@@ -22,6 +22,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -261,7 +262,10 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const {
   glCullFace(GL_FRONT);	//MD3 models use front face culling
 
-  int frame = CalcFrame(cur_time, anim, start_time);
+  float s2;
+  int frame = CalcBaseFrame(cur_time, anim, start_time, s2);
+  frame = NormalizeFrame(anim, frame);
+  int next = NormalizeFrame(anim, frame+1);
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
     if(meshes[obj].texture && meshes[obj].texture->type != SIMPLETEXTURE_NONE) {
@@ -270,6 +274,7 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
       glBegin(GL_TRIANGLES);
 
       int vertindex = frame * meshes[obj].coords.size();
+      int vertindex2 = next * meshes[obj].coords.size();
 
       for(unsigned int j = 0; j < meshes[obj].faces.size(); j++) {
 	for(int vertex = 0; vertex < 3; vertex++) {
@@ -278,9 +283,17 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
 	  glTexCoord2f(meshes[obj].coords[index].coord[0],
 		meshes[obj].coords[index].coord[1]);
 
-	  glVertex3f(meshes[obj].triangles[vertindex + index].vertex[0],
-		meshes[obj].triangles[vertindex + index].vertex[1],
-		meshes[obj].triangles[vertindex +index].vertex[2]);
+	  float x1 = meshes[obj].triangles[vertindex + index].vertex[0];
+	  float y1 = meshes[obj].triangles[vertindex + index].vertex[1];
+	  float z1 = meshes[obj].triangles[vertindex + index].vertex[2];
+
+	  float x2 = meshes[obj].triangles[vertindex2 + index].vertex[0];
+	  float y2 = meshes[obj].triangles[vertindex2 + index].vertex[1];
+	  float z2 = meshes[obj].triangles[vertindex2 + index].vertex[2];
+
+	  float s1 = (1.0f - s2);
+
+	  glVertex3f(s1*x1 + s2*x2, s1*y1 + s2*y2, s1*z1 + s2*z2);
 	  }
         }
       }
@@ -317,45 +330,57 @@ bool SimpleModel_MD3::MoveToTag(unsigned long tag, Uint32 cur_time,
 	const vector<int> &anim, const vector<Uint32> &start_time) const {
   if(tag >= num_tags) return false;
 
-  int frame = CalcFrame(cur_time, anim, start_time);
+  float s;
+  int frame = CalcBaseFrame(cur_time, anim, start_time, s);
+  frame = NormalizeFrame(anim, frame);
+  int next = NormalizeFrame(anim, frame+1);
 
-  //FIXME: Do Interpolation!
-  Quaternion matrix = pTags[frame * num_tags + tag].pos;
-
+  Matrix4x4 matrix;
+  SLERP(matrix, pTags[frame*num_tags+tag].pos, pTags[next*num_tags+tag].pos, s);
   glMultMatrixf(matrix.data);
 
   return true;
   }
 
-int SimpleModel_MD3::CalcFrame(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const {
+int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, float &offset) const {
   int frame = 0;
-
-  //FIXME: Do Interpolation!
+  offset = 0.0;
   if(animations.size() > 0) {
     if(anim.size() < 1 || start_time.size() < 1) {
       fprintf(stderr, "WARNING: Not enough anims/times sent to animated MD3.\n");
       return false;
       }
-
-    //FIXME: Actually interpolate!
     int start = animations[anim[0]].start;
-    int end = animations[anim[0]].end;
-    int loop = animations[anim[0]].loop;
     float fps = animations[anim[0]].fps;
     float elapsed = cur_time - start_time[0];
 
-    frame = start + (int)(elapsed * fps / 1000.0);
+    float disp = elapsed * fps / 1000.0;
+    frame = start + (int)(disp);
+    offset = disp - floorf(disp);
+    }
+  return frame;
+  }
+
+int SimpleModel_MD3::NormalizeFrame(const vector<int> &anim, int frame) const {
+  if(animations.size() > 0) {
+    if(anim.size() < 1) {
+      fprintf(stderr, "WARNING: Not enough anims/times sent to animated MD3.\n");
+      return 0;
+      }
+    int end = animations[anim[0]].end;
+    int loop = animations[anim[0]].loop;
 
     if(frame >= end && loop > 0)
       frame = (end - loop) + (frame - end + loop) % loop;
     else if(frame >= end)
       frame = end - 1;
     }
-
+  else {
+    frame = 0;
+    }
   return frame;
   }
-
 
 const vector<string> &SimpleModel_MD3::GetSkinList() {
   return skins;

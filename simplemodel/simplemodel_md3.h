@@ -24,43 +24,6 @@
 
 #include "simplemodel.h"
 
-struct Quaternion {
-  float data[16];
-  };
-
-struct MD3AnimationData {
-  Sint32 start;
-  Sint32 end;
-  Sint32 loop; // Number of frames that should be looped, I ignore this (for now)
-  Sint32 fps;
-  };
-
-struct MD3Tag {
-  Sint8 name[64];
-  Quaternion pos;
-  };
-
-struct MD3Face {
-  Sint32 vertices[3];
-  };
-
-struct MD3TexCoord {
-  float coord[2];
-  };
-
-struct MD3Triangle {
-  float vertex[3];
-  Uint8 normal[2];	// FIXME: Don't know how these work yet.
-  };
-
-struct MD3Mesh {
-  Sint8 name[68];
-  vector<MD3Face> faces;
-  vector<MD3TexCoord> coords;
-  vector<MD3Triangle> triangles;
-  SimpleTexture *texture;
-  };
-
 class SimpleModel_MD3 : public SimpleModel {
 public:
   SimpleModel_MD3(const string &filenm,
@@ -93,8 +56,42 @@ protected:
   SimpleModel_MD3();
   string modelname, skinname;
 
-  int CalcFrame(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const;
+  int NormalizeFrame(const vector<int> &anim, int frame) const;
+  int CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, float &offset) const;
+
+  struct MD3AnimationData {
+    Sint32 start;
+    Sint32 end;
+    Sint32 loop; // Number of frames that should be looped, I ignore this (for now)
+    Sint32 fps;
+    };
+
+  struct MD3Tag {
+    Sint8 name[64];
+    Matrix4x4 pos;
+    };
+
+  struct MD3Face {
+    Sint32 vertices[3];
+    };
+
+  struct MD3TexCoord {
+    float coord[2];
+    };
+
+  struct MD3Triangle {
+    float vertex[3];
+    Uint8 normal[2];	// FIXME: Don't know how these work yet.
+    };
+
+  struct MD3Mesh {
+    Sint8 name[68];
+    vector<MD3Face> faces;
+    vector<MD3TexCoord> coords;
+    vector<MD3Triangle> triangles;
+    SimpleTexture *texture;
+    };
 
   Uint32 num_tags;	// Number of tags PER FRAME
   vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames

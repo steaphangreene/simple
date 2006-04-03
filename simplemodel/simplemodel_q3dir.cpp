@@ -132,9 +132,6 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
 
 bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time) const {
-  //FIXME: Interpolate Models Using Animations
-  //FIXME: Interpolate Tags
-
   if(anim.size() < 2 || start_time.size() < 2) {
     fprintf(stderr, "WARNING: Not enough anims/times sent to Q3 renderer.\n");
     return false;
