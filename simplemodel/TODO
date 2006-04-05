@@ -1,5 +1,6 @@
 -=To FIX=-
 Finish normalizing scale and test/fix lighting/normals.
+Clean up external individual MD3 model usage (like weapons).
 
 -=TODO=-
 Add Q3PK3 Support
