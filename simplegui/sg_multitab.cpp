@@ -43,6 +43,11 @@ SG_MultiTab::SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
   SG_Tabs *wid =
     new SG_Tabs(items, SG_AUTOSIZE, 1, ttex, dis_ttex, click_ttex, down_ttex);
   AddWidget(wid, 0, 0, 1, 1);
+
+  for(unsigned int anum = 0; anum != areas.size(); ++anum) {
+    if(!areas[anum]) areas[anum] = new SG_Alignment();
+    }
+
   AddWidget(areas[((SG_Tabs *)(widgets[0]))->Which()], 0, 1, 1, ysize - 1);
   subscreens = areas;
   }
