@@ -60,6 +60,8 @@ bool SimpleModel_MD3::Load(const string &filenm,
     return false;
     }
 
+  bool external_skinfile = false;
+
   //These are the parts of the header we're actually reading.
   Sint8 magic[4];
   Sint32 filever;
@@ -69,13 +71,13 @@ bool SimpleModel_MD3::Load(const string &filenm,
   SDL_RWread(model, &magic, 1, sizeof(magic));
   if(strncmp((char *)magic, "IDP3", 4)) {
     fprintf(stderr, "WARNING: File '%s' is not an MD3 file!\n",
-	skinname.c_str());
+	modelnm.c_str());
     return false;
     }
   freadLE(filever, model);
   if(filever != 15) {
     fprintf(stderr, "WARNING: File '%s' is not an v15 MD3 file!\n",
-	skinname.c_str());
+	modelnm.c_str());
     return false;
     }
   SDL_RWseek(model, 68, SEEK_CUR); // Skip the name of the file
@@ -87,7 +89,6 @@ bool SimpleModel_MD3::Load(const string &filenm,
   meshes.resize(num_meshes);
 
   SDL_RWseek(model, 20, SEEK_CUR); // Skip the rest of the header (FIXME: Skins!)
-
 
   //FIXME: This skips the bones, do we want to actually use them?
   SDL_RWseek(model, 56 * num_frames, SEEK_CUR);
@@ -129,7 +130,6 @@ bool SimpleModel_MD3::Load(const string &filenm,
 
     Uint32 num_shaders;
     freadLE(num_shaders, model);
-//    fprintf(stderr, "num_shaders = %d\n", num_shaders);
 
     Uint32 num_vertices;
     freadLE(num_vertices, model);
@@ -162,6 +162,14 @@ bool SimpleModel_MD3::Load(const string &filenm,
       Sint8 buf[65] = {0};
       SDL_RWread(model, buf, 64, 1);
       AddSkin((char*)buf);
+      if(skins.back().length() > 0) {
+	SimpleTexture *tmptex = new SimpleTexture(skins.back());
+	texture.push_back(tmptex);
+	meshes[meshnum].texture = texture.back();
+	}
+      else {
+	external_skinfile = true;
+	}
       }
 
 	// Seek to the start of the face data, then read it in
@@ -198,6 +206,8 @@ bool SimpleModel_MD3::Load(const string &filenm,
     }
   SDL_RWclose(model);
 
+  // We have all our skins, no need for a .skin file!
+  if(!external_skinfile) return false;
 
   // Here we load the requested skin (FIXME: without checking the skin list!)
   SDL_RWops *skin = SDL_RWFromFile(skinname.c_str(), "rb");
@@ -387,6 +397,12 @@ const vector<string> &SimpleModel_MD3::GetSkinList() {
   }
 
 void SimpleModel_MD3::AddSkin(const string &skinnm) {
+  if(skinnm.length() > 4) {
+    string suffix = skinnm.substr(skinnm.length()-4);
+    if(suffix == ".tga" || suffix == ".TGA") {
+      skins.push_back(skinnm.substr(0, skinnm.length()-4));
+      return;
+      }
+    }
   skins.push_back(skinnm);
-//  fprintf(stderr, "Added Skin '%s'\n", skinnm.c_str());
   }

@@ -1,10 +1,11 @@
 -=To FIX=-
-Finish normalizing scale and test/fix lighting/normals.
 Clean up external individual MD3 model usage (like weapons).
+Fix mulitmodel individual MD3 models (like weapon barrels).
 
 -=TODO=-
 Add Q3PK3 Support
 Take care of all FIXMEs in code
+Finish normalizing scale and test/fix lighting/normals.
 
 -=To Flush Out=-
 
