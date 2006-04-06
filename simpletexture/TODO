@@ -1,5 +1,6 @@
 -=To FIX=-
 Find/fix segfault on opening non-existant bmps!
+Remove the haxxor for adding suffixes to unspecified files!
 
 -=TODO=-
 Handle multiple simultanoeus fonts.

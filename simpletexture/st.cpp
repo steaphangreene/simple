@@ -161,6 +161,14 @@ SimpleTexture::SimpleTexture(const string &filenm) {
     file = SDL_RWFromFile((filenm + ".TGA").c_str(), "rb");
     if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
     }
+  if(!file) {
+    // Judging by many of the models I've see, this is not an error.
+    file = SDL_RWFromFile((filenm + ".jpg").c_str(), "rb");
+    }
+  if(!file) {
+    // Judging by many of the models I've see, this is not an error.
+    file = SDL_RWFromFile((filenm + ".JPG").c_str(), "rb");
+    }
 
   if(!file) {
     // Judging by many of the models I've see, even this is not an error.
