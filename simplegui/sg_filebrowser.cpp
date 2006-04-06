@@ -101,7 +101,7 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
       closedir(dir);
       }
     }
-  fileb = new SG_ComboBox(files, 8, newfile);
+  fileb = new SG_ComboBox(files, false);
   if(files.size() == 0) fileb->SetText("<no files>");
   AddWidget(fileb, 1, 2, 6, 1);
   }
