@@ -204,7 +204,7 @@ bool SimpleVideo::StartScene() {
   int nxsize, nysize;
   if(SimpleTexture::ReaquireNeeded(nxsize, nysize)) {
     SDL_SetVideoMode(nxsize, nysize, 0, video_flags);
-    Resize(nxsize, nysize);
+    ResizeGL(nxsize, nysize);
     SimpleTexture::ReaquireContext();
     }
 
@@ -283,7 +283,7 @@ bool SimpleVideo::FinishScene() {
   return true;
   }
 
-bool SimpleVideo::Resize(int xs, int ys) {
+bool SimpleVideo::ResizeGL(int xs, int ys) {
   int rx = xs, ry = ys;
   surface = SDL_SetVideoMode(rx, ry, 0, video_flags);
 
@@ -306,7 +306,7 @@ bool SimpleVideo::ToggleFullscreen(void) {
   if(strcmp(drv, "x11")) return false;
 
   if(oldmodex != 0) {
-    Resize(oldmodex, oldmodey);
+    ResizeGL(oldmodex, oldmodey);
     oldmodex = 0;  oldmodey = 0;
     }
   else {
@@ -342,7 +342,7 @@ bool SimpleVideo::ToggleFullscreen(void) {
 	  }
 	}
       }
-    Resize(modes[goal]->w, modes[goal]->h);
+    ResizeGL(modes[goal]->w, modes[goal]->h);
     }
   SDL_WM_ToggleFullScreen(surface);
   video_flags ^= SDL_FULLSCREEN;

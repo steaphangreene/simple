@@ -48,7 +48,6 @@ public:
   bool FinishScene();
 
   bool ToggleFullscreen();
-  bool Resize(int, int);
 
   void SetMove(double dx, double dy);
   void SetPosition(double x, double y, Uint32 delay);
@@ -67,6 +66,8 @@ public:
   static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated
 
 protected:
+  bool ResizeGL(int, int);
+
   void CalcMove(double &xoff, double &yoff, Uint32 cur_time);
   void CalcZoom(double &zm, Uint32 cur_time);
   void CalcPos(double &x, double &y, Uint32 cur_time);
