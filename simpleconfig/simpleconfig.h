@@ -34,7 +34,8 @@ class SG_Editable;
 
 class SimpleConfig : public SG_MultiTab {
 public:
-  SimpleConfig();
+  SimpleConfig(const vector<string> &other_tabs= vector<string>(),
+	const vector<SG_Alignment*> &other_screens = vector<SG_Alignment*>());
   virtual ~SimpleConfig();
 
   virtual bool Render(unsigned long cur_time);
