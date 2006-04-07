@@ -57,7 +57,7 @@ SimpleConfig::~SimpleConfig() {
 
 bool SimpleConfig::Render(unsigned long cur_time) {
   if(setback) {
-    mode = oldmode;
+    SetMode(oldmode);
     setback = false;
     modebox->Set(mode);
     }
@@ -72,7 +72,7 @@ bool SimpleConfig::ChildEvent(SDL_Event *event) {
 	mode = -1;
 	for(int ctr=0; ctr < modebox->NumItems(); ++ctr) {
 	  if(modebox->Text() == modebox->Item(ctr)) {
-	    mode = ctr;
+	    SetMode(ctr);
 	    break;
 	    }
 	  }
@@ -105,7 +105,10 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
   SG_TextArea *label = new SG_TextArea("Video Config");
   ret->AddWidget(label, 0, 0, 2, 2);
 
-  vector<SimpleVideo_Mode> modes = SimpleVideo::CurrentVideo()->GetModes();
+  xsize.clear();
+  ysize.clear();
+  vector<SimpleVideo_Mode> modes =
+	SimpleVideo::CurrentVideo()->GetFullScreenModes();
   vector<string> modenames;
   modenames.push_back("Resizable Window");
   Uint32 lastx = 0, lasty = 0;
@@ -116,6 +119,8 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
     char buf[256];
     sprintf(buf, "%dx%d Fullscreen%c", modes[mode].x, modes[mode].y, 0);
     modenames.push_back(buf);
+    xsize.push_back(int(modes[mode].x));
+    ysize.push_back(int(modes[mode].x));
     }
 
   SG_TextArea *mlabel = new SG_TextArea("Resolution:");
@@ -166,4 +171,16 @@ int SimpleConfig::HandleRescueThread() {
 
 int SimpleConfig::rescue_thread_handler(void *me) {
   return ((SimpleConfig*)(me))->HandleRescueThread();
+  }
+
+void SimpleConfig::SetMode(int md) {
+  mode = md;
+  if(mode == 0) {
+    SimpleVideo::CurrentVideo()->SetWindowedMode(1024, 768);	//FIXME: Size!
+    }
+  else {
+    SimpleVideo::CurrentVideo()->SetFullScreenMode(
+	xsize[mode-1], ysize[mode-1]
+	);
+    }
   }

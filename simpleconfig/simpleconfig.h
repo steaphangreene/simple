@@ -56,6 +56,7 @@ protected:
   SDL_Thread *rescue_thread;
   bool setback, confirm;
 
+  void SetMode(int md);
   int mode, oldmode;
   SG_ComboBox *modebox;
   vector<int> xsize, ysize;
