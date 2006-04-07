@@ -54,7 +54,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
   yfov = 45.0;
 
   surface = NULL;
-  videoFlags = 0;
+  video_flags = 0;
   xsize=0; ysize=0;
   hgap=0; vgap=0;
   fullscreen_mode = fullscr;
@@ -78,15 +78,15 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
 
   videoInfo = SDL_GetVideoInfo();
 
-  videoFlags = SDL_OPENGL;
-  videoFlags |= SDL_GL_DOUBLEBUFFER;
-  videoFlags |= SDL_RESIZABLE;
+  video_flags = SDL_OPENGL;
+  video_flags |= SDL_GL_DOUBLEBUFFER;
+  video_flags |= SDL_RESIZABLE;
   if(fullscreen_mode)
-    videoFlags |= SDL_FULLSCREEN;
+    video_flags |= SDL_FULLSCREEN;
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  surface = SDL_SetVideoMode(xsize, ysize, 0, videoFlags);
+  surface = SDL_SetVideoMode(xsize, ysize, 0, video_flags);
 
   if(surface == NULL) {
     fprintf(stderr, "Error: %s\n", SDL_GetError());
@@ -203,7 +203,7 @@ bool SimpleVideo::StartScene() {
 
   int nxsize, nysize;
   if(SimpleTexture::ReaquireNeeded(nxsize, nysize)) {
-    SDL_SetVideoMode(nxsize, nysize, 0, videoFlags);
+    SDL_SetVideoMode(nxsize, nysize, 0, video_flags);
     Resize(nxsize, nysize);
     SimpleTexture::ReaquireContext();
     }
@@ -285,7 +285,7 @@ bool SimpleVideo::FinishScene() {
 
 bool SimpleVideo::Resize(int xs, int ys) {
   int rx = xs, ry = ys;
-  surface = SDL_SetVideoMode(rx, ry, 0, videoFlags);
+  surface = SDL_SetVideoMode(rx, ry, 0, video_flags);
 
   xsize = xs;   ysize = ys;
 
@@ -345,8 +345,8 @@ bool SimpleVideo::ToggleFullscreen(void) {
     Resize(modes[goal]->w, modes[goal]->h);
     }
   SDL_WM_ToggleFullScreen(surface);
-  videoFlags ^= SDL_FULLSCREEN;
-  fullscreen_mode = (videoFlags & SDL_FULLSCREEN) != 0;
+  video_flags ^= SDL_FULLSCREEN;
+  fullscreen_mode = (video_flags & SDL_FULLSCREEN) != 0;
 
   return true;
   }
@@ -562,4 +562,14 @@ void SimpleVideo::SetSubscreen(double xs, double ys, double xe, double ye) {
 
 void SimpleVideo::ResetSubscreen() {
   SetSubscreen(-1.0, -1.0, 1.0, 1.0);
+  }
+
+const vector<SimpleVideo_Mode> SimpleVideo::GetModes() const {
+  vector<SimpleVideo_Mode> modes;
+  SDL_Rect **sdl_modes = SDL_ListModes(NULL, video_flags|SDL_FULLSCREEN);
+  for(int m = 0; sdl_modes[m]; ++m) {
+    SimpleVideo_Mode mode = { sdl_modes[m]->w, sdl_modes[m]->h };
+    modes.push_back(mode);
+    }
+  return modes;
   }

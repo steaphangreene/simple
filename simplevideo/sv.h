@@ -27,6 +27,13 @@
 
 #define SV_ORTHO	1	// If not present, it's perspective mode
 
+#include <vector>
+using namespace std;
+
+struct SimpleVideo_Mode {
+  Uint32 x, y;
+  };
+
 class SimpleVideo {
 public:
   SimpleVideo(int xs, int ys, double asp, bool fullscr = false);
@@ -54,6 +61,8 @@ public:
   void ScreenToMap(double &x, double &y, const double &z = 0.0);
   void MapToScreen(double &x, double &y, const double &z = 0.0);
 
+  const vector<SimpleVideo_Mode> GetModes() const;
+
   static SimpleVideo *Current() { return current; };
   static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated
 
@@ -65,7 +74,7 @@ protected:
   static SimpleVideo *current;
 
   SDL_Surface *surface;
-  int videoFlags;
+  int video_flags;
 
   int xsize, ysize;
   int hgap, vgap;
