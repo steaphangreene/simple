@@ -60,7 +60,9 @@ public:
   void ScreenToMap(double &x, double &y, const double &z = 0.0);
   void MapToScreen(double &x, double &y, const double &z = 0.0);
 
-  const vector<SimpleVideo_Mode> GetModes() const;
+  const vector<SimpleVideo_Mode> GetFullScreenModes() const;
+  void SetFullScreenMode(int xs, int ys);
+  void SetWindowedMode(int xs, int ys);
 
   static SimpleVideo *Current() { return current; };
   static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated

@@ -564,7 +564,7 @@ void SimpleVideo::ResetSubscreen() {
   SetSubscreen(-1.0, -1.0, 1.0, 1.0);
   }
 
-const vector<SimpleVideo_Mode> SimpleVideo::GetModes() const {
+const vector<SimpleVideo_Mode> SimpleVideo::GetFullScreenModes() const {
   vector<SimpleVideo_Mode> modes;
   SDL_Rect **sdl_modes = SDL_ListModes(NULL, video_flags|SDL_FULLSCREEN);
   for(int m = 0; sdl_modes[m]; ++m) {
@@ -573,3 +573,14 @@ const vector<SimpleVideo_Mode> SimpleVideo::GetModes() const {
     }
   return modes;
   }
+
+void SimpleVideo::SetFullScreenMode(int xs, int ys) {
+  SDL_SetVideoMode(xs, ys, 0, video_flags|SDL_FULLSCREEN);
+  ResizeGL(xs, ys);
+  }
+
+void SimpleVideo::SetWindowedMode(int xs, int ys) {
+  SDL_SetVideoMode(xs, ys, 0, video_flags&(~SDL_FULLSCREEN));
+  ResizeGL(xs, ys);
+  }
+
