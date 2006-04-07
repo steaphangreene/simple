@@ -26,6 +26,7 @@
 #include <vector>
 using namespace std;
 
+#include "SDL_thread.h"
 #include "../simplegui/sg_multitab.h"
 
 class SG_Button;
@@ -50,7 +51,13 @@ protected:
   SG_Alignment *BuildMouseScreen();
   SG_Alignment *BuildKeyboardScreen();
 
-  SG_ComboBox *vmwid;
+  static int rescue_thread_handler(void *me);
+  int HandleRescueThread();
+  SDL_Thread *rescue_thread;
+  bool setback, confirm;
+
+  int mode, oldmode;
+  SG_ComboBox *modebox;
   vector<int> xsize, ysize;
   };
 

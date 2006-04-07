@@ -40,17 +40,56 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   copy(other_tabs.begin(), other_tabs.end(), items.begin()+4);
   copy(other_screens.begin(), other_screens.end(), screens.begin()+4);
   Resize(1, 16);
-  SetItems(items, screens);
+  SetItems(items);
+  SetAreas(screens);
+  mode = 0;
+  oldmode = 0;
+  setback = false;
+  confirm = true;
+  rescue_thread = NULL;
   }
 
 SimpleConfig::~SimpleConfig() {
+  confirm = true;
+  if(rescue_thread) SDL_WaitThread(rescue_thread, NULL);
+  rescue_thread = NULL;
   }
 
 bool SimpleConfig::Render(unsigned long cur_time) {
+  if(setback) {
+    mode = oldmode;
+    setback = false;
+    modebox->Set(mode);
+    }
   return SG_MultiTab::Render(cur_time);
   }
 
 bool SimpleConfig::ChildEvent(SDL_Event *event) {
+  if(event->type == SDL_SG_EVENT) {
+    switch(event->user.code) {
+      case(SG_EVENT_NEWTEXT): {
+	oldmode = mode;
+	mode = -1;
+	for(int ctr=0; ctr < modebox->NumItems(); ++ctr) {
+	  if(modebox->Text() == modebox->Item(ctr)) {
+	    mode = ctr;
+	    break;
+	    }
+	  }
+	if(mode == -1) {
+	  fprintf(stderr, "ERROR, Got a non-mode mode!\n");
+	  exit(1);
+	  }
+	if(rescue_thread) {
+	  confirm = true;
+	  SDL_WaitThread(rescue_thread, NULL);
+	  rescue_thread = NULL;
+	  }
+	confirm = false;
+	rescue_thread = SDL_CreateThread(rescue_thread_handler, (void*)(this));
+	}break;
+      }
+    }
   return SG_MultiTab::ChildEvent(event);
   }
 
@@ -81,7 +120,7 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
 
   SG_TextArea *mlabel = new SG_TextArea("Resolution:");
   ret->AddWidget(mlabel, 0, 2);
-  SG_ComboBox *modebox = new SG_ComboBox(modenames);
+  modebox = new SG_ComboBox(modenames);
   ret->AddWidget(modebox, 1, 2);
 
   return (SG_Alignment *)ret;
@@ -112,4 +151,19 @@ SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
   SG_TextArea *label = new SG_TextArea("Keyboard Config");
   ret->AddWidget(label, 0, 0, 2, 2);
   return (SG_Alignment *)ret;
+  }
+
+int SimpleConfig::HandleRescueThread() {
+  for(int x= 0; x < 20 && (!confirm); ++x) SDL_Delay(250);
+  if(!confirm) {
+    setback = true;
+    }
+  else {
+    confirm = false;
+    }
+  return 0;
+  }
+
+int SimpleConfig::rescue_thread_handler(void *me) {
+  return ((SimpleConfig*)(me))->HandleRescueThread();
   }
