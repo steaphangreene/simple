@@ -27,39 +27,39 @@ win32:	libsimpleconfig.win32_a
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -framework OpenGL
+#LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
 #CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
+#LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
 CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
 #CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#LIBS=	`sdl-config --libs` ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
 
 OBJS:=	simpleconfig.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` ../simplegui/libsimplegui.win32_a ../simpletexture/libsimpletexture.win32_a -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
 
 WOBJS:=	simpleconfig.win32_o
 
@@ -89,12 +89,12 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o *.a test1 test2 test3 *.win32_o *.win32_a *.exe
+	rm -f deps.mk *.o *.a test1 *.win32_o *.win32_a *.exe
 
 test:	test1
 
-test1:	test1.o libsimpleconfig.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpleconfig.a $(LIBS)
+test1:	test1.o libsimpleconfig.a renderer.o audio.o
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimpleconfig.a $(LIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
