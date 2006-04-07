@@ -39,6 +39,7 @@ SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
 	: SG_Compound(binvpro, 1, 0.0, 0.0) {
 
   opb = new SG_Button("v", btex, btex_dis, btex_click);
+  opb->SetAlignment(SG_ALIGN_CENTER);
   AddWidget(opb, binvpro-1, 0, 1, 1);
 
   string message;
