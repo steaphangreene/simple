@@ -103,6 +103,10 @@ void SG_Menu::SetItems(const vector<string> &itms) {
     }
   }
 
+int SG_Menu::NumItems() {
+  return int(items.size());
+  }
+
 void SG_Menu::SetID(int id) {
   menu_id = id;
   if(menu_id < 0) menu_id = 0;

@@ -41,6 +41,7 @@ public:
 
   virtual const string &Item(int opt);
   virtual void SetItems(const vector<string> &itms);
+  virtual int NumItems();
 
   void SetID(int id);
   int ID();

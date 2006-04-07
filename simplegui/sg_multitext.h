@@ -38,6 +38,10 @@ public:
   virtual void SetItems(const vector<string> &itms) {
     fprintf(stderr, "WARNING: Calling SG_MultiText::SetItems() - should not be here!\n");
     };
+  virtual int NumItems() {
+    fprintf(stderr, "WARNING: Calling SG_MultiText::NumItems() - should not be here!\n");
+    return 0;
+    };
   };
 
 #endif // SG_MULTITEXT_H

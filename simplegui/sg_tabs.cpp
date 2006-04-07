@@ -64,6 +64,14 @@ void SG_Tabs::SetItems(const vector<string> &items) {
     }
   }
 
+const string &SG_Tabs::Item(int opt) {
+  return ((SG_StickyButton*)(widgets[opt]))->Text();
+  }
+
+int SG_Tabs::NumItems() {
+  return int(widgets.size());
+  }
+
 bool SG_Tabs::ChildEvent(SDL_Event *event) {
   static SG_Event_DataType event_data;
 

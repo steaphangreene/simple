@@ -55,6 +55,9 @@ public:
   virtual void SetText(const string &txt);
   virtual const string &Item(int opt);
   virtual void SetItems(const vector<string> &itms);
+  virtual int NumItems();
+
+  void Set(int);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;

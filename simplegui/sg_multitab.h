@@ -33,7 +33,7 @@ using namespace std;
 
 class SG_Alignment;
 
-class SG_MultiTab : public SG_Compound {
+class SG_MultiTab : public SG_Compound, public SG_MultiText {
 public:
   SG_MultiTab(const vector<string> &items = vector<string>(),
 	const vector<SG_Alignment *> &areas = vector<SG_Alignment *>(),
@@ -43,8 +43,11 @@ public:
   virtual ~SG_MultiTab();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
-  void SetItems(const vector<string> &items,
-	const vector<SG_Alignment *> &areas = vector<SG_Alignment *>());
+  virtual const string &Item(int opt);
+  virtual void SetItems(const vector<string> &items);
+  virtual int NumItems();
+  void SetArea(int page, SG_Alignment *area);
+  void SetAreas(const vector<SG_Alignment *> &areas);
   void Set(int);
   
 protected:

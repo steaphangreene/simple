@@ -72,6 +72,10 @@ const string &SG_PullDown::Item(int opt) {
   return menu->Item(opt);
   }
 
+int SG_PullDown::NumItems() {
+  return menu->NumItems();
+  }
+
 void SG_PullDown::SetItems(const vector<string> &itms) {
   menu->SetItems(itms);
   }

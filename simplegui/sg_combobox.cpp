@@ -71,7 +71,7 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
     }
   if(event->user.data1 == (void*)(SG_MultiText*)menu) {
     if(event->user.code == SG_EVENT_MENU) {
-      text->SetText(menu->Item(((int*)(event->user.data2))[0]));
+      Set(((int*)(event->user.data2))[0]);
       event->user.code = SG_EVENT_NEWTEXT;
       event->user.data1 = (void*)(SG_Text*)this;
       event->user.data2 = NULL;
@@ -104,4 +104,12 @@ const string &SG_ComboBox::Item(int opt) {
 void SG_ComboBox::SetItems(const vector<string> &itms) {
   menu->SetItems(itms);
   if(itms.size() > 0) text->SetText(itms[0]);
+  }
+
+int SG_ComboBox::NumItems() {
+  return menu->NumItems();
+  }
+
+void SG_ComboBox::Set(int which) {
+  text->SetText(menu->Item(which));
   }

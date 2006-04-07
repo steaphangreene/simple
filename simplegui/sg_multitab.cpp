@@ -55,14 +55,40 @@ SG_MultiTab::~SG_MultiTab() {
   subscreens.clear();
   }
 
-void SG_MultiTab::SetItems(const vector<string> &items,
-	const vector<SG_Alignment *> &areas) {
+const string &SG_MultiTab::Item(int opt) {
+  return tabs->Item(opt);
+  }
+
+void SG_MultiTab::SetItems(const vector<string> &items) {
   tabs->SetItems(items);
   if(widgets.size() > 1) RemoveWidget(widgets[1]);
   while(subscreens.size() > 0) delete subscreens[0];
-  subscreens = areas;
+  subscreens.clear();
   if(subscreens.size() < items.size()) subscreens.resize(items.size());
   Set(tabs->Which());
+  }
+
+void SG_MultiTab::SetArea(int page, SG_Alignment *area) {
+  if(page < 0 || page >= int(subscreens.size())) return;
+  if(subscreens[page]) {
+    if(page == tabs->Which()) RemoveWidget(subscreens[page]);
+    delete subscreens[page];
+    }
+  subscreens[page] = area;
+  }
+
+void SG_MultiTab::SetAreas(const vector<SG_Alignment *> &areas) {
+  for(Uint32 i = 0; i < subscreens.size(); ++i) {
+    delete subscreens[i];
+    }
+  subscreens = areas;
+  if(int(subscreens.size()) < tabs->NumItems())
+	subscreens.resize(tabs->NumItems());
+  Set(tabs->Which());
+  }
+
+int SG_MultiTab::NumItems() {
+  return tabs->NumItems();
   }
 
 void SG_MultiTab::Set(int which) {
