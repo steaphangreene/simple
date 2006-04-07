@@ -28,43 +28,50 @@
 #include "sg_tabs.h"
 #include "sg_events.h"
 
-SG_MultiTab::SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
+SG_MultiTab::SG_MultiTab(const vector<string> &items,
+	const vector<SG_Alignment *> &areas,
 	int tinvpro,
 	SimpleTexture ttex, SimpleTexture dis_ttex, SimpleTexture click_ttex,
 	SimpleTexture down_ttex) : SG_Compound(1, tinvpro, 0.0, 0.0) {
-  if(items.size() != areas.size()) {
-    fprintf(stderr, "ERROR: SG_MultiTab given vectors of different sizes!\n");
-    exit(1);
-    }
-  if(items.size() == 0) {
-    fprintf(stderr, "ERROR: SG_MultiTab given vectors of zero size!\n");
-    exit(1);
-    }
-  SG_Tabs *wid =
-    new SG_Tabs(items, SG_AUTOSIZE, 1, ttex, dis_ttex, click_ttex, down_ttex);
-  AddWidget(wid, 0, 0, 1, 1);
 
-  for(unsigned int anum = 0; anum != areas.size(); ++anum) {
-    if(!areas[anum]) areas[anum] = new SG_Alignment();
-    }
+  tabs = new SG_Tabs(items, SG_AUTOSIZE, 1);
+  AddWidget(tabs, 0, 0, 1, 1);
 
-  AddWidget(areas[((SG_Tabs *)(widgets[0]))->Which()], 0, 1, 1, ysize - 1);
   subscreens = areas;
+  if(subscreens.size() < items.size()) subscreens.resize(items.size());
+  for(unsigned int anum = 0; anum != subscreens.size(); ++anum) {
+    if(!subscreens[anum]) subscreens[anum] = new SG_Alignment();
+    }
+
+  if(items.size() > 0) AddWidget(subscreens[tabs->Which()], 0, 1, 1, ysize - 1);
   }
 
 SG_MultiTab::~SG_MultiTab() {
-  RemoveWidget(widgets[1]);
-  vector<SG_Alignment *> tmp = subscreens;
-  vector<SG_Alignment *>::iterator itrw = tmp.begin();
-  subscreens.clear();
-  for(; itrw != tmp.end(); ++itrw) {
+  if(widgets.size() > 1) RemoveWidget(widgets[1]);
+  vector<SG_Alignment *>::iterator itrw = subscreens.begin();
+  for(; itrw != subscreens.end(); ++itrw) {
     if(*itrw) delete (*itrw);
     }
+  subscreens.clear();
+  }
+
+void SG_MultiTab::SetItems(const vector<string> &items,
+	const vector<SG_Alignment *> &areas) {
+  tabs->SetItems(items);
+  if(widgets.size() > 1) RemoveWidget(widgets[1]);
+  while(subscreens.size() > 0) delete subscreens[0];
+  subscreens = areas;
+  if(subscreens.size() < items.size()) subscreens.resize(items.size());
+  Set(tabs->Which());
   }
 
 void SG_MultiTab::Set(int which) {
-  RemoveWidget(widgets[1]); //Always REALLY current subwidget
-  AddWidget(subscreens[which], 0, 1, 1, ysize - 1);
+  if(which >= int(subscreens.size()) || which < 0) return;
+  if(tabs->Which() != which) tabs->Set(which);
+  if(widgets.size() > 1)
+    RemoveWidget(widgets[1]); //Always REALLY current subwidget
+  if(which < int(subscreens.size()) && subscreens[which])
+    AddWidget(subscreens[which], 0, 1, 1, ysize - 1);
   }
 
 bool SG_MultiTab::ChildEvent(SDL_Event *event) {

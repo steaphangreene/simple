@@ -28,22 +28,40 @@
 #include "sg_stickybutton.h"
 #include "sg_events.h"
 
-SG_Tabs::SG_Tabs(vector<string> items, int x, int y, SimpleTexture tex,
+SG_Tabs::SG_Tabs(const vector<string> &items, int x, int y, SimpleTexture tex,
 	SimpleTexture dis_tex, SimpleTexture click_tex, SimpleTexture down_tex)
-	: SG_Compound(
-		(x<=0) ? items.size(): x,
-		(y<=0) ? items.size(): y,
-		0.0, 0.0) {
+	: SG_Compound(1, 1, 0.0, 0.0) {
+
+  fixed_x = x;
+  fixed_y = y;
   cur_on = 0;
-  for(int n=0; n < (int)(items.size()); ++n) {
-    SG_StickyButton * sb =
-	new SG_StickyButton(items[n], tex, dis_tex, click_tex, down_tex);
-    AddWidget(sb);
-    if(n == cur_on) sb->TurnOn();
-    }
+  SetItems(items);
   }
 
 SG_Tabs::~SG_Tabs() {
+  }
+
+void SG_Tabs::SetItems(const vector<string> &items) {
+  while(widgets.size() > 0) {
+    SG_Widget *tmpw = widgets[0];
+    RemoveWidget(widgets[0]);
+    delete tmpw;
+    }
+
+  int xsz = fixed_x, ysz = fixed_y;
+  if(fixed_x<=0) xsz = int(items.size());
+  if(fixed_y<=0) ysz = 1;
+  if(xsz <= 0) xsz = 1;
+  if(ysz <= 0) ysz = 1;
+  Resize(xsz, ysz);
+
+  if(cur_on >= int(items.size())) cur_on = items.size() - 1;
+  if(cur_on < 0) cur_on = 0;
+  for(int n=0; n < (int)(items.size()); ++n) {
+    SG_StickyButton * sb = new SG_StickyButton(items[n]);
+    AddWidget(sb, n, 0);
+    if(n == cur_on) sb->TurnOn();
+    }
   }
 
 bool SG_Tabs::ChildEvent(SDL_Event *event) {

@@ -35,17 +35,21 @@ class SG_Alignment;
 
 class SG_MultiTab : public SG_Compound {
 public:
-  SG_MultiTab(vector<string> items, vector<SG_Alignment *> areas,
+  SG_MultiTab(const vector<string> &items = vector<string>(),
+	const vector<SG_Alignment *> &areas = vector<SG_Alignment *>(),
 	int tinvpro = 8, 
 	SimpleTexture ttex = SG_COL_RAISED, SimpleTexture dis_ttex = SG_COL_LOW,
 	SimpleTexture click_ttex = SG_COL_LOW, SimpleTexture down_ttex = SG_COL_HIGH);
   virtual ~SG_MultiTab();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
+  void SetItems(const vector<string> &items,
+	const vector<SG_Alignment *> &areas = vector<SG_Alignment *>());
   void Set(int);
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+  SG_Tabs *tabs;
   vector<SG_Alignment *> subscreens;
   };
 

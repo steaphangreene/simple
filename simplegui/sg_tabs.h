@@ -41,13 +41,15 @@ class SG_StickyButton;
 
 class SG_Tabs : public SG_Compound {
 public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
-  SG_Tabs(vector<string> items, int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
+  SG_Tabs(const vector<string> &items = vector<string>(),
+	int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
 	SimpleTexture tex = SG_COL_RAISED, SimpleTexture dis_tex = SG_COL_LOW,
 	SimpleTexture click_tex = SG_COL_LOW, SimpleTexture down_tex = SG_COL_HIGH);
   virtual ~SG_Tabs();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   int Which() { return cur_on; }
+  void SetItems(const vector<string> &items);
   void Set(int which);
   void Next(bool wrap = false);
   void Prev(bool wrap = false);
@@ -59,6 +61,7 @@ public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   int cur_on; //Which widget is currently on
+  int fixed_x, fixed_y;
   };
 
 #endif // SG_TABS_H
