@@ -30,7 +30,8 @@ using namespace std;
 
 class SG_Button;
 class SG_TextArea;
-class SG_Editable;
+class SG_ComboBox;
+class SG_Alignment;
 
 class SimpleConfig : public SG_MultiTab {
 public:
@@ -44,6 +45,13 @@ public:
 
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+  SG_Alignment *BuildVideoScreen();
+  SG_Alignment *BuildAudioScreen();
+  SG_Alignment *BuildMouseScreen();
+  SG_Alignment *BuildKeyboardScreen();
+
+  SG_ComboBox *vmwid;
+  vector<int> xsize, ysize;
   };
 
 #endif // SIMPLECONFIG_H

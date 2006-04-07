@@ -33,26 +33,26 @@ int FRAME_DIM = 128;
 using namespace std;
 
 #include "../../simplegui/simplegui.h"
+#include "../../simplevideo/simplevideo.h"
 #include "../simpleconfig.h"
-#include "renderer.h"
 #include "audio.h"
 
 #include "click.h"
 
 static SimpleGUI *gui;
+static SimpleVideo *video;
 
 int main(int argc, char **argv) {
   char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
   int xs=1024, ys=768;
 
-  if(!init_renderer(xs, ys)) {
-    fprintf(stderr, "Warning!  Graphics failed to init!\n");
-    }
+  video = new SimpleVideo(xs, ys, 4.0/3.0);
+
+  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
+
   audio_init(2048);
 
   int click = audio_buildsound(click_data, sizeof(click_data));
-
-  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
 
   gui->LoadFont(fontfn);
 
@@ -85,10 +85,10 @@ int main(int argc, char **argv) {
 	}
       }
 
-    start_scene();
+    video->StartScene();
     gui->RenderStart(SDL_GetTicks());
     gui->RenderFinish(SDL_GetTicks());
-    finish_scene();
+    video->FinishScene();
     }
   delete gui;    //Will delete all children
 

@@ -22,11 +22,8 @@
 #include "SDL_opengl.h"
 
 #include "simpleconfig.h"
-#include "../simplegui/sg_events.h"
-#include "../simplegui/sg_globals.h"
-#include "../simplegui/sg_button.h"
-#include "../simplegui/sg_dragable.h"
-#include "../simplegui/sg_textarea.h"
+#include "../simplegui/simplegui.h"
+#include "../simplevideo/simplevideo.h"
 
 SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
         const vector<SG_Alignment*> &other_screens) {
@@ -36,14 +33,13 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   items[1] = "Audio";
   items[2] = "Mouse";
   items[3] = "Keyboard";
-  screens[0] = new SG_Alignment;
-  ((SG_Alignment*)(screens[0]))->SetBorder(0.25, 0.25);
-  ((SG_Alignment*)(screens[0]))->AddWidget(new SG_TextArea("Video Settings"));
-  screens[1] = new SG_Alignment;
-  screens[2] = new SG_Alignment;
-  screens[3] = new SG_Alignment;
+  screens[0] = BuildVideoScreen();
+  screens[1] = BuildAudioScreen();
+  screens[2] = BuildMouseScreen();
+  screens[3] = BuildKeyboardScreen();
   copy(other_tabs.begin(), other_tabs.end(), items.begin()+4);
   copy(other_screens.begin(), other_screens.end(), screens.begin()+4);
+  Resize(1, 16);
   SetItems(items, screens);
   }
 
@@ -61,3 +57,59 @@ bool SimpleConfig::ChildEvent(SDL_Event *event) {
 //  bool SimpleConfig::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SimpleConfig::Default_Mouse_Cursor = NULL;
+
+SG_Alignment *SimpleConfig::BuildVideoScreen() {
+  SG_Table *ret;
+  ret = new SG_Table(2, 15);
+  ret->SetBorder(0.0, 0.0);
+
+  SG_TextArea *label = new SG_TextArea("Video Config");
+  ret->AddWidget(label, 0, 0, 2, 2);
+
+  vector<SimpleVideo_Mode> modes = SimpleVideo::CurrentVideo()->GetModes();
+  vector<string> modenames;
+  modenames.push_back("Resizable Window");
+  Uint32 lastx = 0, lasty = 0;
+  for(Uint32 mode = 0; mode < modes.size(); ++mode) {
+    if(modes[mode].x == lastx && modes[mode].y == lasty) continue;
+    lastx = modes[mode].x;
+    lasty = modes[mode].y;
+    char buf[256];
+    sprintf(buf, "%dx%d Fullscreen%c", modes[mode].x, modes[mode].y, 0);
+    modenames.push_back(buf);
+    }
+
+  SG_TextArea *mlabel = new SG_TextArea("Resolution:");
+  ret->AddWidget(mlabel, 0, 2);
+  SG_ComboBox *modebox = new SG_ComboBox(modenames);
+  ret->AddWidget(modebox, 1, 2);
+
+  return (SG_Alignment *)ret;
+  }
+
+SG_Alignment *SimpleConfig::BuildAudioScreen() {
+  SG_Table *ret;
+  ret = new SG_Table(2, 15);
+  ret->SetBorder(0.0, 0.0);
+  SG_TextArea *label = new SG_TextArea("Audio Config");
+  ret->AddWidget(label, 0, 0, 2, 2);
+  return (SG_Alignment *)ret;
+  }
+
+SG_Alignment *SimpleConfig::BuildMouseScreen() {
+  SG_Table *ret;
+  ret = new SG_Table(2, 15);
+  ret->SetBorder(0.0, 0.0);
+  SG_TextArea *label = new SG_TextArea("Mouse Config");
+  ret->AddWidget(label, 0, 0, 2, 2);
+  return (SG_Alignment *)ret;
+  }
+
+SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
+  SG_Table *ret;
+  ret = new SG_Table(2, 15);
+  ret->SetBorder(0.0, 0.0);
+  SG_TextArea *label = new SG_TextArea("Keyboard Config");
+  ret->AddWidget(label, 0, 0, 2, 2);
+  return (SG_Alignment *)ret;
+  }
