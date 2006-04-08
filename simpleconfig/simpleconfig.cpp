@@ -120,7 +120,7 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
     sprintf(buf, "%dx%d Fullscreen%c", modes[mode].x, modes[mode].y, 0);
     modenames.push_back(buf);
     xsize.push_back(int(modes[mode].x));
-    ysize.push_back(int(modes[mode].x));
+    ysize.push_back(int(modes[mode].y));
     }
 
   SG_TextArea *mlabel = new SG_TextArea("Resolution:");
