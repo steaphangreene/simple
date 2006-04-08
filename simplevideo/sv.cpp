@@ -86,12 +86,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  surface = SDL_SetVideoMode(xsize, ysize, 0, video_flags);
-
-  if(surface == NULL) {
-    fprintf(stderr, "Error: %s\n", SDL_GetError());
-    exit(0);
-    }
+  ResizeGL(xsize, ysize);
 
   // Set a window title.
   SDL_WM_SetCaption("SimpleVideo Renderer", "SimpleVideo Renderer");
@@ -142,9 +137,6 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
 //  glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
 //  glEnable(GL_LIGHT0);
 //  glEnable(GL_LIGHTING);
-
-  // Set the new viewport size
-  glViewport(0, 0, (GLint)xsize, (GLint)ysize);
 
   // Enable 2D textures by default
   glEnable(GL_TEXTURE_2D);
@@ -271,7 +263,6 @@ bool SimpleVideo::StartScene() {
 
   glGetDoublev(GL_MODELVIEW_MATRIX, modelv);
   glGetDoublev(GL_PROJECTION_MATRIX, projv);
-  glGetIntegerv(GL_VIEWPORT, viewport);
 
   return true;
   }
@@ -284,17 +275,9 @@ bool SimpleVideo::FinishScene() {
   }
 
 bool SimpleVideo::ResizeGL(int xs, int ys) {
-  int rx = xs, ry = ys;
-  surface = SDL_SetVideoMode(rx, ry, 0, video_flags);
-
+  surface = SDL_SetVideoMode(xs, ys, 0, video_flags);
   xsize = xs;   ysize = ys;
-
-  if(xsize > (ysize*4)/3) xsize = (ysize*4)/3;
-  if(ysize > (xsize*3)/4) ysize = (xsize*3)/4;
-
-  hgap = (rx-xsize)/2;  vgap = (ry-ysize)/2;
-  glViewport(hgap, vgap, (GLint)xsize, (GLint)ysize);
-
+  glViewport(0, 0, (GLint)xsize, (GLint)ysize);
   return true;
   }
 
@@ -575,12 +558,11 @@ const vector<SimpleVideo_Mode> SimpleVideo::GetFullScreenModes() const {
   }
 
 void SimpleVideo::SetFullScreenMode(int xs, int ys) {
-  SDL_SetVideoMode(xs, ys, 0, video_flags|SDL_FULLSCREEN);
+  video_flags |= SDL_FULLSCREEN;
   ResizeGL(xs, ys);
   }
 
 void SimpleVideo::SetWindowedMode(int xs, int ys) {
-  SDL_SetVideoMode(xs, ys, 0, video_flags&(~SDL_FULLSCREEN));
+  video_flags &= (~SDL_FULLSCREEN);
   ResizeGL(xs, ys);
   }
-

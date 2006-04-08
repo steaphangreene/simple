@@ -105,7 +105,6 @@ protected:
   Uint32 down_start, down_delay;
 
   GLdouble projv[16], modelv[16];
-  GLint viewport[4];
 
   double xstart, xend, ystart, yend;
   };
