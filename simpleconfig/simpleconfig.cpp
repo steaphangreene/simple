@@ -49,6 +49,7 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   setback = false;
   confirm = true;
   rescue_thread = NULL;
+  SetBackground(new SG_Panel());
   }
 
 SimpleConfig::~SimpleConfig() {
