@@ -40,11 +40,12 @@ public:
 	const vector<SG_Alignment*> &other_screens = vector<SG_Alignment*>());
   virtual ~SimpleConfig();
 
-  virtual bool Render(unsigned long cur_time);
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Alignment *BuildVideoScreen();
   SG_Alignment *BuildAudioScreen();
@@ -55,6 +56,7 @@ protected:
   int HandleRescueThread();
   SDL_Thread *rescue_thread;
   bool setback, confirm;
+  Uint32 timeleft, disptime;
 
   void SetMode(int md);
   int mode, oldmode;
@@ -63,7 +65,6 @@ protected:
   SG_TextArea *rescue_indicator;
   SG_TextArea *rescue_label;
   vector<int> xsize, ysize;
-  Uint32 timeleft, disptime;
   };
 
 #endif // SIMPLECONFIG_H

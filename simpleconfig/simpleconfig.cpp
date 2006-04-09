@@ -57,7 +57,7 @@ SimpleConfig::~SimpleConfig() {
   rescue_thread = NULL;
   }
 
-bool SimpleConfig::Render(unsigned long cur_time) {
+bool SimpleConfig::RenderSelf(unsigned long cur_time) {
   if(setback) {
     SetMode(oldmode);
     setback = false;
@@ -88,7 +88,7 @@ bool SimpleConfig::Render(unsigned long cur_time) {
       rescue_indicator->SetText(buf);
       }
     }
-  return SG_MultiTab::Render(cur_time);
+  return SG_MultiTab::RenderSelf(cur_time);
   }
 
 bool SimpleConfig::ChildEvent(SDL_Event *event) {
@@ -207,8 +207,9 @@ SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
 int SimpleConfig::HandleRescueThread() {
   Uint32 ttime = 5000;	// 5 Seconds
   Uint32 tstep = 250;	// In 1/4 second steps
-  for(timeleft = ttime; timeleft > 0 && (!confirm); timeleft -= tstep)
+  for(timeleft = ttime; timeleft > 0 && (!confirm); timeleft -= tstep) {
     SDL_Delay(tstep);
+    }
   if(!confirm) {
     setback = true;
     }
