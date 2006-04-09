@@ -559,10 +559,20 @@ const vector<SimpleVideo_Mode> SimpleVideo::GetFullScreenModes() const {
 
 void SimpleVideo::SetFullScreenMode(int xs, int ys) {
   video_flags |= SDL_FULLSCREEN;
-  ResizeGL(xs, ys);
+
+  SDL_Event event;
+  event.type = SDL_VIDEORESIZE;
+  event.resize.w = xs;
+  event.resize.h = ys;
+  SDL_PushEvent(&event);
   }
 
 void SimpleVideo::SetWindowedMode(int xs, int ys) {
   video_flags &= (~SDL_FULLSCREEN);
-  ResizeGL(xs, ys);
+
+  SDL_Event event;
+  event.type = SDL_VIDEORESIZE;
+  event.resize.w = xs;
+  event.resize.h = ys;
+  SDL_PushEvent(&event);
   }
