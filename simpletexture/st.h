@@ -185,4 +185,7 @@ protected:
   static int new_xsize, new_ysize;
   };
 
+//Exported Utility Functions
+SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode);
+
 #endif // ST_H

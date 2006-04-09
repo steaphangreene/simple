@@ -128,7 +128,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
   Init(SIMPLETEXTURE_DEFINED);
   filename = filenm;
 
-  SDL_RWops *file = SDL_RWFromFile(filenm.c_str(), "rb");
+  SDL_RWops *file = SDL_RWFromZZIP(filenm.c_str(), "rb");
   if(file && tolower(filenm[filenm.length()-2]) == 'g'
 	&& tolower(filenm[filenm.length()-3]) == 't'
 	&& tolower(filenm[filenm.length()-1]) == 'a') {
@@ -137,41 +137,42 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".png").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".png").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".PNG").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".PNG").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".bmp").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".bmp").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".BMP").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".BMP").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".tga").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".tga").c_str(), "rb");
     if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".TGA").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".TGA").c_str(), "rb");
     if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".jpg").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".jpg").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromFile((filenm + ".JPG").c_str(), "rb");
+    file = SDL_RWFromZZIP((filenm + ".JPG").c_str(), "rb");
     }
 
   if(!file) {
     // Judging by many of the models I've see, even this is not an error.
+    //fprintf(stderr, "WARNING: Unable to open '%s'\n", filenm.c_str());
     type = SIMPLETEXTURE_NONE;
     dirty = 0;
     }
@@ -1034,3 +1035,62 @@ bool SimpleTexture::need_to_reaquire;
 int SimpleTexture::new_xsize;
 int SimpleTexture::new_ysize;
 
+
+//All of the below is adapted from the zzliplib site:
+//FILE: http://www.kekkai.org/roger/sdl/rwops/SDL_rwops_zzip.c
+//Copyright (c) 2001 Guido Draheim <guidod@gmx.de>
+
+#include <zzip/zzip.h>
+
+#define SDL_RWOPS_ZZIP_FILE(_context) \
+	((ZZIP_FILE*) (_context)->hidden.unknown.data1)
+
+static int _zzip_seek(SDL_RWops *context, int offset, int whence) {
+  return zzip_seek(SDL_RWOPS_ZZIP_FILE(context), offset, whence);
+  }
+
+static int _zzip_read(SDL_RWops *context, void *ptr, int size, int maxnum) {
+  return zzip_read(SDL_RWOPS_ZZIP_FILE(context), (char*)ptr, size*maxnum);
+  }
+
+static int _zzip_write(SDL_RWops *context, const void *ptr, int size, int num) {
+  return 0; /* ignored */
+  }
+
+static int _zzip_close(SDL_RWops *context) {
+  zzip_close (SDL_RWOPS_ZZIP_FILE(context));
+  if (context) SDL_FreeRW (context);
+  return 0;
+  }
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
+SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode) {
+  register int mo = ZZIP_CASEINSENSITIVE;
+  register SDL_RWops* rwops;
+  register ZZIP_FILE* zzip_file;
+
+  for (; *mode; ++mode) {
+    switch (*mode) {
+      case 'r': mo |= O_RDONLY;  break;
+      case 'b': mo |= O_BINARY; break;
+      case 'w': /* ouch! */  return 0;
+      /* default, 't', 'a', etc, just ignore */
+      }
+    }
+
+  zzip_file = zzip_open (file, mo);
+  if (! zzip_file) return 0;
+
+  rwops = SDL_AllocRW ();
+  if (! rwops) { zzip_close (zzip_file); return 0; }
+
+  SDL_RWOPS_ZZIP_FILE(rwops) = zzip_file;
+  rwops->read = _zzip_read;
+  rwops->write = _zzip_write;
+  rwops->seek = _zzip_seek;
+  rwops->close = _zzip_close;
+  return rwops;
+  }
