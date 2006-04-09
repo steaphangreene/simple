@@ -43,7 +43,7 @@ public:
 
   virtual void SetAspectRatio(double asp);
 
-  bool Render(unsigned long cur_time);
+  bool Render(unsigned long cur_time, bool final = false);
 
   void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };

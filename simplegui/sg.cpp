@@ -145,7 +145,14 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
     glScalef(1.0, aspect_actual, 1.0);
     }
 
+  matrix_saved = false;
   mWid->Render(cur_time);
+  if(current_widget && matrix_saved) {
+    glPushMatrix();
+    glLoadMatrixd(saved_matrix);
+    current_widget->Render(cur_time, true);
+    glPopMatrix();
+    }
 
   //Now we draw the mouse cursor
   //- if it's enabled and at least one axis is within coord system
@@ -510,3 +517,7 @@ SG_Alignment *SimpleGUI::PopupWidget() {
   return popWid;
   }
 
+void SimpleGUI::SaveCurrentMatrix() {
+  glGetDoublev(GL_MODELVIEW_MATRIX, saved_matrix);
+  matrix_saved = true;
+  }

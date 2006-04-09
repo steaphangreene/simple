@@ -73,6 +73,8 @@ public:
   void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
   SG_Widget *CurrentWidget() { return current_widget; };
 
+  void SaveCurrentMatrix();
+
   void SetFocusWidget(SG_Widget *wid) { focus_widget = wid; };
   void UnsetFocusWidget() { SetFocusWidget(NULL); };
   SG_Widget *FocusWidget() { return focus_widget; };
@@ -122,6 +124,8 @@ protected:
   float mouse_xscale, mouse_yscale;
 
   SG_Widget *current_widget;
+  double saved_matrix[16];
+  bool matrix_saved;
   SG_Widget *focus_widget;
 
   int aspect_method;

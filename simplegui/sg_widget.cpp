@@ -55,8 +55,13 @@ bool SG_Widget::HasWidget(SG_Widget *targ) {
   return this == targ;
   }
 
-bool SG_Widget::Render(unsigned long cur_time) {
+bool SG_Widget::Render(unsigned long cur_time, bool final) {
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
+
+  if((!final) && current_sg->CurrentWidget() == this) {	// Not my turn yet
+    current_sg->SaveCurrentMatrix();
+    return true;
+    }
 
   return RenderSelf(cur_time);
   }
