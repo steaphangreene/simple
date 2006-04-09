@@ -150,7 +150,7 @@ bool SimpleConnect::RenderSelf(unsigned long cur_time) {
     slots_dirty = false;
     }
 
-  return SG_Compound::Render(cur_time);
+  return SG_Compound::RenderSelf(cur_time);
   }
 
 void SimpleConnect::SetTag(const string &tag) {
