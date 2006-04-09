@@ -94,7 +94,7 @@ SimpleConnect::~SimpleConnect() {
   delete namep;
   }
 
-bool SimpleConnect::Render(unsigned long cur_time) {
+bool SimpleConnect::RenderSelf(unsigned long cur_time) {
   if(mode == SC_MODE_SEARCH) {
     SDL_mutexP(net_mutex);
     map<Uint64, SC_Host>::iterator host = hosts.begin();

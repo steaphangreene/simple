@@ -109,7 +109,6 @@ public:
   SimpleConnect();
   virtual ~SimpleConnect();
 
-  virtual bool Render(unsigned long cur_time);
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
@@ -136,6 +135,8 @@ public:
   const SimpleConnections &ClaimConnections();
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
   void SetupDefaultColors();
   int NextFreeColor(int oldcolor);
   int NextTeam(int oldteam);
