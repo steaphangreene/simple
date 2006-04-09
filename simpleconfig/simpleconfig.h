@@ -59,7 +59,11 @@ protected:
   void SetMode(int md);
   int mode, oldmode;
   SG_ComboBox *modebox;
+  SG_Button *confirmbut;
+  SG_TextArea *rescue_indicator;
+  SG_TextArea *rescue_label;
   vector<int> xsize, ysize;
+  Uint32 timeleft, disptime;
   };
 
 #endif // SIMPLECONFIG_H

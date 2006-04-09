@@ -58,6 +58,8 @@ int main(int argc, char **argv) {
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
+  gui->SetDefaultFontSize(30);
+
   gui->MasterWidget()->AddWidget(new SimpleConfig);
 
   SDL_Event event;

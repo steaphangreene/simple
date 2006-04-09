@@ -44,6 +44,8 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   SetAreas(screens);
   mode = 0;
   oldmode = 0;
+  timeleft = 0;
+  disptime = 0;
   setback = false;
   confirm = true;
   rescue_thread = NULL;
@@ -60,6 +62,31 @@ bool SimpleConfig::Render(unsigned long cur_time) {
     SetMode(oldmode);
     setback = false;
     modebox->Set(mode);
+    }
+  if(timeleft != disptime) {
+    if(disptime == 0) {
+      modebox->Hide();
+      modebox->Ignore();
+      rescue_label->Hide();
+      rescue_indicator->Show();
+      confirmbut->Show();
+      confirmbut->Listen();
+      }
+    else if(timeleft == 0) {
+      confirmbut->Ignore();
+      confirmbut->Hide();
+      rescue_indicator->Hide();
+      rescue_label->Show();
+      modebox->Show();
+      modebox->Listen();
+      }
+    disptime = timeleft;
+    if(disptime != 0) {
+      char buf[64];
+      sprintf(buf, "Confirm in %d seconds or will be undone%c",
+	(disptime+999)/1000, 0);
+      rescue_indicator->SetText(buf);
+      }
     }
   return SG_MultiTab::Render(cur_time);
   }
@@ -87,6 +114,11 @@ bool SimpleConfig::ChildEvent(SDL_Event *event) {
 	  }
 	confirm = false;
 	rescue_thread = SDL_CreateThread(rescue_thread_handler, (void*)(this));
+	}break;
+      case(SG_EVENT_BUTTONCLICK): {
+	if((SG_Widget*)(event->user.data1) == (SG_Widget*)confirmbut) {
+	  confirm = 1;
+	  }
 	}break;
       }
     }
@@ -125,8 +157,22 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
 
   SG_TextArea *mlabel = new SG_TextArea("Resolution:");
   ret->AddWidget(mlabel, 0, 2);
+
+  confirmbut = new SG_Button("Confirm Change");
+  confirmbut->Hide();
+  confirmbut->Ignore();
+  ret->AddWidget(confirmbut, 1, 2);
+
   modebox = new SG_ComboBox(modenames);
   ret->AddWidget(modebox, 1, 2);
+
+  rescue_indicator = new SG_TextArea("");
+  rescue_indicator->Hide();
+  ret->AddWidget(rescue_indicator, 0, 3, 2, 1);
+
+  rescue_label =
+	new SG_TextArea("You will have 5 seconds to confirm changes");
+  ret->AddWidget(rescue_label, 0, 3, 2, 1);
 
   return (SG_Alignment *)ret;
   }
@@ -159,13 +205,17 @@ SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
   }
 
 int SimpleConfig::HandleRescueThread() {
-  for(int x= 0; x < 20 && (!confirm); ++x) SDL_Delay(250);
+  Uint32 ttime = 5000;	// 5 Seconds
+  Uint32 tstep = 250;	// In 1/4 second steps
+  for(timeleft = ttime; timeleft > 0 && (!confirm); timeleft -= tstep)
+    SDL_Delay(tstep);
   if(!confirm) {
     setback = true;
     }
   else {
     confirm = false;
     }
+  timeleft = 0;
   return 0;
   }
 
