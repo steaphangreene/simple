@@ -66,14 +66,14 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
-bool SG_Menu::Render(unsigned long cur_time) {
+bool SG_Menu::RenderSelf(unsigned long cur_time) {
   if(current_sg->CurrentWidget() != this) return true;
 
   glPushMatrix();
   for(unsigned int item = 0; item < items.size(); ++item) {
     state = (state % 3) + item * 3;
     if(texture[state].dirty) SetText(items[item]);
-    if(!SG_Button::Render(cur_time)) {
+    if(!SG_Button::RenderSelf(cur_time)) {
       glPopMatrix();
       return false;
       }

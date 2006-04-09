@@ -37,7 +37,7 @@ SG_AutoScroll::SG_AutoScroll(float xspn, float yspn, float xval, float yval,
 SG_AutoScroll::~SG_AutoScroll() {
   }
 
-bool SG_AutoScroll::Render(unsigned long cur_time) {
+bool SG_AutoScroll::RenderSelf(unsigned long cur_time) {
   if(xstart != xend && xduration > 0.0) {
     double part = (double)(SDL_GetTicks() - xstart_time) / (xduration * 1000.0);
     while(part >= 1.0) part -= 1.0;
@@ -48,7 +48,7 @@ bool SG_AutoScroll::Render(unsigned long cur_time) {
     while(part >= 1.0) part -= 1.0;
     SetYValue(ystart * (1.0 - part) + yend * part);
     }
-  return SG_Scrollable::Render(cur_time);
+  return SG_Scrollable::RenderSelf(cur_time);
   }
 
 void SG_AutoScroll::SetXScroll(float start, float end, float secs, Uint32 cur_time) {

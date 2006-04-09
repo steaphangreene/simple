@@ -102,7 +102,7 @@ bool SG_Positional::HandEventTo(SG_Widget *targ, SDL_Event *event,
   return true;
   }
 
-bool SG_Positional::Render(unsigned long cur_time) {
+bool SG_Positional::RenderSelf(unsigned long cur_time) {
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
 
   glPushMatrix();

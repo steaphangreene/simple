@@ -49,7 +49,7 @@ int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
   return 0;	// This widget eats all other mouse events all the time
   }
 
-bool SG_Panel::Render(unsigned long cur_time) {
+bool SG_Panel::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;

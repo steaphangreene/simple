@@ -123,9 +123,9 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
   return 1;
   }
 
-bool SG_Editable::Render(unsigned long cur_time) {
+bool SG_Editable::RenderSelf(unsigned long cur_time) {
   if(state == 2 && current_sg->FocusWidget() != this) state = 0;
-  return SG_Panel::Render(cur_time);
+  return SG_Panel::RenderSelf(cur_time);
   }
 
 //  bool SG_Editable::SetDefaultCursor(GL_MODEL *cur);

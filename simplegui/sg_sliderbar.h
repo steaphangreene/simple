@@ -46,9 +46,10 @@ public:
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
-  virtual bool Render(unsigned long cur_time);
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Dragable *handle;
   SG_Button *incb, *decb;

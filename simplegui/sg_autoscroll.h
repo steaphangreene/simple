@@ -29,7 +29,6 @@ public:
   SG_AutoScroll(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
 	float xmin = 0.0, float ymin = 0.0, float xmax = 1.0, float ymax = 1.0);
   virtual ~SG_AutoScroll();
-  virtual bool Render(unsigned long cur_time);
 
   void SetXScroll(float start, float end, float secs, Uint32 cur_time = 0);
   void StopXScroll();
@@ -37,6 +36,7 @@ public:
   void StopYScroll();
 
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
   float xstart, ystart, xend, yend, xduration, yduration;
   Uint32 xstart_time, ystart_time;
   };

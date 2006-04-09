@@ -122,7 +122,7 @@ void SG_Alignment::SetBorder(float xbor, float ybor) {
   yborder = ybor;
   }
 
-bool SG_Alignment::Render(unsigned long cur_time) {
+bool SG_Alignment::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Alignment %p!\n", this);
 
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;

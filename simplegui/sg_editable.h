@@ -30,10 +30,11 @@ public:
 	SimpleTexture dc = SG_COL_BG, SimpleTexture fc = SG_COL_HIGH);
   virtual ~SG_Editable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   };
 

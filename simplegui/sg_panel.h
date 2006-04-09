@@ -40,7 +40,6 @@ public:
   SG_Panel(SimpleTexture tex = SG_COL_BG);
   virtual ~SG_Panel();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);
 
@@ -53,6 +52,7 @@ public:
   virtual void SetAspectRatio(double asp);
 
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
 //  static GL_MODEL Default_Mouse_Cursor;
 
   vector<SimpleTexture> texture;

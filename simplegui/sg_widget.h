@@ -40,9 +40,10 @@ public:
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
-  virtual bool Render(unsigned long cur_time);
 
   virtual void SetAspectRatio(double asp);
+
+  bool Render(unsigned long cur_time);
 
   void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
   void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
@@ -65,6 +66,8 @@ public:
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
 //  GL_MODEL Mouse_Cursor;
 //  static GL_MODEL Default_Mouse_Cursor;
   unsigned long flags;

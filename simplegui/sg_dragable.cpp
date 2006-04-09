@@ -121,8 +121,8 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
   
 //  static GL_MODEL SG_Dragable::Default_Mouse_Cursor = NULL;
 
-bool SG_Dragable::Render(unsigned long cur_time) {
-  bool ret = SG_Panel::Render(cur_time);
+bool SG_Dragable::RenderSelf(unsigned long cur_time) {
+  bool ret = SG_Panel::RenderSelf(cur_time);
   if(!ret) return ret;
 
   if(label) ret = label->Render(cur_time);

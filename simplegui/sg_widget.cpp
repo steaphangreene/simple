@@ -56,6 +56,10 @@ bool SG_Widget::HasWidget(SG_Widget *targ) {
   }
 
 bool SG_Widget::Render(unsigned long cur_time) {
+  return RenderSelf(cur_time);
+  }
+
+bool SG_Widget::RenderSelf(unsigned long cur_time) {
   return 1;
   }
 

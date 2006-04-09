@@ -32,7 +32,6 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual void SetAspectRatio(double asp);
 
@@ -41,6 +40,8 @@ public:
   void SetSendMotion(bool val = true) { send_motion = val; };
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
   bool send_motion;		//Send SG_EVENT_MOTION Events?
   int button_action[3];		//Auto-Handling of the three main buttons
   SG_Menu *button_menu[3];	//Click Menus for the three main buttons

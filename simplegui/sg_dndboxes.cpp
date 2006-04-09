@@ -42,7 +42,7 @@ SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
 SG_DNDBoxes::~SG_DNDBoxes() {
   }
 
-bool SG_DNDBoxes::Render(unsigned long cur_time) {
+bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
   if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
 
   if(background) background->Render(cur_time);
@@ -101,7 +101,7 @@ bool SG_DNDBoxes::Render(unsigned long cur_time) {
 
   glPopMatrix();
 
-  int ret = SG_Table::Render(cur_time);
+  int ret = SG_Table::RenderSelf(cur_time);
   background = tmpback;
   return ret;
   }

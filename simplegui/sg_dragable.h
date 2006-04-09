@@ -30,7 +30,6 @@ public:
   SG_Dragable(SimpleTexture tex = SG_COL_RAISED);
   virtual ~SG_Dragable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   void SetDisplayLimits(float mnx, float mny, float mxx, float mxy);
@@ -45,6 +44,8 @@ public:
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   float base_x, base_y, off_x, off_y, start_x, start_y;
 

@@ -41,7 +41,6 @@ public:
   virtual ~SG_Table();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
   virtual bool AddWidget(SG_Widget *wid);
@@ -71,6 +70,8 @@ public:
   virtual void RangerChanged();
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
   void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
 
 //  static GL_MODEL Default_Mouse_Cursor;

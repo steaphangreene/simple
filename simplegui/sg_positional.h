@@ -35,7 +35,6 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
-  virtual bool Render(unsigned long cur_time);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   virtual bool AddWidget(SG_Widget *wid,
@@ -48,6 +47,8 @@ public:
   virtual void SetAspectRatio(const double asp);
 
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
   vector<SG_AlignmentGeometry> wgeom;
   void CalcGeometry(const vector<SG_AlignmentGeometry>::iterator &geom);
 

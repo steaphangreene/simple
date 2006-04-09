@@ -37,9 +37,9 @@ SG_AnimatedPanel::SG_AnimatedPanel(const vector<SimpleTexture> &txtrs, float msp
 SG_AnimatedPanel::~SG_AnimatedPanel() {
   }
 
-bool SG_AnimatedPanel::Render(unsigned long cur_time) {
+bool SG_AnimatedPanel::RenderSelf(unsigned long cur_time) {
   state = int((float)(cur_time) / speed + 0.5) % texture.size();
-  return SG_Panel::Render(cur_time);
+  return SG_Panel::RenderSelf(cur_time);
   }
 //  bool SG_AnimatedPanel::SetDefaultCursor(GL_MODEL *cur);
   

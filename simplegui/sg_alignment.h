@@ -41,7 +41,6 @@ public:
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
-  virtual bool Render(unsigned long cur_time);
   virtual void Disable();
   virtual void Enable();
   virtual void TurnOn();
@@ -56,6 +55,7 @@ public:
 protected:
   void CalcGeometry();
   SG_AlignmentGeometry cur_geom;
+  virtual bool RenderSelf(unsigned long cur_time);
 
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<SG_Widget *> widgets;

@@ -37,7 +37,6 @@ public:
   SG_DNDBoxes(int xsz, int ysz);
   virtual ~SG_DNDBoxes();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool Render(unsigned long cur_time);
   virtual bool ChildEvent(SDL_Event *event);
   void Exclude(int xp, int yp, int xs = 1, int ys = 1);
   void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1,
@@ -52,6 +51,8 @@ public:
   virtual void RemoveWidget(SG_Widget *wid);
   
 protected:
+  virtual bool RenderSelf(unsigned long cur_time);
+
   bool CanFit(int x1, int y1, int xs=1, int ys=1, Uint32 tps = 0);
   void UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
   void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);

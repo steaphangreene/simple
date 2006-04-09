@@ -107,6 +107,6 @@ bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   
 //  static GL_MODEL SG_SliderBar::Default_Mouse_Cursor = NULL;
 
-bool SG_SliderBar::Render(unsigned long cur_time) {
-  return SG_Compound::Render(cur_time);
+bool SG_SliderBar::RenderSelf(unsigned long cur_time) {
+  return SG_Compound::RenderSelf(cur_time);
   }
