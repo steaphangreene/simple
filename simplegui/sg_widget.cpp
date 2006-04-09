@@ -52,6 +52,8 @@ bool SG_Widget::HandEventTo(SG_Widget *targ, SDL_Event *event,
   }
 
 bool SG_Widget::HasWidget(SG_Widget *targ) {
+  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
+
   return this == targ;
   }
 

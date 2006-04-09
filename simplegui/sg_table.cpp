@@ -123,8 +123,6 @@ bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
 bool SG_Table::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Table %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
-
   if(xsize <= 0 || ysize <= 0) return true;
 
   glPushMatrix();

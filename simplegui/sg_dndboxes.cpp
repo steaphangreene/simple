@@ -43,8 +43,6 @@ SG_DNDBoxes::~SG_DNDBoxes() {
   }
 
 bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
-
   if(background) background->Render(cur_time);
   SG_Widget *tmpback = background;
   background = NULL;

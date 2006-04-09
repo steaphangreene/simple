@@ -218,8 +218,6 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering PassThrough %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
-
   glPushMatrix();
 
   if(background) background->Render(cur_time);	//Same "layer" as parent

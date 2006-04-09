@@ -127,8 +127,6 @@ bool SG_Scrollable::HandEventTo(SG_Widget *targ, SDL_Event *event,
 bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Scrollable %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
-
   if(subwidget_handles) return SG_Alignment::RenderSelf(cur_time);
 
   glPushMatrix();

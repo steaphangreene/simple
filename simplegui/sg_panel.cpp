@@ -52,8 +52,6 @@ int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
 bool SG_Panel::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
-
   glPushMatrix();
 
   if(texture[state].type == SIMPLETEXTURE_TRANS

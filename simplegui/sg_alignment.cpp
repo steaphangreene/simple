@@ -125,8 +125,6 @@ void SG_Alignment::SetBorder(float xbor, float ybor) {
 bool SG_Alignment::RenderSelf(unsigned long cur_time) {
 //  fprintf(stderr, "Rendering Alignment %p!\n", this);
 
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return 1;
-
   glPushMatrix();
 
   if(background) background->Render(cur_time);	//Same "layer" as parent
