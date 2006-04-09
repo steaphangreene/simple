@@ -113,11 +113,6 @@ bool SimpleGUI::RenderStart(unsigned long cur_time, bool ts) {
     xsize = newxsize;
     ysize = newysize;
     aspect_actual = newaspect_actual;
-
-    int videoFlags = SDL_GetVideoSurface()->flags;
-    SDL_SetVideoMode(xsize+xunused, ysize+yunused, 0, videoFlags);
-
-    glViewport(xunused/2, yunused/2, xsize, ysize);
     }
   if(ts) SDL_mutexV(Mutex());
   return 1;
