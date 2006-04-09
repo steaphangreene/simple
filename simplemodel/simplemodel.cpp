@@ -37,12 +37,23 @@ using namespace std;
 #include "simplemodel_wedge.h"
 #include "simplemodel_sphere.h"
 
-SimpleModel *SM_LoadModel(const string &filename, const string &skinname) {
-  SDL_RWops *cfg = SDL_RWFromFile((filename + "/animation.cfg").c_str(), "rb");
+SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinname) {
+  SDL_RWops *cfg = SDL_RWFromZZIP((filename + "/animation.cfg").c_str(), "rb");
   if(cfg) {
+    string skin = skinname;
     SDL_RWclose(cfg);
-    if(skinname.length() <= 0) return new SimpleModel_Q3Dir(filename);
-    else return new SimpleModel_Q3Dir(filename, skinname);
+    if(skin.length() <= 0) skin = "default";
+    return new SimpleModel_Q3Dir(filename, skin);
+    }
+  for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+    cfg = SDL_RWFromZZIP((source_files[snum] + "/" + filename
+	+ "/animation.cfg").c_str(), "rb");
+    if(cfg) {
+      string skin = skinname;
+      SDL_RWclose(cfg);
+      if(skin.length() <= 0) skin = "default";
+      return new SimpleModel_Q3Dir(source_files[snum], filename, skin);
+      }
     }
 
   if(filename.length() >= 3
@@ -194,4 +205,22 @@ void SimpleModel::SLERP(Quaternion &res,
     res.data[2] = s1 * q1.data[2] + s2 * q2.data[2];	// Y
     res.data[3] = s1 * q1.data[3] + s2 * q2.data[3];	// Z
     }
+  }
+
+void SimpleModel::AddSourceFile(const string &in) {
+  source_files.push_back(in);
+  }
+
+void SimpleModel::ClearSourceFiles() {
+  source_files.clear();
+  }
+
+const vector<string> SimpleModel::GetSourceFiles() {
+  return source_files;
+  }
+
+vector<string> SimpleModel::source_files;
+
+SimpleModel *SM_LoadModel(const string &filename, const string &defskin) {
+  return SimpleModel::LoadModel(filename, defskin);
   }

@@ -45,9 +45,19 @@ public:
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm) {};
 
+  //Configuration Functions
+  static void AddSourceFile(const string &in);
+  static void ClearSourceFiles();
+  static const vector<string> GetSourceFiles();
+
+  //Exported Utility Functions
+  static SimpleModel *LoadModel(const string &filename, const string &defskin = "");
+
 protected:
   string filename;
   vector<SimpleTexture *> texture;
+
+  static vector<string> source_files;
 
   struct Matrix4x4 {
     float data[16];

@@ -57,15 +57,25 @@ static void SetAnim(int anim) {
 int main(int argc, char **argv) {
   int xs=1200, ys=900;
 
+  int barg = 1;
+  while(argc > barg && (!strcmp(argv[barg], "-s"))) {
+    if(argc <= barg+1) {
+      fprintf(stderr, "ERROR: -s requires file argument\n");
+      exit(1);
+      }
+    SimpleModel::AddSourceFile(argv[barg+1]);
+    barg += 2;
+    }
+
   char *modname = "models/players/trooper";
 
-  if(argc > 3) {
+  if((argc-barg) > 2) {
     //fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
     fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [skin]\n", argv[0]);
     exit(1);
     }
-  else if(argc >= 2) {
-    modname = argv[1];
+  else if((argc-barg) >= 1) {
+    modname = argv[barg];
     }
 
   if(!init_renderer(xs, ys)) {
@@ -73,8 +83,8 @@ int main(int argc, char **argv) {
     }
 
   char * skinname = ""; // Use Default Skin
-  if(argc == 3) {
-    skinname = argv[2];
+  if(argc-barg == 2) {
+    skinname = argv[barg+1];
     }
 
   SimpleModel *mod = SM_LoadModel(modname, skinname);
@@ -82,18 +92,6 @@ int main(int argc, char **argv) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
     }
-
-//  SimpleModel_MD3 *weap = NULL; //Created below
-//  if(argc == 3) {
-//    weap = new SimpleModel_MD3(argv[2],
-//	(string(argv[2]) + "/machinegun.md3").c_str(),
-//	(string(argv[2]) + "/m41a.jpg").c_str());
-//    if(!weap) {
-//      fprintf(stderr, "ERROR: Weapon model load failed\n");
-//      exit(1);
-//      }
-//    ((SimpleModel_Q3Dir*)mod)->SetWeapon(weap);
-//    }
 
   anims.push_back(LEGS_IDLE);
   anims.push_back(TORSO_STAND);

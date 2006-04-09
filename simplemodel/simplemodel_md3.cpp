@@ -47,12 +47,20 @@ bool SimpleModel_MD3::Load(const string &filenm,
 	const string &modelnm, const string &defskin) {
   filename = filenm;
   modelname = modelnm;
+  if(modelnm.substr(0, filenm.length()) != filenm) {
+    //New format, no duplicated lines in file.
+    modelname = filename + "/" + modelnm;
+    }
+  else {
+    //Old format, duplicated lines in file -OR- zero-length filenm.
+    filename = ".";
+    }
 
   skinname = defskin;
   skinname = modelname.substr(0, modelname.length() - 4) + "_"
 	+ skinname+ ".skin";
 
-  SDL_RWops *model = SDL_RWFromFile(modelname.c_str(), "rb");
+  SDL_RWops *model = SDL_RWFromZZIP(modelname.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
 	modelname.c_str());
@@ -72,12 +80,14 @@ bool SimpleModel_MD3::Load(const string &filenm,
   if(strncmp((char *)magic, "IDP3", 4)) {
     fprintf(stderr, "WARNING: File '%s' is not an MD3 file!\n",
 	modelnm.c_str());
+    SDL_RWclose(model);
     return false;
     }
   freadLE(filever, model);
   if(filever != 15) {
     fprintf(stderr, "WARNING: File '%s' is not an v15 MD3 file!\n",
 	modelnm.c_str());
+    SDL_RWclose(model);
     return false;
     }
   SDL_RWseek(model, 68, SEEK_CUR); // Skip the name of the file
@@ -161,11 +171,19 @@ bool SimpleModel_MD3::Load(const string &filenm,
     for(unsigned int shader=0; shader < num_shaders; ++shader) {
       Sint8 buf[65] = {0};
       SDL_RWread(model, buf, 64, 1);
+      for(int ch=0; ch<64; ++ch) if(buf[ch] == '\\') buf[ch] = '/';
       AddSkin((char*)buf);
       if(skins.back().length() > 0) {
-	SimpleTexture *tmptex = new SimpleTexture(skins.back());
-	texture.push_back(tmptex);
-	meshes[meshnum].texture = texture.back();
+	SimpleTexture *tmptex = new SimpleTexture(filename + "/" + skins.back());
+	if(tmptex->type != SIMPLETEXTURE_NONE) {
+	  texture.push_back(tmptex);
+	  meshes[meshnum].texture = texture.back();
+	  }
+	else {
+	  delete tmptex;
+	  skins.pop_back();	//FIXME: Create RemoveSkin() function?
+	  external_skinfile = true;
+	  }
 	}
       else {
 	external_skinfile = true;
@@ -210,7 +228,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   if(!external_skinfile) return false;
 
   // Here we load the requested skin (FIXME: without checking the skin list!)
-  SDL_RWops *skin = SDL_RWFromFile(skinname.c_str(), "rb");
+  SDL_RWops *skin = SDL_RWFromZZIP(skinname.c_str(), "rb");
   if(!skin) {
     fprintf(stderr, "WARNING: Unable to open skin file '%s'!\n",
 	skinname.c_str());
@@ -228,6 +246,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
     if(res <= 0) {
       fprintf(stderr, "%d\n", filesz);
       fprintf(stderr, "ERROR: Could not read from '%s'\n", skinname.c_str());
+      SDL_RWclose(skin);
       return false;
       }
     fileptr += res;
@@ -239,6 +258,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
   Sint8 obj[256] = {0}, tex[256] = {0};
   while(1) {
     int num = sscanf(fileptr, " %[^ \n\t\r,],%[^ \n\t\r]\n", obj, tex);
+    for(int ch=0; ch<256; ++ch) if(tex[ch] == '\\') tex[ch] = '/';
 
     //Skip to past next whitespace
     while((*fileptr) && !isspace(*fileptr)) ++fileptr;
@@ -251,7 +271,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
     else {
       for(unsigned int i = 0; i < meshes.size(); i++) {
 	if(!strcasecmp((char*)obj, (char*)meshes[i].name)) {
-	  SimpleTexture *tmptex = new SimpleTexture((char*)tex);
+	  SimpleTexture *tmptex = new SimpleTexture(filename + "/" + (char*)tex);
 	  texture.push_back(tmptex);
 
           tmptex->Update();

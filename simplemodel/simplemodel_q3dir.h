@@ -28,9 +28,11 @@
 class SimpleModel_Q3Dir : public SimpleModel {
 public:
   SimpleModel_Q3Dir(const string &filenm, const string &defskin = "default");
+  SimpleModel_Q3Dir(const string &packfile, const string &filenm,
+	const string &defskin);
   virtual ~SimpleModel_Q3Dir();
 
-  virtual bool Load(const string &filenm, const string &defskin = "default");
+  virtual bool Load(const string &packfile, const string &filenm, const string &defskin = "default");
 
   virtual bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),

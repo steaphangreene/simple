@@ -34,7 +34,16 @@ SimpleModel_Q3Dir::SimpleModel_Q3Dir(
   torso = NULL;
   legs = NULL;
   weapon = NULL;
-  Load(filenm, defskin);
+  Load("", filenm, defskin);
+  }
+
+SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &pack,
+	const string &filenm, const string &defskin) {
+  head = NULL;
+  torso = NULL;
+  legs = NULL;
+  weapon = NULL;
+  Load(pack, filenm, defskin);
   }
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir() {
@@ -52,22 +61,25 @@ SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
   if(weapon) weapon = NULL;	// Not mine!
   }
 
-bool SimpleModel_Q3Dir::Load(const string &filenm, const string &defskin) {
+bool SimpleModel_Q3Dir::Load(const string &pack, const string &filenm, const string &defskin) {
   filename = filenm;
-  head = new SimpleModel_MD3(
-	filename, filename + "/head.md3", defskin);
-  torso = new SimpleModel_MD3(
-	filename, filename + "/upper.md3", defskin);
-  legs = new SimpleModel_MD3(
-	filename, filename + "/lower.md3", defskin);
 
-  if(!LoadCFG(filename + "/animation.cfg")) return false;
+  head = new SimpleModel_MD3(pack, filename + "/head.md3", defskin);
+  torso = new SimpleModel_MD3(pack, filename + "/upper.md3", defskin);
+  legs = new SimpleModel_MD3(pack, filename + "/lower.md3", defskin);
+
+  if(pack.length() > 0) {
+    if(!LoadCFG(pack + "/" + filename + "/animation.cfg")) return false;
+    }
+  else {
+    if(!LoadCFG(filename + "/animation.cfg")) return false;
+    }
 
   return false;
   }
 
 bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
-  SDL_RWops *cfg = SDL_RWFromFile(filenm.c_str(), "rb");
+  SDL_RWops *cfg = SDL_RWFromZZIP(filenm.c_str(), "rb");
   if(!cfg) {
     fprintf(stderr, "WARNING: Could not open model animations file '%s'!\n",
 	filenm.c_str());
