@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
 	  if(offset < 1) offset = 1;
 	  delete tex1;
 	  delete tex2;
+	  SimpleTexture::EmptyTrash();
 	  tex1 = new SimpleTexture(argv[offset]);
 	  tex2 = new SimpleTexture(argv[offset]);
 	  }
@@ -71,6 +72,7 @@ int main(int argc, char **argv) {
 	  if(offset >= argc) offset = argc-1;
 	  delete tex1;
 	  delete tex2;
+	  SimpleTexture::EmptyTrash();
 	  tex1 = new SimpleTexture(argv[offset]);
 	  tex2 = new SimpleTexture(argv[offset]);
 	  }break;
@@ -124,6 +126,10 @@ int main(int argc, char **argv) {
 
     finish_scene();
     }
+
+  delete tex1;
+  delete tex2;
+  SimpleTexture::EmptyTrash();
 
   return 0;
   }
