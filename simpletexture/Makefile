@@ -25,41 +25,41 @@ win32:	libsimpletexture.win32_a
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -framework OpenGL
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lopengl32 -lglu32
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
+#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_image -lGL -lGLU
 
 OBJS:=	st.o stt.o stt_default.o stt_invisible.o \
 	stt_button.o stt_buttonup.o stt_buttondown.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lopengl32 -lglu32
+WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lz -lpng -lzziplib -lzlib -lzzip -lopengl32 -lglu32
 
 WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
