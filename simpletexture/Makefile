@@ -59,7 +59,7 @@ OBJS:=	st.o stt.o stt_default.o stt_invisible.o \
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng -lzziplib -lzlib -lzzip -lopengl32 -lglu32
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
