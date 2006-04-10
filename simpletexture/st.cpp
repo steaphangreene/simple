@@ -29,6 +29,7 @@
 #include "stt_invisible.h"
 #include "stt_buttonup.h"
 #include "stt_buttondown.h"
+#include "saferead.h"
 
 #define	ST_NUM_SYSTEM_COLORS	32
 
@@ -181,19 +182,59 @@ SimpleTexture::SimpleTexture(const string &filenm) {
       Uint8 head[5] = {0};
       SDL_RWread(file, (char*)head, 4, 1);
       if(!strncmp((char*)head, "BLP1", 4)) {
-	fprintf(stderr, "It says it is a blp!\n");
-	SDL_RWseek(file, 0xA0, SEEK_SET);
-	SDL_RWread(file, (char*)head, 1, 2);
-	if(head[0] != 0xFF || head[1] != 0xD8) {
-	  fprintf(stderr, "It isn't!\n");
+	Uint32 uncomp, n2, xs, ys, n5, n6;
+	Uint32 off[8], siz[8];
+	freadLE(uncomp, file);
+	freadLE(n2, file);
+	freadLE(xs, file);
+	freadLE(ys, file);
+	freadLE(n5, file);
+	freadLE(n6, file);
+	for(int i=0; i<8; ++i) freadLE(off[i], file);
+	SDL_RWseek(file, 32, SEEK_CUR);	//Skip a bunch of zeros!
+	for(int i=0; i<8; ++i) freadLE(siz[i], file);
+
+	if(!uncomp) {
+	  fprintf(stderr, "It seems to be compressed\n");
+	  fprintf(stderr, "Size: %dx%d\n", xs, ys);
+	  fprintf(stderr, "With: %d %d %d\n", n2, n5, n6);
+	  for(int i=0; i<8; ++i) {
+	    fprintf(stderr, "Offset: %X  Size: %X\n", off[i], siz[i]);
+	    }
+	  fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
+	  fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
 	  }
 	else {
-	  fprintf(stderr, "It is!\n");
+	  SDL_RWseek(file, 0x9C, SEEK_SET);
+	  src = SDL_CreateRGBSurface(SDL_SWSURFACE, xs, ys, 32, ST_SDL_RGBA_COLFIELDS);
+	  Uint8 r, g, b, a;
+	  vector<Uint32> pal;
+	  for(Uint32 ent=0; ent < 256; ++ent) {
+	    freadLE(b, file);
+	    freadLE(g, file);
+	    freadLE(r, file);
+	    freadLE(a, file);
+	    a = (255-a);
+	    pal.push_back(SDL_MapRGBA(src->format, r, g, b, a));
+	    }
+	  SDL_Rect pt = { 0, 0, 1, 1 };
+	  for(Uint32 pix=0; pix < xs*ys; ++pix) {
+	    Uint8 ind;
+	    freadLE(ind, file);
+	    pt.x = pix%xs;
+	    pt.y = pix/xs;
+	    SDL_FillRect(src, &pt, pal[ind]);
+	    }
 	  }
-	fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
-	fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
-	type = SIMPLETEXTURE_NONE;
-	dirty = 0;
+
+//	SDL_RWseek(file, 0xA0, SEEK_SET);
+//	SDL_RWread(file, (char*)head, 1, 2);
+//	if(head[0] != 0xFF || head[1] != 0xD8) {
+//	  fprintf(stderr, "It isn't!\n");
+//	  }
+//	else {
+//	  fprintf(stderr, "It is!\n");
+//	  }
 	}
       else {
 	SDL_RWseek(file, 0, SEEK_SET);
@@ -201,6 +242,10 @@ SimpleTexture::SimpleTexture(const string &filenm) {
       }
     if(!src) {
       src = IMG_Load_RW(file, true);
+      }
+    if(!src) {
+      type = SIMPLETEXTURE_NONE;
+      dirty = 0;
       }
     xfact = 1.0;
     yfact = 1.0;
