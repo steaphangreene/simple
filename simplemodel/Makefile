@@ -61,7 +61,7 @@ OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o \
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
-WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng -lzziplib -lzlib -lzzip -lopengl32 -lglu32
+WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
