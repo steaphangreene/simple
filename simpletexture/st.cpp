@@ -177,7 +177,30 @@ SimpleTexture::SimpleTexture(const string &filenm) {
     dirty = 0;
     }
   else {
-    if(!src) src = IMG_Load_RW(file, true);
+    if(!src) {
+      Uint8 head[5] = {0};
+      SDL_RWread(file, (char*)head, 4, 1);
+      if(!strncmp((char*)head, "BLP1", 4)) {
+	fprintf(stderr, "It says it is a blp!\n");
+	SDL_RWseek(file, 0xA0, SEEK_SET);
+	SDL_RWread(file, (char*)head, 1, 2);
+	if(head[0] != 0xFF || head[1] != 0xD8) {
+	  fprintf(stderr, "It isn't!\n");
+	  }
+	else {
+	  fprintf(stderr, "It is!\n");
+	  }
+	fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
+	type = SIMPLETEXTURE_NONE;
+	dirty = 0;
+	}
+      else {
+	SDL_RWseek(file, 0, SEEK_SET);
+	}
+      }
+    if(!src) {
+      src = IMG_Load_RW(file, true);
+      }
     xfact = 1.0;
     yfact = 1.0;
     dirty = 1;

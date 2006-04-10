@@ -33,9 +33,10 @@ using namespace std;
 
 int main(int argc, char **argv) {
   int xs = 1024, ys = 768;
+  int offset = 1;
 
-  if(argc != 2) {
-    fprintf(stderr, "ERROR: requires file argument\n");
+  if(argc < 2) {
+    fprintf(stderr, "ERROR: requires at least one file argument\n");
     exit(1);
     }
 
@@ -54,6 +55,19 @@ int main(int argc, char **argv) {
 	}
       else if(event.type == SDL_KEYDOWN) {
         if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+        else if(event.key.keysym.sym == SDLK_q) quit = 1;
+        else if(event.key.keysym.sym == SDLK_BACKSPACE) {
+	  --offset;
+	  if(offset < 1) offset = 1;
+	  delete tex;
+	  tex = new SimpleTexture(argv[offset]);
+	  }
+        else if(event.key.keysym.sym == SDLK_SPACE) {
+	  ++offset;
+	  if(offset >= argc) offset = argc-1;
+	  delete tex;
+	  tex = new SimpleTexture(argv[offset]);
+	  }break;
         }
       }
     start_scene();
