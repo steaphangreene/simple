@@ -183,26 +183,41 @@ SimpleTexture::SimpleTexture(const string &filenm) {
       SDL_RWread(file, (char*)head, 4, 1);
       if(!strncmp((char*)head, "BLP1", 4)) {
 	Uint32 uncomp, n2, xs, ys, n5, n6;
-	Uint32 off[8], siz[8];
+	Uint32 off[16], siz[16];
 	freadLE(uncomp, file);
-	freadLE(n2, file);
+	freadLE(n2, file);	//NumMipmaps?
 	freadLE(xs, file);
 	freadLE(ys, file);
-	freadLE(n5, file);
-	freadLE(n6, file);
-	for(int i=0; i<8; ++i) freadLE(off[i], file);
-	SDL_RWseek(file, 32, SEEK_CUR);	//Skip a bunch of zeros!
-	for(int i=0; i<8; ++i) freadLE(siz[i], file);
+	freadLE(n5, file);	//Type
+	freadLE(n6, file);	//SubType
+	for(int i=0; i<16; ++i) freadLE(off[i], file);
+	for(int i=0; i<16; ++i) freadLE(siz[i], file);
 
 	if(!uncomp) {
-	  fprintf(stderr, "It seems to be compressed\n");
-	  fprintf(stderr, "Size: %dx%d\n", xs, ys);
-	  fprintf(stderr, "With: %d %d %d\n", n2, n5, n6);
-	  for(int i=0; i<8; ++i) {
-	    fprintf(stderr, "Offset: %X  Size: %X\n", off[i], siz[i]);
+	//  fprintf(stderr, "It seems to be compressed\n");
+	//  fprintf(stderr, "Size: %dx%d\n", xs, ys);
+	//  fprintf(stderr, "With: %d %d %d\n", n2, n5, n6);
+	//  for(int i=0; i<16; ++i) {
+	//    fprintf(stderr, "Offset: %X  Size: %X\n", off[i], siz[i]);
+	//    }
+	  Uint32 jsize;
+	  SDL_RWseek(file, 0x9C, SEEK_SET);
+	  freadLE(jsize, file);
+	  Uint8 *data = new Uint8[jsize + siz[0]];
+	  SDL_RWread(file, (char *)data, 1, jsize);
+	  SDL_RWseek(file, off[0], SEEK_SET);
+	  SDL_RWread(file, ((char *)data)+jsize, 1, siz[0]);
+	//  fprintf(stderr, "Sizes: (%d + %d) %d\n", jsize, siz[0], jsize+siz[0]);
+	//  FILE *tmpf = fopen("debug.jpg", "wb");
+	//  fwrite(data, 1, jsize+siz[0], tmpf);
+	//  fclose(tmpf);
+	  src = IMG_Load_RW(SDL_RWFromMem(data, jsize+siz[0]), true);
+	  if(!src) {
+	    fprintf(stderr, "WARNING[JPG]: %s\n", IMG_GetError());
+	    fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
+	    fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
 	    }
-	  fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
-	  fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
+	  delete [] data;
 	  }
 	else {
 	  SDL_RWseek(file, 0x9C, SEEK_SET);
@@ -226,15 +241,6 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	    SDL_FillRect(src, &pt, pal[ind]);
 	    }
 	  }
-
-//	SDL_RWseek(file, 0xA0, SEEK_SET);
-//	SDL_RWread(file, (char*)head, 1, 2);
-//	if(head[0] != 0xFF || head[1] != 0xD8) {
-//	  fprintf(stderr, "It isn't!\n");
-//	  }
-//	else {
-//	  fprintf(stderr, "It is!\n");
-//	  }
 	}
       else {
 	SDL_RWseek(file, 0, SEEK_SET);

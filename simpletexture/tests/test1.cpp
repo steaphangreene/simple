@@ -23,6 +23,7 @@
 #include "SDL_opengl.h"
 #include "SDL_keysym.h"
 
+#include <cmath>
 #include <cstdio>
 #include <string>
 
@@ -40,7 +41,8 @@ int main(int argc, char **argv) {
     exit(1);
     }
 
-  SimpleTexture *tex = new SimpleTexture(argv[1]);
+  SimpleTexture *tex1 = new SimpleTexture(argv[1]);
+  SimpleTexture *tex2 = new SimpleTexture(argv[1]);
 
   if(!init_renderer(xs, ys)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
@@ -59,14 +61,18 @@ int main(int argc, char **argv) {
         else if(event.key.keysym.sym == SDLK_BACKSPACE) {
 	  --offset;
 	  if(offset < 1) offset = 1;
-	  delete tex;
-	  tex = new SimpleTexture(argv[offset]);
+	  delete tex1;
+	  delete tex2;
+	  tex1 = new SimpleTexture(argv[offset]);
+	  tex2 = new SimpleTexture(argv[offset]);
 	  }
         else if(event.key.keysym.sym == SDLK_SPACE) {
 	  ++offset;
 	  if(offset >= argc) offset = argc-1;
-	  delete tex;
-	  tex = new SimpleTexture(argv[offset]);
+	  delete tex1;
+	  delete tex2;
+	  tex1 = new SimpleTexture(argv[offset]);
+	  tex2 = new SimpleTexture(argv[offset]);
 	  }break;
         }
       }
@@ -83,15 +89,30 @@ int main(int argc, char **argv) {
 
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex->GLTexture());
+
     glColor3f(1.0f, 1.0f, 1.0f);
 
+    glBindTexture(GL_TEXTURE_2D, tex1->GLTexture());
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, tex->yfact);
+    glTexCoord2f(0.0, tex1->yfact);
     glVertex3f(-1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, tex->yfact);
+    glTexCoord2f(tex1->xfact, tex1->yfact);
     glVertex3f( 1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, 0.0);
+    glTexCoord2f(tex1->xfact, 0.0);
+    glVertex3f( 1.0, 1.0, 0.0);
+    glTexCoord2f(0.0, 0.0);
+    glVertex3f(-1.0, 1.0, 0.0);
+    glEnd();
+
+    glTranslatef(sin(SDL_GetTicks() / 1024.0) / 2.0,
+	cos(SDL_GetTicks() / 1024.0) / 2.0, 0.0);
+    glBindTexture(GL_TEXTURE_2D, tex2->GLTexture());
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0, tex2->yfact);
+    glVertex3f(-1.0, -1.0, 0.0);
+    glTexCoord2f(tex2->xfact, tex2->yfact);
+    glVertex3f( 1.0, -1.0, 0.0);
+    glTexCoord2f(tex2->xfact, 0.0);
     glVertex3f( 1.0, 1.0, 0.0);
     glTexCoord2f(0.0, 0.0);
     glVertex3f(-1.0, 1.0, 0.0);
