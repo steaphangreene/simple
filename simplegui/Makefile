@@ -27,33 +27,33 @@ win32:	libsimplegui.win32_a
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -framework OpenGL
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
+CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lefence -lSDL_image -lSDL_ttf -lGL -lGLU
+#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lefence -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
+#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 	sg_alignment.o sg_positional.o sg_table.o \
@@ -68,8 +68,8 @@ OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lglu32 -lpng -ljpeg -lz -lpng -lopengl32
+WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
+WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lglu32 -lpng -ljpeg -lzziplib -lzlib -lzzip -lpng -lopengl32
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
