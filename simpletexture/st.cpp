@@ -191,6 +191,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  fprintf(stderr, "It is!\n");
 	  }
 	fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
+	fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
 	type = SIMPLETEXTURE_NONE;
 	dirty = 0;
 	}
