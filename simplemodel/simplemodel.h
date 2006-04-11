@@ -59,6 +59,14 @@ protected:
 
   static vector<string> source_files;
 
+  struct Vector3 {
+    float data[3];
+    };
+
+  struct Vector4 {
+    float data[4];
+    };
+
   struct Matrix4x4 {
     float data[16];
     };
@@ -72,11 +80,22 @@ protected:
   static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
 
   //Math
-  static void Add(Matrix4x4 &res, const Matrix4x4 &m1, const Matrix4x4 &m2);
+  template <class Tp>
+  static void Add(Tp &res, const Tp &m1, const Tp &m2) {
+    for(int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
+      res.data[n] = m1.data[n] + m2.data[n];
+      }
+    }
   static void Multiply(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2);
 
   //Interpolations
+  template <class Tp>
+  static void LERP(Tp &res, const Tp &m1, const Tp &m2, float t) {
+    for(int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
+      res.data[n] = m1.data[n]*(1.0-t) + m2.data[n]*t;
+      }
+    }
   static void SLERP(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
   static void SLERP(Quaternion &res,
