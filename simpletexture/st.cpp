@@ -222,23 +222,27 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	else {
 	  SDL_RWseek(file, 0x9C, SEEK_SET);
 	  src = SDL_CreateRGBSurface(SDL_SWSURFACE, xs, ys, 32, ST_SDL_RGBA_COLFIELDS);
-	  Uint8 r, g, b, a;
-	  vector<Uint32> pal;
+	  vector<SDL_Color> pal;
 	  for(Uint32 ent=0; ent < 256; ++ent) {
-	    freadLE(b, file);
-	    freadLE(g, file);
-	    freadLE(r, file);
-	    freadLE(a, file);
-	    a = (255-a);
-	    pal.push_back(SDL_MapRGBA(src->format, r, g, b, a));
+	    pal.push_back(SDL_Color());
+	    freadLE(pal.back().b, file);
+	    freadLE(pal.back().g, file);
+	    freadLE(pal.back().r, file);
+	    SDL_RWseek(file, 1, SEEK_CUR); //Skip Unused Alpha
 	    }
 	  SDL_Rect pt = { 0, 0, 1, 1 };
 	  for(Uint32 pix=0; pix < xs*ys; ++pix) {
-	    Uint8 ind;
-	    freadLE(ind, file);
+	    Uint8 index, alpha;
+	    freadLE(index, file);
+	    Uint32 bookmark = SDL_RWtell(file);
+	    SDL_RWseek(file, xs*ys-1, SEEK_CUR);
+	    freadLE(alpha, file);
 	    pt.x = pix%xs;
 	    pt.y = pix/xs;
-	    SDL_FillRect(src, &pt, pal[ind]);
+	    SDL_FillRect(src, &pt, SDL_MapRGBA(src->format, 
+		pal[index].r, pal[index].g, pal[index].b, alpha
+		));
+	    SDL_RWseek(file, bookmark, SEEK_SET);
 	    }
 	  }
 	}
