@@ -71,6 +71,12 @@ protected:
   static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat);
   static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
 
+  //Math
+  static void Multiply(Matrix4x4 &res,
+	const Matrix4x4 &m1, const Matrix4x4 &m2);
+  static void MultiplyTranspose(Matrix4x4 &res,	//Temporary!
+	const Matrix4x4 &m1, const Matrix4x4 &m2);
+
   //Interpolations
   static void SLERP(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
