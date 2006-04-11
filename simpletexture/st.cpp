@@ -263,6 +263,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 //    if(!src) {
 //      //FIXME: Error Handling!
 //      }
+    SDL_RWclose(file);
     }
   }
 
