@@ -72,6 +72,7 @@ protected:
   static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
 
   //Math
+  static void Add(Matrix4x4 &res, const Matrix4x4 &m1, const Matrix4x4 &m2);
   static void Multiply(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2);
 

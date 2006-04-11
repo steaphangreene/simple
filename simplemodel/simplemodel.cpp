@@ -105,6 +105,26 @@ void SimpleModel::SLERP(Matrix4x4 &res,
   res.data[14] = (1.0f - t) * m1.data[14] + t * m2.data[14];
   }
 
+void SimpleModel::Add(Matrix4x4 &res,
+	const Matrix4x4 &m1, const Matrix4x4 &m2) {
+  res.data[0] = m1.data[0] + m2.data[0];
+  res.data[1] = m1.data[1] + m2.data[1];
+  res.data[2] = m1.data[2] + m2.data[2];
+  res.data[3] = m1.data[3] + m2.data[3];
+  res.data[4] = m1.data[4] + m2.data[4];
+  res.data[5] = m1.data[5] + m2.data[5];
+  res.data[6] = m1.data[6] + m2.data[6];
+  res.data[7] = m1.data[7] + m2.data[7];
+  res.data[8] = m1.data[8] + m2.data[8];
+  res.data[9] = m1.data[9] + m2.data[9];
+  res.data[10] = m1.data[10] + m2.data[10];
+  res.data[11] = m1.data[11] + m2.data[11];
+  res.data[12] = m1.data[12] + m2.data[12];
+  res.data[13] = m1.data[13] + m2.data[13];
+  res.data[14] = m1.data[14] + m2.data[14];
+  res.data[15] = m1.data[15] + m2.data[15];
+  }
+
 void SimpleModel::Multiply(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2) {
   res.data[0] = m1.data[0]*m2.data[0] + m1.data[4]*m2.data[1]
