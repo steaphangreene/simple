@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
     glDisable(GL_BLEND);
 
     finish_scene();
+    SDL_Delay(10);	// Let the OS breathe
     }
 
   delete tex1;
