@@ -260,10 +260,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
     xfact = 1.0;
     yfact = 1.0;
     dirty = 1;
-//    if(!src) {
-//      //FIXME: Error Handling!
-//      }
-    SDL_RWclose(file);
+//    SDL_RWclose(file);	//Why does this generate a double-free???
     }
   }
 
@@ -1122,15 +1119,12 @@ int SimpleTexture::new_ysize;
 
 #include <zzip/zzip.h>
 
-#define SDL_RWOPS_ZZIP_FILE(_context) \
-	(_context->hidden.unknown.data1)
-
 static int _zzip_seek(SDL_RWops *context, int offset, int whence) {
-  return zzip_seek((ZZIP_FILE*)SDL_RWOPS_ZZIP_FILE(context), offset, whence);
+  return zzip_seek((ZZIP_FILE*)(context->hidden.unknown.data1), offset, whence);
   }
 
 static int _zzip_read(SDL_RWops *context, void *ptr, int size, int maxnum) {
-  return zzip_read((ZZIP_FILE*)SDL_RWOPS_ZZIP_FILE(context), (char*)ptr, size*maxnum);
+  return zzip_read((ZZIP_FILE*)(context->hidden.unknown.data1), (char*)ptr, size*maxnum);
   }
 
 static int _zzip_write(SDL_RWops *context, const void *ptr, int size, int num) {
@@ -1138,8 +1132,8 @@ static int _zzip_write(SDL_RWops *context, const void *ptr, int size, int num) {
   }
 
 static int _zzip_close(SDL_RWops *context) {
-  zzip_close ((ZZIP_FILE*)SDL_RWOPS_ZZIP_FILE(context));
-  if (context) SDL_FreeRW (context);
+  zzip_close ((ZZIP_FILE*)(context->hidden.unknown.data1));
+  if(context) SDL_FreeRW(context);
   return 0;
   }
 
@@ -1148,9 +1142,9 @@ static int _zzip_close(SDL_RWops *context) {
 #endif
 
 SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode) {
-  register int mo = ZZIP_CASEINSENSITIVE;
-  register SDL_RWops* rwops;
-  register ZZIP_FILE* zzip_file;
+  int mo = ZZIP_CASEINSENSITIVE;
+  SDL_RWops *rwops;
+  ZZIP_FILE *zzip_file;
 
   for (; *mode; ++mode) {
     switch (*mode) {
@@ -1162,12 +1156,12 @@ SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode) {
     }
 
   zzip_file = zzip_open (file, mo);
-  if (! zzip_file) return 0;
+  if(!zzip_file) return NULL;
 
-  rwops = SDL_AllocRW ();
-  if (! rwops) { zzip_close (zzip_file); return 0; }
+  rwops = SDL_AllocRW();
+  if(!rwops) { zzip_close(zzip_file); return NULL; }
 
-  SDL_RWOPS_ZZIP_FILE(rwops) = (void*)zzip_file;
+  rwops->hidden.unknown.data1 = (void*)zzip_file;
   rwops->read = _zzip_read;
   rwops->write = _zzip_write;
   rwops->seek = _zzip_seek;
