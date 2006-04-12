@@ -75,7 +75,7 @@ libsimplemodel.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimplemodel.win32_a $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/* tests/*
-	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
+	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<
@@ -93,7 +93,7 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o *.a test1 test2 test3 *.win32_o *.win32_a *.exe
+	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
 
 test:	test1
 

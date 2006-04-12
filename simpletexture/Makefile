@@ -71,7 +71,7 @@ libsimpletexture.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimpletexture.win32_a $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/*
-	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
+	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 test:	test1
 
@@ -100,7 +100,7 @@ deps.mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a *.exe
+	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
