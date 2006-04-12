@@ -19,14 +19,34 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+DESTDIR =
+PREFIX = $(DESTDIR)/usr/local
+BINDIR = $(PREFIX)/bin
+LIBDIR = $(PREFIX)/lib/simple
+INCDIR = $(PREFIX)/include/simple
+
+INSTALL = /usr/bin/install
+
+all:	build
+
+build:
+	make -C simpleaudio
+	make -C simpletexture
+	make -C simplevideo
+	make -C simplegui
+	make -C simplemodel
+	make -C simpleconnect
+	make -C simpleconfig
+
+install:	all
+	$(INSTALL) -d $(LIBDIR)
+	$(INSTALL) -d $(INCDIR)
+	$(INSTALL) -m 644 simple*/lib*.a $(LIBDIR)
+	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
+
+uninstall:	all
+	rm -f $(LIBDIR)/libsimple*.a
+	rm -f $(INCDIR)/s*.h
 
 win32:
 	make -C simpleaudio $@
