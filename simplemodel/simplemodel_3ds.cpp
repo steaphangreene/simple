@@ -30,7 +30,7 @@
 using namespace std;
 
 #include "simplemodel_3ds.h"
-#include "saferead.h"
+#include "../simpletexture/saferead.h"
 
 SimpleModel_3DS::SimpleModel_3DS(const string &filenm, const string &texnm) {
   Load(filenm, texnm);
