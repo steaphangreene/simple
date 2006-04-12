@@ -60,7 +60,7 @@ win32:
 	make -C simpleconnect $@
 	make -C simpleconfig $@
 
-ChangeLog:
+ChangeLog:	.svn
 	make -C simpleaudio $@
 	make -C simpletexture $@
 	make -C simplevideo $@
