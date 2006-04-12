@@ -24,3 +24,9 @@
 module=`pwd | tr '/' '\n' | grep -v '^$' | tail -1`
 make ChangeLog
 scp ChangeLog optimus:public_html/${module}/ChangeLog.txt
+
+if test $module = simple ; then
+  for submod in simple[a-z]* ; do
+    scp ${submod}/ChangeLog optimus:public_html/${submod}/ChangeLog.txt
+  done
+fi
