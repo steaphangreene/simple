@@ -31,7 +31,7 @@
 using namespace std;
 
 #include "sg_compound.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_panel.h"
 #include "sg_stickybutton.h"
 

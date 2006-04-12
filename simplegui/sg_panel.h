@@ -29,7 +29,7 @@
 using namespace std;
 
 #include "sg_colors.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_widget.h"
 
 #define SG_STATE_DEFAULT	0

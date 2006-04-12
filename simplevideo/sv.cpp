@@ -38,7 +38,7 @@
 using namespace std;
 
 #include "sv.h"
-#include "../simpletexture/st.h"
+#include "st.h"
 
 SimpleVideo *SimpleVideo::current = NULL;
 

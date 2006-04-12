@@ -22,8 +22,8 @@
 #include "SDL_opengl.h"
 
 #include "simpleconfig.h"
-#include "../simplegui/simplegui.h"
-#include "../simplevideo/simplevideo.h"
+#include "simplegui.h"
+#include "simplevideo.h"
 
 SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
         const vector<SG_Alignment*> &other_screens) {

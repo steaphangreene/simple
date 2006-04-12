@@ -30,7 +30,7 @@
 using namespace std;
 
 #include "simplemodel_q3dir.h"
-#include "../simpletexture/saferead.h"
+#include "saferead.h"
 
 SimpleModel_MD3::SimpleModel_MD3(const string &filenm,
 	const string &modelnm, const string &defskin) {

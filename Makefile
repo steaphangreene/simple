@@ -41,8 +41,11 @@ build:
 install:	all
 	$(INSTALL) -d $(LIBDIR)
 	$(INSTALL) -d $(INCDIR)
+	$(INSTALL) -d $(BINDIR)
 	$(INSTALL) -m 644 simple*/lib*.a $(LIBDIR)
 	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
+	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' > simple-config
+	$(INSTALL) -m 755 simple-config $(BINDIR)
 
 uninstall:	all
 	rm -f $(LIBDIR)/libsimple*.a
@@ -65,6 +68,7 @@ ChangeLog:
 	make -C simplemodel $@
 	make -C simpleconnect $@
 	make -C simpleconfig $@
+	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 test:	
 	#make -C simpleaudio $@
@@ -101,6 +105,7 @@ clean:
 	make -C simplemodel $@
 	make -C simpleconnect $@
 	make -C simpleconfig $@
+	rm -f simple-config ChangeLog
 
 backup:
 	make -C simpleaudio $@

@@ -26,40 +26,40 @@ win32:	libsimpleconnect.win32_a
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplegui -I../simpletexture
+#LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -framework OpenGL
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplegui -I../simpletexture
+#LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplegui -I../simpletexture
+#LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplegui -I../simpletexture
+LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
+#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplegui -I../simpletexture
+#LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_image -lGL -lGLU
+#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplegui -I../simpletexture
+#LIBS=	../simplegui/libsimplegui.a `sdl-config --libs` -lSDL_image -lGL -lGLU
 
 OBJS:=	sc.o
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` -I../simplegui -I../simpletexture
+WLIBS=	../simplegui/libsimplegui.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:=	sc.win32_o
 
@@ -69,7 +69,7 @@ libsimpleconnect.a:	$(OBJS)
 libsimpleconnect.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimpleconnect.win32_a $(WOBJS)
 
-ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/*
+ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 %.o:	%.cpp

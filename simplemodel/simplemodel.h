@@ -29,7 +29,7 @@ using namespace std;
 #include "SDL.h"
 #include "SDL_opengl.h"
 
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 
 class SimpleModel {
 public:

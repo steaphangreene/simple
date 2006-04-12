@@ -25,11 +25,11 @@ using namespace std;
 #include "SDL_opengl.h"
 
 #include "sc.h"
-#include "../simplegui/sg_events.h"
-#include "../simplegui/sg_globals.h"
-#include "../simplegui/sg_button.h"
-#include "../simplegui/sg_dragable.h"
-#include "../simplegui/sg_editable.h"
+#include "sg_events.h"
+#include "sg_globals.h"
+#include "sg_button.h"
+#include "sg_dragable.h"
+#include "sg_editable.h"
 
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	12

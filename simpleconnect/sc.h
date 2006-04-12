@@ -39,7 +39,7 @@ using namespace std;
 
 #include "safecomm.h"
 
-#include "../simplegui/sg_compound.h"
+#include "sg_compound.h"
 
 class SG_Button;
 class SG_TextArea;

@@ -27,7 +27,7 @@
 using namespace std;
 
 #include "SDL_thread.h"
-#include "../simplegui/sg_multitab.h"
+#include "sg_multitab.h"
 
 class SG_Button;
 class SG_TextArea;

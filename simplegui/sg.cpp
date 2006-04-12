@@ -30,7 +30,7 @@ using namespace std;
 #include "sg_alignment.h"
 #include "sg_positional.h"
 #include "sg_events.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 
 SimpleGUI *current_sg = NULL;
 

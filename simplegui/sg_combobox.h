@@ -29,7 +29,7 @@
 using namespace std;
 
 #include "sg_compound.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_colors.h"
 #include "sg_text.h"
 #include "sg_multitext.h"

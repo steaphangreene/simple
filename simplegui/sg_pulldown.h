@@ -24,7 +24,7 @@
 
 #include "sg_compound.h"
 #include "sg_multitext.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_colors.h"
 
 class SG_Button;

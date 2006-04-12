@@ -25,32 +25,32 @@ win32:	libsimplemodel.win32_a
 
 #PRODUCTION OPTIONS (STANDARD)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 #CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 #CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
 #CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
 
 OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o \
@@ -60,7 +60,7 @@ OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o \
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
+WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags` -I../simpletexture
 WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o \
@@ -74,7 +74,7 @@ libsimplemodel.a:	$(OBJS)
 libsimplemodel.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimplemodel.win32_a $(WOBJS)
 
-ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/* tests/*
+ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 %.o:	%.cpp

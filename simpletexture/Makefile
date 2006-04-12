@@ -70,7 +70,7 @@ libsimpletexture.a:	$(OBJS)
 libsimpletexture.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs libsimpletexture.win32_a $(WOBJS)
 
-ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn scripts/*
+ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn tests/*.cpp tests/*.h
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 test:	test1

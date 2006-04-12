@@ -26,7 +26,7 @@
 #define SG_SLIDERBAR_H
 
 #include "sg_compound.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_colors.h"
 #include "sg_ranger.h"
 

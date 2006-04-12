@@ -31,7 +31,7 @@ using namespace std;
 
 #include "sg_compound.h"
 #include "sg_multitext.h"
-#include "../simpletexture/simpletexture.h"
+#include "simpletexture.h"
 #include "sg_colors.h"
 
 #ifndef SG_AUTOSIZE
