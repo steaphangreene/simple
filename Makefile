@@ -24,6 +24,7 @@ PREFIX = $(DESTDIR)/usr/local
 BINDIR = $(PREFIX)/bin
 LIBDIR = $(PREFIX)/lib/simple
 INCDIR = $(PREFIX)/include/simple
+WLIBDIR = $(PREFIX)/i586-mingw32msvc/lib/simple
 
 INSTALL = /usr/bin/install
 
@@ -47,9 +48,10 @@ install:	all
 	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' > simple-config
 	$(INSTALL) -m 755 simple-config $(BINDIR)
 
-uninstall:	all
+uninstall:	uninstall_win32
 	rm -f $(LIBDIR)/libsimple*.a
 	rm -f $(INCDIR)/s*.h
+	rm -vf $(BINDIR)/simple-config
 
 win32:
 	make -C simpleaudio $@
@@ -59,6 +61,22 @@ win32:
 	make -C simplemodel $@
 	make -C simpleconnect $@
 	make -C simpleconfig $@
+
+install_win32:	install win32
+	$(INSTALL) -d $(WLIBDIR)
+	$(INSTALL) -m 644 simpleaudio/libsimpleaudio.win32_a $(WLIBDIR)/libsimpleaudio.a
+	$(INSTALL) -m 644 simpletexture/libsimpletexture.win32_a $(WLIBDIR)/libsimpletexture.a
+	$(INSTALL) -m 644 simplevideo/libsimplevideo.win32_a $(WLIBDIR)/libsimplevideo.a
+	$(INSTALL) -m 644 simplegui/libsimplegui.win32_a $(WLIBDIR)/libsimplegui.a
+	$(INSTALL) -m 644 simplemodel/libsimplemodel.win32_a $(WLIBDIR)/libsimplemodel.a
+	$(INSTALL) -m 644 simpleconnect/libsimpleconnect.win32_a $(WLIBDIR)/libsimpleconnect.a
+	$(INSTALL) -m 644 simpleconfig/libsimpleconfig.win32_a $(WLIBDIR)/libsimpleconfig.a
+	cat scripts/simple-config.sh | sed 's|prefix=".*"|prefix="$(PREFIX)"|g' | sed 's|cross_prefix=".*"|cross_prefix="i586-mingw32msvc-"|g' | sed 's|cross_dir=".*"|cross_dir="/i586-mingw32msvc"|g' | sed 's|-lGL -lGLU|-lopengl32 -lglu32|g' | sed 's|base_libs=".*"|base_libs="-lSDL_net -lwsock32 -lSDL_ttf -lSDL_image -lSDL_mixer -lvorbisfile -lvorbis -logg -lSDL -lpng -ljpeg -lpng"|g' > i586-mingw32msvc-simple-config
+	$(INSTALL) -m 755 i586-mingw32msvc-simple-config $(BINDIR)
+
+uninstall_win32:
+	rm -vf $(WLIBDIR)/libsimple*.win32_a
+	rm -vf $(BINDIR)/i586-mingw32msvc-simple-config
 
 ChangeLog:	.svn
 	make -C simpleaudio $@
@@ -105,7 +123,7 @@ clean:
 	make -C simplemodel $@
 	make -C simpleconnect $@
 	make -C simpleconfig $@
-	rm -f simple-config ChangeLog
+	rm -f *simple-config ChangeLog
 
 backup:
 	make -C simpleaudio $@

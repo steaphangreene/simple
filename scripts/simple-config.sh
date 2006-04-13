@@ -26,7 +26,10 @@ exec_prefix="${prefix}"
 package="simple"
 version="0.0.0-prerelease"
 includedir="${prefix}/include/simple"
-libdir="${exec_prefix}/lib/simple"
+cross_prefix=""
+cross_dir=""
+libdir="${exec_prefix}${cross_dir}/lib/simple"
+base_libs="-lSDL_net -lSDL_ttf -lSDL_image -lSDL_mixer"
 
 if test $# -eq 0; then
     cat <<EOF
@@ -35,8 +38,8 @@ Options:
     --prefix[=DIR]) : \$prefix
     --package) : \$package
     --version) : \$version
-    --cflags) : -I\$includedir
-    --libs) : -L\$libdir -lzzip -lz
+    --cflags) : <long>
+    --libs) : <long>
 EOF
 fi
 
@@ -47,8 +50,8 @@ for i in "$@" ; do
     --prefix)   output="$output $prefix" ;;
     --package)  output="$output $package" ;;
     --version)  output="$output $version" ;;
-    --cflags)   output="$output `sdl-config --cflags` `zzip-config --cflags` -I$includedir" ;;
-    --libs) output="$output `sdl-config --libs` `zzip-config --libs` -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplegui -lsimplemodel -lsimpletexture -lSDL_net -lSDL_ttf -lSDL_image -lSDL_mixer `zzip-config --libs` -lGL -lGLU"
+    --cflags)   output="$output `${cross_prefix}sdl-config --cflags` `${cross_prefix}zzip-config --cflags` -I$includedir" ;;
+    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplegui -lsimplemodel -lsimpletexture `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` -lGL -lGLU"
         ;;
     *) output="$output $i" ;;
     esac
