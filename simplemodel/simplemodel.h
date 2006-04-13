@@ -96,6 +96,7 @@ protected:
     }
   static void Multiply(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2);
+  static void Normalize(Quaternion &res, const Quaternion &quat);
 
   //Interpolations
   template <class Tp>

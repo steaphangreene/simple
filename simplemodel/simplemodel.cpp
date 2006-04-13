@@ -93,6 +93,16 @@ const vector<string> &SimpleModel::GetSkinList() {
   return skins;
   }
 
+void SimpleModel::Normalize(Quaternion &res, const Quaternion &quat) {
+  float scale = sqrtf(quat.data[0]*quat.data[0]
+	+ quat.data[1]*quat.data[1] + quat.data[2]*quat.data[2]
+	+ quat.data[3]*quat.data[3]);
+  res.data[0] = quat.data[0] / scale;
+  res.data[1] = quat.data[0] / scale;
+  res.data[2] = quat.data[0] / scale;
+  res.data[3] = quat.data[0] / scale;
+  }
+
 void SimpleModel::SLERP(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t) {
   Quaternion q1 = {{0.0}}, q2 = {{0.0}}, qres = {{0.0}};
@@ -267,4 +277,3 @@ SimpleModel::Matrix4x4 SimpleModel::identity4x4 = {{
 	0.0, 0.0, 1.0, 0.0,
 	0.0, 0.0, 0.0, 1.0
 	}};
-

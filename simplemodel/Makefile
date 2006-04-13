@@ -54,6 +54,7 @@ LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --lib
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
 
 OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o \
+	simplemodel_md.o simplemodel_mdx.o \
 	simplemodel_sphere.o simplemodel_wedge.o \
 	simplemodel_cone.o simplemodel_cube.o \
 	simplemodel_3ds.o
@@ -97,10 +98,13 @@ deps.mk:	*.cpp *.h
 clean:
 	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
 
-test:	test1
+test:	test1 test2
 
 test1:	test1.o renderer.o libsimplemodel.a
 	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimplemodel.a $(LIBS)
+	
+test2:	test2.o renderer.o libsimplemodel.a
+	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o libsimplemodel.a $(LIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test

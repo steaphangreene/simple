@@ -87,13 +87,11 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
 
       mindex = geosets.at(0).vertex_groups.at(v2);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
-      vert = vec2;
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v3);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
-      vert = vec3;
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
     glEnd();
@@ -263,7 +261,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
       if(anim_info.cur_seq->start <= start_frame->frame && anim_info.cur_seq->end >= end_frame->frame) {
         float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
         SLERP(res, start_frame->quat, end_frame->quat, weight);
-        //Normalize(res); //Norming a Quaternion?
+        Normalize(res, res);
         }
       else
         res = start_frame->quat;
