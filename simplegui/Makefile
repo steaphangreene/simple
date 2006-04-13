@@ -83,10 +83,12 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o
 
 libsimplegui.a:	$(OBJS)
-	ar rcs libsimplegui.a $(OBJS)
+	rm -vf $@
+	ar rcs $@ $(OBJS)
 
 libsimplegui.win32_a:	$(WOBJS)
-	i586-mingw32msvc-ar rcs libsimplegui.win32_a $(WOBJS)
+	rm -vf $@
+	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h scripts/* .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog

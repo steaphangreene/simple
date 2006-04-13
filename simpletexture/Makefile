@@ -65,10 +65,12 @@ WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
 
 libsimpletexture.a:	$(OBJS)
-	ar rcs libsimpletexture.a $(OBJS)
+	rm -vf $@
+	ar rcs $@ $(OBJS)
 
 libsimpletexture.win32_a:	$(WOBJS)
-	i586-mingw32msvc-ar rcs libsimpletexture.win32_a $(WOBJS)
+	rm -vf $@
+	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn tests/*.cpp tests/*.h
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog

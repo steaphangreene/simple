@@ -69,10 +69,12 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o \
 	simplemodel_3ds.win32_o
 
 libsimplemodel.a:	$(OBJS)
-	ar rcs libsimplemodel.a $(OBJS)
+	rm -vf $@
+	ar rcs $@ $(OBJS)
 
 libsimplemodel.win32_a:	$(WOBJS)
-	i586-mingw32msvc-ar rcs libsimplemodel.win32_a $(WOBJS)
+	rm -vf $@
+	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog

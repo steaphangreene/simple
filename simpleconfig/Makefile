@@ -64,10 +64,12 @@ WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` `/usr/i586
 WOBJS:=	simpleconfig.win32_o
 
 libsimpleconfig.a:	$(OBJS)
-	ar rcs libsimpleconfig.a $(OBJS)
+	rm -vf $@
+	ar rcs $@ $(OBJS)
 
 libsimpleconfig.win32_a:	$(WOBJS)
-	i586-mingw32msvc-ar rcs libsimpleconfig.win32_a $(WOBJS)
+	rm -vf $@
+	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog

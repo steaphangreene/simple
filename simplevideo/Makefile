@@ -64,10 +64,12 @@ WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_imag
 WOBJS:=	sv.win32_o
 
 libsimplevideo.a:	$(OBJS)
-	ar rcs libsimplevideo.a $(OBJS)
+	rm -vf $@
+	ar rcs $@ $(OBJS)
 
 libsimplevideo.win32_a:	$(WOBJS)
-	i586-mingw32msvc-ar rcs libsimplevideo.win32_a $(WOBJS)
+	rm -vf $@
+	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
 	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
