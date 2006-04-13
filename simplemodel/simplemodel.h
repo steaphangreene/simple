@@ -84,13 +84,13 @@ protected:
   //Math
   template <class Tp>
   static void Add(Tp &res, const Tp &m1, const Tp &m2) {
-    for(int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
+    for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = m1.data[n] + m2.data[n];
       }
     }
   template <class Tp>
   static void Multiply(Tp &res, const Tp &mat, float scale) {
-    for(int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
+    for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = mat.data[n] * scale;
       }
     }
