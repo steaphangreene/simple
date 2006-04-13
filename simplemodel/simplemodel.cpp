@@ -260,3 +260,11 @@ vector<string> SimpleModel::source_files;
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin) {
   return SimpleModel::LoadModel(filename, defskin);
   }
+
+SimpleModel::Matrix4x4 SimpleModel::identity4x4 = {{
+	1.0, 0.0, 0.0, 0.0,
+	0.0, 1.0, 0.0, 0.0,
+	0.0, 0.0, 1.0, 0.0,
+	0.0, 0.0, 0.0, 1.0
+	}};
+
