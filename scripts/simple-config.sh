@@ -24,7 +24,7 @@
 prefix="/usr/local"
 exec_prefix="${prefix}"
 package="simple"
-version="0.12.83"
+version="0.0.0-prerelease"
 includedir="${prefix}/include/simple"
 libdir="${exec_prefix}/lib/simple"
 
