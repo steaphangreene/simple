@@ -222,8 +222,9 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  src = IMG_Load_RW(SDL_RWFromMem(data, jsize+siz[0]), true);
 	  if(!src) {
 	    fprintf(stderr, "WARNING[JPG]: %s\n", IMG_GetError());
-	    fprintf(stderr, "Sorry, BLP support is not yet complete!\n");
-	    fprintf(stderr, "WARNING: File '%s' ignored!\n", filenm.c_str());
+	    fprintf(stderr, "Sorry, BLP '%s' failed to load!\n");
+	    fprintf(stderr, "Perhaps you haven't patched SDL_image?\n");
+	    fprintf(stderr, "WARNING: File ignored!\n", filenm.c_str());
 	    }
 	  delete [] data;
 	  }
@@ -242,7 +243,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  Uint8 index[xs*ys], alpha[xs*ys];
 	  int ret = SDL_RWread(file, index, 1, xs*ys);
 	  ret += SDL_RWread(file, alpha, 1, xs*ys);
-	  if(ret != xs*ys*2) {
+	  if(ret != int(xs*ys*2)) {
 	    fprintf(stderr, "ERROR: Can't read pixel data from file '%s'\n",
 		filenm.c_str());
 	    type = SIMPLETEXTURE_NONE;
