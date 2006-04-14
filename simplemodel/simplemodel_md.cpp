@@ -316,7 +316,7 @@ int SimpleModel_MD::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
       return false;
       }
     int start = sequences.at(anim[0]).start;
-    float fps = 40.0; //sequences[anim[0]].speed;    // FIXME: Not sure about this?
+    float fps = 960.0; //sequences[anim[0]].speed;    // FIXME: Not sure about this?
     float elapsed = cur_time - start_time[0];
 
     float disp = elapsed * fps / 1000.0;
