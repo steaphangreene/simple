@@ -118,9 +118,9 @@ void SimpleModel::Normalize(Quaternion &res, const Quaternion &quat) {
 	+ quat.data[1]*quat.data[1] + quat.data[2]*quat.data[2]
 	+ quat.data[3]*quat.data[3]);
   res.data[0] = quat.data[0] / scale;
-  res.data[1] = quat.data[0] / scale;
-  res.data[2] = quat.data[0] / scale;
-  res.data[3] = quat.data[0] / scale;
+  res.data[1] = quat.data[1] / scale;
+  res.data[2] = quat.data[2] / scale;
+  res.data[3] = quat.data[3] / scale;
   }
 
 void SimpleModel::SLERP(Matrix4x4 &res,
