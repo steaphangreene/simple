@@ -42,6 +42,9 @@ SimpleModel_MD::SimpleModel_MD() {
 SimpleModel_MD::~SimpleModel_MD() {
   }
 
+/*
+  cur_transforms stores the bone_transforms and the geoset_transforms for this frame of rendering
+*/
 bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vector<Uint32> & start_time) const {
   TransformInfo cur_transforms;
   AnimationInfo anim_info;
@@ -56,7 +59,6 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
   anim_info.interpolation_weight = factor;
 
   cur_transforms.bone_transforms.resize(bones.size());
-  cur_transforms.geoset_matrices.resize(geosets.at(0).group_counts.size());
 
   //fprintf(stderr, "Start frame: %d\n", sequences.at(anim[0]).start);
   //fprintf(stderr, "End frame: %d\n", sequences.at(anim[0]).end);
@@ -104,15 +106,22 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
   return true;
   }
 
+/*
+  In this function we loop through the geosets group counts and build the matrices that will actually be used to transform the geoset's vertices at render time (these matrices are stored in current_transforms and are not to be confused with the vector<Uint32> matrices in an MDXGeoset). For every i-th element of group_count, we look in the geosets matrices vector from group_count[i - 1] to group_count[i] and accumulate the bone transforms referenced by those elements in matrices.
+*/
 void SimpleModel_MD::MDXGeoset::CalculateGroupMatrices(TransformInfo & current_transforms) const {
   Uint32 index = 0;
     
+  current_transforms.geoset_matrices.resize(group_counts.size());
   for(Uint32 i = 0; i < group_counts.size(); ++i) {
       AccumulateBoneTransforms(current_transforms, i, group_counts.at(i), index);
       index += group_counts.at(i);
   }
 }
 
+/*
+  This is where we accumulate the bone transforms. m_id refers to which transformation matrix were building. m_count refers to how many elements in the geoset's matrices vector that were going to look at. m_start is index saying at which element we start at. We basically loop and for every i that we look at in matrices, we add bone_transform[matrices[i]] to the transformation matrix for render time m_id. Once were done we scale it by m_count.
+*/
 void SimpleModel_MD::MDXGeoset::AccumulateBoneTransforms(TransformInfo & cur_trans, const Uint32 m_id, const Uint32 m_count, const Uint32 m_start) const {
     for(Uint32 i = 0; i < m_count; ++i)
       Add(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), cur_trans.bone_transforms.at(matrices.at(m_start + i)));
@@ -121,6 +130,9 @@ void SimpleModel_MD::MDXGeoset::AccumulateBoneTransforms(TransformInfo & cur_tra
     Multiply(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), scale);
 }
 
+/*
+  This is where we start building the bone transforms. pmat is the parent matrix (this is called from render and identity4x4 is passed) and pid is the parent id (bones without parents have -1 as a parent id). Basically, we loop through all of the bones, for every bone with a parent_id = pid we calculate its transform using the parent matrix that we currently have. Then we build it's children by calling this same function but, with the transform of the bone we just calculated as the parent matrix and its object_id as the parent id.
+*/
 void SimpleModel_MD::CalcTransforms(TransformInfo & cur_trans, const Matrix4x4 & pmat, const Sint32 pid, const AnimationInfo & anim_info) const {
   for(vector<MDXBone>::const_iterator it = bones.begin(); it != bones.end(); ++it) {
     if(it->object.parent == pid) {
@@ -137,6 +149,8 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   bool has_translation = false;
   bool has_rotation = false;
 
+  // If type isn't 0 or 256 then it's not really a bone and has something to do will billboard.
+  // FIXME: Is this why animation doesn't work?
   if(object.type != 0 && object.type != 256) {
     //res = identity4x4;
     res = pmat;
@@ -184,15 +198,20 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   Multiply(res, accum_mat3, pmat);
   }
 
+/*
+  res is the resultant translation vector
+*/
 bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const AnimationInfo & anim_info) const {
   vector<MDXKeyFrameTS>::const_iterator start_frame;
   vector<MDXKeyFrameTS>::const_iterator end_frame;
   
+  // If we're at the last frame of animation, set res to be the point at that frame
   if(anim_info.cur_seq->start == (object.translation_info.key_frames.end() - 1)->frame) {
     res = (object.translation_info.key_frames.end() - 1)->point;
     return true;
     };
 
+  // Loop through the frames to find our match
   for(vector<MDXKeyFrameTS>::const_iterator it = object.translation_info.key_frames.begin(); it != object.translation_info.key_frames.end(); ++it) {
     start_frame = it;
     end_frame = (it + 1);
@@ -207,10 +226,13 @@ bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const Animati
       return true;
       }
 
+    // Make sure current frame falls between start frame and end frame
     if(start_frame->frame < anim_info.cur_frame && anim_info.cur_frame < end_frame->frame) {
+      // Make sure this sequence starts after start frame and ends before end frame
       if(anim_info.cur_seq->start > start_frame->frame && anim_info.cur_seq->end < end_frame->frame)
         return false;
 
+      // If our current animation starts before start frame and ends after end frame, interpolate into res
       if(anim_info.cur_seq->start <= start_frame->frame && anim_info.cur_seq->end >= end_frame->frame) {
         float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
         LERP(res, start_frame->point, end_frame->point, weight);
@@ -225,6 +247,9 @@ bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const Animati
   return false;
   };
 
+/*
+  Comments from MDXBone::CalcBoneTranslation apply to this func
+*/
 bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const AnimationInfo & anim_info) const {
   vector<MDXKeyFrameR>::const_iterator start_frame;
   vector<MDXKeyFrameR>::const_iterator end_frame;
