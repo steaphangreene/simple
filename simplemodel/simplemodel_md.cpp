@@ -176,7 +176,6 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   trans_mat.data[13] = translation.y;
   trans_mat.data[14] = translation.z;
 
-  rotation.data[3] = -rotation.data[3];
   Matrix4x4 rot_mat;
   QuaternionToMatrix4x4(rot_mat, rotation);
 
