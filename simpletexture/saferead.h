@@ -25,31 +25,37 @@
 #include "SDL.h"
 
 template <class Tp>
-static void freadLE(Tp &var, SDL_RWops *fl) {
+static int freadLE(Tp &var, SDL_RWops *fl) {
   union { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  SDL_RWread(fl, &data.v, 1, sizeof(Tp));
+  int ret=SDL_RWread(fl, &data.v, sizeof(Tp), 1);
+  if(ret == 1) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  int i1=0, i2=sizeof(Tp)-1;
-  while(i1 < i2) {
-    swap(data.b[i1], data.b[i2]);
-    ++i1; --i2;
-    }
+    int i1=0, i2=sizeof(Tp)-1;
+    while(i1 < i2) {
+      swap(data.b[i1], data.b[i2]);
+      ++i1; --i2;
+      }
 #endif
-  var = data.v;
+    var = data.v;
+    }
+  return ret;
   };
 
 template <class Tp>
-static void freadBE(Tp &var, SDL_RWops *fl) {
+static int freadBE(Tp &var, SDL_RWops *fl) {
   union { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  SDL_RWread(fl, &data.v, 1, sizeof(Tp));
+  int ret=SDL_RWread(fl, &data.v, sizeof(Tp), 1);
+  if(ret == 1) {
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
-  int i1=0, i2=sizeof(Tp)-1;
-  while(i1 < i2) {
-    swap(data.b[i1], data.b[i2]);
-    ++i1; --i2;
-    }
+    int i1=0, i2=sizeof(Tp)-1;
+    while(i1 < i2) {
+      swap(data.b[i1], data.b[i2]);
+      ++i1; --i2;
+      }
 #endif
-  var = data.v;
+    var = data.v;
+    }
+  return ret;
   };
 
 #endif	//SAFEREAD_H

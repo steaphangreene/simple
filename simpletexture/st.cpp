@@ -184,14 +184,22 @@ SimpleTexture::SimpleTexture(const string &filenm) {
       if(!strncmp((char*)head, "BLP1", 4)) {
 	Uint32 uncomp, n2, xs, ys, n5, n6;
 	Uint32 off[16], siz[16];
-	freadLE(uncomp, file);
-	freadLE(n2, file);	//NumMipmaps?
-	freadLE(xs, file);
-	freadLE(ys, file);
-	freadLE(n5, file);	//Type
-	freadLE(n6, file);	//SubType
-	for(int i=0; i<16; ++i) freadLE(off[i], file);
-	for(int i=0; i<16; ++i) freadLE(siz[i], file);
+	int ret = 0;
+	ret += freadLE(uncomp, file);
+	ret += freadLE(n2, file);	//NumMipmaps?  Nope.  What is this?
+	ret += freadLE(xs, file);
+	ret += freadLE(ys, file);
+	ret += freadLE(n5, file);	//Type
+	ret += freadLE(n6, file);	//SubType
+	for(int i=0; i<16; ++i) ret += freadLE(off[i], file);
+	for(int i=0; i<16; ++i) ret += freadLE(siz[i], file);
+	if(ret != 38) {
+	  fprintf(stderr, "ERROR: Failed to read BLP header (%d) on '%s'!\n",
+		ret, filenm.c_str());
+	  type = SIMPLETEXTURE_NONE;
+	  dirty = 0;
+	  return;
+	  }
 
 	if(!uncomp) {
 	//  fprintf(stderr, "It seems to be compressed\n");
@@ -231,18 +239,22 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	    SDL_RWseek(file, 1, SEEK_CUR); //Skip Unused Alpha
 	    }
 	  SDL_Rect pt = { 0, 0, 1, 1 };
+	  Uint8 index[xs*ys], alpha[xs*ys];
+	  int ret = SDL_RWread(file, index, 1, xs*ys);
+	  ret += SDL_RWread(file, alpha, 1, xs*ys);
+	  if(ret != xs*ys*2) {
+	    fprintf(stderr, "ERROR: Can't read pixel data from file '%s'\n",
+		filenm.c_str());
+	    type = SIMPLETEXTURE_NONE;
+	    dirty = 0;
+	    return;
+	    }
 	  for(Uint32 pix=0; pix < xs*ys; ++pix) {
-	    Uint8 index, alpha;
-	    freadLE(index, file);
-	    Uint32 bookmark = SDL_RWtell(file);
-	    SDL_RWseek(file, xs*ys-1, SEEK_CUR);
-	    freadLE(alpha, file);
 	    pt.x = pix%xs;
 	    pt.y = pix/xs;
 	    SDL_FillRect(src, &pt, SDL_MapRGBA(src->format, 
-		pal[index].r, pal[index].g, pal[index].b, alpha
-		));
-	    SDL_RWseek(file, bookmark, SEEK_SET);
+		pal[index[pix]].r, pal[index[pix]].g, pal[index[pix]].b,
+		alpha[pix]));
 	    }
 	  }
 	}
@@ -1124,7 +1136,7 @@ static int _zzip_seek(SDL_RWops *context, int offset, int whence) {
   }
 
 static int _zzip_read(SDL_RWops *context, void *ptr, int size, int maxnum) {
-  return zzip_read((ZZIP_FILE*)(context->hidden.unknown.data1), (char*)ptr, size*maxnum);
+  return (zzip_read((ZZIP_FILE*)(context->hidden.unknown.data1), (char*)ptr, size*maxnum) / size);
   }
 
 static int _zzip_write(SDL_RWops *context, const void *ptr, int size, int num) {
