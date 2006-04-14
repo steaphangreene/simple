@@ -152,8 +152,8 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   // If type isn't 0 or 256 then it's not really a bone and has something to do will billboard.
   // FIXME: Is this why animation doesn't work?
   if(object.type != 0 && object.type != 256) {
-    //res = identity4x4;
-    res = pmat;
+    res = identity4x4;
+    //res = pmat;
     return;
     }
   
@@ -163,6 +163,7 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   if(object.rotation_info.key_frames.size() > 0)
     has_rotation = CalcBoneRotation(rotation, anim_info);
 
+  
   Matrix4x4 pivot_mat = identity4x4;
   pivot_mat.data[12] = center.x;
   pivot_mat.data[13] = center.y;
@@ -186,16 +187,34 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   Matrix4x4 accum_mat3 = identity4x4;
 
   if(has_rotation) {
-    Multiply(accum_mat1, pivot_matN, rot_mat);
-    Multiply(accum_mat2, accum_mat1, pivot_mat);
+    Multiply(accum_mat1, rot_mat, pivot_matN);
+    Multiply(accum_mat2, pivot_mat, accum_mat1);
     }
 
   if(has_translation)
-    Multiply(accum_mat3, accum_mat2, trans_mat);
+    Multiply(accum_mat3, trans_mat, accum_mat2);
   else
     accum_mat3 = accum_mat2;
 
-  Multiply(res, accum_mat3, pmat);
+  Multiply(res, pmat, accum_mat3);
+  
+  /*
+  glPushMatrix();
+    glLoadIdentity();
+
+    glMultMatrixf(pmat.data);
+
+    if(has_translation)
+      glTranslatef(translation.x, translation.y, translation.z);
+
+    if(has_rotation) {
+      glTranslatef(-center.x, -center.y, -center.z);
+      glMultMatrixf(rot_mat.data);
+      glTranslatef(center.x, center.y, center.z);
+      }   
+    glGetFloatv(GL_MODELVIEW_MATRIX, res.data);
+  glPopMatrix();
+  */
   }
 
 /*
