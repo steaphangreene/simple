@@ -84,19 +84,16 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
     glBegin(GL_TRIANGLES);
       Uint32 mindex = geosets.at(0).vertex_groups.at(v1);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
-      //vert = vec1;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v2);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
-      //vert = vec2;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v3);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
-      //vert = vec3;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
     glEnd();
@@ -179,6 +176,7 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   trans_mat.data[13] = translation.y;
   trans_mat.data[14] = translation.z;
 
+  rotation.data[3] = -rotation.data[3];
   Matrix4x4 rot_mat;
   QuaternionToMatrix4x4(rot_mat, rotation);
 
@@ -297,7 +295,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
       if(anim_info.cur_seq->start <= start_frame->frame && anim_info.cur_seq->end >= end_frame->frame) {
         float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
         SLERP(res, start_frame->quat, end_frame->quat, weight);
-        Normalize(res, res);
+        //Normalize(res, res);	// This doesn't seem to be required.
         }
       else
         res = start_frame->quat;
