@@ -125,7 +125,7 @@ void SimpleModel::Normalize(Quaternion &res, const Quaternion &quat) {
 
 void SimpleModel::SLERP(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t) {
-  Quaternion q1 = {{0.0}}, q2 = {{0.0}}, qres = {{0.0}};
+  Quaternion q1, q2, qres;
   Matrix4x4ToQuaternion(q1, m1);
   Matrix4x4ToQuaternion(q2, m2);
   SLERP(qres, q1, q2, t);
@@ -173,27 +173,27 @@ void SimpleModel::Multiply(Matrix4x4 &res,
 
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
   mat.data[0] = 1.0f - 2.0f *
-	(quat.data[2] * quat.data[2] + quat.data[3] * quat.data[3]);
+	(quat.data[1] * quat.data[1] + quat.data[2] * quat.data[2]);
   mat.data[1] = 2.0f *
-	(quat.data[1] * quat.data[2] - quat.data[0] * quat.data[3]);
+	(quat.data[0] * quat.data[1] - quat.data[3] * quat.data[2]);
   mat.data[2] = 2.0f *
-	(quat.data[1] * quat.data[3] + quat.data[0] * quat.data[2]);
+	(quat.data[0] * quat.data[2] + quat.data[3] * quat.data[1]);
   mat.data[3] = 0.0f;
 
   mat.data[4] = 2.0f *
-	(quat.data[1] * quat.data[2] + quat.data[0] * quat.data[3]);
+	(quat.data[0] * quat.data[1] + quat.data[3] * quat.data[2]);
   mat.data[5] = 1.0f - 2.0f *
-	(quat.data[1] * quat.data[1] + quat.data[3] * quat.data[3]);
+	(quat.data[0] * quat.data[0] + quat.data[2] * quat.data[2]);
   mat.data[6] = 2.0f *
-	(quat.data[2] * quat.data[3] - quat.data[0] * quat.data[1]);
+	(quat.data[1] * quat.data[2] - quat.data[3] * quat.data[0]);
   mat.data[7] = 0.0f;
 
   mat.data[8] = 2.0f *
-	(quat.data[1] * quat.data[3] - quat.data[0] * quat.data[2]);
+	(quat.data[0] * quat.data[2] - quat.data[3] * quat.data[1]);
   mat.data[9] = 2.0f *
-	(quat.data[2] * quat.data[3] + quat.data[0] * quat.data[1]);
+	(quat.data[1] * quat.data[2] + quat.data[3] * quat.data[0]);
   mat.data[10] = 1.0f - 2.0f *
-	(quat.data[1] * quat.data[1] + quat.data[2] * quat.data[2]);
+	(quat.data[0] * quat.data[0] + quat.data[1] * quat.data[1]);
   mat.data[11] = 0.0f;
 
   mat.data[12] = 0;
@@ -209,32 +209,32 @@ void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat) 
 
   if(trace > 0.00000001f) {
     scale = sqrt(trace) * 2.0f;
-    quat.data[1] = (mat.data[9] - mat.data[6]) / scale;
-    quat.data[2] = (mat.data[2] - mat.data[8]) / scale;
-    quat.data[3] = (mat.data[4] - mat.data[1]) / scale;
-    quat.data[0] = 0.25 * scale;
+    quat.data[0] = (mat.data[9] - mat.data[6]) / scale;
+    quat.data[1] = (mat.data[2] - mat.data[8]) / scale;
+    quat.data[2] = (mat.data[4] - mat.data[1]) / scale;
+    quat.data[3] = 0.25 * scale;
     }
   else {
     if(mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
       scale  = sqrt(1.0f + mat.data[0] - mat.data[5] - mat.data[10]) * 2.0f;
-      quat.data[1] = 0.25f * scale;
-      quat.data[2] = (mat.data[1] + mat.data[4]) / scale;
-      quat.data[3] = (mat.data[2] + mat.data[8]) / scale;
-      quat.data[0] = (mat.data[9] - mat.data[6]) / scale;
+      quat.data[0] = 0.25f * scale;
+      quat.data[1] = (mat.data[1] + mat.data[4]) / scale;
+      quat.data[2] = (mat.data[2] + mat.data[8]) / scale;
+      quat.data[3] = (mat.data[9] - mat.data[6]) / scale;
       }
     else if(mat.data[5] > mat.data[10]) {
       scale  = sqrt(1.0f + mat.data[5] - mat.data[0] - mat.data[10]) * 2.0f;
-      quat.data[1] = (mat.data[1] + mat.data[4]) / scale;
-      quat.data[2] = 0.25f * scale;
-      quat.data[3] = (mat.data[6] + mat.data[9]) / scale;
-      quat.data[0] = (mat.data[2] - mat.data[8]) / scale;
+      quat.data[0] = (mat.data[1] + mat.data[4]) / scale;
+      quat.data[1] = 0.25f * scale;
+      quat.data[2] = (mat.data[6] + mat.data[9]) / scale;
+      quat.data[3] = (mat.data[2] - mat.data[8]) / scale;
       }
     else {
       scale  = sqrt(1.0f + mat.data[10] - mat.data[0] - mat.data[5]) * 2.0f;
-      quat.data[1] = (mat.data[2] + mat.data[8]) / scale;
-      quat.data[2] = (mat.data[6] + mat.data[9]) / scale;
-      quat.data[3] = 0.25f * scale;
-      quat.data[0] = (mat.data[4] - mat.data[1]) / scale;
+      quat.data[0] = (mat.data[2] + mat.data[8]) / scale;
+      quat.data[1] = (mat.data[6] + mat.data[9]) / scale;
+      quat.data[2] = 0.25f * scale;
+      quat.data[3] = (mat.data[4] - mat.data[1]) / scale;
       }
     }
   }
