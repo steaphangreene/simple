@@ -46,7 +46,7 @@ SimpleModel_MDX::~SimpleModel_MDX() {
 
 bool SimpleModel_MDX::Load(const string &filenm,
 	const string &modelnm, const string &defskin) {
-  fprintf(stderr, "Opening '%s'\n", filenm.c_str());
+//  fprintf(stderr, "Opening '%s'\n", filenm.c_str());
   string token;
 
   filename = filenm + "/" + modelnm;
@@ -64,7 +64,7 @@ bool SimpleModel_MDX::Load(const string &filenm,
 
   HandleMagicWord(model);
   while((token = GetNextToken(model)) != "EOB") {
-    fprintf(stderr, "Current token is '%s'.\n", token.c_str());
+//    fprintf(stderr, "Current token is '%s'.\n", token.c_str());
     if(token == "VERS") {
       if(HandleVersion(model) == false)
         return false;
@@ -226,7 +226,7 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
     string buffer;
     buffer = filenm + "/" + (char *)(it->path);
     SimpleTexture *newtexture = new SimpleTexture(buffer);
-    fprintf(stderr, "Texture = %s\n", buffer.c_str());
+//    fprintf(stderr, "Texture = %s\n", buffer.c_str());
     texture.push_back(newtexture);
     }
 
@@ -308,7 +308,7 @@ bool SimpleModel_MDX::HandleGeosets(SDL_RWops * model) {
     bytes_read = SDL_RWtell(model) - file_offset;
     }
 
-  fprintf(stderr, "Number of geosets %d.\n", geosets.size());
+//  fprintf(stderr, "Number of geosets %d.\n", geosets.size());
 
   return true;
   }
@@ -548,7 +548,7 @@ bool SimpleModel_MDX::HandleBones(SDL_RWops * model) {
     bytes_read = SDL_RWtell(model) - file_offset;
     }
 
-  fprintf(stderr, "Numer of bones %d.\n", bones.size());
+//  fprintf(stderr, "Number of bones %d.\n", bones.size());
 
   return true;  
   }
@@ -758,7 +758,7 @@ string SimpleModel_MDX::GetNextToken(SDL_RWops * model) {
       }
     } 
   else {
-    fprintf(stderr, "Returning EOB.\n");
+//    fprintf(stderr, "Returning EOB.\n");
     return "EOB";
     }
   }
