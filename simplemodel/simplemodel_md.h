@@ -218,14 +218,12 @@ protected:
     };
 
   SimpleModel_MD();
-  void CalcTransforms(TransformInfo &, const Matrix4x4 , const Sint32, const AnimationInfo &) const;
+  void CalcTransforms(TransformInfo &, const Matrix4x4 &, const Sint32, const AnimationInfo &) const;
 
   int NormalizeFrame(const vector<int> &anim, int frame) const;
   int CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
     const vector<Uint32> &start_time, float &offset) const;
   void MatVecMult(MDXVertex & res, const Matrix4x4 & m, const MDXVertex & v) const;
-
-  Matrix4x4 mat_ident;  
 
   MDXModel model_info;
   vector<MDXSequence> sequences;

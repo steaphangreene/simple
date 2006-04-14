@@ -37,7 +37,6 @@ SimpleModel_MD::SimpleModel_MD(const string &filenm) {
   }
 
 SimpleModel_MD::SimpleModel_MD() {
-  mat_ident = identity4x4;
   }
 
 SimpleModel_MD::~SimpleModel_MD() {
@@ -61,9 +60,9 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
 
   //fprintf(stderr, "Start frame: %d\n", sequences.at(anim[0]).start);
   //fprintf(stderr, "End frame: %d\n", sequences.at(anim[0]).end);
-  //fprintf(stderr, "Frame: %d.\n", anim_info.cur_frame);
+  //fprintf(stderr, "Frame: %d.\n\n", anim_info.cur_frame);
 
-  CalcTransforms(cur_transforms, mat_ident, -1, anim_info);
+  CalcTransforms(cur_transforms, identity4x4, -1, anim_info);
   geosets.at(0).CalculateGroupMatrices(cur_transforms);
  
   MDXVertex vert;
@@ -79,25 +78,23 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
-
     glBindTexture(GL_TEXTURE_2D, texture.at(geosets.at(0).texture_id)->GLTexture());
     glBegin(GL_TRIANGLES);
       Uint32 mindex = geosets.at(0).vertex_groups.at(v1);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
-      vert = vec1;	//FIXME: This disable the transformations
+      //vert = vec1;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v2);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
-      vert = vec2;	//FIXME: This disable the transformations
+      //vert = vec2;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v3);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
-      vert = vec3;	//FIXME: This disable the transformations
+      //vert = vec3;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
     glEnd();
@@ -117,18 +114,14 @@ void SimpleModel_MD::MDXGeoset::CalculateGroupMatrices(TransformInfo & current_t
 }
 
 void SimpleModel_MD::MDXGeoset::AccumulateBoneTransforms(TransformInfo & cur_trans, const Uint32 m_id, const Uint32 m_count, const Uint32 m_start) const {
-    for(Uint32 i = 0; i < m_count; ++i) {
-      Matrix4x4 temp = {{0.0}};
-      Add(temp, cur_trans.geoset_matrices.at(m_id), cur_trans.bone_transforms.at(matrices.at(m_start + i)));
-      cur_trans.geoset_matrices.at(m_id) = temp;
-      }
-
+    for(Uint32 i = 0; i < m_count; ++i)
+      Add(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), cur_trans.bone_transforms.at(matrices.at(m_start + i)));
+    
     float scale = 1.0 / m_count;
-    for(Uint32 i = 0; i < 16; ++i)
-      cur_trans.geoset_matrices.at(m_id).data[i] *= scale;
+    Multiply(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), scale);
 }
 
-void SimpleModel_MD::CalcTransforms(TransformInfo & cur_trans, const Matrix4x4 pmat, const Sint32 pid, const AnimationInfo & anim_info) const {
+void SimpleModel_MD::CalcTransforms(TransformInfo & cur_trans, const Matrix4x4 & pmat, const Sint32 pid, const AnimationInfo & anim_info) const {
   for(vector<MDXBone>::const_iterator it = bones.begin(); it != bones.end(); ++it) {
     if(it->object.parent == pid) {
       Uint32 bone_id = it - bones.begin();
@@ -144,32 +137,29 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   bool has_translation = false;
   bool has_rotation = false;
 
-  if(object.type == 264) {
+  if(object.type != 0 && object.type != 256) {
     //res = identity4x4;
     res = pmat;
     return;
     }
-
+  
   if(object.translation_info.key_frames.size() > 0)
     has_translation = CalcBoneTranslation(translation, anim_info);
 
   if(object.rotation_info.key_frames.size() > 0)
     has_rotation = CalcBoneRotation(rotation, anim_info);
 
-  Matrix4x4 pivot_mat;
-  pivot_mat = identity4x4;
+  Matrix4x4 pivot_mat = identity4x4;
   pivot_mat.data[12] = center.x;
   pivot_mat.data[13] = center.y;
   pivot_mat.data[14] = center.z;
 
-  Matrix4x4 pivot_matN;
-  pivot_matN = identity4x4;
+  Matrix4x4 pivot_matN = identity4x4;
   pivot_matN.data[12] = -center.x;
   pivot_matN.data[13] = -center.y;
   pivot_matN.data[14] = -center.z;
 
-  Matrix4x4 trans_mat;
-  trans_mat = identity4x4;
+  Matrix4x4 trans_mat = identity4x4;
   trans_mat.data[12] = translation.x;
   trans_mat.data[13] = translation.y;
   trans_mat.data[14] = translation.z;
@@ -177,25 +167,21 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   Matrix4x4 rot_mat;
   QuaternionToMatrix4x4(rot_mat, rotation);
 
-  Matrix4x4 accum_mat1;
-  Matrix4x4 accum_mat2;
-  Matrix4x4 accum_mat3;
+  Matrix4x4 accum_mat1 = identity4x4;
+  Matrix4x4 accum_mat2 = identity4x4;
+  Matrix4x4 accum_mat3 = identity4x4;
 
-  accum_mat1 = identity4x4;
-  accum_mat2 = identity4x4;
-  accum_mat3 = identity4x4;
-    
   if(has_rotation) {
-    Multiply(accum_mat1, rot_mat, pivot_matN);
-    Multiply(accum_mat2, pivot_mat, accum_mat1);
+    Multiply(accum_mat1, pivot_matN, rot_mat);
+    Multiply(accum_mat2, accum_mat1, pivot_mat);
     }
 
   if(has_translation)
-    Multiply(accum_mat3, trans_mat, accum_mat2);
+    Multiply(accum_mat3, accum_mat2, trans_mat);
   else
     accum_mat3 = accum_mat2;
 
-  Multiply(res, pmat, accum_mat3);
+  Multiply(res, accum_mat3, pmat);
   }
 
 bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const AnimationInfo & anim_info) const {
@@ -248,7 +234,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
     return true;
     };
 
-  for(vector<MDXKeyFrameR>::const_iterator it = object.rotation_info.key_frames.begin(); it != object.rotation_info.key_frames.end(); ++it) {
+  for(vector<MDXKeyFrameR>::const_iterator it = object.rotation_info.key_frames.begin(); it != object.rotation_info.key_frames.end() - 1; ++it) {
     start_frame = it;
     end_frame = (it + 1);
 
@@ -256,13 +242,11 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
       res = start_frame->quat;
       return true;
       }
-
-    if(anim_info.cur_frame == end_frame->frame) {
+    else if(anim_info.cur_frame == end_frame->frame) {
       res = end_frame->quat;
       return true;
       }
-
-    if(start_frame->frame < anim_info.cur_frame && anim_info.cur_frame < end_frame->frame) {
+    else if(start_frame->frame < anim_info.cur_frame && anim_info.cur_frame < end_frame->frame) {
       if(anim_info.cur_seq->start > start_frame->frame && anim_info.cur_seq->end < end_frame->frame)
         return false;
 
@@ -291,7 +275,7 @@ int SimpleModel_MD::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
       return false;
       }
     int start = sequences.at(anim[0]).start;
-    float fps = 120.0; //sequences[anim[0]].speed;    // FIXME: Not sure about this?
+    float fps = 40.0; //sequences[anim[0]].speed;    // FIXME: Not sure about this?
     float elapsed = cur_time - start_time[0];
 
     float disp = elapsed * fps / 1000.0;

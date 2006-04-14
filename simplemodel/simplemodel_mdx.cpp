@@ -298,10 +298,11 @@ bool SimpleModel_MDX::HandleGeosets(SDL_RWops * model) {
     fprintf(stderr, "Number of group counts in geoset: %d.\n", new_geoset.group_counts.size());
     fprintf(stderr, "Number of matrices in geoset: %d.\n\n", new_geoset.matrices.size());
     */
+    /*
     for(Uint32 i = 0; i < new_geoset.matrices.size(); ++i)
       fprintf(stderr, "%d ", new_geoset.matrices.at(i));
     fprintf(stderr, "\n");
-
+    */
     geosets.push_back(new_geoset);
 
     bytes_read = SDL_RWtell(model) - file_offset;
@@ -704,7 +705,7 @@ bool SimpleModel_MDX::HandlePivots(SDL_RWops * model) {
     freadLE(pivots.at(i).x, model);
     freadLE(pivots.at(i).y, model);
     freadLE(pivots.at(i).z, model);
-    fprintf(stderr, "%f, %f, %f\n", pivots.at(i).x, pivots.at(i).y, pivots.at(i).z);
+    // fprintf(stderr, "%f, %f, %f\n", pivots.at(i).x, pivots.at(i).y, pivots.at(i).z);
     }
 
   return true;    
