@@ -29,8 +29,7 @@
 using namespace std;
 
 #include "../simplemodel.h"
-#include "../simplemodel_q3dir.h"
-#include "../simplemodel_md3.h"
+#include "../simplemodel_mdx.h"
 #include "../sm_q3anim.h"
 #include "renderer.h"
 
@@ -55,7 +54,7 @@ static void SetAnim(int anim) {
   }
 
 int main(int argc, char **argv) {
-  int xs=1200, ys=900;
+  int xs=800, ys=600;
 
   int barg = 1;
   while(argc > barg && (!strcmp(argv[barg], "-s"))) {
@@ -70,8 +69,7 @@ int main(int argc, char **argv) {
   char *modname = "models/players/trooper";
 
   if((argc-barg) > 2) {
-    //fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]);
-    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [skin]\n", argv[0]);
+    //fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]$    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [skin]\n", argv[0]);
     exit(1);
     }
   else if((argc-barg) >= 1) {
@@ -93,6 +91,8 @@ int main(int argc, char **argv) {
     exit(1);
     }
 
+//  anims.push_back(LEGS_IDLE);
+  anims.push_back(5);
   anims.push_back(LEGS_IDLE);
   anims.push_back(TORSO_STAND);
   times.push_back(SDL_GetTicks());
@@ -100,53 +100,61 @@ int main(int argc, char **argv) {
 
   int quit = 0;
   float yaw = 0.0, pitch = 0.0;
+  float posx = 2.0, posy = 0.0, posz = 0.0;
   while(!quit) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
       if(event.type == SDL_QUIT) {
-	quit = 1;
-	}
+    quit = 1;
+    }
       else if(event.type == SDL_KEYDOWN) {
-        if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-        else if(event.key.keysym.sym == SDLK_1) SetAnim(BOTH_DEATH1);
-        else if(event.key.keysym.sym == SDLK_2) SetAnim(BOTH_DEAD1);
-        else if(event.key.keysym.sym == SDLK_3) SetAnim(BOTH_DEATH2);
-        else if(event.key.keysym.sym == SDLK_4) SetAnim(BOTH_DEAD2);
-        else if(event.key.keysym.sym == SDLK_5) SetAnim(BOTH_DEATH3);
-        else if(event.key.keysym.sym == SDLK_6) SetAnim(BOTH_DEAD3);
+	if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+	else if(event.key.keysym.sym == SDLK_1) SetAnim(BOTH_DEATH1);
+	else if(event.key.keysym.sym == SDLK_2) SetAnim(BOTH_DEAD1);
+	else if(event.key.keysym.sym == SDLK_3) SetAnim(BOTH_DEATH2);
+	else if(event.key.keysym.sym == SDLK_4) SetAnim(BOTH_DEAD2);
+	else if(event.key.keysym.sym == SDLK_5) SetAnim(BOTH_DEATH3);
+	else if(event.key.keysym.sym == SDLK_6) SetAnim(BOTH_DEAD3);
 
-        else if(event.key.keysym.sym == SDLK_q) SetAnim(TORSO_GESTURE);
-        else if(event.key.keysym.sym == SDLK_w) SetAnim(TORSO_ATTACK);
-        else if(event.key.keysym.sym == SDLK_e) SetAnim(TORSO_ATTACK2);
-        else if(event.key.keysym.sym == SDLK_r) SetAnim(TORSO_DROP);
-        else if(event.key.keysym.sym == SDLK_t) SetAnim(TORSO_RAISE);
-        else if(event.key.keysym.sym == SDLK_y) SetAnim(TORSO_STAND);
-        else if(event.key.keysym.sym == SDLK_u) SetAnim(TORSO_STAND2);
+	else if(event.key.keysym.sym == SDLK_q) SetAnim(TORSO_GESTURE);
+	else if(event.key.keysym.sym == SDLK_w) SetAnim(TORSO_ATTACK);
+	else if(event.key.keysym.sym == SDLK_e) SetAnim(TORSO_ATTACK2);
+	else if(event.key.keysym.sym == SDLK_r) SetAnim(TORSO_DROP);
+	else if(event.key.keysym.sym == SDLK_t) SetAnim(TORSO_RAISE);
+	else if(event.key.keysym.sym == SDLK_y) SetAnim(TORSO_STAND);
+	else if(event.key.keysym.sym == SDLK_u) SetAnim(TORSO_STAND2);
 
-        else if(event.key.keysym.sym == SDLK_a) SetAnim(LEGS_WALKCR);
-        else if(event.key.keysym.sym == SDLK_s) SetAnim(LEGS_WALK);
-        else if(event.key.keysym.sym == SDLK_d) SetAnim(LEGS_RUN);
-        else if(event.key.keysym.sym == SDLK_f) SetAnim(LEGS_BACK);
-        else if(event.key.keysym.sym == SDLK_g) SetAnim(LEGS_SWIM);
-        else if(event.key.keysym.sym == SDLK_h) SetAnim(LEGS_JUMP);
-        else if(event.key.keysym.sym == SDLK_j) SetAnim(LEGS_LAND);
-        else if(event.key.keysym.sym == SDLK_k) SetAnim(LEGS_JUMPB);
-        else if(event.key.keysym.sym == SDLK_l) SetAnim(LEGS_LANDB);
-        else if(event.key.keysym.sym == SDLK_SEMICOLON) SetAnim(LEGS_IDLE);
-        else if(event.key.keysym.sym == SDLK_QUOTE) SetAnim(LEGS_IDLECR);
-        else if(event.key.keysym.sym == SDLK_RETURN) SetAnim(LEGS_TURN);
+	else if(event.key.keysym.sym == SDLK_a) SetAnim(LEGS_WALKCR);
+	else if(event.key.keysym.sym == SDLK_s) SetAnim(LEGS_WALK);
+	else if(event.key.keysym.sym == SDLK_d) SetAnim(LEGS_RUN);
+	else if(event.key.keysym.sym == SDLK_f) SetAnim(LEGS_BACK);
+	else if(event.key.keysym.sym == SDLK_g) SetAnim(LEGS_SWIM);
+	else if(event.key.keysym.sym == SDLK_h) SetAnim(LEGS_JUMP);
+	else if(event.key.keysym.sym == SDLK_j) SetAnim(LEGS_LAND);
+	else if(event.key.keysym.sym == SDLK_k) SetAnim(LEGS_JUMPB);
+	else if(event.key.keysym.sym == SDLK_l) SetAnim(LEGS_LANDB);
+	else if(event.key.keysym.sym == SDLK_SEMICOLON) SetAnim(LEGS_IDLE);
+	else if(event.key.keysym.sym == SDLK_QUOTE) SetAnim(LEGS_IDLECR);
+	else if(event.key.keysym.sym == SDLK_RETURN) SetAnim(LEGS_TURN);
 
-        else if(event.key.keysym.sym == SDLK_RIGHT)	yaw += 5.0;
-        else if(event.key.keysym.sym == SDLK_LEFT)	yaw -= 5.0;
-        else if(event.key.keysym.sym == SDLK_UP)	pitch += 5.0;
-        else if(event.key.keysym.sym == SDLK_DOWN)	pitch -= 5.0;
+	else if(event.key.keysym.sym == SDLK_RIGHT) yaw += 5.0;
+	else if(event.key.keysym.sym == SDLK_LEFT)  yaw -= 5.0;
+	else if(event.key.keysym.sym == SDLK_UP)   pitch += 5.0;
+	else if(event.key.keysym.sym == SDLK_DOWN) pitch -= 5.0;
 
-        else {
-          }
-        }
+	else if(event.key.keysym.sym == SDLK_KP6) posy += 0.5;
+	else if(event.key.keysym.sym == SDLK_KP4) posy -= 0.5;
+	else if(event.key.keysym.sym == SDLK_KP8) posz += 0.5;
+	else if(event.key.keysym.sym == SDLK_KP2) posz -= 0.5;
+	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += 0.5;
+	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= 0.5;
+
+	else {
+	  }
+	}
       }
     start_scene();
-    glTranslatef(2.0, 0.0, 0.0);
+    glTranslatef(posx, posy, posz);
     glRotatef(yaw, 0.0, 0.0, 1.0);
     glRotatef(pitch, 0.0, 1.0, 0.0);
     glTranslatef(0.0, 0.0, -2.0);

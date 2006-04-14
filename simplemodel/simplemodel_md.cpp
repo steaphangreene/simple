@@ -48,6 +48,9 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
   AnimationInfo anim_info;
   float factor;  
 
+  glPushMatrix();
+  glScalef(1.0/32.0, 1.0/32.0, 1.0/32.0);
+
   anim_info.cur_frame = CalcBaseFrame(cur_time, anim, start_time, factor);
   anim_info.cur_frame = NormalizeFrame(anim, anim_info.cur_frame);
   anim_info.cur_seq = sequences.begin() + anim.at(0);
@@ -82,20 +85,25 @@ bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vec
     glBegin(GL_TRIANGLES);
       Uint32 mindex = geosets.at(0).vertex_groups.at(v1);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
+      vert = vec1;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v2);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
+      vert = vec2;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
 
       mindex = geosets.at(0).vertex_groups.at(v3);
       MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
+      vert = vec3;	//FIXME: This disable the transformations
       glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[1]);
       glVertex3f(vert.x, vert.y, vert.z);
     glEnd();
     }
+
+  glPopMatrix();
   return true;
   }
 

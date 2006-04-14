@@ -30,7 +30,8 @@ public:
 	const string &modelnm = "", const string &defskin = "");
   virtual ~SimpleModel_MDX();
 
-  virtual bool Load(const string &filenm, const string &modelnm, const string &defskin);
+  virtual bool Load(const string &filenm,
+	const string &modelnm, const string &defskin);
 
 protected:
   SimpleModel_MDX();

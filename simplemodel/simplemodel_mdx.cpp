@@ -44,14 +44,14 @@ SimpleModel_MDX::SimpleModel_MDX() : SimpleModel_MD() {
 SimpleModel_MDX::~SimpleModel_MDX() {
   }
 
-bool SimpleModel_MDX::Load(const string & filenm,
+bool SimpleModel_MDX::Load(const string &filenm,
 	const string &modelnm, const string &defskin) {
   fprintf(stderr, "Opening '%s'\n", filenm.c_str());
   string token;
 
   filename = filenm + "/" + modelnm;
 
-  SDL_RWops * model = SDL_RWFromZZIP(filename.c_str(), "rb");
+  SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n", filename.c_str());
     perror("WARNING");
