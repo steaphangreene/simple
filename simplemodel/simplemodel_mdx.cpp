@@ -63,6 +63,10 @@ bool SimpleModel_MDX::Load(const string &filenm,
   SDL_RWseek(model, 0, SEEK_SET);
 
   HandleMagicWord(model);
+
+  if(defskin.length() > 0)
+    texture.push_back(new SimpleTexture(filenm + "/" + defskin));
+
   while((token = GetNextToken(model)) != "EOB") {
 //    fprintf(stderr, "Current token is '%s'.\n", token.c_str());
     if(token == "VERS") {
@@ -225,9 +229,8 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
 
     string buffer;
     buffer = filenm + "/" + (char *)(it->path);
-    SimpleTexture *newtexture = new SimpleTexture(buffer);
-//    fprintf(stderr, "Texture = %s\n", buffer.c_str());
-    texture.push_back(newtexture);
+
+    texture.push_back(new SimpleTexture(buffer));
     }
 
   return true;
