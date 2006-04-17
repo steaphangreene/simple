@@ -33,18 +33,18 @@ public:
   virtual bool Load(const string &filenm,
 	const string &filenm, const string &defskin = "default");
 
-  virtual bool Render(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>()) const;
-  bool MoveToTag(unsigned long tag, Uint32 cur_time,
+  virtual bool MoveToTag(Uint32 tag, Uint32 cur_time,
         const vector<int> &anim = vector<int>(),
-        const vector<Uint32> &start_time = vector<Uint32>()) const;
+        const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
 
-  unsigned long TagNameToIndex(const string &tagname) const;
-  bool MoveToTag(const string &tagname, Uint32 cur_time,
+  //WTF???  Why the hell won't GCC figure this out by itself???
+  //SimpleModel_MD3 is publically derived from SimpleModel!!!!
+  //And this is a public member function of SimpleModel!!!!
+  bool MoveToTag(const string &tag, Uint32 cur_time,
         const vector<int> &anim = vector<int>(),
         const vector<Uint32> &start_time = vector<Uint32>()) const {
-    return MoveToTag(TagNameToIndex(tagname), cur_time, anim, start_time);
+    return SimpleModel::MoveToTag(tag, cur_time, anim, start_time);
     }
 
   virtual const vector<string> &GetSkinList();
@@ -53,12 +53,17 @@ public:
   int AddAnimation(int start, int end, int loop, int fps);
 
 protected:
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
   SimpleModel_MD3();
   string modelname, skinname;
 
-  int NormalizeFrame(const vector<int> &anim, int frame) const;
-  int CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, float &offset) const;
+  int NormalizeFrame(int anim, int frame) const;
+  int CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
+	float &offset) const;
 
   struct MD3AnimationData {
     Sint32 start;

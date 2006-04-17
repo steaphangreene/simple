@@ -40,8 +40,8 @@ bool SimpleModel_Cube::Load(const string &filenm) {
   return true;
   }
 
-bool SimpleModel_Cube::Render(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const {
+bool SimpleModel_Cube::RenderSelf(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, Uint32 anim_offset) const {
   glBegin(GL_QUADS);
 
   glTexCoord2f(0.0, 0.0);

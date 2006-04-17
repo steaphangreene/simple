@@ -64,13 +64,14 @@ public:
 
   virtual bool Load(const string &filenm, const string &texnm = "");
 
-  virtual bool Render(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>()) const;
-
 protected:
-    GLuint display_list;
-	vector<MAXMesh> mesh;
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
+  GLuint display_list;
+  vector<MAXMesh> mesh;
   };
 
 #endif	//SIMPLEMODEL_3DS_H

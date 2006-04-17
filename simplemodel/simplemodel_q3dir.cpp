@@ -32,8 +32,6 @@ SimpleModel_Q3Dir::SimpleModel_Q3Dir(
 	const string &filenm, const string &defskin) {
   head = NULL;
   torso = NULL;
-  legs = NULL;
-  weapon = NULL;
   Load("", filenm, defskin);
   }
 
@@ -41,38 +39,39 @@ SimpleModel_Q3Dir::SimpleModel_Q3Dir(const string &pack,
 	const string &filenm, const string &defskin) {
   head = NULL;
   torso = NULL;
-  legs = NULL;
-  weapon = NULL;
   Load(pack, filenm, defskin);
   }
 
 SimpleModel_Q3Dir::SimpleModel_Q3Dir() {
   head = NULL;
   torso = NULL;
-  legs = NULL;
-  weapon = NULL;
   }
 
 SimpleModel_Q3Dir::~SimpleModel_Q3Dir() {
   if(head) delete head;
   if(torso) delete torso;
-  if(legs) delete legs;
-
-  if(weapon) weapon = NULL;	// Not mine!
   }
 
 bool SimpleModel_Q3Dir::Load(const string &pack, const string &filenm, const string &defskin) {
-  filename = filenm;
+  string base_filename = filenm;
+  string legfile = base_filename + "/lower.md3";
+  string torsofile = base_filename + "/upper.md3";
+  string headfile = base_filename + "/head.md3";
 
-  head = new SimpleModel_MD3(pack, filename + "/head.md3", defskin);
-  torso = new SimpleModel_MD3(pack, filename + "/upper.md3", defskin);
-  legs = new SimpleModel_MD3(pack, filename + "/lower.md3", defskin);
+  SimpleModel_MD3::Load(pack, legfile, defskin);
+
+  torso = new SimpleModel_MD3(pack, torsofile, defskin);
+  SetAnimOffset("tag_torso", 1);
+  if(torso) AttachSubmodel("tag_torso", torso);
+
+  head = new SimpleModel_MD3(pack, headfile, defskin);
+  if(torso && head) torso->AttachSubmodel("tag_head", head);
 
   if(pack.length() > 0) {
-    if(!LoadCFG(pack + "/" + filename + "/animation.cfg")) return false;
+    if(!LoadCFG(pack + "/" + base_filename + "/animation.cfg")) return false;
     }
   else {
-    if(!LoadCFG(filename + "/animation.cfg")) return false;
+    if(!LoadCFG(base_filename + "/animation.cfg")) return false;
     }
 
   return false;
@@ -121,7 +120,7 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
 
     if(anim < BOTH_MAX) {
       torso->AddAnimation(start, start + num, loop, fps);
-      legs->AddAnimation(start, start + num, loop, fps);
+      AddAnimation(start, start + num, loop, fps);
       }
     else if(anim < TORSO_MAX) {
       if(torso_first < 0) torso_first = start;
@@ -130,7 +129,7 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
     else if(anim < LEGS_MAX) {
       if(legs_offset < 0) legs_offset = start - torso_first;
       start -= legs_offset;
-      legs->AddAnimation(start, start + num, loop, fps);
+      AddAnimation(start, start + num, loop, fps);
       }
     else {
       fprintf(stderr, "WARNING: Too many animations for Q3 in '%s'!\n",
@@ -142,75 +141,56 @@ bool SimpleModel_Q3Dir::LoadCFG(const string &filenm) {
   return true;
   }
 
-bool SimpleModel_Q3Dir::Render(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const {
+bool SimpleModel_Q3Dir::RenderSelf(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, Uint32 anim_offset) const {
   if(anim.size() < 2 || start_time.size() < 2) {
     fprintf(stderr, "WARNING: Not enough anims/times sent to Q3 renderer.\n");
     return false;
     }
 
+/*
   vector<int> leganim(1);
-  vector<Uint32> legtime(1);
-  vector<int> torsoanim(1);
-  vector<Uint32> torsotime(1);
-
   leganim[0] = anim[0];
+  vector<Uint32> legtime(1);
   legtime[0] = start_time[0];
-  torsoanim[0] = anim[1];
-  torsotime[0] = start_time[1];
 
   //Do some auto-correction for not-quite valid inputs
-  if(torsotime[0] >= legtime[0] && torsoanim[0] < BOTH_MAX) { 
-    leganim[0] = torsoanim[0];
-    legtime[0] = torsotime[0];
+  if(legtime[1] >= legtime[0] && leganim[1] < BOTH_MAX) { 
+    leganim[0] = leganim[1];
+    legtime[0] = legtime[1];
     }
-  else if(legtime[0] >= torsotime[0] && leganim[0] < BOTH_MAX) {
-    torsoanim[0] = leganim[0];
-    torsotime[0] = legtime[0];
+  else if(legtime[0] >= legtime[1] && leganim[0] < BOTH_MAX) {
+    leganim[1] = leganim[0];
+    legtime[1] = legtime[0];
     }
-  else if(torsoanim[0] < BOTH_MAX) { 
-    torsoanim[0] = TORSO_STAND;
-    torsotime[0] = legtime[0];
+  else if(leganim[1] < BOTH_MAX) { 
+    leganim[1] = TORSO_STAND;
+    legtime[1] = legtime[0];
     }
   else if(leganim[0] < BOTH_MAX) {
     leganim[0] = LEGS_IDLE;
-    legtime[0] = torsotime[0];
+    legtime[0] = legtime[1];
     }
 
   if(leganim[0] >= BOTH_MAX) {	//Adjust for Leg Offset
     leganim[0] -= (LEGS_START - TORSO_START);
     }
+*/
 
-  if(legs) {
-    glPushMatrix();
-    glColor3f(1.0, 1.0, 1.0);
-    glEnable(GL_TEXTURE_2D);
-    glScalef(0.0625, 0.0625, 0.0625);
-    glTranslatef(0.0, 0.0, 24.0);	//Adjust for floor height
+//  glPushMatrix();
+  glColor3f(1.0, 1.0, 1.0);
+  glEnable(GL_TEXTURE_2D);
+  glScalef(0.0625, 0.0625, 0.0625);
+  glTranslatef(0.0, 0.0, 24.0);	//Adjust for floor height
 
-    legs->Render(cur_time, leganim, legtime);
+  SimpleModel_MD3::RenderSelf(cur_time, anim, start_time);
 
-    if(torso && legs->MoveToTag("tag_torso", cur_time, leganim, legtime)) {
-      torso->Render(cur_time, torsoanim, torsotime);
-
-      glPushMatrix();
-      if(head && torso->MoveToTag("tag_head", cur_time, torsoanim, torsotime)) {
-	head->Render(cur_time);	//No animations
-	}
-      glPopMatrix();
-
-      if(weapon && torso->MoveToTag("tag_weapon", cur_time, torsoanim, torsotime)) {
-	weapon->Render(cur_time); //No animations
-	}
-      }
-    glPopMatrix();
-    return true;
-    }
-  return false;
+//  glPopMatrix();
+  return true;
   }
 
 void SimpleModel_Q3Dir::SetWeapon(SimpleModel_MD3 *weap) {
-  weapon = weap;
+  if(torso) torso->AttachSubmodel("tag_weapon", weap);
   }
 
 const vector<string> &SimpleModel_Q3Dir::GetSkinList() {

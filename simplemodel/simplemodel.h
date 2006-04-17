@@ -22,8 +22,9 @@
 #ifndef	SIMPLEMODEL_H
 #define	SIMPLEMODEL_H
 
-#include <string>
+#include <map>
 #include <vector>
+#include <string>
 using namespace std;
 
 #include "SDL.h"
@@ -36,11 +37,30 @@ public:
   SimpleModel();
   virtual ~SimpleModel();
 
-  virtual bool Load(const string &filenm);
-
-  virtual bool Render(Uint32 cur_time,
+  bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>()) const;
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
+  virtual bool MoveToTag(Uint32 tag, Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+  void AttachSubmodel(Uint32 tag, SimpleModel *submodel);
+  void DetachSubmodel(const SimpleModel *submodel);
+  void DetachSubmodel(Uint32 tag);
+  void SetAnimOffset(Uint32 tag, Uint32 offset);
+
+  Uint32 TagNameToIndex(const string &tagname) const;
+  bool MoveToTag(const string &tagname, Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+  void AttachSubmodel(const string &tag, SimpleModel *submodel);
+  void DetachSubmodel(const string &tag);
+  void SetAnimOffset(const string &tag, Uint32 offset);
+
+  virtual bool Load(const string &filenm);
 
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm) {};
@@ -54,8 +74,16 @@ public:
   static SimpleModel *LoadModel(const string &filename, const string &defskin = "");
 
 protected:
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
   string filename;
   vector<SimpleTexture *> texture;
+  map<string, Uint32> tags;
+  map<Uint32, SimpleModel *> submodels;
+  map<Uint32, Uint32> tag_anim_offsets;
 
   static vector<string> source_files;
 

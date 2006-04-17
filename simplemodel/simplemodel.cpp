@@ -123,9 +123,52 @@ bool SimpleModel::Load(const string &filenm) {
   return false;
   }
 
-bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const {
+bool SimpleModel::MoveToTag(const Uint32 tag, Uint32 cur_time,
+        const vector<int> &anim, const vector<Uint32> &start_time,
+	Uint32 anim_offset) const {
   return false;
+  }
+
+Uint32 SimpleModel::TagNameToIndex(const string &tagname) const {
+  if(tags.count(tagname) < 1) {
+    map<Uint32, SimpleModel*>::const_iterator itr = submodels.begin();
+    for(; itr != submodels.end(); ++itr) {
+      Uint32 ret = itr->second->TagNameToIndex(tagname);
+      if(ret != 0xFFFFFFFF) return ((ret << 8) | itr->first);
+      }
+    return (Uint32)0xFFFFFFFF;
+    }
+  return tags.find(tagname)->second;
+  }
+
+bool SimpleModel::MoveToTag(const string &tagname, Uint32 cur_time,
+	const vector<int> &anim, const vector<Uint32> &start_time,
+	Uint32 anim_offset) const {
+  return MoveToTag(TagNameToIndex(tagname), cur_time, anim, start_time);
+  }
+
+
+bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+  if(!RenderSelf(cur_time, anim, start_time, anim_offset)) return false;
+  map<Uint32, SimpleModel*>::const_iterator itr = submodels.begin();
+  for(; itr != submodels.end(); ++itr) {
+    bool ret = false;
+    glPushMatrix();
+    if(MoveToTag(itr->first, cur_time, anim, start_time, anim_offset)) {
+      if(itr->second->Render(cur_time, anim, start_time,
+		anim_offset + tag_anim_offsets.find(itr->first)->second)) {
+	ret = true;
+	}
+      }
+    glPopMatrix();
+    }
+  return true;
+  }
+
+bool SimpleModel::RenderSelf(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+  return false;	//ERROR - Can't Render Abstract Class!
   }
 
 const vector<string> &SimpleModel::GetSkinList() {
@@ -380,3 +423,45 @@ SimpleModel::Matrix4x4 SimpleModel::identity4x4 = {{
 	0.0, 0.0, 1.0, 0.0,
 	0.0, 0.0, 0.0, 1.0
 	}};
+
+void SimpleModel::AttachSubmodel(Uint32 tag, SimpleModel *submodel) {
+  if((tag & 0xFFFFFF00) != 0) {
+    if(submodels.count(tag&0xFF) > 0) {
+      submodels[tag&0xFF]->AttachSubmodel(tag>>8, submodel);
+      }
+    }
+  else {
+    submodels.insert(pair<Uint32, SimpleModel *>(tag, submodel));
+    if(tag_anim_offsets.count(tag) < 1) tag_anim_offsets[tag] = 0;
+    }
+  }
+
+void SimpleModel::DetachSubmodel(const SimpleModel *submodel) {
+  map<Uint32, SimpleModel *>::iterator itr = submodels.begin();
+  for(; itr != submodels.end(); ++itr) {
+    if(itr->second == submodel) {
+      submodels.erase(itr);
+      break;
+      }
+    }
+  }
+
+void SimpleModel::AttachSubmodel(const string &tag, SimpleModel *submodel) {
+  AttachSubmodel(TagNameToIndex(tag), submodel);
+  }
+
+void SimpleModel::DetachSubmodel(Uint32 tag) {
+  submodels.erase(tag);
+  }
+
+void SimpleModel::DetachSubmodel(const string &tag) {
+  submodels.erase(TagNameToIndex(tag));
+  }
+
+void SimpleModel::SetAnimOffset(Uint32 tag, Uint32 offset) {
+  tag_anim_offsets[tag] = offset;
+  }
+
+void SimpleModel::SetAnimOffset(const string &tag, Uint32 offset) {
+  SetAnimOffset(TagNameToIndex(tag), offset);
+  }

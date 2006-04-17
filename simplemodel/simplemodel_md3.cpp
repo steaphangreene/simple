@@ -30,6 +30,7 @@
 using namespace std;
 
 #include "simplemodel_q3dir.h"
+#include "sm_q3anim.h"
 #include "saferead.h"
 
 SimpleModel_MD3::SimpleModel_MD3(const string &filenm,
@@ -103,22 +104,22 @@ bool SimpleModel_MD3::Load(const string &filenm,
   //FIXME: This skips the bones, do we want to actually use them?
   SDL_RWseek(model, 56 * num_frames, SEEK_CUR);
 
-
   pTags.resize(num_frames * num_tags);
   for(unsigned int tag = 0; tag < num_frames * num_tags; ++tag) {
-    SDL_RWread(model, pTags[tag].name, 64, 1);
+    SDL_RWread(model, pTags[tag].name, 64, 1);	// FIXME: Don't need this anymore!
+    if(tag < num_tags) tags[(char*)pTags[tag].name] = tag;
     freadLE(pTags[tag].pos.data[12], model);	// Location vector
     freadLE(pTags[tag].pos.data[13], model);	// Location vector
     freadLE(pTags[tag].pos.data[14], model);	// Location vector
-    pTags[tag].pos.data[15] = 1;
+    pTags[tag].pos.data[15] = 1.0;
     freadLE(pTags[tag].pos.data[0], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[1], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[2], model);	// Rotation matrix
-    pTags[tag].pos.data[3] = 0;
+    pTags[tag].pos.data[3] = 0.0;
     freadLE(pTags[tag].pos.data[4], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[5], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[6], model);	// Rotation matrix
-    pTags[tag].pos.data[7] = 0;
+    pTags[tag].pos.data[7] = 0.0;
     freadLE(pTags[tag].pos.data[8], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[9], model);	// Rotation matrix
     freadLE(pTags[tag].pos.data[10], model);	// Rotation matrix
@@ -171,18 +172,20 @@ bool SimpleModel_MD3::Load(const string &filenm,
     for(unsigned int shader=0; shader < num_shaders; ++shader) {
       Sint8 buf[65] = {0};
       SDL_RWread(model, buf, 64, 1);
-      for(int ch=0; ch<64; ++ch) if(buf[ch] == '\\') buf[ch] = '/';
-      AddSkin((char*)buf);
-      if(skins.back().length() > 0) {
-	SimpleTexture *tmptex = new SimpleTexture(filename + "/" + skins.back());
-	if(tmptex->type != SIMPLETEXTURE_NONE) {
-	  texture.push_back(tmptex);
-	  meshes[meshnum].texture = texture.back();
-	  }
-	else {
-	  delete tmptex;
-	  skins.pop_back();	//FIXME: Create RemoveSkin() function?
-	  external_skinfile = true;
+      if(strlen((char*)buf) > 0) {
+	for(int ch=0; ch<64; ++ch) if(buf[ch] == '\\') buf[ch] = '/';
+	AddSkin((char*)buf);
+	if(skins.back().length() > 0) {
+	  SimpleTexture *tmptex = new SimpleTexture(filename + "/" + skins.back());
+	  if(tmptex->type != SIMPLETEXTURE_NONE) {
+	    texture.push_back(tmptex);
+	    meshes[meshnum].texture = texture.back();
+	    }
+	  else {
+	    delete tmptex;
+	    skins.pop_back();	//FIXME: Create RemoveSkin() function?
+	    external_skinfile = true;
+	    }
 	  }
 	}
       else {
@@ -288,14 +291,20 @@ bool SimpleModel_MD3::Load(const string &filenm,
   return false;
   }
 
-bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time) const {
+bool SimpleModel_MD3::RenderSelf(Uint32 cur_time, const vector<int> &anim,
+	const vector<Uint32> &start_time, Uint32 anim_offset) const {
   glCullFace(GL_FRONT);	//MD3 models use front face culling
 
   float s2;
-  int frame = CalcBaseFrame(cur_time, anim, start_time, s2);
-  frame = NormalizeFrame(anim, frame);
-  int next = NormalizeFrame(anim, frame+1);
+  int frame = 0, next = 0;
+  int animation = anim[anim_offset];
+  if(animation >= LEGS_START) animation -= (LEGS_START - TORSO_START);
+
+  if(anim.size() >= anim_offset) {
+    frame = CalcBaseFrame(cur_time, animation, start_time[anim_offset], s2);
+    frame = NormalizeFrame(animation, frame);
+    next = NormalizeFrame(animation, frame+1);
+    }
 
   for(unsigned int obj = 0; obj < meshes.size(); ++obj) {
     if(meshes[obj].texture && meshes[obj].texture->type != SIMPLETEXTURE_NONE) {
@@ -332,7 +341,7 @@ bool SimpleModel_MD3::Render(Uint32 cur_time, const vector<int> &anim,
 
   glCullFace(GL_BACK);
 
-  return false;
+  return true;
   }
 
 int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
@@ -347,23 +356,21 @@ int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
   return animations.size() - 1;
   }
 
-unsigned long SimpleModel_MD3::TagNameToIndex(const string &tagname) const {
-  unsigned int tag = 0;
-  for(; tag < num_tags; ++tag) {
-    if(!strcasecmp((char*)pTags[tag].name, tagname.c_str())) break;
-    }
-  if(tag == num_tags) return ULONG_MAX;
-  else return tag;
-  }
-
-bool SimpleModel_MD3::MoveToTag(unsigned long tag, Uint32 cur_time,
-	const vector<int> &anim, const vector<Uint32> &start_time) const {
+bool SimpleModel_MD3::MoveToTag(Uint32 tag, Uint32 cur_time,
+	const vector<int> &anim, const vector<Uint32> &start_time,
+	Uint32 anim_offset) const {
   if(tag >= num_tags) return false;
 
+  int animation = anim[anim_offset];
+  if(animation >= LEGS_START) animation -= (LEGS_START - TORSO_START);
+
   float s;
-  int frame = CalcBaseFrame(cur_time, anim, start_time, s);
-  frame = NormalizeFrame(anim, frame);
-  int next = NormalizeFrame(anim, frame+1);
+  int frame = 0, next = 0;
+  if(anim.size() >= anim_offset) {
+    frame = CalcBaseFrame(cur_time, animation, start_time[anim_offset], s);
+    frame = NormalizeFrame(animation, frame);
+    next = NormalizeFrame(animation, frame+1);
+    }
 
   Matrix4x4 matrix;
   SLERP(matrix, pTags[frame*num_tags+tag].pos, pTags[next*num_tags+tag].pos, s);
@@ -372,18 +379,14 @@ bool SimpleModel_MD3::MoveToTag(unsigned long tag, Uint32 cur_time,
   return true;
   }
 
-int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, float &offset) const {
+int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
+	float &offset) const {
   int frame = 0;
   offset = 0.0;
   if(animations.size() > 0) {
-    if(anim.size() < 1 || start_time.size() < 1) {
-      fprintf(stderr, "WARNING: Not enough anims/times sent to animated MD3.\n");
-      return false;
-      }
-    int start = animations[anim[0]].start;
-    float fps = animations[anim[0]].fps;
-    float elapsed = cur_time - start_time[0];
+    int start = animations[anim].start;
+    float fps = animations[anim].fps;
+    float elapsed = cur_time - start_time;
 
     float disp = elapsed * fps / 1000.0;
     frame = start + (int)(disp);
@@ -392,14 +395,10 @@ int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
   return frame;
   }
 
-int SimpleModel_MD3::NormalizeFrame(const vector<int> &anim, int frame) const {
+int SimpleModel_MD3::NormalizeFrame(int anim, int frame) const {
   if(animations.size() > 0) {
-    if(anim.size() < 1) {
-      fprintf(stderr, "WARNING: Not enough anims/times sent to animated MD3.\n");
-      return 0;
-      }
-    int end = animations[anim[0]].end;
-    int loop = animations[anim[0]].loop;
+    int end = animations[anim].end;
+    int loop = animations[anim].loop;
 
     if(frame >= end && loop > 0)
       frame = (end - loop) + (frame - end + loop) % loop;

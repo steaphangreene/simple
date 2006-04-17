@@ -93,7 +93,6 @@ int main(int argc, char **argv) {
 
 //  anims.push_back(LEGS_IDLE);
   anims.push_back(5);
-  anims.push_back(LEGS_IDLE);
   anims.push_back(TORSO_STAND);
   times.push_back(SDL_GetTicks());
   times.push_back(SDL_GetTicks());

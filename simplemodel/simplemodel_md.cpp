@@ -45,7 +45,8 @@ SimpleModel_MD::~SimpleModel_MD() {
 /*
   cur_transforms stores the bone_transforms and the geoset_transforms for this frame of rendering
 */
-bool SimpleModel_MD::Render(Uint32 cur_time, const vector<int> & anim, const vector<Uint32> & start_time) const {
+bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
+	const vector<Uint32> & start_time, Uint32 anim_offset) const {
   TransformInfo cur_transforms;
   AnimationInfo anim_info;
   float factor;  

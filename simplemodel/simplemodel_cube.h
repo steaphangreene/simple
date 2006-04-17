@@ -33,11 +33,11 @@ public:
 
   virtual bool Load(const string &filenm);
 
-  virtual bool Render(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>()) const;
-
 protected:
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
   };
 
 #endif	//SIMPLEMODEL_CUBE_H

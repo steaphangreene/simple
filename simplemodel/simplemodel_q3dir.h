@@ -22,10 +22,9 @@
 #ifndef	SIMPLEMODEL_Q3DIR_H
 #define	SIMPLEMODEL_Q3DIR_H
 
-#include "simplemodel.h"
 #include "simplemodel_md3.h"
 
-class SimpleModel_Q3Dir : public SimpleModel {
+class SimpleModel_Q3Dir : public SimpleModel_MD3 {
 public:
   SimpleModel_Q3Dir(const string &filenm, const string &defskin = "default");
   SimpleModel_Q3Dir(const string &packfile, const string &filenm,
@@ -34,20 +33,21 @@ public:
 
   virtual bool Load(const string &packfile, const string &filenm, const string &defskin = "default");
 
-  virtual bool Render(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>()) const;
-
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm);
 
   void SetWeapon(SimpleModel_MD3 *weap);
 
 protected:
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
   bool LoadCFG(const string &filenm);
 
   SimpleModel_Q3Dir();
-  SimpleModel_MD3 *head, *torso, *legs, *weapon;
+  SimpleModel_MD3 *head, *torso;	// I am the "legs"
 
   vector<string> skins;
   };
