@@ -30,8 +30,9 @@ using namespace std;
 
 #include "simplemodel.h"
 #include "simplemodel_q3dir.h"
-#include "simplemodel_3ds.h"
+#include "simplemodel_md3.h"
 #include "simplemodel_mdx.h"
+#include "simplemodel_3ds.h"
 
 #include "simplemodel_cone.h"
 #include "simplemodel_cube.h"
@@ -60,6 +61,25 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
     return new SimpleModel_3DS(filename, skinname);
+    }
+
+  if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "md3"))) {
+    SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
+    if(model) {
+      SDL_RWclose(model);
+      return new SimpleModel_MD3(".", filename, skinname);
+      }
+    for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+      model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
+      if(model) {
+	SDL_RWclose(model);
+	return new SimpleModel_MD3(source_files[snum], filename, skinname);
+	}
+      }
+    fprintf(stderr, "WARNING: Failed to load md3 model '%s' - using wedge.\n",
+	filename.c_str());
+    return new SimpleModel_Wedge();
     }
 
   if(filename.length() >= 3

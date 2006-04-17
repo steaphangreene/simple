@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   char *modname = "models/players/trooper";
 
   if((argc-barg) > 2) {
-    //fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [weapondir]\n", argv[0]$    fprintf(stderr, "USAGE: %s <modelfile>|<modeldir> [skin]\n", argv[0]);
+    fprintf(stderr, "USAGE: %s [-s <search_prefix> [...]] <model_file>|<model_dir> [skin]\n", argv[0]);
     exit(1);
     }
   else if((argc-barg) >= 1) {
