@@ -96,6 +96,23 @@ protected:
     }
   static void Multiply(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2);
+  static void Multiply(Matrix4x4 &res,
+	const Matrix4x4 &m1, const Matrix4x4 &m2, const Matrix4x4 &m3);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3,
+	const Matrix4x4 &m4, const Matrix4x4 &m5);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7,
+	const Matrix4x4 &m8);
   static void Normalize(Quaternion &res, const Quaternion &quat);
 
   //Interpolations

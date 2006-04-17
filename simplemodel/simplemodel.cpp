@@ -171,6 +171,53 @@ void SimpleModel::Multiply(Matrix4x4 &res,
 	+ m1.data[11]*m2.data[14] + m1.data[15]*m2.data[15];
   }
 
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3);
+  Multiply(res, m1, temp);
+  }
+
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3, m4);
+  Multiply(res, m1, temp);
+  }
+
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3, m4, m5);
+  Multiply(res, m1, temp);
+  }
+
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3, m4, m5, m6);
+  Multiply(res, m1, temp);
+  }
+
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3, m4, m5, m6, m7);
+  Multiply(res, m1, temp);
+  }
+
+void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
+	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
+	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7,
+	const Matrix4x4 &m8) {
+  Matrix4x4 temp;
+  Multiply(temp, m2, m3, m4, m5, m6, m7, m8);
+  Multiply(res, m1, temp);
+  }
+
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
   mat.data[0] = 1.0f - 2.0f *
 	(quat.data[1] * quat.data[1] + quat.data[2] * quat.data[2]);
