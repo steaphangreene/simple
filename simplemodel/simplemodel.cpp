@@ -465,3 +465,8 @@ void SimpleModel::SetAnimOffset(Uint32 tag, Uint32 offset) {
 void SimpleModel::SetAnimOffset(const string &tag, Uint32 offset) {
   SetAnimOffset(TagNameToIndex(tag), offset);
   }
+
+int SimpleModel::LookUpAnimation(const string &anim) {
+  if(!animations.count(anim)) return 0;
+  return animations.find(anim)->second;
+  }

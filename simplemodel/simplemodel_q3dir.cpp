@@ -74,6 +74,32 @@ bool SimpleModel_Q3Dir::Load(const string &pack, const string &filenm, const str
     if(!LoadCFG(base_filename + "/animation.cfg")) return false;
     }
 
+  animations["BOTH_DEATH1"] = BOTH_DEATH1;
+  animations["BOTH_DEAD1"] = BOTH_DEAD1;
+  animations["BOTH_DEATH2"] = BOTH_DEATH2;
+  animations["BOTH_DEAD2"] = BOTH_DEAD2;
+  animations["BOTH_DEATH3"] = BOTH_DEATH3;
+  animations["BOTH_DEAD3"] = BOTH_DEAD3;
+  animations["TORSO_GESTURE"] = TORSO_GESTURE;
+  animations["TORSO_ATTACK"] = TORSO_ATTACK;
+  animations["TORSO_ATTACK2"] = TORSO_ATTACK2;
+  animations["TORSO_DROP"] = TORSO_DROP;
+  animations["TORSO_RAISE"] = TORSO_RAISE;
+  animations["TORSO_STAND"] = TORSO_STAND;
+  animations["TORSO_STAND2"] = TORSO_STAND2;
+  animations["LEGS_WALKCR"] = LEGS_WALKCR;
+  animations["LEGS_WALK"] = LEGS_WALK;
+  animations["LEGS_RUN"] = LEGS_RUN;
+  animations["LEGS_BACK"] = LEGS_BACK;
+  animations["LEGS_SWIM"] = LEGS_SWIM;
+  animations["LEGS_JUMP"] = LEGS_JUMP;
+  animations["LEGS_LAND"] = LEGS_LAND;
+  animations["LEGS_JUMPB"] = LEGS_JUMPB;
+  animations["LEGS_LANDB"] = LEGS_LANDB;
+  animations["LEGS_IDLE"] = LEGS_IDLE;
+  animations["LEGS_IDLECR"] = LEGS_IDLECR;
+  animations["LEGS_TURN"] = LEGS_TURN;
+
   return false;
   }
 

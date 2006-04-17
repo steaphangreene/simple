@@ -351,9 +351,9 @@ int SimpleModel_MD3::AddAnimation(int start, int end, int loop, int fps) {
   anim.end = end;
   anim.loop = loop;
   anim.fps = fps;
-  animations.push_back(anim);
+  anim_data.push_back(anim);
 
-  return animations.size() - 1;
+  return anim_data.size() - 1;
   }
 
 bool SimpleModel_MD3::MoveToTag(Uint32 tag, Uint32 cur_time,
@@ -383,9 +383,9 @@ int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
 	float &offset) const {
   int frame = 0;
   offset = 0.0;
-  if(animations.size() > 0) {
-    int start = animations[anim].start;
-    float fps = animations[anim].fps;
+  if(anim_data.size() > 0) {
+    int start = anim_data[anim].start;
+    float fps = anim_data[anim].fps;
     float elapsed = cur_time - start_time;
 
     float disp = elapsed * fps / 1000.0;
@@ -396,9 +396,9 @@ int SimpleModel_MD3::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
   }
 
 int SimpleModel_MD3::NormalizeFrame(int anim, int frame) const {
-  if(animations.size() > 0) {
-    int end = animations[anim].end;
-    int loop = animations[anim].loop;
+  if(anim_data.size() > 0) {
+    int end = anim_data[anim].end;
+    int loop = anim_data[anim].loop;
 
     if(frame >= end && loop > 0)
       frame = (end - loop) + (frame - end + loop) % loop;

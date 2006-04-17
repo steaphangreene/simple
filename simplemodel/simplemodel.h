@@ -37,6 +37,11 @@ public:
   SimpleModel();
   virtual ~SimpleModel();
 
+  const map<string, int> GetAnimations() { return animations; };
+  int LookUpAnimation(const string &anim);
+
+  const map<string, Uint32> GetTags() { return tags; };
+
   bool Render(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
 	const vector<Uint32> &start_time = vector<Uint32>(),
@@ -81,6 +86,7 @@ protected:
 
   string filename;
   vector<SimpleTexture *> texture;
+  map<string, int> animations;
   map<string, Uint32> tags;
   map<Uint32, SimpleModel *> submodels;
   map<Uint32, Uint32> tag_anim_offsets;

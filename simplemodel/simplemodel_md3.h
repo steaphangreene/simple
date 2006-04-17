@@ -101,7 +101,7 @@ protected:
   Uint32 num_tags;	// Number of tags PER FRAME
   vector<MD3Tag> pTags;		// Holds ALL tags for ALL frames
   vector<MD3Mesh> meshes;
-  vector<MD3AnimationData> animations;
+  vector<MD3AnimationData> anim_data;
   vector<string> skins;
   };
 
