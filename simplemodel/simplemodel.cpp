@@ -173,9 +173,23 @@ void SimpleModel::Multiply(Matrix4x4 &res,
 
 void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
 	const Matrix4x4 &m2, const Matrix4x4 &m3) {
-  Matrix4x4 temp;
-  Multiply(temp, m2, m3);
-  Multiply(res, m1, temp);
+  //This may not look better, but GCC will be able to optimize this much more!
+  res.data[0] = m1.data[0]*(m2.data[0]*m3.data[0] + m2.data[4]*m3.data[1] + m2.data[8]*m3.data[2] + m2.data[12]*m3.data[3]) + m1.data[4]*(m2.data[1]*m3.data[0] + m2.data[5]*m3.data[1] + m2.data[9]*m3.data[2] + m2.data[13]*m3.data[3]) + m1.data[8]*(m2.data[2]*m3.data[0] + m2.data[6]*m3.data[1] + m2.data[10]*m3.data[2] + m2.data[14]*m3.data[3]) + m1.data[12]*(m2.data[3]*m3.data[0] + m2.data[7]*m3.data[1] + m2.data[11]*m3.data[2] + m2.data[15]*m3.data[3]);
+  res.data[1] = m1.data[1]*(m2.data[0]*m3.data[0] + m2.data[4]*m3.data[1] + m2.data[8]*m3.data[2] + m2.data[12]*m3.data[3]) + m1.data[5]*(m2.data[1]*m3.data[0] + m2.data[5]*m3.data[1] + m2.data[9]*m3.data[2] + m2.data[13]*m3.data[3]) + m1.data[9]*(m2.data[2]*m3.data[0] + m2.data[6]*m3.data[1] + m2.data[10]*m3.data[2] + m2.data[14]*m3.data[3]) + m1.data[13]*(m2.data[3]*m3.data[0] + m2.data[7]*m3.data[1] + m2.data[11]*m3.data[2] + m2.data[15]*m3.data[3]);
+  res.data[2] = m1.data[2]*(m2.data[0]*m3.data[0] + m2.data[4]*m3.data[1] + m2.data[8]*m3.data[2] + m2.data[12]*m3.data[3]) + m1.data[6]*(m2.data[1]*m3.data[0] + m2.data[5]*m3.data[1] + m2.data[9]*m3.data[2] + m2.data[13]*m3.data[3]) + m1.data[10]*(m2.data[2]*m3.data[0] + m2.data[6]*m3.data[1] + m2.data[10]*m3.data[2] + m2.data[14]*m3.data[3]) + m1.data[14]*(m2.data[3]*m3.data[0] + m2.data[7]*m3.data[1] + m2.data[11]*m3.data[2] + m2.data[15]*m3.data[3]);
+  res.data[3] = m1.data[3]*(m2.data[0]*m3.data[0] + m2.data[4]*m3.data[1] + m2.data[8]*m3.data[2] + m2.data[12]*m3.data[3]) + m1.data[7]*(m2.data[1]*m3.data[0] + m2.data[5]*m3.data[1] + m2.data[9]*m3.data[2] + m2.data[13]*m3.data[3]) + m1.data[11]*(m2.data[2]*m3.data[0] + m2.data[6]*m3.data[1] + m2.data[10]*m3.data[2] + m2.data[14]*m3.data[3]) + m1.data[15]*(m2.data[3]*m3.data[0] + m2.data[7]*m3.data[1] + m2.data[11]*m3.data[2] + m2.data[15]*m3.data[3]);
+  res.data[4] = m1.data[0]*(m2.data[0]*m3.data[4] + m2.data[4]*m3.data[5] + m2.data[8]*m3.data[6] + m2.data[12]*m3.data[7]) + m1.data[4]*(m2.data[1]*m3.data[4] + m2.data[5]*m3.data[5] + m2.data[9]*m3.data[6] + m2.data[13]*m3.data[7]) + m1.data[8]*(m2.data[2]*m3.data[4] + m2.data[6]*m3.data[5] + m2.data[10]*m3.data[6] + m2.data[14]*m3.data[7]) + m1.data[12]*(m2.data[3]*m3.data[4] + m2.data[7]*m3.data[5] + m2.data[11]*m3.data[6] + m2.data[15]*m3.data[7]);
+  res.data[5] = m1.data[1]*(m2.data[0]*m3.data[4] + m2.data[4]*m3.data[5] + m2.data[8]*m3.data[6] + m2.data[12]*m3.data[7]) + m1.data[5]*(m2.data[1]*m3.data[4] + m2.data[5]*m3.data[5] + m2.data[9]*m3.data[6] + m2.data[13]*m3.data[7]) + m1.data[9]*(m2.data[2]*m3.data[4] + m2.data[6]*m3.data[5] + m2.data[10]*m3.data[6] + m2.data[14]*m3.data[7]) + m1.data[13]*(m2.data[3]*m3.data[4] + m2.data[7]*m3.data[5] + m2.data[11]*m3.data[6] + m2.data[15]*m3.data[7]);
+  res.data[6] = m1.data[2]*(m2.data[0]*m3.data[4] + m2.data[4]*m3.data[5] + m2.data[8]*m3.data[6] + m2.data[12]*m3.data[7]) + m1.data[6]*(m2.data[1]*m3.data[4] + m2.data[5]*m3.data[5] + m2.data[9]*m3.data[6] + m2.data[13]*m3.data[7]) + m1.data[10]*(m2.data[2]*m3.data[4] + m2.data[6]*m3.data[5] + m2.data[10]*m3.data[6] + m2.data[14]*m3.data[7]) + m1.data[14]*(m2.data[3]*m3.data[4] + m2.data[7]*m3.data[5] + m2.data[11]*m3.data[6] + m2.data[15]*m3.data[7]);
+  res.data[7] = m1.data[3]*(m2.data[0]*m3.data[4] + m2.data[4]*m3.data[5] + m2.data[8]*m3.data[6] + m2.data[12]*m3.data[7]) + m1.data[7]*(m2.data[1]*m3.data[4] + m2.data[5]*m3.data[5] + m2.data[9]*m3.data[6] + m2.data[13]*m3.data[7]) + m1.data[11]*(m2.data[2]*m3.data[4] + m2.data[6]*m3.data[5] + m2.data[10]*m3.data[6] + m2.data[14]*m3.data[7]) + m1.data[15]*(m2.data[3]*m3.data[4] + m2.data[7]*m3.data[5] + m2.data[11]*m3.data[6] + m2.data[15]*m3.data[7]);
+  res.data[8] = m1.data[0]*(m2.data[0]*m3.data[8] + m2.data[4]*m3.data[9] + m2.data[8]*m3.data[10] + m2.data[12]*m3.data[11]) + m1.data[4]*(m2.data[1]*m3.data[8] + m2.data[5]*m3.data[9] + m2.data[9]*m3.data[10] + m2.data[13]*m3.data[11]) + m1.data[8]*(m2.data[2]*m3.data[8] + m2.data[6]*m3.data[9] + m2.data[10]*m3.data[10] + m2.data[14]*m3.data[11]) + m1.data[12]*(m2.data[3]*m3.data[8] + m2.data[7]*m3.data[9] + m2.data[11]*m3.data[10] + m2.data[15]*m3.data[11]);
+  res.data[9] = m1.data[1]*(m2.data[0]*m3.data[8] + m2.data[4]*m3.data[9] + m2.data[8]*m3.data[10] + m2.data[12]*m3.data[11]) + m1.data[5]*(m2.data[1]*m3.data[8] + m2.data[5]*m3.data[9] + m2.data[9]*m3.data[10] + m2.data[13]*m3.data[11]) + m1.data[9]*(m2.data[2]*m3.data[8] + m2.data[6]*m3.data[9] + m2.data[10]*m3.data[10] + m2.data[14]*m3.data[11]) + m1.data[13]*(m2.data[3]*m3.data[8] + m2.data[7]*m3.data[9] + m2.data[11]*m3.data[10] + m2.data[15]*m3.data[11]);
+  res.data[10] = m1.data[2]*(m2.data[0]*m3.data[8] + m2.data[4]*m3.data[9] + m2.data[8]*m3.data[10] + m2.data[12]*m3.data[11]) + m1.data[6]*(m2.data[1]*m3.data[8] + m2.data[5]*m3.data[9] + m2.data[9]*m3.data[10] + m2.data[13]*m3.data[11]) + m1.data[10]*(m2.data[2]*m3.data[8] + m2.data[6]*m3.data[9] + m2.data[10]*m3.data[10] + m2.data[14]*m3.data[11]) + m1.data[14]*(m2.data[3]*m3.data[8] + m2.data[7]*m3.data[9] + m2.data[11]*m3.data[10] + m2.data[15]*m3.data[11]);
+  res.data[11] = m1.data[3]*(m2.data[0]*m3.data[8] + m2.data[4]*m3.data[9] + m2.data[8]*m3.data[10] + m2.data[12]*m3.data[11]) + m1.data[7]*(m2.data[1]*m3.data[8] + m2.data[5]*m3.data[9] + m2.data[9]*m3.data[10] + m2.data[13]*m3.data[11]) + m1.data[11]*(m2.data[2]*m3.data[8] + m2.data[6]*m3.data[9] + m2.data[10]*m3.data[10] + m2.data[14]*m3.data[11]) + m1.data[15]*(m2.data[3]*m3.data[8] + m2.data[7]*m3.data[9] + m2.data[11]*m3.data[10] + m2.data[15]*m3.data[11]);
+  res.data[12] = m1.data[0]*(m2.data[0]*m3.data[12] + m2.data[4]*m3.data[13] + m2.data[8]*m3.data[14] + m2.data[12]*m3.data[15]) + m1.data[4]*(m2.data[1]*m3.data[12] + m2.data[5]*m3.data[13] + m2.data[9]*m3.data[14] + m2.data[13]*m3.data[15]) + m1.data[8]*(m2.data[2]*m3.data[12] + m2.data[6]*m3.data[13] + m2.data[10]*m3.data[14] + m2.data[14]*m3.data[15]) + m1.data[12]*(m2.data[3]*m3.data[12] + m2.data[7]*m3.data[13] + m2.data[11]*m3.data[14] + m2.data[15]*m3.data[15]);
+  res.data[13] = m1.data[1]*(m2.data[0]*m3.data[12] + m2.data[4]*m3.data[13] + m2.data[8]*m3.data[14] + m2.data[12]*m3.data[15]) + m1.data[5]*(m2.data[1]*m3.data[12] + m2.data[5]*m3.data[13] + m2.data[9]*m3.data[14] + m2.data[13]*m3.data[15]) + m1.data[9]*(m2.data[2]*m3.data[12] + m2.data[6]*m3.data[13] + m2.data[10]*m3.data[14] + m2.data[14]*m3.data[15]) + m1.data[13]*(m2.data[3]*m3.data[12] + m2.data[7]*m3.data[13] + m2.data[11]*m3.data[14] + m2.data[15]*m3.data[15]);
+  res.data[14] = m1.data[2]*(m2.data[0]*m3.data[12] + m2.data[4]*m3.data[13] + m2.data[8]*m3.data[14] + m2.data[12]*m3.data[15]) + m1.data[6]*(m2.data[1]*m3.data[12] + m2.data[5]*m3.data[13] + m2.data[9]*m3.data[14] + m2.data[13]*m3.data[15]) + m1.data[10]*(m2.data[2]*m3.data[12] + m2.data[6]*m3.data[13] + m2.data[10]*m3.data[14] + m2.data[14]*m3.data[15]) + m1.data[14]*(m2.data[3]*m3.data[12] + m2.data[7]*m3.data[13] + m2.data[11]*m3.data[14] + m2.data[15]*m3.data[15]);
+  res.data[15] = m1.data[3]*(m2.data[0]*m3.data[12] + m2.data[4]*m3.data[13] + m2.data[8]*m3.data[14] + m2.data[12]*m3.data[15]) + m1.data[7]*(m2.data[1]*m3.data[12] + m2.data[5]*m3.data[13] + m2.data[9]*m3.data[14] + m2.data[13]*m3.data[15]) + m1.data[11]*(m2.data[2]*m3.data[12] + m2.data[6]*m3.data[13] + m2.data[10]*m3.data[14] + m2.data[14]*m3.data[15]) + m1.data[15]*(m2.data[3]*m3.data[12] + m2.data[7]*m3.data[13] + m2.data[11]*m3.data[14] + m2.data[15]*m3.data[15]);
   }
 
 void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
@@ -189,33 +203,35 @@ void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
 	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
 	const Matrix4x4 &m5) {
   Matrix4x4 temp;
-  Multiply(temp, m2, m3, m4, m5);
-  Multiply(res, m1, temp);
+  Multiply(temp, m3, m4, m5);
+  Multiply(res, m1, m2, temp);
   }
 
 void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
 	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
 	const Matrix4x4 &m5, const Matrix4x4 &m6) {
   Matrix4x4 temp;
-  Multiply(temp, m2, m3, m4, m5, m6);
-  Multiply(res, m1, temp);
+  Multiply(temp, m3, m4, m5, m6);
+  Multiply(res, m1, m2, temp);
   }
 
 void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
 	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
 	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7) {
-  Matrix4x4 temp;
-  Multiply(temp, m2, m3, m4, m5, m6, m7);
-  Multiply(res, m1, temp);
+  Matrix4x4 temp, temp2;
+  Multiply(temp, m5, m6, m7);
+  Multiply(temp2, m3, m4, temp);
+  Multiply(res, m1, m2, temp);
   }
 
 void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
 	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
 	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7,
 	const Matrix4x4 &m8) {
-  Matrix4x4 temp;
-  Multiply(temp, m2, m3, m4, m5, m6, m7, m8);
-  Multiply(res, m1, temp);
+  Matrix4x4 temp, temp2;
+  Multiply(temp, m5, m6, m7, m8);
+  Multiply(temp2, m3, m4, temp);
+  Multiply(res, m1, m2, temp);
   }
 
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
