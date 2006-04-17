@@ -179,39 +179,18 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
   Matrix4x4 rot_mat;
   QuaternionToMatrix4x4(rot_mat, rotation);
 
-  Matrix4x4 accum_mat1 = identity4x4;
-  Matrix4x4 accum_mat2 = identity4x4;
-  Matrix4x4 accum_mat3 = identity4x4;
-
-  if(has_rotation) {
-    Multiply(accum_mat1, rot_mat, pivot_matN);
-    Multiply(accum_mat2, pivot_mat, accum_mat1);
+  if(has_rotation && has_translation) {
+    Multiply(res, pmat, trans_mat, pivot_mat, rot_mat, pivot_matN);
     }
-
-  if(has_translation)
-    Multiply(accum_mat3, trans_mat, accum_mat2);
-  else
-    accum_mat3 = accum_mat2;
-
-  Multiply(res, pmat, accum_mat3);
-  
-  /*
-  glPushMatrix();
-    glLoadIdentity();
-
-    glMultMatrixf(pmat.data);
-
-    if(has_translation)
-      glTranslatef(translation.x, translation.y, translation.z);
-
-    if(has_rotation) {
-      glTranslatef(-center.x, -center.y, -center.z);
-      glMultMatrixf(rot_mat.data);
-      glTranslatef(center.x, center.y, center.z);
-      }   
-    glGetFloatv(GL_MODELVIEW_MATRIX, res.data);
-  glPopMatrix();
-  */
+  else if(has_rotation) {
+    Multiply(res, pmat, pivot_mat, rot_mat, pivot_matN);
+    }
+  else if(has_translation) {
+    Multiply(res, pmat, trans_mat);
+    }
+  else {
+    res = pmat;
+    }
   }
 
 /*
