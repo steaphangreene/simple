@@ -74,9 +74,13 @@ install_win32:	install win32
 	cat scripts/simple-config.sh | sed 's|prefix=".*"|prefix="$(PREFIX)"|g' | sed 's|cross_prefix=".*"|cross_prefix="i586-mingw32msvc-"|g' | sed 's|cross_dir=".*"|cross_dir="/i586-mingw32msvc"|g' | sed 's|-lGL -lGLU|-lopengl32 -lglu32|g' | sed 's|base_libs=".*"|base_libs="-lSDL_net -lwsock32 -lSDL_ttf -lSDL_image -lSDL_mixer -lvorbisfile -lvorbis -logg -lSDL -lpng -ljpeg -lpng"|g' > i586-mingw32msvc-simple-config
 	$(INSTALL) -m 755 i586-mingw32msvc-simple-config $(BINDIR)
 
+win32_install:	install_win32
+
 uninstall_win32:
 	rm -vf $(WLIBDIR)/libsimple*.win32_a
 	rm -vf $(BINDIR)/i586-mingw32msvc-simple-config
+
+win32_uninstall:	uninstall_win32
 
 ChangeLog:	.svn
 	make -C simpleaudio $@
@@ -98,22 +102,16 @@ test:
 	make -C simpleconfig $@
 
 win32_test:	
-	make -C simpleaudio $@
+	make -C simpleaudio win32	#No tests!
 	make -C simpletexture $@
-	make -C simplevideo $@
+	make -C simplevideo win32	#No tests!
 	make -C simplegui $@
 	make -C simplemodel $@
-	make -C simpleconnect $@
+	make -C simpleconnect win32	#No tests!
 	make -C simpleconfig $@
 
-wintest:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+wintest:	win32_test
+test_win32:	win32_test
 
 clean:
 	make -C simpleaudio $@

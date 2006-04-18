@@ -59,7 +59,7 @@ OBJS:=	simpleconfig.o
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+WLIBS=	../simplevideo/libsimplevideo.win32_a ../simplegui/libsimplegui.win32_a ../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lSDL_image -lSDL_ttf -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:=	simpleconfig.win32_o
 

@@ -65,6 +65,7 @@ WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config -
 WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o \
+	simplemodel_md.win32_o simplemodel_mdx.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
 	simplemodel_cone.win32_o simplemodel_cube.win32_o \
 	simplemodel_3ds.win32_o
