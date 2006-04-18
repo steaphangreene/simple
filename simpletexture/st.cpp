@@ -128,52 +128,57 @@ SimpleTexture::SimpleTexture(const int col_index) {
 SimpleTexture::SimpleTexture(const string &filenm) {
   Init(SIMPLETEXTURE_DEFINED);
   filename = filenm;
+  { string::iterator chr = filename.begin();
+    for(; chr < filename.end(); ++chr) {
+      if((*chr) == '\\') (*chr) = '/';
+      }
+    }
 
-  SDL_RWops *file = SDL_RWFromZZIP(filenm.c_str(), "rb");
-  if(file && tolower(filenm[filenm.length()-2]) == 'g'
-	&& tolower(filenm[filenm.length()-3]) == 't'
-	&& tolower(filenm[filenm.length()-1]) == 'a') {
+  SDL_RWops *file = SDL_RWFromZZIP(filename.c_str(), "rb");
+  if(file && tolower(filename[filename.length()-2]) == 'g'
+	&& tolower(filename[filename.length()-3]) == 't'
+	&& tolower(filename[filename.length()-1]) == 'a') {
     src = IMG_LoadTyped_RW(file, true, "TGA");
     }
 
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".png").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".png").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".PNG").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".PNG").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".bmp").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".bmp").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".BMP").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".BMP").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".tga").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".tga").c_str(), "rb");
     if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".TGA").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".TGA").c_str(), "rb");
     if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".jpg").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".jpg").c_str(), "rb");
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
-    file = SDL_RWFromZZIP((filenm + ".JPG").c_str(), "rb");
+    file = SDL_RWFromZZIP((filename + ".JPG").c_str(), "rb");
     }
 
   if(!file) {
     // Judging by many of the models I've see, even this is not an error.
-    //fprintf(stderr, "WARNING: Unable to open '%s'\n", filenm.c_str());
+    //fprintf(stderr, "WARNING: Unable to open '%s'\n", filename.c_str());
     type = SIMPLETEXTURE_NONE;
     dirty = 0;
     }
@@ -195,7 +200,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	for(int i=0; i<16; ++i) ret += freadLE(siz[i], file);
 	if(ret != 38) {
 	  fprintf(stderr, "ERROR: Failed to read BLP header (%d) on '%s'!\n",
-		ret, filenm.c_str());
+		ret, filename.c_str());
 	  type = SIMPLETEXTURE_NONE;
 	  dirty = 0;
 	  return;
@@ -224,7 +229,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	    fprintf(stderr, "WARNING[JPG]: %s\n", IMG_GetError());
 	    fprintf(stderr, "Sorry, BLP '%s' failed to load!\n");
 	    fprintf(stderr, "Perhaps you haven't patched SDL_image?\n");
-	    fprintf(stderr, "WARNING: File ignored!\n", filenm.c_str());
+	    fprintf(stderr, "WARNING: File ignored!\n", filename.c_str());
 	    }
 	  delete [] data;
 	  }
@@ -245,7 +250,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  ret += SDL_RWread(file, alpha, 1, xs*ys);
 	  if(ret != int(xs*ys*2)) {
 	    fprintf(stderr, "ERROR: Can't read pixel data from file '%s'\n",
-		filenm.c_str());
+		filename.c_str());
 	    type = SIMPLETEXTURE_NONE;
 	    dirty = 0;
 	    return;
