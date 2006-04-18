@@ -194,6 +194,23 @@ bool SimpleModel_MD2::Load(const string &filenm,
 //    freadLE(tri_tex[tri + 2], model);
 //    }
 
+  if(defskin.length() > 0) {
+    AddSkin(filenm + "/" + defskin);
+    }
+
+  SDL_RWseek(model, skins_offset, SEEK_SET);
+  for(Uint32 skin=0; skin < num_skins; ++skin) {
+    Sint8 skinnm[68] = {0};
+    SDL_RWread(model, skinnm, 1, 64);
+    AddSkin(filenm + "/" + (char*)skinnm);
+    }
+
+  float scalex = 1.0, scaley = 1.0;
+  if(texture.size() > 0) {
+    scalex = texture[0]->xfact;
+    scaley = texture[0]->yfact;
+    }
+
   glcomms.resize(num_glcomms);
   SDL_RWseek(model, glcomm_offset, SEEK_SET);
   for(Uint32 glcomm=0; glcomm < num_glcomms; ++glcomm) {
@@ -210,20 +227,11 @@ bool SimpleModel_MD2::Load(const string &filenm,
     glcomms[glcomm].verts.resize(comstat);
     for(Sint32 glind=0; glind < comstat; ++glind) {
       freadLE(glcomms[glcomm].verts[glind].tex_x, model);
+      glcomms[glcomm].verts[glind].tex_x *= scalex;
       freadLE(glcomms[glcomm].verts[glind].tex_y, model);
+      glcomms[glcomm].verts[glind].tex_y *= scaley;
       freadLE(glcomms[glcomm].verts[glind].vindex, model);
       }
-    }
-
-  if(defskin.length() > 0) {
-    AddSkin(filenm + "/" + defskin);
-    }
-
-  SDL_RWseek(model, skins_offset, SEEK_SET);
-  for(Uint32 skin=0; skin < num_skins; ++skin) {
-    Sint8 skinnm[68] = {0};
-    SDL_RWread(model, skinnm, 1, 64);
-    AddSkin(filenm + "/" + (char*)skinnm);
     }
 
   return false;
@@ -233,9 +241,7 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time, Uint32 anim_offset) const {
 //  glCullFace(GL_FRONT);	//Do MD2 models use front face culling too?
 
-  glBegin(GL_TRIANGLES);
-
-//  if(texture.size() > 0) glBindTexture(GL_TEXTURE_2D, texture[0]->GLTexture());
+  if(texture.size() > 0) glBindTexture(GL_TEXTURE_2D, texture[0]->GLTexture());
 
   vector<GLCommand>::const_iterator glcomm = glcomms.begin();
   for(; glcomm != glcomms.end(); ++glcomm) {
@@ -246,7 +252,7 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
     vector<GLVertex>::const_iterator glvert = glcomm->verts.begin();
     for(; glvert != glcomm->verts.end(); ++glvert) {
-//      if(texture.size() > 0) glTexCoord2f(glvert->tex_x, glvert->tex_y);
+      if(texture.size() > 0) glTexCoord2f(glvert->tex_x, glvert->tex_y);
       glVertex3f(verts[frame][glvert->vindex].data[0],
 		verts[frame][glvert->vindex].data[1],
 		verts[frame][glvert->vindex].data[2]
@@ -284,15 +290,13 @@ const vector<string> &SimpleModel_MD2::GetSkinList() {
   }
 
 void SimpleModel_MD2::AddSkin(const string &skinnm) {
-  fprintf(stderr, "Load skin: '%s'\n", skinnm.c_str());
-//  SimpleTexture *skin = new SimpleTexture(skinnm.c_str());
-//  if(skin && (skin->type != SIMPLETEXTURE_NONE)) {
-//    fprintf(stderr, "Success!\n");
-//    texture.push_back(skin);
-//    skins.push_back(skinnm);
-//    }
-//  else if(skin) {
-//    fprintf(stderr, "Failed!\n");
-//    delete skin;
-//    }
+  SimpleTexture *skin = new SimpleTexture(skinnm.c_str());
+  if(skin && (skin->type != SIMPLETEXTURE_NONE)) {
+    skin->GLTexture();
+    texture.push_back(skin);
+    skins.push_back(skinnm);
+    }
+  else if(skin) {
+    delete skin;
+    }
   }
