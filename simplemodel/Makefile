@@ -53,7 +53,8 @@ LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --lib
 #CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 #LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
 
-OBJS:=	simplemodel.o simplemodel_q3dir.o simplemodel_md3.o \
+OBJS:=	simplemodel.o simplemodel_q3dir.o \
+	simplemodel_md3.o simplemodel_md2.o \
 	simplemodel_md.o simplemodel_mdx.o \
 	simplemodel_sphere.o simplemodel_wedge.o \
 	simplemodel_cone.o simplemodel_cube.o \
@@ -64,7 +65,8 @@ WCXX=	i586-mingw32msvc-g++
 WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags` -I../simpletexture
 WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
-WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o simplemodel_md3.win32_o \
+WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
+	simplemodel_md3.win32_o simplemodel_md2.win32_o \
 	simplemodel_md.win32_o simplemodel_mdx.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
 	simplemodel_cone.win32_o simplemodel_cube.win32_o \

@@ -30,6 +30,7 @@ using namespace std;
 
 #include "simplemodel.h"
 #include "simplemodel_q3dir.h"
+#include "simplemodel_md2.h"
 #include "simplemodel_md3.h"
 #include "simplemodel_mdx.h"
 #include "simplemodel_3ds.h"
@@ -68,6 +69,9 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
     SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
     if(model) {
       SDL_RWclose(model);
+      if(filename[0] == '/') {
+	return new SimpleModel_MD3("/", filename, skinname);
+	}
       return new SimpleModel_MD3(".", filename, skinname);
       }
     for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
@@ -83,10 +87,35 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
     }
 
   if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "md2"))) {
+    SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
+    if(model) {
+      SDL_RWclose(model);
+      if(filename[0] == '/') {
+	return new SimpleModel_MD2("/", filename, skinname);
+	}
+      return new SimpleModel_MD2(".", filename, skinname);
+      }
+    for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+      model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
+      if(model) {
+	SDL_RWclose(model);
+	return new SimpleModel_MD2(source_files[snum], filename, skinname);
+	}
+      }
+    fprintf(stderr, "WARNING: Failed to load md2 model '%s' - using wedge.\n",
+	filename.c_str());
+    return new SimpleModel_Wedge();
+    }
+
+  if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "mdx"))) {
     SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
     if(model) {
       SDL_RWclose(model);
+      if(filename[0] == '/') {
+	return new SimpleModel_MDX("/", filename, skinname);
+	}
       return new SimpleModel_MDX(".", filename, skinname);
       }
     for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
