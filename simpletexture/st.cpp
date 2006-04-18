@@ -708,7 +708,7 @@ void SimpleTexture::Update() {
     //This is the automatic downsizing code - originally from SimpleGUI
     glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
 	GL_UNSIGNED_BYTE, cur->pixels );
-    GLint res;
+    GLint res = 0;
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
     while(res == 0) {
       if(xsize >= ysize) xsize /= 2;
