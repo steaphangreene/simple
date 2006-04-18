@@ -89,12 +89,12 @@ ChangeLog:	.svn
 	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
 
 test:	
-	#make -C simpleaudio $@
+	make -C simpleaudio	#No tests!
 	make -C simpletexture $@
-	#make -C simplevideo $@
+	make -C simplevideo	#No tests!
 	make -C simplegui $@
 	make -C simplemodel $@
-	#make -C simpleconnect $@
+	make -C simpleconnect	#No tests!
 	make -C simpleconfig $@
 
 win32_test:	
