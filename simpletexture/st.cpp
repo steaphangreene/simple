@@ -711,6 +711,10 @@ void SimpleTexture::Update() {
     GLint res = 0;
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &res);
     while(res == 0) {
+      if(xsize < 1 || ysize < 1) {
+	fprintf(stderr, "ERROR: Shrank image to %dx%d\n", xsize, ysize);
+	exit(1);
+	}
       if(xsize >= ysize) xsize /= 2;
       else ysize /= 2;
       glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, xsize, ysize, 0, GL_RGBA,
