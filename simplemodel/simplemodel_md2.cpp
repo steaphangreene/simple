@@ -409,6 +409,28 @@ bool SimpleModel_MD2::Load(const string &filenm,
       }
     }
 
+  animations["STAND"] = 0;
+  animations["RUN"] = 1;
+  animations["ATTACK"] = 2;
+  animations["PAIN_A"] = 3;
+  animations["PAIN_B"] = 4;
+  animations["PAIN_C"] = 5;
+  animations["JUMP"] = 6;
+  animations["FLIP"] = 7;
+  animations["SALUTE"] = 8;
+  animations["FALLBACK"] = 9;
+  animations["WAVE"] = 10;
+  animations["POINT"] = 11;
+  animations["CROUCH_STAND"] = 12;
+  animations["CROUCH_WALK"] = 13;
+  animations["CROUCH_ATTACK"] = 14;
+  animations["CROUCH_PAIN"] = 15;
+  animations["CROUCH_DEATH"] = 16;
+  animations["DEATH_FALLBACK"] = 17;
+  animations["DEATH_FALLFORWARD"] = 18;
+  animations["DEATH_FALLBACKSLOW"] = 19;
+  animations["BOOM"] = 20;
+
   return false;
   }
 
