@@ -36,13 +36,13 @@ const Uint32 anim_data[21][3] = {	// Each represents: start, end, fps
   {   0,  39,  9 },	// STAND
   {  40,  45, 10 },	// RUN
   {  46,  53, 10 },	// ATTACK
-  {  54,  57,  7 },	// PAIN_A
-  {  58,  61,  7 },	// PAIN_B
-  {  62,  65,  7 },	// PAIN_C
+  {  54,  57,  7 },	// PAIN1
+  {  58,  61,  7 },	// PAIN2
+  {  62,  65,  7 },	// PAIN3
   {  66,  71,  7 },	// JUMP
-  {  72,  83,  7 },	// FLIP
+  {  72,  83,  7 },	// FLIPOFF
   {  84,  94,  7 },	// SALUTE
-  {  95, 111, 10 },	// FALLBACK
+  {  95, 111, 10 },	// TAUNT
   { 112, 122,  7 },	// WAVE
   { 123, 134,  6 },	// POINT
   { 135, 153, 10 },	// CROUCH_STAND
@@ -50,9 +50,9 @@ const Uint32 anim_data[21][3] = {	// Each represents: start, end, fps
   { 160, 168, 10 },	// CROUCH_ATTACK
   { 168, 172,  7 },	// CROUCH_PAIN
   { 173, 177,  5 },	// CROUCH_DEATH
-  { 178, 183,  7 },	// DEATH_FALLBACK
-  { 184, 189,  7 },	// DEATH_FALLFORWARD
-  { 190, 197,  7 },	// DEATH_FALLBACKSLOW
+  { 178, 183,  7 },	// DEATH1
+  { 184, 189,  7 },	// DEATH2
+  { 190, 197,  7 },	// DEATH3
   };
 
 SimpleModel_MD2::SimpleModel_MD2(const string &filenm,
@@ -411,13 +411,13 @@ bool SimpleModel_MD2::Load(const string &filenm,
   if(num_frames > anim_data[0][1]) animations["STAND"] = 0;
   if(num_frames > anim_data[1][1]) animations["RUN"] = 1;
   if(num_frames > anim_data[2][1]) animations["ATTACK"] = 2;
-  if(num_frames > anim_data[3][1]) animations["PAIN_A"] = 3;
-  if(num_frames > anim_data[4][1]) animations["PAIN_B"] = 4;
-  if(num_frames > anim_data[5][1]) animations["PAIN_C"] = 5;
+  if(num_frames > anim_data[3][1]) animations["PAIN1"] = 3;
+  if(num_frames > anim_data[4][1]) animations["PAIN2"] = 4;
+  if(num_frames > anim_data[5][1]) animations["PAIN3"] = 5;
   if(num_frames > anim_data[6][1]) animations["JUMP"] = 6;
-  if(num_frames > anim_data[7][1]) animations["FLIP"] = 7;
+  if(num_frames > anim_data[7][1]) animations["FLIPOFF"] = 7;
   if(num_frames > anim_data[8][1]) animations["SALUTE"] = 8;
-  if(num_frames > anim_data[9][1]) animations["FALLBACK"] = 9;
+  if(num_frames > anim_data[9][1]) animations["TAUNT"] = 9;
   if(num_frames > anim_data[10][1]) animations["WAVE"] = 10;
   if(num_frames > anim_data[11][1]) animations["POINT"] = 11;
   if(num_frames > anim_data[12][1]) animations["CROUCH_STAND"] = 12;
@@ -425,9 +425,9 @@ bool SimpleModel_MD2::Load(const string &filenm,
   if(num_frames > anim_data[14][1]) animations["CROUCH_ATTACK"] = 14;
   if(num_frames > anim_data[15][1]) animations["CROUCH_PAIN"] = 15;
   if(num_frames > anim_data[16][1]) animations["CROUCH_DEATH"] = 16;
-  if(num_frames > anim_data[17][1]) animations["DEATH_FALLBACK"] = 17;
-  if(num_frames > anim_data[18][1]) animations["DEATH_FALLFORWARD"] = 18;
-  if(num_frames > anim_data[19][1]) animations["DEATH_FALLBACKSLOW"] = 19;
+  if(num_frames > anim_data[17][1]) animations["DEATH1"] = 17;
+  if(num_frames > anim_data[18][1]) animations["DEATH2"] = 18;
+  if(num_frames > anim_data[19][1]) animations["DEATH3"] = 19;
 
   return false;
   }
