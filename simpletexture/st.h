@@ -98,13 +98,18 @@ public:
 
   GLuint GLTexture();
 
+  float ScaleX(float base);
+  float ScaleY(float base);
+  float xfact, yfact;	// Portion of texture actually shown
+			// Using these publically is depricated!
+			// You should use ScaleX and ScaleY instead!
+
   //FIXME: All this should be protected!
   SimpleTextureType type;
   SDL_Surface *cur;	//Current texture buffer
   SDL_Surface *src;	//Only for SIMPLETEXTURE_DEFINED/SIMPLETEXTURE_FILE
   SDL_Color col;	//Only for SIMPLETEXTURE_COLOR
   SDL_Color fg;		//Text Color
-  float xfact, yfact;	//Portion of texture actually shown
   bool dirty; //Does the system need to rebuild this texture?
 
   //Color Code (originally from SimpleGUI)

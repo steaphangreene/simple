@@ -180,13 +180,13 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
       glColor3f(1.0f, 1.0f, 1.0f);
 
       glBegin(GL_QUADS);
-      glTexCoord2f(0.0, mouse_cursor->yfact);
+      glTexCoord2f(mouse_cursor->ScaleX(0.0), mouse_cursor->ScaleY(1.0));
       glVertex3f(-1.0, -1.0, 0.0);
-      glTexCoord2f(mouse_cursor->xfact, mouse_cursor->yfact);
+      glTexCoord2f(mouse_cursor->ScaleX(1.0), mouse_cursor->ScaleY(1.0));
       glVertex3f( 1.0, -1.0, 0.0);
-      glTexCoord2f(mouse_cursor->xfact, 0.0);
+      glTexCoord2f(mouse_cursor->ScaleX(1.0), mouse_cursor->ScaleY(0.0));
       glVertex3f( 1.0, 1.0, 0.0);
-      glTexCoord2f(0.0, 0.0);
+      glTexCoord2f(mouse_cursor->ScaleX(0.0), mouse_cursor->ScaleY(0.0));
       glVertex3f(-1.0, 1.0, 0.0);
       glEnd();
 
@@ -428,22 +428,6 @@ void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   if(mouse_cursor) delete mouse_cursor;
   mouse_cursor = new SimpleTexture(cur);
-
-/*
-  mouse_xscale = xsc;
-  mouse_yscale = ysc;
-
-  int xsize = nextpoweroftwo(mouse_cursor->src->w);
-  int ysize = nextpoweroftwo(mouse_cursor->src->h);
-  mouse_cursor->cur = SDL_CreateRGBSurface(0, xsize, ysize, 32,
-	ST_SDL_RGBA_COLFIELDS);
-  SDL_SetAlpha(mouse_cursor->src, 0, SDL_ALPHA_TRANSPARENT);
-  SDL_BlitSurface(mouse_cursor->src, NULL, mouse_cursor->cur, NULL);
-  mouse_cursor->xfact = (float)(mouse_cursor->src->w) / (float)(xsize);
-  mouse_cursor->yfact = (float)(mouse_cursor->src->h) / (float)(ysize);
-
-  mouse_cursor->Update();
-*/
   }
 
 SimpleGUI *SimpleGUI::Current() {

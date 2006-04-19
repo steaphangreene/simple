@@ -212,13 +212,13 @@ int main(int argc, char **argv) {
     glBindTexture(GL_TEXTURE_2D, banner->GLTexture());
 
     glBegin(GL_QUADS);
-      glTexCoord2f(0.0, banner->yfact);
+      glTexCoord2f(banner->ScaleX(0.0), banner->ScaleY(1.0));
       glVertex3f(0.0, 0.0, 0.0);
-      glTexCoord2f(banner->xfact, banner->yfact);
+      glTexCoord2f(banner->ScaleX(1.0), banner->ScaleY(1.0));
       glVertex3f(1.0, 0.0, 0.0);
-      glTexCoord2f(banner->xfact, 0.0);
+      glTexCoord2f(banner->ScaleX(1.0), banner->ScaleY(0.0));
       glVertex3f(1.0, 1.0, 0.0);
-      glTexCoord2f(0.0, 0.0);
+      glTexCoord2f(banner->ScaleX(0.0), banner->ScaleY(0.0));
       glVertex3f(0.0, 1.0, 0.0);
     glEnd();
 

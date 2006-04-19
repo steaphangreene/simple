@@ -1129,6 +1129,14 @@ void SimpleTexture::ReaquireContext() {
     }
   }
 
+float SimpleTexture::ScaleX(float base) {
+  return base*xfact;
+  }
+
+float SimpleTexture::ScaleY(float base) {
+  return base*yfact;
+  }
+
 set<SimpleTexture *> SimpleTexture::all_textures;
 bool SimpleTexture::need_to_reaquire;
 int SimpleTexture::new_xsize;

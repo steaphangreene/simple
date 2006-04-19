@@ -65,13 +65,13 @@ bool SG_Panel::RenderSelf(unsigned long cur_time) {
 
 
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0, texture[state].yfact);
+  glTexCoord2f(texture[state].ScaleX(0.0), texture[state].ScaleY(1.0));
   glVertex3f(-1.0, -1.0, 0.0);
-  glTexCoord2f(texture[state].xfact, texture[state].yfact);
+  glTexCoord2f(texture[state].ScaleX(1.0), texture[state].ScaleY(1.0));
   glVertex3f( 1.0, -1.0, 0.0);
-  glTexCoord2f(texture[state].xfact, 0.0);
+  glTexCoord2f(texture[state].ScaleX(1.0), texture[state].ScaleY(0.0));
   glVertex3f( 1.0, 1.0, 0.0);
-  glTexCoord2f(0.0, 0.0);
+  glTexCoord2f(texture[state].ScaleX(0.0), texture[state].ScaleY(0.0));
   glVertex3f(-1.0, 1.0, 0.0);
   glEnd();
 

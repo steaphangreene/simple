@@ -91,13 +91,13 @@ int main(int argc, char **argv) {
 
     glBindTexture(GL_TEXTURE_2D, tex->GLTexture());
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, tex->yfact);
+    glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(1.0));
     glVertex3f(-1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, tex->yfact);
+    glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(1.0));
     glVertex3f( 1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, 0.0);
+    glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(0.0));
     glVertex3f( 1.0, 1.0, 0.0);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(0.0));
     glVertex3f(-1.0, 1.0, 0.0);
     glEnd();
 
@@ -105,13 +105,13 @@ int main(int argc, char **argv) {
 	cos(SDL_GetTicks() / 1024.0) / 2.0, 0.0);
     glBindTexture(GL_TEXTURE_2D, tex->GLTexture());
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, tex->yfact);
+    glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(1.0));
     glVertex3f(-1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, tex->yfact);
+    glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(1.0));
     glVertex3f( 1.0, -1.0, 0.0);
-    glTexCoord2f(tex->xfact, 0.0);
+    glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(0.0));
     glVertex3f( 1.0, 1.0, 0.0);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(0.0));
     glVertex3f(-1.0, 1.0, 0.0);
     glEnd();
 

@@ -449,18 +449,14 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     next = NormalizeFrame(anim[anim_offset], frame + 1);
     frame = NormalizeFrame(anim[anim_offset], frame);
 
-    float sx=1.0, sy=1.0;
-    if(texture.size() > 0) {
-      sx = texture[0]->xfact;
-      sy = texture[0]->yfact;
-      }
-
     Vector3 vert, norm;
 
     vector<GLVertex>::const_iterator glvert = glcomm->verts.begin();
     for(; glvert != glcomm->verts.end(); ++glvert) {
-      if(texture.size() > 0)
-	glTexCoord2f(glvert->tex_x * sx, glvert->tex_y * sy);
+      if(texture.size() > 0)  glTexCoord2f(
+		texture[0]->ScaleX(glvert->tex_x),
+		texture[0]->ScaleY(glvert->tex_y)
+		);
       LERP(norm, norms[frame][glvert->vindex], norms[next][glvert->vindex], fac);
       LERP(vert, verts[frame][glvert->vindex], verts[next][glvert->vindex], fac);
       glNormal3fv(norm.data);
