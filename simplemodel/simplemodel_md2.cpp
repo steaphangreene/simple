@@ -325,6 +325,8 @@ bool SimpleModel_MD2::Load(const string &filenm,
     freadLE(translate[1], model);
     freadLE(translate[2], model);
 
+    translate[2] += 24.0;
+
     scale[0] /= 16.0;
     scale[1] /= 16.0;
     scale[2] /= 16.0;
