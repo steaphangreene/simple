@@ -446,8 +446,8 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     float fac = 0.0;
     Uint32 frame, next;
     frame = CalcBaseFrame(cur_time, anim[anim_offset], start_time[anim_offset], fac);
-    frame = NormalizeFrame(anim[anim_offset], frame);
     next = NormalizeFrame(anim[anim_offset], frame + 1);
+    frame = NormalizeFrame(anim[anim_offset], frame);
 
     float sx=1.0, sy=1.0;
     if(texture.size() > 0) {
@@ -493,8 +493,29 @@ Uint32 SimpleModel_MD2::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_ti
   }
 
 Uint32 SimpleModel_MD2::NormalizeFrame(int anim, Uint32 frame) const {
-  if(frame < anim_data[anim][0]) frame = anim_data[anim][0];
-  else if(frame > anim_data[anim][1]) frame = anim_data[anim][1];
+  if(frame < anim_data[anim][0]) {
+    frame = anim_data[anim][0];
+    }
+  else if(anim == 0 || anim == 1 || anim == 12 || anim == 13) {
+    frame -= anim_data[anim][0];
+    frame %= (anim_data[anim][1] - anim_data[anim][0]) + 1;
+    frame += anim_data[anim][0];
+    }
+  else if(anim < 12) {
+    if(frame > anim_data[anim][1]) {
+      frame = NormalizeFrame(0, frame + anim_data[0][0] - anim_data[anim][1]);
+      }
+    }
+  else if(anim < 16) {
+    if(frame > anim_data[anim][1]) {
+      frame = NormalizeFrame(12, frame + anim_data[12][0] - anim_data[anim][1]);
+      }
+    }
+  else {
+    if(frame > anim_data[anim][1]) {
+      frame = anim_data[anim][1];
+      }
+    }
   return frame;
   }
 
