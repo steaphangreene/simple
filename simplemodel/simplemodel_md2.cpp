@@ -32,6 +32,30 @@ using namespace std;
 #include "simplemodel_md2.h"
 #include "saferead.h"
 
+const int anim_data[21][3] = {	// Each represents: start, end, fps
+  {   0,  39,  9 },	// STAND
+  {  40,  45, 10 },	// RUN
+  {  46,  53, 10 },	// ATTACK
+  {  54,  57,  7 },	// PAIN_A
+  {  58,  61,  7 },	// PAIN_B
+  {  62,  65,  7 },	// PAIN_C
+  {  66,  71,  7 },	// JUMP
+  {  72,  83,  7 },	// FLIP
+  {  84,  94,  7 },	// SALUTE
+  {  95, 111, 10 },	// FALLBACK
+  { 112, 122,  7 },	// WAVE
+  { 123, 134,  6 },	// POINT
+  { 135, 153, 10 },	// CROUCH_STAND
+  { 154, 159,  7 },	// CROUCH_WALK
+  { 160, 168, 10 },	// CROUCH_ATTACK
+  { 196, 172,  7 },	// CROUCH_PAIN
+  { 173, 177,  5 },	// CROUCH_DEATH
+  { 178, 183,  7 },	// DEATH_FALLBACK
+  { 184, 189,  7 },	// DEATH_FALLFORWARD
+  { 190, 197,  7 },	// DEATH_FALLBACKSLOW
+  { 198, 198,  5 },	// BOOM
+  };
+
 SimpleModel_MD2::SimpleModel_MD2(const string &filenm,
 	const string &modelnm, const string &defskin) {
   Load(filenm, modelnm, defskin);
@@ -397,7 +421,11 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     if(glcomm->strip) glBegin(GL_TRIANGLE_STRIP);
     else glBegin(GL_TRIANGLE_FAN);
 
-    Uint32 frame = (cur_time/100) % verts.size();
+    float fac = 0.0;
+    Uint32 frame, next;
+    frame = CalcBaseFrame(cur_time, anim[anim_offset], start_time[anim_offset], fac);
+    frame = NormalizeFrame(anim[anim_offset], frame);
+    next = NormalizeFrame(anim[anim_offset], frame + 1);
 
     float sx=1.0, sy=1.0;
     if(texture.size() > 0) {
@@ -405,12 +433,16 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       sy = texture[0]->yfact;
       }
 
+    Vector3 vert, norm;
+
     vector<GLVertex>::const_iterator glvert = glcomm->verts.begin();
     for(; glvert != glcomm->verts.end(); ++glvert) {
       if(texture.size() > 0)
 	glTexCoord2f(glvert->tex_x * sx, glvert->tex_y * sy);
-      glNormal3fv(norms[frame][glvert->vindex].data);
-      glVertex3fv(verts[frame][glvert->vindex].data);
+      LERP(norm, norms[frame][glvert->vindex], norms[next][glvert->vindex], fac);
+      LERP(vert, verts[frame][glvert->vindex], verts[next][glvert->vindex], fac);
+      glNormal3fv(norm.data);
+      glVertex3fv(vert.data);
       }
 
     glEnd();
@@ -431,11 +463,16 @@ bool SimpleModel_MD2::MoveToTag(Uint32 tag, Uint32 cur_time,
 
 int SimpleModel_MD2::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
 	float &offset) const {
-  int frame = 0;
+  int frame = anim_data[anim][0];
+  offset = (float(cur_time - start_time) / 1000.0) * float(anim_data[anim][2]);
+  frame += int(offset);
+  offset -= truncf(offset);
   return frame;
   }
 
 int SimpleModel_MD2::NormalizeFrame(int anim, int frame) const {
+  if(frame < anim_data[anim][0]) frame = anim_data[anim][0];
+  else if(frame > anim_data[anim][1]) frame = anim_data[anim][1];
   return frame;
   }
 

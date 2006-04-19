@@ -156,7 +156,7 @@ protected:
   //Interpolations
   template <class Tp>
   static void LERP(Tp &res, const Tp &m1, const Tp &m2, float t) {
-    for(int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
+    for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = m1.data[n]*(1.0-t) + m2.data[n]*t;
       }
     }
