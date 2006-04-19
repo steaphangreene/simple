@@ -59,6 +59,12 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
       }
     }
 
+  SDL_RWops *md2 = SDL_RWFromZZIP((filename + "/tris.md2").c_str(), "rb");
+  if(md2) {
+    SDL_RWclose(md2);
+    return new SimpleModel_MD2(filename, "tris.md2", skinname);
+    }
+
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
     return new SimpleModel_3DS(filename, skinname);
@@ -74,7 +80,7 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
 	}
       return new SimpleModel_MD3(".", filename, skinname);
       }
-    for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+    for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);
@@ -96,7 +102,7 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
 	}
       return new SimpleModel_MD2(".", filename, skinname);
       }
-    for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+    for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);
@@ -118,7 +124,7 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
 	}
       return new SimpleModel_MDX(".", filename, skinname);
       }
-    for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
+    for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);

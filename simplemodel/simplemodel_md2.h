@@ -45,8 +45,8 @@ protected:
   string modelname;
   vector<string> skins;
   vector<vector<Vector3> > verts;
+  vector<vector<Vector3> > norms;
   vector<vector<Vector2> > tex_coords;
-//  vector<Uint16> tri_vert, tri_tex;
 
   struct GLVertex {
     float tex_x, tex_y;
