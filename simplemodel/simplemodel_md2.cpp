@@ -53,7 +53,6 @@ const int anim_data[21][3] = {	// Each represents: start, end, fps
   { 178, 183,  7 },	// DEATH_FALLBACK
   { 184, 189,  7 },	// DEATH_FALLFORWARD
   { 190, 197,  7 },	// DEATH_FALLBACKSLOW
-  { 198, 198,  5 },	// BOOM
   };
 
 SimpleModel_MD2::SimpleModel_MD2(const string &filenm,
@@ -429,7 +428,6 @@ bool SimpleModel_MD2::Load(const string &filenm,
   animations["DEATH_FALLBACK"] = 17;
   animations["DEATH_FALLFORWARD"] = 18;
   animations["DEATH_FALLBACKSLOW"] = 19;
-  animations["BOOM"] = 20;
 
   return false;
   }
