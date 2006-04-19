@@ -32,7 +32,7 @@ using namespace std;
 #include "simplemodel_md2.h"
 #include "saferead.h"
 
-const int anim_data[21][3] = {	// Each represents: start, end, fps
+const Uint32 anim_data[21][3] = {	// Each represents: start, end, fps
   {   0,  39,  9 },	// STAND
   {  40,  45, 10 },	// RUN
   {  46,  53, 10 },	// ATTACK
@@ -48,7 +48,7 @@ const int anim_data[21][3] = {	// Each represents: start, end, fps
   { 135, 153, 10 },	// CROUCH_STAND
   { 154, 159,  7 },	// CROUCH_WALK
   { 160, 168, 10 },	// CROUCH_ATTACK
-  { 196, 172,  7 },	// CROUCH_PAIN
+  { 168, 172,  7 },	// CROUCH_PAIN
   { 173, 177,  5 },	// CROUCH_DEATH
   { 178, 183,  7 },	// DEATH_FALLBACK
   { 184, 189,  7 },	// DEATH_FALLFORWARD
@@ -408,26 +408,26 @@ bool SimpleModel_MD2::Load(const string &filenm,
       }
     }
 
-  animations["STAND"] = 0;
-  animations["RUN"] = 1;
-  animations["ATTACK"] = 2;
-  animations["PAIN_A"] = 3;
-  animations["PAIN_B"] = 4;
-  animations["PAIN_C"] = 5;
-  animations["JUMP"] = 6;
-  animations["FLIP"] = 7;
-  animations["SALUTE"] = 8;
-  animations["FALLBACK"] = 9;
-  animations["WAVE"] = 10;
-  animations["POINT"] = 11;
-  animations["CROUCH_STAND"] = 12;
-  animations["CROUCH_WALK"] = 13;
-  animations["CROUCH_ATTACK"] = 14;
-  animations["CROUCH_PAIN"] = 15;
-  animations["CROUCH_DEATH"] = 16;
-  animations["DEATH_FALLBACK"] = 17;
-  animations["DEATH_FALLFORWARD"] = 18;
-  animations["DEATH_FALLBACKSLOW"] = 19;
+  if(num_frames > anim_data[0][1]) animations["STAND"] = 0;
+  if(num_frames > anim_data[1][1]) animations["RUN"] = 1;
+  if(num_frames > anim_data[2][1]) animations["ATTACK"] = 2;
+  if(num_frames > anim_data[3][1]) animations["PAIN_A"] = 3;
+  if(num_frames > anim_data[4][1]) animations["PAIN_B"] = 4;
+  if(num_frames > anim_data[5][1]) animations["PAIN_C"] = 5;
+  if(num_frames > anim_data[6][1]) animations["JUMP"] = 6;
+  if(num_frames > anim_data[7][1]) animations["FLIP"] = 7;
+  if(num_frames > anim_data[8][1]) animations["SALUTE"] = 8;
+  if(num_frames > anim_data[9][1]) animations["FALLBACK"] = 9;
+  if(num_frames > anim_data[10][1]) animations["WAVE"] = 10;
+  if(num_frames > anim_data[11][1]) animations["POINT"] = 11;
+  if(num_frames > anim_data[12][1]) animations["CROUCH_STAND"] = 12;
+  if(num_frames > anim_data[13][1]) animations["CROUCH_WALK"] = 13;
+  if(num_frames > anim_data[14][1]) animations["CROUCH_ATTACK"] = 14;
+  if(num_frames > anim_data[15][1]) animations["CROUCH_PAIN"] = 15;
+  if(num_frames > anim_data[16][1]) animations["CROUCH_DEATH"] = 16;
+  if(num_frames > anim_data[17][1]) animations["DEATH_FALLBACK"] = 17;
+  if(num_frames > anim_data[18][1]) animations["DEATH_FALLFORWARD"] = 18;
+  if(num_frames > anim_data[19][1]) animations["DEATH_FALLBACKSLOW"] = 19;
 
   return false;
   }
@@ -483,16 +483,16 @@ bool SimpleModel_MD2::MoveToTag(Uint32 tag, Uint32 cur_time,
   return true;
   }
 
-int SimpleModel_MD2::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
+Uint32 SimpleModel_MD2::CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
 	float &offset) const {
-  int frame = anim_data[anim][0];
+  Uint32 frame = anim_data[anim][0];
   offset = (float(cur_time - start_time) / 1000.0) * float(anim_data[anim][2]);
-  frame += int(offset);
+  frame += Uint32(offset);
   offset -= truncf(offset);
   return frame;
   }
 
-int SimpleModel_MD2::NormalizeFrame(int anim, int frame) const {
+Uint32 SimpleModel_MD2::NormalizeFrame(int anim, Uint32 frame) const {
   if(frame < anim_data[anim][0]) frame = anim_data[anim][0];
   else if(frame > anim_data[anim][1]) frame = anim_data[anim][1];
   return frame;

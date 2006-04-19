@@ -65,8 +65,8 @@ protected:
 	const vector<Uint32> &start_time = vector<Uint32>(),
 	Uint32 anim_offset = 0) const;
 
-  int NormalizeFrame(int anim, int frame) const;
-  int CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
+  Uint32 NormalizeFrame(int anim, Uint32 frame) const;
+  Uint32 CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
 	float &offset) const;
   };
 
