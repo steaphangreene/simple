@@ -388,8 +388,7 @@ bool SimpleModel_MD2::Load(const string &filenm,
 
 bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time, Uint32 anim_offset) const {
-//  glCullFace(GL_FRONT);	//Do MD2 models use front face culling too?
-  glDisable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);	//MD2 models use front face culling
 
   if(texture.size() > 0) glBindTexture(GL_TEXTURE_2D, texture[0]->GLTexture());
 
@@ -417,8 +416,7 @@ bool SimpleModel_MD2::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     glEnd();
     }
 
-//  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
 
   return true;
   }
