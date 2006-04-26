@@ -61,45 +61,42 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 
   cur_transforms.bone_transforms.resize(bones.size());
 
-  //fprintf(stderr, "Start frame: %d\n", sequences.at(anim[0]).start);
-  //fprintf(stderr, "End frame: %d\n", sequences.at(anim[0]).end);
-  //fprintf(stderr, "Frame: %d.\n\n", anim_info.cur_frame);
-
   CalcTransforms(cur_transforms, identity4x4, -1, anim_info);
-  geosets.at(0).CalculateGroupMatrices(cur_transforms);
  
   MDXVertex vert;
-  for(Uint32 i = 0; i < geosets.at(0).indices.size(); i += 3) {
-    Uint32 v1 = geosets.at(0).indices.at(i);
-    Uint32 v2 = geosets.at(0).indices.at(i + 1);
-    Uint32 v3 = geosets.at(0).indices.at(i + 2);
-
-    MDXVertex vec1 = geosets.at(0).vertices.at(v1);
-    MDXVertex vec2 = geosets.at(0).vertices.at(v2);
-    MDXVertex vec3 = geosets.at(0).vertices.at(v3);
-
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, texture.at(geosets.at(0).texture_id)->GLTexture());
-    glBegin(GL_TRIANGLES);
-      Uint32 mindex = geosets.at(0).vertex_groups.at(v1);
-      MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
-      glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v1).coord[1]);
-      glVertex3f(vert.x, vert.y, vert.z);
-
-      mindex = geosets.at(0).vertex_groups.at(v2);
-      MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
-      glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v2).coord[1]);
-      glVertex3f(vert.x, vert.y, vert.z);
-
-      mindex = geosets.at(0).vertex_groups.at(v3);
-      MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
-      glTexCoord2f(geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[0], geosets.at(0).texture_coords_uvas.at(0).at(v3).coord[1]);
-      glVertex3f(vert.x, vert.y, vert.z);
-    glEnd();
+  for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it == geosets.begin(); ++geo_it) {
+    geo_it->CalculateGroupMatrices(cur_transforms);
+    for(vector<Uint16>::const_iterator indx_it = geo_it->indices.begin(); indx_it != geo_it->indices.end(); indx_it += 3) {
+      Uint32 v1 = *indx_it;
+      Uint32 v2 = *(indx_it + 1);
+      Uint32 v3 = *(indx_it + 2);
+    
+      MDXVertex vec1 = geo_it->vertices.at(v1);
+      MDXVertex vec2 = geo_it->vertices.at(v2);
+      MDXVertex vec3 = geo_it->vertices.at(v3);
+    
+      glEnable(GL_BLEND);
+      glEnable(GL_TEXTURE_2D);
+    
+      glBindTexture(GL_TEXTURE_2D, texture.at(geo_it->texture_id)->GLTexture());
+      glBegin(GL_TRIANGLES);
+        Uint32 mindex = geo_it->vertex_groups.at(v1);
+        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
+        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v1).coord[0], geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
+        glVertex3f(vert.x, vert.y, vert.z);
+    
+        mindex = geo_it->vertex_groups.at(v2);
+        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
+        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v2).coord[0], geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
+        glVertex3f(vert.x, vert.y, vert.z);
+    
+        mindex = geo_it->vertex_groups.at(v3);
+        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
+        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v3).coord[0], geo_it->texture_coords_uvas.at(0).at(v3).coord[1]);
+        glVertex3f(vert.x, vert.y, vert.z);
+      glEnd();
+      }
     }
-
   glPopMatrix();
   return true;
   }

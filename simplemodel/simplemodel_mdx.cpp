@@ -229,8 +229,9 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
 
     string buffer;
     buffer = filenm + "/" + (char *)(it->path);
-
+    fprintf(stderr, "%s\n", buffer.c_str());
     texture.push_back(new SimpleTexture(buffer));
+    fprintf(stderr, "%d\n", (*(texture.end() - 1))->GLTexture());
     }
 
   return true;
