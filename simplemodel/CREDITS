@@ -20,11 +20,14 @@
 # *************************************************************************
 
 Primary Authors:
-Steaphan Greene <stea@cs.binghamton.edu>
-Noah Schwartz <laze00@gmail.com>
+	Steaphan Greene <stea@cs.binghamton.edu>
+	Noah Schwartz <laze00@gmail.com>
 
 
-Special Thanks To
-Jimmy "Nub" Campbell for cracking the MDX format
-deffer from gamedev.net with his help on tracking down bugs in the MDX loader/renderer
-David for his referenced open-source MDX loader/renderer (http://www.xeberon.net/view.php?id=125)
+Special Thanks To:
+	DigiBen <digiben@gametutorials.com>
+	gOLeM <golem@gametutorials.com>
+	EvilSmile <evilsmile@gametutorials.com>
+	Jimmy "Nub" Campbell
+	deffer from gamedev.net
+	David <theprophet@wanadoo.fr>
