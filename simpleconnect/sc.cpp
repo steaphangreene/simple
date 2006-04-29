@@ -178,7 +178,7 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
       }
     else if(data.type < SC_SLOT_OPTPLAYER) {
       data.ptype = SC_PLAYER_AI;
-      sprintf((char*)(data.playername), "Player %d%c", slot-slts.begin()+1, 0);
+      sprintf((char*)(data.playername), "Player %ld%c", slot-slts.begin()+1, 0);
       }
     else {
       data.ptype = SC_PLAYER_NONE;
@@ -791,7 +791,7 @@ int SimpleConnect::HandleHostThread() {
 	    }
 	  else {
 	    slot->ptype = SC_PLAYER_AI;
-	    sprintf((char*)(slot->playername), "Player %d%c",
+	    sprintf((char*)(slot->playername), "Player %ld%c",
 		slot-conn.slots.begin()+1, 0);
 	    }
 	  slot->sock = NULL;
