@@ -227,7 +227,8 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  src = IMG_Load_RW(SDL_RWFromMem(data, jsize+siz[0]), true);
 	  if(!src) {
 	    fprintf(stderr, "WARNING[JPG]: %s\n", IMG_GetError());
-	    fprintf(stderr, "Sorry, BLP '%s' failed to load!\n");
+	    fprintf(stderr, "Sorry, BLP '%s' failed to load!\n",
+		filename.c_str());
 	    fprintf(stderr, "Perhaps you haven't patched SDL_image?\n");
 	    fprintf(stderr, "WARNING: File ignored!\n", filename.c_str());
 	    }
