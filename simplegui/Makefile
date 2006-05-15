@@ -42,7 +42,7 @@ win32:	libsimplegui.win32_a
 
 #DEGUGGING OPTIONS (NO EFENCE)
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config -I../simpletexture --cflags`
+CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
 LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
