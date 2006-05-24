@@ -277,7 +277,18 @@ bool SimpleVideo::FinishScene() {
 bool SimpleVideo::ResizeGL(int xs, int ys) {
   surface = SDL_SetVideoMode(xs, ys, 0, video_flags);
   xsize = xs;   ysize = ys;
-  glViewport(0, 0, (GLint)xsize, (GLint)ysize);
+
+  if(aspect != 0.0) {
+    if(xsize > int(ysize*aspect+0.5)) xsize = int(ysize*aspect+0.5);
+    if(ysize > int(xsize/aspect+0.5)) ysize = int(xsize/aspect+0.5);
+
+    hgap = (xs-xsize)/2;  vgap = (ys-ysize)/2;
+    glViewport(hgap, vgap, (GLint)xsize, (GLint)ysize);
+    }
+  else {
+    glViewport(0, 0, (GLint)xsize, (GLint)ysize);
+    }
+
   return true;
   }
 
