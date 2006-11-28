@@ -311,16 +311,19 @@ int SimpleModel_MD::NormalizeFrame(const vector<int> &anim, int frame) const {
       }
 
     int end = sequences[anim[0]].end;
+	int start = sequences.at(anim.at(0)).start;
     bool loop = sequences[anim[0]].loop;
 
     if(frame >= end && loop == true) {
-      frame -= sequences.at(anim.at(0)).end - sequences.at(anim.at(0)).start;
-    } else if(frame >= end)
+	  frame %= (end - start);
+	  frame += start;
+	  } 
+	else if(frame >= end)
       frame = end - 1;
-    }
-  else {
+    } 
+  else
     frame = 0;
-    }
+
   return frame;
   }
 
