@@ -36,16 +36,16 @@ using namespace std;
 #include "sg_events.h"
 
 SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
-	: SG_Compound(8, 5, 0.1, 0.1) {
+	: SG_Compound(12, 10, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
 
   openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(openb, 6, 4, 2, 1);
+  AddWidget(openb, 9, 9, 3, 1);
 
-  AddWidget(new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW), 0, 4, 2, 1);
+  AddWidget(new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW), 0, 9, 3, 1);
 
   dirb = new SG_TextArea("./", SG_COL_LOW, SG_COL_BG);
-  AddWidget(dirb, 1, 1, 6, 1);
+  AddWidget(dirb, 1, 1, 10, 1);
 
   int pos = 0, npos = -1;
   do {
@@ -103,7 +103,7 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
     }
   fileb = new SG_ComboBox(files, false);
   if(files.size() == 0) fileb->SetText("<no files>");
-  AddWidget(fileb, 1, 2, 6, 1);
+  AddWidget(fileb, 1, 2, 10, 1);
   }
 
 SG_FileBrowser::~SG_FileBrowser() {
