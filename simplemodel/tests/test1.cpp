@@ -35,6 +35,7 @@ static vector<int> anims;
 static vector<Uint32> times;
 
 static SimpleModel *mod = NULL;
+static SimpleModel *weap = NULL;
 
 static SimpleTexture *banner = NULL;
 
@@ -82,18 +83,23 @@ static void SetAnim(int which, string anim_name = "") {
 
 int main(int argc, char **argv) {
   int xs=800, ys=600;
+  char *modname = "models/players/trooper";
+  char *weapname = "models/weapons2/machinegun";
 
   int barg = 1;
-  while(argc > barg && (!strcmp(argv[barg], "-s"))) {
+  while(argc > barg && (strcmp(argv[barg], "-s") == 0 || strcmp(argv[barg], "-w") == 0)) {
     if(argc <= barg+1) {
-      fprintf(stderr, "ERROR: -s requires file argument\n");
+      fprintf(stderr, "ERROR: -s/-w requires file argument\n");
       exit(1);
       }
-    SimpleModel::AddSourceFile(argv[barg+1]);
+    if(strcmp(argv[barg], "-s") == 0) {
+      SimpleModel::AddSourceFile(argv[barg+1]);
+      }
+    else if(strcmp(argv[barg], "-w") == 0) {
+      weapname = argv[barg+1];
+      }
     barg += 2;
     }
-
-  char *modname = "models/players/trooper";
 
   if((argc-barg) > 2) {
     fprintf(stderr, "USAGE: %s [-s <search_prefix> [...]] <model_file>|<model_dir> [skin]\n", argv[0]);
@@ -124,6 +130,10 @@ int main(int argc, char **argv) {
   if(!mod) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
+    }
+  weap = SM_LoadModel(weapname);	//FIXME: Skin?
+  if(weap) {
+    mod->AttachSubmodel("tag_weapon", weap);
     }
 
   anims.push_back(0);
