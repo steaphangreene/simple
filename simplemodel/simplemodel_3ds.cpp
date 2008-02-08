@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleModel Example Module by Steaphan Greene
 //
-//  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2005-2008 Steaphan Greene <stea@cs.binghamton.edu>
 //
 //  3DS support written by Noah Schwartz with chunk parsing code based on Damiano Vitulli's 3DS loading
 //  tutorial at http://spacesimulator.net/tut4_3dsloader.html
