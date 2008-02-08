@@ -40,9 +40,9 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
   background = new SG_Panel(SG_COL_FG);
 
   openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_LOW);
-  AddWidget(openb, 9, 9, 3, 1);
+  AddWidget(openb, 10, 9, 2, 1);
 
-  AddWidget(new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW), 0, 9, 3, 1);
+  AddWidget(new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW), 0, 9, 2, 1);
 
   dirb = new SG_TextArea("./", SG_COL_LOW, SG_COL_BG);
   AddWidget(dirb, 1, 1, 10, 1);
