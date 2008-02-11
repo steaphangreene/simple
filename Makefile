@@ -25,6 +25,8 @@ BINDIR = $(PREFIX)/bin
 LIBDIR = $(PREFIX)/lib/simple
 INCDIR = $(PREFIX)/include/simple
 WLIBDIR = $(PREFIX)/i586-mingw32msvc/lib/simple
+SVNREV = $(shell svn info | grep Revision | cut -f2 -d" ")
+REVISION = $(shell printf "%.10d" $(SVNREV))
 
 INSTALL = /usr/bin/install
 
@@ -45,7 +47,7 @@ install:	all
 	$(INSTALL) -d $(BINDIR)
 	$(INSTALL) -m 644 simple*/lib*.a $(LIBDIR)
 	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
-	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' > simple-config
+	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' | sed 's-REVISION-$(REVISION)-g' > simple-config
 	$(INSTALL) -m 755 simple-config $(BINDIR)
 
 uninstall:	uninstall_win32

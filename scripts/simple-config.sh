@@ -24,7 +24,7 @@
 prefix="/usr/local"
 exec_prefix="${prefix}"
 package="simple"
-version="0.0.0-prerelease"
+version="0.0.0-svnREVISION"
 includedir="${prefix}/include/simple"
 cross_prefix=""
 cross_dir=""
