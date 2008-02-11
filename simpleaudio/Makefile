@@ -72,7 +72,7 @@ libsimpleaudio.win32_a:	$(WOBJS)
 	i586-mingw32msvc-ar rcs $@ $(WOBJS)
 
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
-	../scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
+	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<

@@ -90,7 +90,7 @@ ChangeLog:	.svn
 	make -C simplemodel $@
 	make -C simpleconnect $@
 	make -C simpleconfig $@
-	./scripts/svn2cl.sh | sed 's-stea-sgreene-g' > ChangeLog
+	./scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
 test:	
 	make -C simpleaudio	#No tests!
