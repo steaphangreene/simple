@@ -234,3 +234,10 @@ void SG_Alignment::SetBackground(SG_Widget *wid) {
 void SG_Alignment::UnsetBackground() {
   background = NULL;
   }
+
+void SG_Alignment::SetAlignment(int align) {
+  vector<SG_Widget *>::const_iterator wid = widgets.begin();
+  for(; wid != widgets.end(); ++wid) {
+    (*wid)->SetAlignment(align);
+    }
+  }

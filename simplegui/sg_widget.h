@@ -24,6 +24,10 @@
 
 #include "SDL.h"
 
+#define SG_ALIGN_LEFT   ST_ALIGN_LEFT
+#define SG_ALIGN_CENTER ST_ALIGN_CENTER
+#define SG_ALIGN_RIGHT  ST_ALIGN_RIGHT
+
 #define SG_WIDGET_FLAGS_HIDDEN		1
 #define SG_WIDGET_FLAGS_DISABLED	2
 #define SG_WIDGET_FLAGS_PRESSED		4
@@ -42,6 +46,7 @@ public:
   virtual bool HasWidget(SG_Widget *targ);
 
   virtual void SetAspectRatio(double asp);
+  virtual void SetAlignment(int align);
 
   bool Render(unsigned long cur_time, bool final = false);
 

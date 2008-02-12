@@ -55,8 +55,6 @@ public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
   virtual void SetItems(const vector<string> &items);
   virtual int NumItems();
 
-  void SetAlignment(int align);
-
   void Set(int which);
   void Next(bool wrap = false);
   void Prev(bool wrap = false);

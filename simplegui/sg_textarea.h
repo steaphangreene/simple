@@ -30,10 +30,6 @@
 #include <string>
 using namespace std;
 
-#define SG_ALIGN_LEFT	ST_ALIGN_LEFT
-#define SG_ALIGN_CENTER	ST_ALIGN_CENTER
-#define SG_ALIGN_RIGHT	ST_ALIGN_RIGHT
-
 #ifndef SG_AUTOSIZE
 #define SG_AUTOSIZE	ST_AUTOSIZE
 #endif
@@ -59,7 +55,7 @@ public:
   void SetVisibleSize(double xs, double ys);
   void SetVisibleLines(int numlns);	//Depricated!
 
-  void SetAlignment(int align);
+  virtual void SetAlignment(int align);
 
   virtual void SetText(const string &txt);
   virtual const string &Text();

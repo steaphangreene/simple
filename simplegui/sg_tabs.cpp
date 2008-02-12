@@ -166,10 +166,3 @@ void SG_Tabs::Down(bool wrap) {
     }
   Set(cur_on);
   }
-
-void SG_Tabs::SetAlignment(int align) {
-  vector<SG_Widget *>::const_iterator wid = widgets.begin();
-  for(; wid != widgets.end(); ++wid) {
-    ((SG_StickyButton *)(*wid))->SetAlignment(align);
-    }
-  }
