@@ -31,7 +31,7 @@ SDL_Surface *STT_Button::BuildTexture(SDL_Surface *surf,
   }
 
 SDL_Color STT_Button::base_col(const SDL_Color &c) {
-  SDL_Color ret;
+  SDL_Color ret = {0, 0, 0, 0};
   ret.r = base_col(c.r);
   ret.g = base_col(c.g);
   ret.b = base_col(c.b);
@@ -39,7 +39,7 @@ SDL_Color STT_Button::base_col(const SDL_Color &c) {
   }
 
 SDL_Color STT_Button::light_col(const SDL_Color &c) {
-  SDL_Color ret;
+  SDL_Color ret = {0, 0, 0, 0};
   ret.r = light_col(c.r);
   ret.g = light_col(c.g);
   ret.b = light_col(c.b);
@@ -47,7 +47,7 @@ SDL_Color STT_Button::light_col(const SDL_Color &c) {
   }
 
 SDL_Color STT_Button::dark_col(const SDL_Color &c) {
-  SDL_Color ret;
+  SDL_Color ret = {0, 0, 0, 0};
   ret.r = dark_col(c.r);
   ret.g = dark_col(c.g);
   ret.b = dark_col(c.b);
