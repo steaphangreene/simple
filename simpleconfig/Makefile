@@ -24,44 +24,21 @@ all:	libsimpleconfig.a
 
 win32:	libsimpleconfig.win32_a
 
-#PRODUCTION OPTIONS (STANDARD)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-#LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
-
-#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-#LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -framework OpenGL
-
-#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-#LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -L/usr/X11R6/bin -lopengl32 -lglu32
-
-#DEGUGGING OPTIONS (NO EFENCE)
+#All of this is usually overridden by the main Makefile
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
-
-#DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-#LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lefence -lGL -lGLU
-
-#PROFILING OPTIONS
-#CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-#LIBS=	`sdl-config --libs` `zzip-config --libs` ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a -lSDL_ttf -lSDL_image -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+WCXX=	i586-mingw32msvc-g++
+WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 OBJS:=	simpleconfig.o
-
-#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
-WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` -I../simplevideo -I../simplegui -I../simpletexture
-WLIBS=	../simplevideo/libsimplevideo.win32_a ../simplegui/libsimplegui.win32_a ../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lSDL_image -lSDL_ttf -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplegui -I../simplevideo
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
 
 WOBJS:=	simpleconfig.win32_o
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simplevideo
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
 
 libsimpleconfig.a:	$(OBJS)
 	rm -vf $@
@@ -96,13 +73,13 @@ clean:
 test:	test1
 
 test1:	test1.o libsimpleconfig.a audio.o
-	$(CXX) $(CXXFLAGS) -o test1 test1.o audio.o libsimpleconfig.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test1 test1.o audio.o libsimpleconfig.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o audio.win32_o libsimpleconfig.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimpleconfig.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimpleconfig.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

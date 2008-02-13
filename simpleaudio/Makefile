@@ -24,44 +24,21 @@ all:	libsimpleaudio.a
 
 win32:	libsimpleaudio.win32_a
 
-#PRODUCTION OPTIONS (STANDARD)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_mixer -lGL -lGLU
-
-#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_mixer -framework OpenGL
-
-#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_mixer -L/usr/X11R6/bin -lopengl32 -lglu32
-
-#DEGUGGING OPTIONS (NO EFENCE)
+#All of this is usually overridden by the main Makefile
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-LIBS=	`sdl-config --libs` -lSDL_mixer -lGL -lGLU
-
-#DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_mixer -lefence -lGL -lGLU
-
-#PROFILING OPTIONS
-#CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags`
-#LIBS=	`sdl-config --libs` -lSDL_mixer -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+WCXX=	i586-mingw32msvc-g++
+WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 OBJS:=	simpleaudio.o
-
-#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
-WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+CXXFLAGS:=	$(FLAGS)
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 
 WOBJS:=	simpleaudio.win32_o
+WCXXFLAGS:=	$(WFLAGS)
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
 libsimpleaudio.a:	$(OBJS)
 	rm -vf $@
@@ -96,13 +73,13 @@ clean:
 test:	test1
 
 test1:	test1.o libsimpleaudio.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpleaudio.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpleaudio.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o libsimpleaudio.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpleaudio.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpleaudio.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

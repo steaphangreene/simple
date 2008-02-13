@@ -23,46 +23,23 @@ all:	libsimpletexture.a
 
 win32:	libsimpletexture.win32_a
 
-#PRODUCTION OPTIONS (STANDARD)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
-
-#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -framework OpenGL
-
-#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lopengl32 -lglu32
-
-#DEGUGGING OPTIONS (NO EFENCE)
+#All of this is usually overridden by the main Makefile
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
-
-#DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lefence -lGL -lGLU
-
-#PROFILING OPTIONS
-#CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lSDL_ttf -lSDL_image -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+WCXX=	i586-mingw32msvc-g++
+WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 OBJS:=	st.o stt.o stt_default.o stt_invisible.o \
 	stt_button.o stt_buttonup.o stt_buttondown.o
-
-#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
-WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+CXXFLAGS:=	$(FLAGS)
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 
 WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
+WCXXFLAGS:=	$(WFLAGS)
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
 libsimpletexture.a:	$(OBJS)
 	rm -vf $@
@@ -78,13 +55,13 @@ ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn tests/*.cpp tests/*.h
 test:	test1
 
 test1:	test1.o renderer.o libsimpletexture.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpletexture.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpletexture.a $(CXXLIBS)
 
 win32_test:	test1.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o libsimpletexture.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WCXXLIBS)
 
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) -c $<

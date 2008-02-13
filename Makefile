@@ -30,16 +30,51 @@ REVISION = $(shell printf "%.10d" $(SVNREV))
 
 INSTALL = /usr/bin/install
 
+#PRODUCTION OPTIONS (STANDARD)
+#CXX=	g++
+#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+
+#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
+#CXX=	g++
+#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -framework OpenGL
+
+#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
+#CXX=	g++
+#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -L/usr/X11R6/bin -lopengl32 -lglu32
+
+#DEGUGGING OPTIONS (NO EFENCE)
+CXX=	g++
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+
+#DEGUGGING OPTIONS (WITH EFENCE)
+#CXX=	g++
+#FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lefence -lGL -lGLU
+
+#PROFILING OPTIONS
+#CXX=	g++
+#FLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+#LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+
+#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
+WCXX=	i586-mingw32msvc-g++
+WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+
 all:	build
 
 build:
-	make -C simpleaudio
-	make -C simpletexture
-	make -C simplevideo
-	make -C simplegui
-	make -C simplemodel
-	make -C simpleconnect
-	make -C simpleconfig
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 
 install:	all
 	$(INSTALL) -d $(LIBDIR)
@@ -56,13 +91,13 @@ uninstall:	uninstall_win32
 	rm -vf $(BINDIR)/simple-config
 
 win32:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simpleconfig WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 
 install_win32:	install win32
 	$(INSTALL) -d $(WLIBDIR)
@@ -73,7 +108,7 @@ install_win32:	install win32
 	$(INSTALL) -m 644 simplemodel/libsimplemodel.win32_a $(WLIBDIR)/libsimplemodel.a
 	$(INSTALL) -m 644 simpleconnect/libsimpleconnect.win32_a $(WLIBDIR)/libsimpleconnect.a
 	$(INSTALL) -m 644 simpleconfig/libsimpleconfig.win32_a $(WLIBDIR)/libsimpleconfig.a
-	cat scripts/simple-config.sh | sed 's|prefix=".*"|prefix="$(PREFIX)"|g' | sed 's|cross_prefix=".*"|cross_prefix="i586-mingw32msvc-"|g' | sed 's|cross_dir=".*"|cross_dir="/i586-mingw32msvc"|g' | sed 's|-lGL -lGLU|-lopengl32 -lglu32|g' | sed 's|base_libs=".*"|base_libs="-lSDL_net -lwsock32 -lSDL_ttf -lSDL_image -lSDL_mixer -lvorbisfile -lvorbis -logg -lSDL -lpng -ljpeg -lpng"|g' > i586-mingw32msvc-simple-config
+	cat scripts/simple-config.sh | sed 's|prefix=".*"|prefix="$(PREFIX)"|g' | sed 's|cross_prefix=".*"|cross_prefix="i586-mingw32msvc-"|g' | sed 's|cross_dir=".*"|cross_dir="/i586-mingw32msvc"|g' | sed 's|-lGL -lGLU|-lopengl32 -lglu32|g' | sed 's|base_libs=".*"|base_libs="-lSDL_net -lwsock32 -lSDL_ttf -lSDL_image -lvorbisfile -lvorbis -logg -lSDL -lpng -ljpeg -lpng"|g' > i586-mingw32msvc-simple-config
 	$(INSTALL) -m 755 i586-mingw32msvc-simple-config $(BINDIR)
 
 win32_install:	install_win32
@@ -85,60 +120,60 @@ uninstall_win32:
 win32_uninstall:	uninstall_win32
 
 ChangeLog:	.svn
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	./scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
 test:	
-	make -C simpleaudio	#No tests!
-	make -C simpletexture $@
-	make -C simplevideo	#No tests!
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect	#No tests!
-	make -C simpleconfig $@
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 
 win32_test:	
-	make -C simpleaudio win32	#No tests!
-	make -C simpletexture $@
-	make -C simplevideo win32	#No tests!
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect win32	#No tests!
-	make -C simpleconfig $@
+	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
+	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
+	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
+	make -C simpleconfig WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 
 wintest:	win32_test
 test_win32:	win32_test
 
 clean:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	rm -f *simple-config ChangeLog
 
 backup:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 
 tar:
-	make -C simpleaudio $@
-	make -C simpletexture $@
-	make -C simplevideo $@
-	make -C simplegui $@
-	make -C simplemodel $@
-	make -C simpleconnect $@
-	make -C simpleconfig $@
+	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@

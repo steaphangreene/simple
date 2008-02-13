@@ -25,35 +25,13 @@ win32:	libsimplegui.win32_a
 
 #all:	test
 
-#PRODUCTION OPTIONS (STANDARD)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
-
-#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -framework OpenGL
-
-#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	g++
-#CXXFLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -L/usr/X11R6/bin -lopengl32 -lglu32
-
-#DEGUGGING OPTIONS (NO EFENCE)
+#All of this is usually overridden by the main Makefile
 CXX=	g++
-CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
-
-#DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	g++
-#CXXFLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lefence -lSDL_image -lSDL_ttf -lGL -lGLU
-
-#PROFILING OPTIONS
-#CXX=	g++
-#CXXFLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags` -I../simpletexture
-#LIBS=	../simpletexture/libsimpletexture.a `sdl-config --libs` `zzip-config --libs` -lSDL_image -lSDL_ttf -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+WCXX=	i586-mingw32msvc-g++
+WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
+WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
 OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 	sg_alignment.o sg_positional.o sg_table.o \
@@ -65,11 +43,8 @@ OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 	sg_radiobuttons.o sg_combobox.o sg_pulldown.o sg_sliderbar.o \
 	sg_scrollingarea.o sg_dndboxes.o sg_tabs.o \
 	sg_passthrough.o sg_translabel.o
-
-#PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
-WCXX=	i586-mingw32msvc-g++
-WCXXFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags` `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --cflags` -I../simpletexture
-WLIBS=	../simpletexture/libsimpletexture.win32_a `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL_image -lSDL_ttf -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+CXXFLAGS:=	$(FLAGS) -I../simpletexture
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/libsimpletexture.a
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
@@ -81,6 +56,8 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/libsimpletexture.a
 
 libsimplegui.a:	$(OBJS)
 	rm -vf $@
@@ -114,31 +91,31 @@ clean:
 test:	test1 test2 test3 test4
 
 test1:	test1.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimplegui.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
 
 test2:	test2.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o libsimplegui.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
 
 test3:  test3.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o libsimplegui.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
 	
 test4:  test4.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o libsimplegui.a $(LIBS)
+	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe test3.exe test4.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 
 test2.exe:	test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 
 test3.exe:	test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
 test4.exe:	test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WLIBS)
+	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
