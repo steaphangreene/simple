@@ -22,6 +22,6 @@
 #ifndef SIMPLESCENE_H
 #define SIMPLESCENE_H
 
-#include "sc.h"
+#include "ss.h"
 
 #endif  //SIMPLESCENE_H
