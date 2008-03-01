@@ -71,6 +71,7 @@ build:
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
@@ -94,6 +95,7 @@ win32:
 	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simplescene WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
@@ -104,6 +106,7 @@ install_win32:	install win32
 	$(INSTALL) -m 644 simpleaudio/libsimpleaudio.win32_a $(WLIBDIR)/libsimpleaudio.a
 	$(INSTALL) -m 644 simpletexture/libsimpletexture.win32_a $(WLIBDIR)/libsimpletexture.a
 	$(INSTALL) -m 644 simplevideo/libsimplevideo.win32_a $(WLIBDIR)/libsimplevideo.a
+	$(INSTALL) -m 644 simplescene/libsimplescene.win32_a $(WLIBDIR)/libsimplescene.a
 	$(INSTALL) -m 644 simplegui/libsimplegui.win32_a $(WLIBDIR)/libsimplegui.a
 	$(INSTALL) -m 644 simplemodel/libsimplemodel.win32_a $(WLIBDIR)/libsimplemodel.a
 	$(INSTALL) -m 644 simpleconnect/libsimpleconnect.win32_a $(WLIBDIR)/libsimpleconnect.a
@@ -123,6 +126,7 @@ ChangeLog:	.svn
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
@@ -133,6 +137,7 @@ test:
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
@@ -142,6 +147,7 @@ win32_test:
 	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
 	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
+	make -C simplescene WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
 	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
 	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
@@ -154,6 +160,7 @@ clean:
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
@@ -164,6 +171,7 @@ backup:
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
@@ -173,6 +181,7 @@ tar:
 	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
