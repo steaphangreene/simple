@@ -40,7 +40,7 @@ using namespace std;
 
 SimpleScene *SimpleScene::current = NULL;
 
-SimpleScene::SimpleScene(int xs, int ys, double asp, bool fullscr) {
+SimpleScene::SimpleScene() {
   if(current) {
     fprintf(stderr, "ERROR: Created mulitple SimpleScene instances!\n");
     exit(1);

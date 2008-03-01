@@ -30,10 +30,12 @@ using namespace std;
 
 class SimpleScene {
 public:
-  SimpleScene(int xs, int ys, double asp, bool fullscr = false);
+  SimpleScene();
   ~SimpleScene();
 
   bool Render(Uint32 offset);
+
+  static SimpleScene *Current() { return current; };
 
 protected:
   static SimpleScene *current;

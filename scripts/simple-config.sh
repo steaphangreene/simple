@@ -51,7 +51,7 @@ for i in "$@" ; do
     --package)  output="$output $package" ;;
     --version)  output="$output $version" ;;
     --cflags)   output="$output `${cross_prefix}sdl-config --cflags` `${cross_prefix}zzip-config --cflags` -I$includedir" ;;
-    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplegui -lsimplemodel -lsimpletexture `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` -lGL -lGLU"
+    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplescene -lsimplegui -lsimplemodel -lsimpletexture `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` -lGL -lGLU"
         ;;
     *) output="$output $i" ;;
     esac
