@@ -28,6 +28,23 @@
 #include <vector>
 using namespace std;
 
+#include "st.h"
+
+struct SimpleScene_ParticleType {
+  SimpleTexture *tex;
+  float cr0, cg0, cb0, ca0;
+  float cr1, cg1, cb1, ca1;
+  float xv, yv, zv;
+  float sz0, sz1;
+  Uint32 dur;
+  };
+
+struct SimpleScene_Particle {
+  unsigned int type;
+  float xp, yp, zp;
+  Uint32 start;
+  };
+
 class SimpleScene {
 public:
   SimpleScene();
@@ -37,7 +54,15 @@ public:
 
   static SimpleScene *Current() { return current; };
 
+  int AddParticleType(SimpleScene_ParticleType ptp);
+  void AddParticle(int type, float xp, float yp, float zp, Uint32 start);
+
 protected:
+  bool DrawParticles(Uint32 offset);
+
+  vector<SimpleScene_ParticleType> ptypes;
+  vector<SimpleScene_Particle> parts;
+
   static SimpleScene *current;
   };
 

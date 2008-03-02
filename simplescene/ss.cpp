@@ -53,5 +53,69 @@ SimpleScene::~SimpleScene() {
   }
 
 bool SimpleScene::Render(Uint32 offset) {
+  DrawParticles(offset);
   return true;
   }
+
+
+int SimpleScene::AddParticleType(SimpleScene_ParticleType ptp) {
+  ptypes.push_back(ptp);
+  return int(ptypes.size() - 1);
+  }
+
+void SimpleScene::AddParticle(int type,
+	float xp, float yp, float zp, Uint32 start) {
+  SimpleScene_Particle newpart = { type, xp, yp, zp, start };
+  parts.push_back(newpart);
+  }
+
+bool SimpleScene::DrawParticles(Uint32 offset) {
+  //Prep for billboard transformation
+  float view[16];
+  glGetFloatv(GL_MODELVIEW_MATRIX, view);
+
+  glDisable(GL_LIGHTING);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glDepthMask(GL_FALSE);
+  glBegin(GL_QUADS);
+
+  vector<SimpleScene_Particle>::iterator part = parts.begin();
+  for(; part != parts.end(); ++part) {
+    SimpleScene_ParticleType *type = &(ptypes[part->type]);
+    if(part->start <= offset && (part->start + type->dur) > offset) {
+      float tm, sz, cr, cg, cb, ca, xp, yp, zp, xxo, xyo, yxo, yyo, zxo, zyo;
+      tm = (offset - part->start) / float(type->dur);
+
+      sz = type->sz1 * tm + type->sz0 * (1.0 - tm);
+      cr = type->cr1 * tm + type->cr0 * (1.0 - tm);
+      cg = type->cg1 * tm + type->cg0 * (1.0 - tm);
+      cb = type->cb1 * tm + type->cb0 * (1.0 - tm);
+      ca = type->ca1 * tm + type->ca0 * (1.0 - tm);
+
+      xp = part->xp + type->xv * (offset - part->start) / 1000.0;
+      yp = part->yp + type->yv * (offset - part->start) / 1000.0;
+      zp = part->zp + type->zv * (offset - part->start) / 1000.0;
+      xxo = sz * view[0];  yxo = sz * view[4];  zxo = sz * view[8];
+      xyo = sz * view[1];  yyo = sz * view[5];  zyo = sz * view[9];
+
+      glColor4f(cr, cg, cb, ca);
+      glBindTexture(GL_TEXTURE_2D, type->tex->GLTexture());
+      glTexCoord2f(type->tex->ScaleX(1.0), type->tex->ScaleY(0.0));
+      glVertex3f(xp + xxo - xyo, yp + yxo - yyo, zp + zxo - zyo);
+      glTexCoord2f(type->tex->ScaleX(1.0), type->tex->ScaleY(1.0));
+      glVertex3f(xp + xxo + xyo, yp + yxo + yyo, zp + zxo + zyo);
+      glTexCoord2f(type->tex->ScaleX(0.0), type->tex->ScaleY(1.0));
+      glVertex3f(xp - xxo + xyo, yp - yxo + yyo, zp - zxo + zyo);
+      glTexCoord2f(type->tex->ScaleX(0.0), type->tex->ScaleY(0.0));
+      glVertex3f(xp - xxo - xyo, yp - yxo - yyo, zp - zxo - zyo);
+      }
+    }
+
+  glEnd();
+  glDepthMask(GL_TRUE);
+  glDisable(GL_BLEND);
+
+  return true;
+  }
+
