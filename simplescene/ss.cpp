@@ -70,6 +70,10 @@ void SimpleScene::AddParticle(int type,
   }
 
 bool SimpleScene::DrawParticles(Uint32 offset) {
+  if(parts.size() < 1) { return true; }
+  GLuint tex = ptypes[parts[0].type].tex->GLTexture();
+  glBindTexture(GL_TEXTURE_2D, tex);
+
   //Prep for billboard transformation
   float view[16];
   glGetFloatv(GL_MODELVIEW_MATRIX, view);
@@ -99,8 +103,14 @@ bool SimpleScene::DrawParticles(Uint32 offset) {
       xxo = sz * view[0];  yxo = sz * view[4];  zxo = sz * view[8];
       xyo = sz * view[1];  yyo = sz * view[5];  zyo = sz * view[9];
 
+      if(tex != type->tex->GLTexture()) {
+	glEnd();
+	tex = type->tex->GLTexture();
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glBegin(GL_QUADS);
+        }
+
       glColor4f(cr, cg, cb, ca);
-      glBindTexture(GL_TEXTURE_2D, type->tex->GLTexture());
       glTexCoord2f(type->tex->ScaleX(1.0), type->tex->ScaleY(0.0));
       glVertex3f(xp + xxo - xyo, yp + yxo - yyo, zp + zxo - zyo);
       glTexCoord2f(type->tex->ScaleX(1.0), type->tex->ScaleY(1.0));
