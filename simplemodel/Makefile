@@ -36,7 +36,7 @@ OBJS:=	simplemodel.o simplemodel_q3dir.o \
 	simplemodel_md.o simplemodel_mdx.o \
 	simplemodel_sphere.o simplemodel_wedge.o \
 	simplemodel_cone.o simplemodel_cube.o \
-	simplemodel_3ds.o
+	simplemodel_3ds.o simplemodel_obj.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/libsimpletexture.a
 
@@ -45,7 +45,7 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md.win32_o simplemodel_mdx.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
 	simplemodel_cone.win32_o simplemodel_cube.win32_o \
-	simplemodel_3ds.win32_o
+	simplemodel_3ds.win32_o simplemodel_obj.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/libsimpletexture.a
 

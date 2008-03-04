@@ -34,6 +34,7 @@ using namespace std;
 #include "simplemodel_md3.h"
 #include "simplemodel_mdx.h"
 #include "simplemodel_3ds.h"
+#include "simplemodel_obj.h"
 
 #include "simplemodel_cone.h"
 #include "simplemodel_cube.h"
@@ -63,6 +64,11 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
   if(md2) {
     SDL_RWclose(md2);
     return new SimpleModel_MD2(filename, "tris.md2", skinname);
+    }
+
+  if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "obj"))) {
+    return new SimpleModel_OBJ(filename, skinname);
     }
 
   if(filename.length() >= 3
