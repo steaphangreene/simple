@@ -3,8 +3,9 @@
 //
 //  Copyright 2005-2008 Steaphan Greene <stea@cs.binghamton.edu>
 //
-//  3DS support written by Noah Schwartz with chunk parsing code based on Damiano Vitulli's 3DS loading
-//  tutorial at http://spacesimulator.net/tut4_3dsloader.html
+//  3DS support written by Noah Schwartz with chunk parsing code
+//  based on Damiano Vitulli's 3DS loading tutorial at
+//  http://spacesimulator.net/tut4_3dsloader.html
 //
 //  SimpleModel is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
