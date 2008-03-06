@@ -49,6 +49,8 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
   buf[size] = 0;
 
   vector<Vector3> points;
+  vector<Vector3> norms;
+  vector<Vector2> coords;
 
   ptr = buf;
   while((ptr - buf) < size) {
@@ -57,6 +59,18 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
       sscanf(ptr+2, "%f %f %f", &x, &y, &z);
       Vector3 vec = { { x, y, z } };
       points.push_back(vec);
+      }
+    if(!strncmp(ptr, "vn ", 3)) {
+      float x, y, z;
+      sscanf(ptr+2, "%f %f %f", &x, &y, &z);
+      Vector3 vec = { { x, y, z } };
+      norms.push_back(vec);
+      }
+    if(!strncmp(ptr, "vt ", 3)) {
+      float x, y;
+      sscanf(ptr+2, "%f %f", &x, &y);
+      Vector2 vec = { { x, y } };
+      coords.push_back(vec);
       }
     while((*ptr) != '\n' && (ptr - buf) < size) { ++ptr; }
     if((ptr - buf) < size) { ++ptr; }
@@ -68,32 +82,39 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
   int begun = 0;
   while((ptr - buf) < size) {
     if(!strncmp(ptr, "f ", 2)) {
-      int p1, p2, p3, p4, r;
-      r = sscanf(ptr+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d %d/%*d/%*d",
-		&p1, &p2, &p3, &p4);
-      if(r < 3) {
-	r = sscanf(ptr+2, "%d//%*d %d//%*d %d//%*d %d//%*d",
-		&p1, &p2, &p3, &p4);
+      int p[4] = { 0, 0, 0, 0 };
+      int t[4] = { 0, 0, 0, 0 };
+      int n[4] = { 0, 0, 0, 0 };
+      int res;
+      res = sscanf(ptr+2, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
+		p+0, t+0, n+0, p+1, t+1, n+1, p+2, t+2, n+2, p+3, t+3, n+3);
+      if(res < 9) {
+	res = sscanf(ptr+2, "%d//%d %d//%d %d//%d %d//%d",
+		p+0, n+0, p+1, n+1, p+2, n+2, p+3, n+3);
 	}
-      if(r < 3) {
-	r = sscanf(ptr+2, "%d/%*d/ %d/%*d/ %d/%*d/ %d/%*d/",
-		&p1, &p2, &p3, &p4);
+      if(res < 6) {
+	res = sscanf(ptr+2, "%d/%d/ %d/%d/ %d/%d/ %d/%d/",
+		p+0, t+0, p+1, t+1, p+2, t+2, p+3, t+3);
 	}
-      if(r < 3) {
-	r = sscanf(ptr+2, "%d// %d// %d// %d//", &p1, &p2, &p3, &p4);
+      if(res < 6) {
+	res = sscanf(ptr+2, "%d// %d// %d// %d//", p+0, p+1, p+2, p+3);
 	}
-      if(r < 3) {
+      if(res < 3) {
 	fprintf(stderr, "Warning: Failed to load '%s'\n", filenm.c_str());
 	return false;
 	}
       if(!begun) {
-	if(r == 3) glBegin(GL_TRIANGLES);
-	else if(r == 4) glBegin(GL_QUADS);
+	if(p[3] > 0) glBegin(GL_QUADS);
+	else glBegin(GL_TRIANGLES);
+	begun = 1;
 	}
-      glVertex3fv(points[p1-1].data);
-      glVertex3fv(points[p2-1].data);
-      glVertex3fv(points[p3-1].data);
-      if(r == 4) glVertex3fv(points[p4-1].data);
+      for(int vert = 0; vert < 4; ++vert) {
+	if(p[vert] > 0) {
+	  if(n[vert] > 0) glNormal3fv(norms[n[vert]-1].data);
+	  if(t[vert] > 0) glTexCoord2fv(coords[t[vert]-1].data);
+	  glVertex3fv(points[p[vert]-1].data);
+	  }
+	}
       }
     while((*ptr) != '\n' && (ptr - buf) < size) { ++ptr; }
     if((ptr - buf) < size) { ++ptr; }
