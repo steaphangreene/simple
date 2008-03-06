@@ -100,6 +100,9 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
 	res = sscanf(ptr+2, "%d// %d// %d// %d//", p+0, p+1, p+2, p+3);
 	}
       if(res < 3) {
+	res = sscanf(ptr+2, "%d %d %d %d", p+0, p+1, p+2, p+3);
+	}
+      if(res < 3) {
 	fprintf(stderr, "Warning: Failed to load '%s'\n", filenm.c_str());
 	return false;
 	}
