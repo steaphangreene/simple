@@ -65,14 +65,35 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
   ptr = buf;
   display_list = glGenLists(1);
   glNewList(display_list, GL_COMPILE);
-  glBegin(GL_TRIANGLES);
+  int begun = 0;
   while((ptr - buf) < size) {
     if(!strncmp(ptr, "f ", 2)) {
-      int p1, p2, p3;
-      sscanf(ptr+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &p1, &p2, &p3);
+      int p1, p2, p3, p4, r;
+      r = sscanf(ptr+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d %d/%*d/%*d",
+		&p1, &p2, &p3, &p4);
+      if(r < 3) {
+	r = sscanf(ptr+2, "%d//%*d %d//%*d %d//%*d %d//%*d",
+		&p1, &p2, &p3, &p4);
+	}
+      if(r < 3) {
+	r = sscanf(ptr+2, "%d/%*d/ %d/%*d/ %d/%*d/ %d/%*d/",
+		&p1, &p2, &p3, &p4);
+	}
+      if(r < 3) {
+	r = sscanf(ptr+2, "%d// %d// %d// %d//", &p1, &p2, &p3, &p4);
+	}
+      if(r < 3) {
+	fprintf(stderr, "Warning: Failed to load '%s'\n", filenm.c_str());
+	return false;
+	}
+      if(!begun) {
+	if(r == 3) glBegin(GL_TRIANGLES);
+	else if(r == 4) glBegin(GL_QUADS);
+	}
       glVertex3fv(points[p1-1].data);
       glVertex3fv(points[p2-1].data);
       glVertex3fv(points[p3-1].data);
+      if(r == 4) glVertex3fv(points[p4-1].data);
       }
     while((*ptr) != '\n' && (ptr - buf) < size) { ++ptr; }
     if((ptr - buf) < size) { ++ptr; }
