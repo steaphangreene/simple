@@ -20,9 +20,10 @@
 # *************************************************************************
 
 DESTDIR =
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
 PREFIX = $(DESTDIR)/usr/local
 BINDIR = $(PREFIX)/bin
-LIBDIR = $(PREFIX)/lib/simple
+LIBDIR = $(PREFIX)/lib/simple/$(ARCH)
 INCDIR = $(PREFIX)/include/simple
 WLIBDIR = $(PREFIX)/i586-mingw32msvc/lib/simple
 SVNREV = $(shell svn info | grep Revision | cut -f2 -d" ")

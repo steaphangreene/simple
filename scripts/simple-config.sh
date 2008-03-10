@@ -28,7 +28,8 @@ version="0.0.0-svnREVISION"
 includedir="${prefix}/include/simple"
 cross_prefix=""
 cross_dir=""
-libdir="${exec_prefix}${cross_dir}/lib/simple"
+arch="/`gcc -v 2>&1 | grep Target | cut -f2 -d' '`"
+libdir="${exec_prefix}${cross_dir}/lib/simple${arch}"
 base_libs="-lSDL_net -lSDL_ttf -lSDL_image -lSDL_mixer"
 
 if test $# -eq 0; then
