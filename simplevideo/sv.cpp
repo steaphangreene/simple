@@ -145,10 +145,14 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
 
   xp = 0.0;
   yp = 0.0;
+  zp = 0.0;
   targ_xp = xp;
   targ_yp = yp;
+  targ_zp = zp;
   pos_start = 0;
   pos_delay = 0;
+  zpos_start = 0;
+  zpos_delay = 0;
 
   dxp = 0.0;
   dyp = 0.0;
@@ -200,16 +204,20 @@ bool SimpleVideo::StartScene() {
     SimpleTexture::ReaquireContext();
     }
 
-  double x = 0.0, y = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
+  double x = 0.0, y = 0.0, z = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
   CalcMove(xoff, yoff, real_time);
   CalcZoom(zm, real_time);
   CalcPos(x, y, real_time);
+  CalcZPos(z, real_time);
   CalcAng(ang, real_time);
 
   //Catch up with transitions that are over
   if((xp != targ_xp || yp != targ_yp) && real_time >= pos_start + pos_delay) {
     xp = targ_xp;
     yp = targ_yp;
+    }
+  if(zp != targ_zp && real_time >= zpos_start + zpos_delay) {
+    zp = targ_zp;
     }
   if(angle != targ_angle && real_time >= angle_start + angle_delay) {
     angle = targ_angle;
@@ -259,7 +267,7 @@ bool SimpleVideo::StartScene() {
   double upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
   double upz = cos(DEG2RAD(down));
 
-  gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp, x+xoff, y+yoff, 0.0, upx, upy, upz);
+  gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp+z, x+xoff, y+yoff, z, upx, upy, upz);
 
   glGetDoublev(GL_MODELVIEW_MATRIX, modelv);
   glGetDoublev(GL_PROJECTION_MATRIX, projv);
@@ -411,6 +419,36 @@ void SimpleVideo::CalcMove(double &xoff, double &yoff, Uint32 cur_time) {
 
   yoff = (dxp * 2.0 * elapsed / 1000.0) * sin(DEG2RAD(targ_angle));
   yoff += (dyp * 2.0 * elapsed / 1000.0) * cos(DEG2RAD(targ_angle));
+  }
+
+void SimpleVideo::SetZPosition(double z, Uint32 delay) {
+  Uint32 event_time = SDL_GetTicks();
+
+  //Start from where we are right now
+  double tmpz = 0.0;
+  CalcZPos(tmpz, event_time);
+  zp = tmpz;
+
+  targ_zp = z;
+  zpos_start = event_time;
+  zpos_delay = delay;
+  }
+
+void SimpleVideo::CalcZPos(double &z, Uint32 cur_time) {
+  z = zp;
+
+  if(targ_zp != zp) {
+    if(cur_time >= zpos_start + zpos_delay) {
+      z = targ_zp;
+      }
+    else if(cur_time > zpos_start) {
+      double frac = (double)(cur_time - zpos_start) / (double)(zpos_delay);
+      double part = sin(frac * M_PI/2.0);
+      part = part;
+      double ipart = 1.0 - part;
+      z = (zp*ipart + targ_zp*part);
+      }
+    }
   }
 
 void SimpleVideo::SetZoom(double zm, Uint32 delay) {

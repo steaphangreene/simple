@@ -51,6 +51,7 @@ public:
 
   void SetMove(double dx, double dy);
   void SetPosition(double x, double y, Uint32 delay);
+  void SetZPosition(double z, Uint32 delay);
   void SetZoom(double zm, Uint32 delay);
   void SetAngle(double ang, Uint32 delay);
   void SetDown(double dn, Uint32 delay);
@@ -73,6 +74,7 @@ protected:
   void CalcMove(double &xoff, double &yoff, Uint32 cur_time);
   void CalcZoom(double &zm, Uint32 cur_time);
   void CalcPos(double &x, double &y, Uint32 cur_time);
+  void CalcZPos(double &z, Uint32 cur_time);
   void CalcAng(double &ang, Uint32 cur_time);
   static SimpleVideo *current;
 
@@ -92,6 +94,8 @@ protected:
 
   double xp, yp, targ_xp, targ_yp;
   Uint32 pos_start, pos_delay;
+  double zp, targ_zp;
+  Uint32 zpos_start, zpos_delay;
   double dxp, dyp;
   Uint32 move_start;
 
