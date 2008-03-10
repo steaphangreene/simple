@@ -326,12 +326,12 @@ bool SimpleModel_MD2::Load(const string &filenm,
 
     translate[2] += 24.0;
 
-    scale[0] /= 16.0;
-    scale[1] /= 16.0;
-    scale[2] /= 16.0;
-    translate[0] /= 16.0;
-    translate[1] /= 16.0;
-    translate[2] /= 16.0;
+    scale[0] /= 24.0;
+    scale[1] /= 24.0;
+    scale[2] /= 24.0;
+    translate[0] /= 24.0;
+    translate[1] /= 24.0;
+    translate[2] /= 24.0;
 
     Sint8 name[20] = {0};
     SDL_RWread(model, (char*)name, 1, 16);

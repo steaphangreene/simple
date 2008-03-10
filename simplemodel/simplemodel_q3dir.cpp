@@ -206,7 +206,7 @@ bool SimpleModel_Q3Dir::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 //  glPushMatrix();
   glColor3f(1.0, 1.0, 1.0);
   glEnable(GL_TEXTURE_2D);
-  glScalef(0.0625, 0.0625, 0.0625);
+  glScalef(1.0/24.0, 1.0/24.0, 1.0/24.0);
   glTranslatef(0.0, 0.0, 24.0);	//Adjust for floor height
 
   SimpleModel_MD3::RenderSelf(cur_time, anim, start_time);
