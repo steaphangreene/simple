@@ -37,7 +37,9 @@ protected:
 	const vector<int> &anim = vector<int>(),
 	const vector<Uint32> &start_time = vector<Uint32>(),
 	Uint32 anim_offset = 0) const;
-  GLuint display_list;
+  GLuint vertices;
+  GLenum format;
+  int num_verts;
   };
 
 #endif	//SIMPLEMODEL_OBJ_H

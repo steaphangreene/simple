@@ -154,6 +154,9 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
   }
 
 SimpleModel::SimpleModel() {
+  if(!gl_ext_detected) {
+    SetupGLEXT();
+    }
   }
 
 SimpleModel::~SimpleModel() {
@@ -510,4 +513,31 @@ void SimpleModel::SetAnimOffset(const string &tag, Uint32 offset) {
 int SimpleModel::LookUpAnimation(const string &anim) {
   if(!animations.count(anim)) return -1;
   return animations.find(anim)->second;
+  }
+
+bool SimpleModel::gl_ext_detected = false;
+SimpleModel::glGenVBO SimpleModel::glGenBuffersARB = NULL;
+SimpleModel::glBndVBO SimpleModel::glBindBufferARB = NULL;
+SimpleModel::glBufVBO SimpleModel::glBufferDataARB = NULL;
+SimpleModel::glDelVBO SimpleModel::glDeleteBuffersARB = NULL;
+
+void SimpleModel::SetupGLEXT() {
+  SimpleModel::glGenBuffersARB =
+	(glGenVBO) SDL_GL_GetProcAddress("glGenBuffersARB");
+  SimpleModel::glBindBufferARB =
+	(glBndVBO) SDL_GL_GetProcAddress("glBindBufferARB");
+  SimpleModel::glBufferDataARB =
+	(glBufVBO) SDL_GL_GetProcAddress("glBufferDataARB");
+  SimpleModel::glDeleteBuffersARB =
+	(glDelVBO) SDL_GL_GetProcAddress("glDeleteBuffersARB");
+  if(SimpleModel::glGenBuffersARB == NULL
+	|| SimpleModel::glBindBufferARB == NULL
+	|| SimpleModel::glBufferDataARB == NULL
+	|| SimpleModel::glDeleteBuffersARB == NULL) {
+    SimpleModel::glGenBuffersARB = NULL;
+    SimpleModel::glBindBufferARB = NULL;
+    SimpleModel::glBufferDataARB = NULL;
+    SimpleModel::glDeleteBuffersARB = NULL;
+    }
+  gl_ext_detected = true;
   }

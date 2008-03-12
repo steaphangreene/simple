@@ -37,6 +37,12 @@ SimpleModel_OBJ::SimpleModel_OBJ() {
   }
 
 SimpleModel_OBJ::~SimpleModel_OBJ() {
+  if(SimpleModel::glGenBuffersARB == NULL) {
+    glDeleteLists(vertices, 1);
+    }
+  else {
+    SimpleModel::glDeleteBuffersARB(1, &vertices);
+    }
   }
 
 bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
@@ -77,9 +83,14 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
     }
 
   ptr = buf;
-  display_list = glGenLists(1);
-  glNewList(display_list, GL_COMPILE);
+  if(SimpleModel::glGenBuffersARB == NULL) {
+    vertices = glGenLists(1);
+    glNewList(vertices, GL_COMPILE);
+    }
+  vector<GLfloat> buffer;	// For VBO Implementation
   int begun = 0;
+  format = GL_V3F;
+  num_verts = 0;
   while((ptr - buf) < size) {
     if(!strncmp(ptr, "f ", 2)) {
       int p[4] = { 0, 0, 0, 0 };
@@ -107,29 +118,68 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
 	return false;
 	}
       if(!begun) {
-	if(p[3] > 0) glBegin(GL_QUADS);
-	else glBegin(GL_TRIANGLES);
+	if(SimpleModel::glGenBuffersARB == NULL) {
+	  if(p[3] > 0) glBegin(GL_QUADS);
+	  else glBegin(GL_TRIANGLES);
+	  }
 	begun = 1;
 	}
       for(int vert = 0; vert < 4; ++vert) {
 	if(p[vert] > 0) {
-	  if(n[vert] > 0) glNormal3fv(norms[n[vert]-1].data);
-	  if(t[vert] > 0) glTexCoord2fv(coords[t[vert]-1].data);
-	  glVertex3fv(points[p[vert]-1].data);
+	  if(SimpleModel::glGenBuffersARB == NULL) {
+	    if(t[vert] > 0) glTexCoord2fv(coords[t[vert]-1].data);
+	    if(n[vert] > 0) glNormal3fv(norms[n[vert]-1].data);
+	    glVertex3fv(points[p[vert]-1].data);
+	    }
+	  else {
+	    if(t[vert] > 0) {
+	      buffer.push_back(coords[t[vert]-1].data[0]);
+	      buffer.push_back(coords[t[vert]-1].data[1]);
+	      format = GL_T2F_V3F;
+	      }
+	    if(n[vert] > 0) {
+	      buffer.push_back(norms[n[vert]-1].data[0]);
+	      buffer.push_back(norms[n[vert]-1].data[1]);
+	      buffer.push_back(norms[n[vert]-1].data[2]);
+	      if(format == GL_V3F) { format = GL_N3F_V3F; }
+	      else { format = GL_T2F_N3F_V3F; }
+	      }
+	    buffer.push_back(points[p[vert]-1].data[0]);
+	    buffer.push_back(points[p[vert]-1].data[1]);
+	    buffer.push_back(points[p[vert]-1].data[2]);
+	    }
+	  ++num_verts;
 	  }
 	}
       }
     while((*ptr) != '\n' && (ptr - buf) < size) { ++ptr; }
     if((ptr - buf) < size) { ++ptr; }
     }
-  glEnd();
-  glEndList();
+  if(SimpleModel::glGenBuffersARB == NULL) {
+    glEnd();
+    glEndList();
+    }
+  else {
+    SimpleModel::glGenBuffersARB(1, &vertices);
+    SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, vertices);
+    SimpleModel::glBufferDataARB(GL_ARRAY_BUFFER,
+	sizeof(GLfloat) * buffer.size(), &(buffer[0]), GL_STATIC_DRAW_ARB);
+    SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    }
 
   return true;
   }
 
 bool SimpleModel_OBJ::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time, Uint32 anim_offset) const {
-  glCallList(display_list);
+  if(SimpleModel::glGenBuffersARB == NULL) {
+    glCallList(vertices);
+    }
+  else {
+    SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, vertices);
+    glInterleavedArrays(format, 0, NULL);
+    glDrawArrays(GL_QUADS, 0, num_verts);
+    SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, 0);
+    }
   return true;
   }

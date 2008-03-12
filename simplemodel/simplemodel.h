@@ -164,6 +164,19 @@ protected:
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
   static void SLERP(Quaternion &res,
 	const Quaternion &q1, const Quaternion &q2, const float t);
+
+  static bool gl_ext_detected;
+  static void SetupGLEXT();
+
+  typedef void (APIENTRY * glGenVBO) (GLsizei, GLuint *);
+  typedef void (APIENTRY * glBndVBO) (GLenum, GLuint);
+  typedef void (APIENTRY * glBufVBO) (GLenum, GLsizeiptr, const GLvoid *, GLenum);
+  typedef void (APIENTRY * glDelVBO) (GLsizei, const GLuint *);
+
+  static glGenVBO glGenBuffersARB;
+  static glBndVBO glBindBufferARB;
+  static glBufVBO glBufferDataARB;
+  static glDelVBO glDeleteBuffersARB;
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
