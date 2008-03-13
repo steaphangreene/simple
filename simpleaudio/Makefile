@@ -42,8 +42,10 @@ WOBJS:=	simpleaudio.win32_o
 WCXXFLAGS:=	$(WFLAGS)
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
-$(ARCH)/libsimpleaudio.a:	$(OBJS)
+$(ARCH):
 	mkdir -p $(ARCH)
+
+$(ARCH)/libsimpleaudio.a:	$(OBJS) | $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -54,12 +56,10 @@ libsimpleaudio.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-$(ARCH)/%.o:	%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(ARCH)/%.o:	tests/%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	tests/%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
@@ -74,7 +74,7 @@ deps.$(ARCH).mk:	*.cpp *.h
 
 clean:
 	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
-	mkdir -p $(ARCH)
+	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
 test:	test1

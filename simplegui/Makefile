@@ -66,8 +66,10 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
-$(ARCH)/libsimplegui.a:	$(OBJS)
+$(ARCH):
 	mkdir -p $(ARCH)
+
+$(ARCH)/libsimplegui.a:	$(OBJS) | $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -78,12 +80,10 @@ libsimplegui.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h scripts/* .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-$(ARCH)/%.o:	%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(ARCH)/%.o:	tests/%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	tests/%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
@@ -97,7 +97,7 @@ deps.$(ARCH).mk:	*.cpp *.h
 
 clean:
 	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
-	mkdir -p $(ARCH)
+	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
 test:	test1 test2 test3 test4

@@ -44,8 +44,10 @@ WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 WCXXFLAGS:=	$(WFLAGS)
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
-$(ARCH)/libsimpletexture.a:	$(OBJS)
+$(ARCH):
 	mkdir -p $(ARCH)
+
+$(ARCH)/libsimpletexture.a:	$(OBJS) | $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -67,12 +69,10 @@ wintest:	win32_test
 test1.exe:	test1.win32_o renderer.win32_o libsimpletexture.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WCXXLIBS)
 
-$(ARCH)/%.o:	%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(ARCH)/%.o:	tests/%.cpp
-	mkdir -p $(ARCH)
+$(ARCH)/%.o:	tests/%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
@@ -86,7 +86,7 @@ deps.$(ARCH).mk:	*.cpp *.h
 
 clean:
 	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
-	mkdir -p $(ARCH)
+	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
