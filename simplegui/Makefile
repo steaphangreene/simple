@@ -35,16 +35,21 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
-	sg_alignment.o sg_positional.o sg_table.o \
-	sg_scrollable.o sg_autoscroll.o \
-	sg_panel.o sg_animatedpanel.o \
-	sg_textarea.o sg_progressbar.o sg_editable.o \
-	sg_button.o sg_stickybutton.o sg_menu.o sg_dragable.o \
-	sg_compound.o sg_filebrowser.o sg_multitab.o sg_listbox.o \
-	sg_radiobuttons.o sg_combobox.o sg_pulldown.o sg_sliderbar.o \
-	sg_scrollingarea.o sg_dndboxes.o sg_tabs.o \
-	sg_passthrough.o sg_translabel.o
+OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
+	$(ARCH)/sg_ranger2d.o $(ARCH)/sg_alignment.o \
+	$(ARCH)/sg_positional.o $(ARCH)/sg_table.o \
+	$(ARCH)/sg_scrollable.o $(ARCH)/sg_autoscroll.o \
+	$(ARCH)/sg_panel.o $(ARCH)/sg_animatedpanel.o \
+	$(ARCH)/sg_textarea.o $(ARCH)/sg_progressbar.o \
+	$(ARCH)/sg_editable.o $(ARCH)/sg_button.o \
+	$(ARCH)/sg_stickybutton.o $(ARCH)/sg_menu.o \
+	$(ARCH)/sg_dragable.o $(ARCH)/sg_compound.o \
+	$(ARCH)/sg_filebrowser.o $(ARCH)/sg_multitab.o \
+	$(ARCH)/sg_listbox.o $(ARCH)/sg_radiobuttons.o \
+	$(ARCH)/sg_combobox.o $(ARCH)/sg_pulldown.o \
+	$(ARCH)/sg_sliderbar.o $(ARCH)/sg_scrollingarea.o \
+	$(ARCH)/sg_dndboxes.o $(ARCH)/sg_tabs.o \
+	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 

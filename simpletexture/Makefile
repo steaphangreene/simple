@@ -33,8 +33,9 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	st.o stt.o stt_default.o stt_invisible.o \
-	stt_button.o stt_buttonup.o stt_buttondown.o
+OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
+	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \
+	$(ARCH)/stt_buttonup.o $(ARCH)/stt_buttondown.o
 CXXFLAGS:=	$(FLAGS)
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 

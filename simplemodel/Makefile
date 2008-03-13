@@ -33,14 +33,14 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	simplemodel.o simplemodel_q3dir.o \
-	simplemodel_md3.o simplemodel_md2.o \
-	simplemodel_md.o simplemodel_mdx.o \
-	simplemodel_sphere.o simplemodel_wedge.o \
-	simplemodel_cone.o simplemodel_cube.o \
-	simplemodel_xyplane.o simplemodel_xzplane.o \
-	simplemodel_yzplane.o \
-	simplemodel_3ds.o simplemodel_obj.o
+OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
+	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
+	$(ARCH)/simplemodel_md.o $(ARCH)/simplemodel_mdx.o \
+	$(ARCH)/simplemodel_sphere.o $(ARCH)/simplemodel_wedge.o \
+	$(ARCH)/simplemodel_cone.o $(ARCH)/simplemodel_cube.o \
+	$(ARCH)/simplemodel_xyplane.o $(ARCH)/simplemodel_xzplane.o \
+	$(ARCH)/simplemodel_yzplane.o $(ARCH)/simplemodel_3ds.o \
+	$(ARCH)/simplemodel_obj.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
