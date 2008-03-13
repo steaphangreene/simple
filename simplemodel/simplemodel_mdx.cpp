@@ -199,6 +199,8 @@ bool SimpleModel_MDX::HandleSequences(SDL_RWops * model) {
     printf("Sequence start: %d.\n", it->start);
     printf("Sequence end: %d.\n\n", it->end);
     */
+
+    animations[(char *)it->name] = it - sequences.begin();
     }
 
   return true;
@@ -472,7 +474,6 @@ bool SimpleModel_MDX::HandleFrameInfo(SDL_RWops * model, vector<MDXFrameInfo> & 
 
   freadLE(num_anims, model);
   mdx_animations.resize(num_anims);
-  static char animnum = 'A';
   for(vector<MDXFrameInfo>::iterator it = mdx_animations.begin(); it != mdx_animations.end(); ++it) {
     freadLE(it->bound_radius, model);
 
@@ -483,8 +484,6 @@ bool SimpleModel_MDX::HandleFrameInfo(SDL_RWops * model, vector<MDXFrameInfo> & 
     freadLE(it->max_extents[0], model);
     freadLE(it->max_extents[1], model);
     freadLE(it->max_extents[2], model);
-    animations[string("Anim-") + animnum] = animnum - 'A';
-    animnum++;
     }
 
   return true;
