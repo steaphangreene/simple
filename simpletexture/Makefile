@@ -68,9 +68,11 @@ test1.exe:	test1.win32_o renderer.win32_o libsimpletexture.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WCXXLIBS)
 
 $(ARCH)/%.o:	%.cpp
+	mkdir -p $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ARCH)/%.o:	tests/%.cpp
+	mkdir -p $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o

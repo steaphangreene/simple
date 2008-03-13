@@ -55,9 +55,11 @@ ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
 $(ARCH)/%.o:	%.cpp
+	mkdir -p $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ARCH)/%.o:	tests/%.cpp
+	mkdir -p $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
