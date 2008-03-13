@@ -102,17 +102,17 @@ clean:
 
 test:	test1 test2 test3 test4
 
-test1:	test1.o renderer.o audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test2:	test2.o renderer.o audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test3:  test3.o renderer.o audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test3:  $(ARCH)/test3.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test3 $(ARCH)/test3.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test4:  test4.o renderer.o audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test4:  $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test4 $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe test3.exe test4.exe
 wintest:	win32_test

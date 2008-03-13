@@ -79,8 +79,8 @@ clean:
 
 test:	test1
 
-test1:	test1.o $(ARCH)/libsimpleaudio.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimpleaudio.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleaudio.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleaudio.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test

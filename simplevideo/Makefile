@@ -79,8 +79,8 @@ clean:
 
 test:	test1
 
-test1:	test1.o $(ARCH)/libsimplevideo.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimplevideo.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplevideo.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplevideo.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
