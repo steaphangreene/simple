@@ -1148,7 +1148,7 @@ int SimpleTexture::new_ysize;
 //FILE: http://www.kekkai.org/roger/sdl/rwops/SDL_rwops_zzip.c
 //Copyright (c) 2001 Guido Draheim <guidod@gmx.de>
 
-#include <zzip/zzip.h>
+#include "zzip/zzip.h"
 
 static int _zzip_seek(SDL_RWops *context, int offset, int whence) {
   return zzip_seek((ZZIP_FILE*)(context->hidden.unknown.data1), offset, whence);

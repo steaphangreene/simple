@@ -27,10 +27,17 @@ package="simple"
 version="0.0.0-svnREVISION"
 includedir="${prefix}/include/simple"
 cross_prefix=""
-cross_dir=""
 arch="/`gcc -v 2>&1 | grep Target | cut -f2 -d' '`"
-libdir="${exec_prefix}${cross_dir}/lib/simple${arch}"
+libdir="${exec_prefix}/lib/simple/${arch}"
 base_libs="-lSDL_net -lSDL_ttf -lSDL_image -lSDL_mixer"
+extra_libs=""
+gl_libs="-lGL -lGLU"
+
+if [ $arch == i586-mingw32msvc ]; then
+  cross_prefix="/opt/i586-mingw32msvc/bin/"
+  extra_libs="-lSDL -lpng -ltiff -ljpeg -lz"
+  gl_libs="-lopengl32 -lglu32"
+fi
 
 if test $# -eq 0; then
     cat <<EOF
@@ -52,7 +59,7 @@ for i in "$@" ; do
     --package)  output="$output $package" ;;
     --version)  output="$output $version" ;;
     --cflags)   output="$output `${cross_prefix}sdl-config --cflags` `${cross_prefix}zzip-config --cflags` -I$includedir" ;;
-    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplescene -lsimplegui -lsimplemodel -lsimpletexture `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` -lGL -lGLU"
+    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplescene -lsimplegui -lsimplemodel -lsimpletexture `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` ${extra_libs} ${gl_libs}"
         ;;
     *) output="$output $i" ;;
     esac

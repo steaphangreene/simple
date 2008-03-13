@@ -25,46 +25,47 @@ PREFIX = $(DESTDIR)/usr/local
 BINDIR = $(PREFIX)/bin
 LIBDIR = $(PREFIX)/lib/simple/$(ARCH)
 INCDIR = $(PREFIX)/include/simple
-WLIBDIR = $(PREFIX)/i586-mingw32msvc/lib/simple
+WLIBDIR = $(PREFIX)/lib/simple/i586-mingw32msvc
 SVNREV = $(shell svn info | grep Revision | cut -f2 -d" ")
 REVISION = $(shell printf "%.10d" $(SVNREV))
 
 INSTALL = /usr/bin/install
 
 #PRODUCTION OPTIONS (STANDARD)
-#CXX=	g++
+#CXX=	$(ARCH)-g++
 #FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
 #LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	g++
+#CXX=	$(ARCH)-g++
 #FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
 #LIBS=	`sdl-config --libs` `zzip-config --libs` -framework OpenGL
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	g++
+#CXX=	$(ARCH)-g++
 #FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
 #LIBS=	`sdl-config --libs` `zzip-config --libs` -L/usr/X11R6/bin -lopengl32 -lglu32
 
 #DEGUGGING OPTIONS (NO EFENCE)
-CXX=	g++
+CXX=	$(ARCH)-g++
 FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
 LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
 
 #DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	g++
+#CXX=	$(ARCH)-g++
 #FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
 #LIBS=	`sdl-config --libs` `zzip-config --libs` -lefence -lGL -lGLU
 
 #PROFILING OPTIONS
-#CXX=	g++
+#CXX=	$(ARCH)-g++
 #FLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
 #LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
+WARCH=	i586-mingw32msvc
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
-WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags` `/opt/i586-mingw32msvc/bin/zzip-config --cflags` -I/opt/i586-mingw32msvc/include
+WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
 
 .PHONY: all
 all:	build
@@ -89,6 +90,8 @@ install:	all
 	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
 	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' | sed 's-REVISION-$(REVISION)-g' > simple-config
 	$(INSTALL) -m 755 simple-config $(BINDIR)
+	cat simple-config | sed 's|^arch=.*|arch=\$(ARCH)|g' > $(ARCH)-simple-config
+	$(INSTALL) -m 755 $(ARCH)-simple-config $(BINDIR)
 
 .PHONY: uninstall
 uninstall:	uninstall_win32
@@ -98,31 +101,17 @@ uninstall:	uninstall_win32
 
 .PHONY: win32
 win32:
-	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplescene WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simpleconfig WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)'
 
 .PHONY: install_win32
-install_win32:	install win32
-	$(INSTALL) -d $(WLIBDIR)
-	$(INSTALL) -m 644 simpleaudio/libsimpleaudio.win32_a $(WLIBDIR)/libsimpleaudio.a
-	$(INSTALL) -m 644 simpletexture/libsimpletexture.win32_a $(WLIBDIR)/libsimpletexture.a
-	$(INSTALL) -m 644 simplevideo/libsimplevideo.win32_a $(WLIBDIR)/libsimplevideo.a
-	$(INSTALL) -m 644 simplescene/libsimplescene.win32_a $(WLIBDIR)/libsimplescene.a
-	$(INSTALL) -m 644 simplegui/libsimplegui.win32_a $(WLIBDIR)/libsimplegui.a
-	$(INSTALL) -m 644 simplemodel/libsimplemodel.win32_a $(WLIBDIR)/libsimplemodel.a
-	$(INSTALL) -m 644 simpleconnect/libsimpleconnect.win32_a $(WLIBDIR)/libsimpleconnect.a
-	$(INSTALL) -m 644 simpleconfig/libsimpleconfig.win32_a $(WLIBDIR)/libsimpleconfig.a
-	cat scripts/simple-config.sh | sed 's|prefix=".*"|prefix="$(PREFIX)"|g' | sed 's|cross_prefix=".*"|cross_prefix="i586-mingw32msvc-"|g' | sed 's|cross_dir=".*"|cross_dir="/i586-mingw32msvc"|g' | sed 's|-lGL -lGLU|-lopengl32 -lglu32|g' | sed 's|base_libs=".*"|base_libs="-lSDL_net -lwsock32 -lSDL_ttf -lSDL_image -lvorbisfile -lvorbis -logg -lSDL -lpng -ljpeg -lpng"|g' > i586-mingw32msvc-simple-config
-	$(INSTALL) -m 755 i586-mingw32msvc-simple-config $(BINDIR)
+install_win32:	win32
+	make PREFIX=$(PREFIX) ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' install
+	$(WARCH)-ranlib $(PREFIX)/lib/simple/$(WARCH)/lib*.a
 
 .PHONY: win32_install
-win32_install:	install_win32
+win32_install:	win32
+	make PREFIX=$(PREFIX) ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' install
+	$(WARCH)-ranlib $(PREFIX)/lib/simple/$(WARCH)/lib*.a
 
 .PHONY: uninstall_win32
 uninstall_win32:
@@ -156,14 +145,14 @@ test:
 
 .PHONY: win32_test
 win32_test:	
-	make -C simpleaudio WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
-	make -C simpletexture WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplevideo WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
-	make -C simplescene WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
-	make -C simplegui WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simplemodel WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
-	make -C simpleconnect WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' win32	#No tests!
-	make -C simpleconfig WCXX='$(WCXX)' WFLAGS='$(WFLAGS)' WLIBS='$(WLIBS)' $@
+	make -C simpleaudio ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
+	make -C simpletexture ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
+	make -C simplevideo ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
+	make -C simplescene ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
+	make -C simplegui ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
+	make -C simplemodel ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
+	make -C simpleconnect ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
+	make -C simpleconfig ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
 
 .PHONY: wintest
 wintest:	win32_test
