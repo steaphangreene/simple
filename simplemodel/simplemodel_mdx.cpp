@@ -467,12 +467,13 @@ bool SimpleModel_MDX::HandleMatrices(SDL_RWops * model, vector<Uint32> & matrice
   return true;
   }
 
-bool SimpleModel_MDX::HandleFrameInfo(SDL_RWops * model, vector<MDXFrameInfo> & animations) {
+bool SimpleModel_MDX::HandleFrameInfo(SDL_RWops * model, vector<MDXFrameInfo> & mdx_animations) {
   Uint32 num_anims = 0;
 
   freadLE(num_anims, model);
-  animations.resize(num_anims);
-  for(vector<MDXFrameInfo>::iterator it = animations.begin(); it != animations.end(); ++it) {
+  mdx_animations.resize(num_anims);
+  static char animnum = 'A';
+  for(vector<MDXFrameInfo>::iterator it = mdx_animations.begin(); it != mdx_animations.end(); ++it) {
     freadLE(it->bound_radius, model);
 
     freadLE(it->min_extents[0], model);
@@ -482,6 +483,8 @@ bool SimpleModel_MDX::HandleFrameInfo(SDL_RWops * model, vector<MDXFrameInfo> & 
     freadLE(it->max_extents[0], model);
     freadLE(it->max_extents[1], model);
     freadLE(it->max_extents[2], model);
+    animations[string("Anim-") + animnum] = animnum - 'A';
+    animnum++;
     }
 
   return true;
