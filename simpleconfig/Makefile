@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimpleconfig.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimpleconfig.a
 #all:	test
 
 win32:	libsimpleconfig.win32_a
@@ -34,13 +36,14 @@ WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpn
 
 OBJS:=	simpleconfig.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplegui -I../simplevideo
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	simpleconfig.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simplevideo
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simplevideo/libsimplevideo.a ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
-libsimpleconfig.a:	$(OBJS)
+$(ARCH)/libsimpleconfig.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -51,29 +54,31 @@ libsimpleconfig.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
-	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
+	$(CXX) $(CXXFLAGS) -MM *.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 test:	test1
 
-test1:	test1.o libsimpleconfig.a audio.o
-	$(CXX) $(CXXFLAGS) -o test1 test1.o audio.o libsimpleconfig.a $(CXXLIBS)
+test1:	test1.o $(ARCH)/libsimpleconfig.a audio.o
+	$(CXX) $(CXXFLAGS) -o test1 test1.o audio.o $(ARCH)/libsimpleconfig.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
@@ -88,7 +93,7 @@ tar:
 		simpleconfig/Makefile simpleconfig/TODO simpleconfig/COPYING \
 		simpleconfig/*.cpp simpleconfig/*.h
 #		simpleconfig/tests/*.cpp simpleconfig/tests/*.h \
-#		simpleconfig/scripts/*.* simpleconfig/deps.mk \
+#		simpleconfig/scripts/*.* simpleconfig/deps.$(ARCH).mk \
 	gzip -9 simpleconfig.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk

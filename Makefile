@@ -71,21 +71,21 @@ all:	build
 
 .PHONY: build
 build:
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'
 
 .PHONY: install
 install:	all
 	$(INSTALL) -d $(LIBDIR)
 	$(INSTALL) -d $(INCDIR)
 	$(INSTALL) -d $(BINDIR)
-	$(INSTALL) -m 644 simple*/lib*.a $(LIBDIR)
+	$(INSTALL) -m 644 simple*/$(ARCH)/lib*.a $(LIBDIR)
 	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
 	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' | sed 's-REVISION-$(REVISION)-g' > simple-config
 	$(INSTALL) -m 755 simple-config $(BINDIR)
@@ -133,26 +133,26 @@ uninstall_win32:
 win32_uninstall:	uninstall_win32
 
 ChangeLog:	.svn
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	./scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
 .PHONY: test
 test:	
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)'	#No tests!
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 
 .PHONY: win32_test
 win32_test:	
@@ -172,34 +172,34 @@ test_win32:	win32_test
 
 .PHONY: clean
 clean:
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 	rm -f *simple-config ChangeLog
 
 .PHONY: backup
 backup:
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
 
 .PHONY: tar
 tar:
-	make -C simpleaudio CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpletexture CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplevideo CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplescene CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplegui CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simplemodel CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconnect CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
-	make -C simpleconfig CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleaudio ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpletexture ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplevideo ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplescene ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplegui ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simplemodel ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconnect ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@
+	make -C simpleconfig ARCH='$(ARCH)' CXX='$(CXX)' FLAGS='$(FLAGS)' LIBS='$(LIBS)' $@

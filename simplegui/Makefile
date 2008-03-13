@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimplegui.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimplegui.a
 
 win32:	libsimplegui.win32_a
 
@@ -44,7 +46,7 @@ OBJS:=	sg.o sg_widget.o sg_ranger.o sg_ranger2d.o \
 	sg_scrollingarea.o sg_dndboxes.o sg_tabs.o \
 	sg_passthrough.o sg_translabel.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/libsimpletexture.a
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
@@ -57,9 +59,10 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/libsimpletexture.a
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
-libsimplegui.a:	$(OBJS)
+$(ARCH)/libsimplegui.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -70,37 +73,39 @@ libsimplegui.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h scripts/* .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 test:	test1 test2 test3 test4
 
-test1:	test1.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
+test1:	test1.o renderer.o audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test2:	test2.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
+test2:	test2.o renderer.o audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test2 test2.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test3:  test3.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
+test3:  test3.o renderer.o audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test3 test3.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test4:  test4.o renderer.o audio.o libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o libsimplegui.a $(CXXLIBS)
+test4:  test4.o renderer.o audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test4 test4.o renderer.o audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe test3.exe test4.exe
 wintest:	win32_test
@@ -124,7 +129,7 @@ tar:
 		simplegui/Makefile simplegui/TODO simplegui/COPYING \
 		simplegui/*.cpp simplegui/*.h \
 		simplegui/tests/*.cpp simplegui/tests/*.h \
-		simplegui/scripts/*.* simplegui/deps.mk
+		simplegui/scripts/*.* simplegui/deps.$(ARCH).mk
 	gzip -9 simplegui.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk

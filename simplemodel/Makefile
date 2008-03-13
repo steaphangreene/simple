@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimplemodel.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimplemodel.a
 
 win32:	libsimplemodel.win32_a
 
@@ -40,7 +42,7 @@ OBJS:=	simplemodel.o simplemodel_q3dir.o \
 	simplemodel_yzplane.o \
 	simplemodel_3ds.o simplemodel_obj.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/libsimpletexture.a
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
@@ -51,9 +53,10 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_yzplane.win32_o \
 	simplemodel_3ds.win32_o simplemodel_obj.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/libsimpletexture.a
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
-libsimplemodel.a:	$(OBJS)
+$(ARCH)/libsimplemodel.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -64,28 +67,30 @@ libsimplemodel.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 test:	test1
 
-test1:	test1.o renderer.o libsimplemodel.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimplemodel.a $(CXXLIBS)
+test1:	test1.o renderer.o $(ARCH)/libsimplemodel.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
@@ -100,7 +105,7 @@ tar:
 		simplemodel/Makefile simplemodel/TODO simplemodel/COPYING \
 		simplemodel/tests/*.cpp simplemodel/tests/*.h \
 		simplemodel/*.cpp simplemodel/*.h
-#		simplemodel/scripts/*.* simplemodel/deps.mk \
+#		simplemodel/scripts/*.* simplemodel/deps.$(ARCH).mk \
 	gzip -9 simplemodel.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk

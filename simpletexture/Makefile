@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimpletexture.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimpletexture.a
 
 win32:	libsimpletexture.win32_a
 
@@ -41,7 +43,8 @@ WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 WCXXFLAGS:=	$(WFLAGS)
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
-libsimpletexture.a:	$(OBJS)
+$(ARCH)/libsimpletexture.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -54,8 +57,8 @@ ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn tests/*.cpp tests/*.h
 
 test:	test1
 
-test1:	test1.o renderer.o libsimpletexture.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpletexture.a $(CXXLIBS)
+test1:	test1.o renderer.o $(ARCH)/libsimpletexture.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimpletexture.a $(CXXLIBS)
 
 win32_test:	test1.exe
 wintest:	win32_test
@@ -63,23 +66,25 @@ wintest:	win32_test
 test1.exe:	test1.win32_o renderer.win32_o libsimpletexture.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WCXXLIBS)
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+	$(CXX) $(CXXFLAGS) -MM *.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
@@ -88,7 +93,7 @@ tar:
 		simpletexture/Makefile simpletexture/TODO simpletexture/COPYING \
 		simpletexture/*.cpp simpletexture/*.h
 #		simpletexture/tests/*.cpp simpletexture/tests/*.h \
-#		simpletexture/scripts/*.* simpletexture/deps.mk \
+#		simpletexture/scripts/*.* simpletexture/deps.$(ARCH).mk \
 	gzip -9 simpletexture.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk

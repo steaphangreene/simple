@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimpleaudio.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimpleaudio.a
 #all:	test
 
 win32:	libsimpleaudio.win32_a
@@ -32,7 +34,7 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --cflags`
 WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/usr/i586-mingw32msvc/bin/i586-mingw32msvc-zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	simpleaudio.o
+OBJS:=	$(ARCH)/simpleaudio.o
 CXXFLAGS:=	$(FLAGS)
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 
@@ -40,7 +42,8 @@ WOBJS:=	simpleaudio.win32_o
 WCXXFLAGS:=	$(WFLAGS)
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
 
-libsimpleaudio.a:	$(OBJS)
+$(ARCH)/libsimpleaudio.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -51,29 +54,33 @@ libsimpleaudio.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	mkdir -p $(ARCH)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	mkdir -p $(ARCH)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
-	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
+	$(CXX) $(CXXFLAGS) -MM *.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 test:	test1
 
-test1:	test1.o libsimpleaudio.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpleaudio.a $(CXXLIBS)
+test1:	test1.o $(ARCH)/libsimpleaudio.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimpleaudio.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
@@ -88,7 +95,7 @@ tar:
 		simpleaudio/Makefile simpleaudio/TODO simpleaudio/COPYING \
 		simpleaudio/*.cpp simpleaudio/*.h
 #		simpleaudio/tests/*.cpp simpleaudio/tests/*.h \
-#		simpleaudio/scripts/*.* simpleaudio/deps.mk \
+#		simpleaudio/scripts/*.* simpleaudio/deps.$(ARCH).mk \
 	gzip -9 simpleaudio.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk

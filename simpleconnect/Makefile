@@ -19,7 +19,9 @@
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # *************************************************************************
 
-all:	libsimpleconnect.a
+ARCH = $(shell gcc -v 2>&1 | grep Target | cut -f2 -d" ")
+
+all:	$(ARCH)/libsimpleconnect.a
 #all:	test
 
 win32:	libsimpleconnect.win32_a
@@ -34,13 +36,14 @@ WLIBS=	`/usr/i586-mingw32msvc/bin/i586-mingw32msvc-sdl-config --libs` -lSDL -lpn
 
 OBJS:=	sc.o
 CXXFLAGS:=	$(FLAGS) -I../simplegui -I../simpletexture
-CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
+CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	sc.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui
-WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS) ../simplegui/libsimplegui.a ../simpletexture/libsimpletexture.a
+WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
-libsimpleconnect.a:	$(OBJS)
+$(ARCH)/libsimpleconnect.a:	$(OBJS)
+	mkdir -p $(ARCH)
 	rm -vf $@
 	ar rcs $@ $(OBJS)
 
@@ -51,29 +54,31 @@ libsimpleconnect.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-%.o:	%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o:	tests/%.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(ARCH)/%.o:	tests/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.win32_o:	%.cpp %.o
+%.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-%.win32_o:	tests/%.cpp %.o
+%.win32_o:	tests/%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
-deps.mk:	*.cpp *.h
-#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp > deps.mk
-	$(CXX) $(CXXFLAGS) -MM *.cpp > deps.mk
+deps.$(ARCH).mk:	*.cpp *.h
+#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
+	$(CXX) $(CXXFLAGS) -MM *.cpp | sed "s/\.o:/.$(ARCH).o:/" > $@
 
 clean:
-	rm -f deps.mk *.o *.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	mkdir -p $(ARCH)
+	rmdir $(ARCH)
 
 test:	test1
 
-test1:	test1.o libsimpleconnect.a
-	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o libsimpleconnect.a $(CXXLIBS)
+test1:	test1.o $(ARCH)/libsimpleconnect.a
+	$(CXX) $(CXXFLAGS) -o test1 test1.o renderer.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
@@ -88,7 +93,7 @@ tar:
 		simpleconnect/Makefile simpleconnect/TODO simpleconnect/COPYING \
 		simpleconnect/*.cpp simpleconnect/*.h
 #		simpleconnect/tests/*.cpp simpleconnect/tests/*.h \
-#		simpleconnect/scripts/*.* simpleconnect/deps.mk \
+#		simpleconnect/scripts/*.* simpleconnect/deps.$(ARCH).mk \
 	gzip -9 simpleconnect.$(TSTR).tar
 
-include deps.mk
+include deps.$(ARCH).mk
