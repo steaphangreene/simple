@@ -103,8 +103,6 @@ void SG_Menu::SetItems(const vector<string> &itms) {
       texture[itm*3 + 2].LinkTextFrom(&(texture[itm*3 + 0]));
       }
     texture[itm*3 + 0].SetText(items[itm]);
-    texture[itm*3 + 1].SetText(items[itm]);
-    texture[itm*3 + 2].SetText(items[itm]);
     }
   }
 

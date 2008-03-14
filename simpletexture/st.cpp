@@ -78,7 +78,6 @@ struct SimpleTexture::TextData {
     alignment = in.alignment;
     aspect_ratio = in.aspect_ratio;
     dirty = in.dirty;
-    clients.clear();
     }
 
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
