@@ -40,6 +40,9 @@ protected:
   GLuint vertices;
   GLenum format;
   int num_verts;
+
+  static set<SimpleModel_OBJ *> valid_models;
+  static void ReloadValidModels();
   };
 
 #endif	//SIMPLEMODEL_OBJ_H

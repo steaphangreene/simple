@@ -46,6 +46,7 @@ SimpleModel_OBJ::~SimpleModel_OBJ() {
   }
 
 bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
+  filename = filenm;
   SDL_RWops *model = SDL_RWFromFile(filenm.c_str(), "r");
   int size = SDL_RWseek(model, 0, SEEK_END);
   SDL_RWseek(model, 0, SEEK_SET);
@@ -166,20 +167,41 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
 	sizeof(GLfloat) * buffer.size(), &(buffer[0]), GL_STATIC_DRAW_ARB);
     SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, 0);
     }
+  valid_models.insert(this);
 
   return true;
   }
 
 bool SimpleModel_OBJ::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+
   if(SimpleModel::glGenBuffersARB == NULL) {
+    if(!glIsList(vertices)) {
+      ReloadValidModels();
+      //fprintf(stderr, "Warning: Had to reload models %d!\n", glGetError());
+      return false;
+      }
     glCallList(vertices);
     }
   else {
+    if(!SimpleModel::glIsBufferARB(vertices)) {
+      ReloadValidModels();
+      //fprintf(stderr, "Warning: Had to reload models %d!\n", glGetError());
+      return false;
+      }
     SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, vertices);
     glInterleavedArrays(format, 0, NULL);
     glDrawArrays(GL_QUADS, 0, num_verts);
     SimpleModel::glBindBufferARB(GL_ARRAY_BUFFER, 0);
     }
   return true;
+  }
+
+set<SimpleModel_OBJ *> SimpleModel_OBJ::valid_models;
+
+void SimpleModel_OBJ::ReloadValidModels() {
+  set<SimpleModel_OBJ*>::iterator mod = valid_models.begin();
+  for(; mod != valid_models.end(); ++mod) {
+    (*mod)->Load((*mod)->filename);
+    }
   }
