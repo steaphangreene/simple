@@ -37,6 +37,7 @@ SimpleModel_OBJ::SimpleModel_OBJ() {
   }
 
 SimpleModel_OBJ::~SimpleModel_OBJ() {
+  valid_models.erase(this);
   if(SimpleModel::glGenBuffersARB == NULL) {
     glDeleteLists(vertices, 1);
     }
@@ -200,6 +201,7 @@ bool SimpleModel_OBJ::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 set<SimpleModel_OBJ *> SimpleModel_OBJ::valid_models;
 
 void SimpleModel_OBJ::ReloadValidModels() {
+  valid_models.clear();
   set<SimpleModel_OBJ*>::iterator mod = valid_models.begin();
   for(; mod != valid_models.end(); ++mod) {
     (*mod)->Load((*mod)->filename);
