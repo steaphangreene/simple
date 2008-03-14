@@ -64,6 +64,23 @@ struct SimpleTexture::TextData {
     if(rendered_text) SDL_FreeSurface(rendered_text);
     };
 
+  void operator = (SimpleTexture::TextData &in) {
+    rendered_text = NULL;
+    text_xsize = in.text_xsize;
+    text_ysize = in.text_xsize;
+    visible_xlines = in.visible_xlines;
+    visible_ylines = in.visible_ylines;
+    visible_xoffset = in.visible_xoffset;
+    visible_yoffset = in.visible_yoffset;
+    xmargin = in.xmargin;
+    ymargin = in.ymargin;
+    font_size = in.font_size;
+    alignment = in.alignment;
+    aspect_ratio = in.aspect_ratio;
+    dirty = in.dirty;
+    clients.clear();
+    }
+
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
   SDL_Surface *rendered_text;
   int text_xsize, text_ysize;
@@ -1092,6 +1109,10 @@ TextGeometry *SimpleTexture::GetTextGeometry() {	//FIXME: Temporary!
   return &ret;
   }
 
+void SimpleTexture::UnlinkText() {
+  if(text) DetachTextData();
+  }
+
 void SimpleTexture::LinkTextTo(SimpleTexture *other) {
   if(!text) AttachTextData();
   other->AttachTextData(text);
@@ -1100,6 +1121,13 @@ void SimpleTexture::LinkTextTo(SimpleTexture *other) {
 void SimpleTexture::LinkTextFrom(SimpleTexture *other) {
   if(!other->text) other->AttachTextData();
   AttachTextData(other->text);
+  }
+
+void SimpleTexture::CopyTextFrom(SimpleTexture *other) {
+  AttachTextData();
+  if(other->text) {
+    (*text) = (*(other->text));
+    }
   }
 
 void SimpleTexture::SetTexturator(ST_Texturator *ttr) {

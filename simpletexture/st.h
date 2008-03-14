@@ -95,6 +95,8 @@ public:
 
   void LinkTextTo(SimpleTexture *other);
   void LinkTextFrom(SimpleTexture *other);
+  void CopyTextFrom(SimpleTexture *other);
+  void UnlinkText();
 
   GLuint GLTexture();
 
