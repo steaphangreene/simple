@@ -526,6 +526,7 @@ SimpleModel::glGenVBO SimpleModel::glGenBuffersARB = NULL;
 SimpleModel::glBndVBO SimpleModel::glBindBufferARB = NULL;
 SimpleModel::glBufVBO SimpleModel::glBufferDataARB = NULL;
 SimpleModel::glDelVBO SimpleModel::glDeleteBuffersARB = NULL;
+SimpleModel::glIsAVBO SimpleModel::glIsBufferARB = NULL;
 
 void SimpleModel::SetupGLEXT() {
   SimpleModel::glGenBuffersARB =
@@ -536,14 +537,18 @@ void SimpleModel::SetupGLEXT() {
 	(glBufVBO) SDL_GL_GetProcAddress("glBufferDataARB");
   SimpleModel::glDeleteBuffersARB =
 	(glDelVBO) SDL_GL_GetProcAddress("glDeleteBuffersARB");
+  SimpleModel::glIsBufferARB =
+	(glIsAVBO) SDL_GL_GetProcAddress("glIsBufferARB");
   if(SimpleModel::glGenBuffersARB == NULL
 	|| SimpleModel::glBindBufferARB == NULL
 	|| SimpleModel::glBufferDataARB == NULL
-	|| SimpleModel::glDeleteBuffersARB == NULL) {
+	|| SimpleModel::glDeleteBuffersARB == NULL
+	|| SimpleModel::glIsBufferARB == NULL) {
     SimpleModel::glGenBuffersARB = NULL;
     SimpleModel::glBindBufferARB = NULL;
     SimpleModel::glBufferDataARB = NULL;
     SimpleModel::glDeleteBuffersARB = NULL;
+    SimpleModel::glIsBufferARB = NULL;
     }
   gl_ext_detected = true;
   }

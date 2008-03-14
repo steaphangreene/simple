@@ -172,11 +172,13 @@ protected:
   typedef void (APIENTRY * glBndVBO) (GLenum, GLuint);
   typedef void (APIENTRY * glBufVBO) (GLenum, GLsizeiptr, const GLvoid *, GLenum);
   typedef void (APIENTRY * glDelVBO) (GLsizei, const GLuint *);
+  typedef GLboolean (APIENTRY * glIsAVBO) (GLuint);
 
   static glGenVBO glGenBuffersARB;
   static glBndVBO glBindBufferARB;
   static glBufVBO glBufferDataARB;
   static glDelVBO glDeleteBuffersARB;
+  static glIsAVBO glIsBufferARB;
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
