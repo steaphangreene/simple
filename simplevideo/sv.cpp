@@ -244,17 +244,6 @@ bool SimpleVideo::StartScene() {
   glTranslatef((xend+xstart)/2.0, (yend+ystart)/2.0, 0.0);
   glScalef((xend-xstart)/2.0, (yend-ystart)/2.0, (yend-ystart)/2.0);
 
-  if(flags & SV_ORTHO) {
-    //FIXME: Calculate ACTUAL near and far clipping limits
-    glOrtho(-aspect*zm/2.0, aspect*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0, 1.0, 64.0);
-    }
-  else {
-    //FIXME: Calculate ACTUAL near and far clipping limits
-    gluPerspective(yfov, aspect, 1.0, 64.0);
-    }
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
   double vdist = 32.0;
   if(!(flags & SV_ORTHO)) vdist = zm;
 
@@ -266,6 +255,31 @@ bool SimpleVideo::StartScene() {
   double upx = sin(DEG2RAD(down)) * -sin(DEG2RAD(ang));
   double upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
   double upz = cos(DEG2RAD(down));
+
+  if(flags & SV_ORTHO) {
+    double zmin_clip, zmax_clip, A, B, C, theta;
+    theta = DEG2RAD(90.0-down);
+    A = (zm/2.0) * tan(theta);
+    B = (z-minz) / cos(theta);
+    C = (maxz-z) / cos(theta);
+    zmax_clip = vdist + (A + B);
+    zmin_clip = vdist - (A + C);
+    glOrtho(-aspect*zm/2.0, aspect*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0,
+	zmin_clip, zmax_clip);
+    }
+  else {
+    //FIXME: This clip calculation is wrong
+    double zmin_clip, zmax_clip, xdist, ydist;
+    xdist = (vdist*sin(DEG2RAD(down)) + zm);
+    ydist = (vdist*cos(DEG2RAD(down)) + z - minz);
+    zmax_clip = sqrt(xdist*xdist + ydist*ydist);
+    xdist = (vdist*sin(DEG2RAD(down)) - zm);
+    ydist = (vdist*cos(DEG2RAD(down)) + z - maxz);
+    zmin_clip = sqrt(xdist*xdist + ydist*ydist);
+    gluPerspective(yfov, aspect, zmin_clip, zmax_clip);
+    }
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
   gluLookAt(xvp+x+xoff, yvp+y+yoff, zvp+z, x+xoff, y+yoff, z, upx, upy, upz);
 
