@@ -70,11 +70,11 @@ public:
   ~SimpleTexture();
 
 // Tell us to prep to renew ourselves
-  static void NeedToReaquireContext(const int xsize, const int ysize);
+  static void NeedToReacquireContext(const int xsize, const int ysize);
 // Are we preparing?
-  static bool ReaquireNeeded(int &xsize, int &ysize);
+  static bool ReacquireNeeded(int &xsize, int &ysize);
 // Go ahead and do it!
-  static void ReaquireContext();
+  static void ReacquireContext();
 
   const SimpleTexture &operator = (const SimpleTexture &in);
   void SetTexture(const SimpleTexture &in);

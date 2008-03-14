@@ -198,10 +198,10 @@ bool SimpleVideo::StartScene() {
   Uint32 real_time = SDL_GetTicks();
 
   int nxsize, nysize;
-  if(SimpleTexture::ReaquireNeeded(nxsize, nysize)) {
+  if(SimpleTexture::ReacquireNeeded(nxsize, nysize)) {
     SDL_SetVideoMode(nxsize, nysize, 0, video_flags);
     ResizeGL(nxsize, nysize);
-    SimpleTexture::ReaquireContext();
+    SimpleTexture::ReacquireContext();
     }
 
   double x = 0.0, y = 0.0, z = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;

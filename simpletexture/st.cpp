@@ -1134,13 +1134,13 @@ void SimpleTexture::SetTexturator(ST_Texturator *ttr) {
   else texturator = ttr;
   }
 
-void SimpleTexture::NeedToReaquireContext(const int xsize, const int ysize) {
+void SimpleTexture::NeedToReacquireContext(const int xsize, const int ysize) {
   new_xsize = xsize;
   new_ysize = ysize;
   need_to_reaquire = true;
   }
 
-bool SimpleTexture::ReaquireNeeded(int &xsize, int &ysize) {
+bool SimpleTexture::ReacquireNeeded(int &xsize, int &ysize) {
   if(need_to_reaquire) {
     xsize = new_xsize;
     ysize = new_ysize;
@@ -1149,7 +1149,7 @@ bool SimpleTexture::ReaquireNeeded(int &xsize, int &ysize) {
   return false;
   }
 
-void SimpleTexture::ReaquireContext() {
+void SimpleTexture::ReacquireContext() {
   need_to_reaquire = false;
   set<SimpleTexture*>::iterator itr = all_textures.begin();
   for(; itr != all_textures.end(); ++itr) {
