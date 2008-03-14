@@ -201,9 +201,10 @@ bool SimpleModel_OBJ::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 set<SimpleModel_OBJ *> SimpleModel_OBJ::valid_models;
 
 void SimpleModel_OBJ::ReloadValidModels() {
-  set<SimpleModel_OBJ*>::iterator mod = valid_models.begin();
-  for(; mod != valid_models.end(); ++mod) {
+  set<SimpleModel_OBJ*> temp_set = valid_models;
+  valid_models.clear();
+  set<SimpleModel_OBJ*>::iterator mod = temp_set.begin();
+  for(; mod != temp_set.end(); ++mod) {
     (*mod)->Load((*mod)->filename);
     }
-  valid_models.clear();
   }
