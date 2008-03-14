@@ -97,6 +97,11 @@ void SG_Menu::SetItems(const vector<string> &itms) {
     texture.pop_back();
     }
   for(unsigned int itm=0; itm < items.size(); ++itm) {
+    if(itm > 0) {
+      texture[itm*3 + 0].CopyTextFrom(&(texture[0]));
+      texture[itm*3 + 1].LinkTextFrom(&(texture[itm*3 + 0]));
+      texture[itm*3 + 2].LinkTextFrom(&(texture[itm*3 + 0]));
+      }
     texture[itm*3 + 0].SetText(items[itm]);
     texture[itm*3 + 1].SetText(items[itm]);
     texture[itm*3 + 2].SetText(items[itm]);
