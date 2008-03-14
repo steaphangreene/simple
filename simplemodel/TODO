@@ -5,7 +5,6 @@ Fix mulitmodel individual MD3 models (like weapon barrels).
 Add Q3PK3 Support (currently have to be renamed to ".zip").
 Take care of all FIXMEs in code
 Finish normalizing scale and test/fix lighting/normals.
-Animation querying spec/system
 MDX Billboards
 Remaining MDX tags
 MDX Particle Systems
@@ -13,6 +12,5 @@ MDX Particle Systems
 -=To Flush Out=-
 
 -=Wishlist=-
-Add OBJ Support
 Add Surface Reduction Code
 Add code to outline models

@@ -1,1 +1,8 @@
+-=To FIX=-
 Fix aspect-ratio preservation on resize (broke it with resize-event changes).
+
+-=TODO=-
+
+-=To Flush Out=-
+
+-=Wishlist=-
