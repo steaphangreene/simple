@@ -42,7 +42,8 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
   openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_LOW);
   AddWidget(openb, 10, 9, 2, 1);
 
-  AddWidget(new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW), 0, 9, 2, 1);
+  cancelb = new SG_Button("Cancel", SG_COL_RAISED, SG_COL_LOW);
+  AddWidget(cancelb, 0, 9, 2, 1);
 
   dirb = new SG_TextArea("./", SG_COL_LOW, SG_COL_BG);
   AddWidget(dirb, 1, 1, 10, 1);
@@ -113,6 +114,12 @@ bool SG_FileBrowser::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
     if(event->user.data1 == (void *)(openb)) {
       event->user.code = SG_EVENT_FILEOPEN;
+      event->user.data1 = (void*)(SG_FileBrowser*)this;
+      event->user.data2 = NULL;
+      return 1;
+      }
+    else if(event->user.data1 == (void *)(cancelb)) {
+      event->user.code = SG_EVENT_CANCEL;
       event->user.data1 = (void*)(SG_FileBrowser*)this;
       event->user.data2 = NULL;
       return 1;

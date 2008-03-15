@@ -43,7 +43,7 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   string dir;	//Directory
   string reg;	//Pseudo-Regex of Files
-  SG_Button *openb;
+  SG_Button *openb, *cancelb;
   SG_TextArea *dirb;
   SG_ComboBox *fileb;
   string filename;

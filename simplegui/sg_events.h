@@ -78,6 +78,7 @@
 //SG_Compound Actions
 #define	SG_EVENT_OK		2000
 #define	SG_EVENT_SELECT		2001
+#define	SG_EVENT_CANCEL		2002
 
 //SG_FileBrowser Actions
 #define	SG_EVENT_FILEOPEN	2101
