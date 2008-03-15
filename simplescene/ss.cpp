@@ -69,6 +69,11 @@ void SimpleScene::AddParticle(int type,
   parts.push_back(newpart);
   }
 
+void SimpleScene::Clear() {
+  ptypes.clear();
+  parts.clear();
+  }
+
 bool SimpleScene::DrawParticles(Uint32 offset) {
   if(parts.size() < 1) { return true; }
   GLuint tex = ptypes[parts[0].type].tex->GLTexture();

@@ -57,6 +57,8 @@ public:
   int AddParticleType(SimpleScene_ParticleType ptp);
   void AddParticle(int type, float xp, float yp, float zp, Uint32 start);
 
+  void Clear();
+
 protected:
   bool DrawParticles(Uint32 offset);
 
