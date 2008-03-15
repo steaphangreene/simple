@@ -31,44 +31,39 @@ REVISION = $(shell printf "%.10d" $(SVNREV))
 
 INSTALL = /usr/bin/install
 
+.PHONY: all
+all:	build
+
 #PRODUCTION OPTIONS (STANDARD)
-#CXX=	$(ARCH)-g++
-#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
-
-#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
-#CXX=	$(ARCH)-g++
-#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -framework OpenGL
-
-#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
-#CXX=	$(ARCH)-g++
-#FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -L/usr/X11R6/bin -lopengl32 -lglu32
-
-#DEGUGGING OPTIONS (NO EFENCE)
 CXX=	$(ARCH)-g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
+FLAGS=	-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`
 LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
 
+#DEGUGGING OPTIONS (NO EFENCE)
+debug:
+	make FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`' LIBS='`sdl-config --libs` `zzip-config --libs` -lGL -lGLU'
+
 #DEGUGGING OPTIONS (WITH EFENCE)
-#CXX=	$(ARCH)-g++
-#FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lefence -lGL -lGLU
+efence:
+	make FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`' LIBS='`sdl-config --libs` `zzip-config --libs` -lefence -lGL -lGLU'
 
 #PROFILING OPTIONS
-#CXX=	$(ARCH)-g++
-#FLAGS=	-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-#LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+prof:
+	make FLAGS='-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`' LIBS='`sdl-config --libs` `zzip-config --libs` -lGL -lGLU'
+
+#PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
+macos:
+	make FLAGS='-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`' LIBS='`sdl-config --libs` `zzip-config --libs` -framework OpenGL'
+
+#PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
+cygwin:
+	make FLAGS='-s -O2 -Wall `sdl-config --cflags` `zzip-config --cflags`' LIBS='`sdl-config --libs` `zzip-config --libs` -L/usr/X11R6/bin -lopengl32 -lglu32'
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WARCH=	i586-mingw32msvc
 WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags` `/opt/i586-mingw32msvc/bin/zzip-config --cflags` -I/opt/i586-mingw32msvc/include
 WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
-
-.PHONY: all
-all:	build
 
 .PHONY: build
 build:
