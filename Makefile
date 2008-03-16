@@ -89,7 +89,7 @@ install:	all
 	$(INSTALL) -m 755 $(ARCH)-simple-config $(BINDIR)
 
 .PHONY: uninstall
-uninstall:	uninstall_win32
+uninstall:
 	rm -f $(LIBDIR)/libsimple*.a
 	rm -f $(INCDIR)/s*.h
 	rm -vf $(BINDIR)/simple-config
@@ -103,15 +103,12 @@ install_win32:	win32
 	make PREFIX=$(PREFIX) ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' install
 	$(WARCH)-ranlib $(PREFIX)/lib/simple/$(WARCH)/lib*.a
 
-.PHONY: win32_install
-win32_install:	win32
-	make PREFIX=$(PREFIX) ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' install
-	$(WARCH)-ranlib $(PREFIX)/lib/simple/$(WARCH)/lib*.a
-
 .PHONY: uninstall_win32
-uninstall_win32:
-	rm -vf $(WLIBDIR)/libsimple*.win32_a
-	rm -vf $(BINDIR)/i586-mingw32msvc-simple-config
+uninstall_win32:	uninstall
+	make ARCH=$(WARCH) uninstall
+
+.PHONY: win32_install
+win32_install:	install_win32
 
 .PHONY: win32_uninstall
 win32_uninstall:	uninstall_win32
@@ -140,19 +137,17 @@ test:
 
 .PHONY: win32_test
 win32_test:	
-	make -C simpleaudio ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
-	make -C simpletexture ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
-	make -C simplevideo ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
-	make -C simplescene ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
-	make -C simplegui ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
-	make -C simplemodel ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
-	make -C simpleconnect ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' win32	#No tests!
-	make -C simpleconfig ARCH=$(WARCH) CXX='$(WCXX)' FLAGS='$(WFLAGS)' LIBS='$(WLIBS)' $@
+	make ARCH=$(WARCH) test
 
-.PHONY: wintest
-wintest:	win32_test
 .PHONY: test_win32
 test_win32:	win32_test
+
+.PHONY: win32_clean
+win32_clean:	
+	make ARCH=$(WARCH) clean
+
+.PHONY: clean_win32
+clean_win32:	win32_clean
 
 .PHONY: clean
 clean:
