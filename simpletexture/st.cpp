@@ -141,7 +141,9 @@ SimpleTexture::SimpleTexture(const int col_index) {
   dirty = 1;
   }
 
+#define TGA_TYPE tga_type	//SDL_image Doesn't use Const
 SimpleTexture::SimpleTexture(const string &filenm) {
+  static char tga_type[4] = "TGA";	//SDL)image Doesn't use Const
   Init(SIMPLETEXTURE_DEFINED);
   filename = filenm;
   { string::iterator chr = filename.begin();
@@ -154,7 +156,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
   if(file && tolower(filename[filename.length()-2]) == 'g'
 	&& tolower(filename[filename.length()-3]) == 't'
 	&& tolower(filename[filename.length()-1]) == 'a') {
-    src = IMG_LoadTyped_RW(file, true, "TGA");
+    src = IMG_LoadTyped_RW(file, true, TGA_TYPE);
     }
 
   if(!file) {
@@ -176,12 +178,12 @@ SimpleTexture::SimpleTexture(const string &filenm) {
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
     file = SDL_RWFromZZIP((filename + ".tga").c_str(), "rb");
-    if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
+    if(file) src = IMG_LoadTyped_RW(file, true, TGA_TYPE);
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
     file = SDL_RWFromZZIP((filename + ".TGA").c_str(), "rb");
-    if(file) src = IMG_LoadTyped_RW(file, true, "TGA");
+    if(file) src = IMG_LoadTyped_RW(file, true, TGA_TYPE);
     }
   if(!file) {
     // Judging by many of the models I've see, this is not an error.
