@@ -362,13 +362,13 @@ void SimpleTexture::CopyFrom(const SimpleTexture &in) {
   texturator = in.texturator;
 
   //WARNING! Shallow Copy
-  cur = in.cur;
+  cur = NULL;
   src = in.src;
   col = in.col;
   fg = in.fg;
   xfact = in.xfact;
   yfact = in.yfact;
-  dirty = in.dirty;
+  dirty = 1;
 
   //WARNING! Shallow Copy
   texture = in.texture;
