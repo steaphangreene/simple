@@ -24,10 +24,11 @@
 
 SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx,
 	SG_Ranger2D *par) {
+  span = spn;
+  value = val;
   parent = par;
   SetLimits(mn, mx);
   SetSpan(spn);
-  SetValue(val);
   }
 
 SG_Ranger::~SG_Ranger() {
