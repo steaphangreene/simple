@@ -36,7 +36,8 @@
 using namespace std;
 
 #include "ss.h"
-#include "st.h"
+#include "simpletexture.h"
+#include "simplemodel.h"
 
 SimpleScene *SimpleScene::current = NULL;
 
@@ -57,16 +58,100 @@ bool SimpleScene::Render(Uint32 offset) {
   return true;
   }
 
-
-int SimpleScene::AddParticleType(SimpleScene_ParticleType ptp) {
-  ptypes.push_back(ptp);
-  return int(ptypes.size() - 1);
+SS_Model SimpleScene::AddModel(SimpleModel *mod) {
+  models.push_back(mod);
+  return (SS_Model)(models.size() - 1);
   }
 
-void SimpleScene::AddParticle(int type,
-	float xp, float yp, float zp, Uint32 start) {
-  SimpleScene_Particle newpart = { type, xp, yp, zp, start };
-  parts.push_back(newpart);
+SS_Object SimpleScene::AddObject(SS_Model mod) {
+  Object obj = { mod };
+  objects.push_back(obj);
+  return (SS_Object)(objects.size() - 1);
+  }
+
+void SimpleScene::SetObjectModel(SS_Model mod) {
+  objects[(int)(mod)].mod = mod;
+  }
+
+SS_PType SimpleScene::AddPType() {
+  PType ptype;
+  ptypes.push_back(ptype);
+  return (SS_PType)(ptypes.size() - 1);
+  }
+
+void SimpleScene::SetPTypeTexture(SS_PType tp, SimpleTexture *tex) {
+  ptypes[(int)(tp)].tex = tex;
+  }
+
+void SimpleScene::SetPTypeColor0(
+	SS_PType tp, float cr, float cg, float cb, float ca) {
+  ptypes[(int)(tp)].cr0 = cr;
+  ptypes[(int)(tp)].cg0 = cg;
+  ptypes[(int)(tp)].cb0 = cb;
+  ptypes[(int)(tp)].ca0 = ca;
+  }
+
+void SimpleScene::SetPTypeColor1(
+	SS_PType tp, float cr, float cg, float cb, float ca) {
+  ptypes[(int)(tp)].cr1 = cr;
+  ptypes[(int)(tp)].cg1 = cg;
+  ptypes[(int)(tp)].cb1 = cb;
+  ptypes[(int)(tp)].ca1 = ca;
+  }
+
+void SimpleScene::SetPTypeColor(
+	SS_PType tp, float cr, float cg, float cb, float ca) {
+  ptypes[(int)(tp)].cr0 = cr;
+  ptypes[(int)(tp)].cg0 = cg;
+  ptypes[(int)(tp)].cb0 = cb;
+  ptypes[(int)(tp)].ca0 = ca;
+  ptypes[(int)(tp)].cr1 = cr;
+  ptypes[(int)(tp)].cg1 = cg;
+  ptypes[(int)(tp)].cb1 = cb;
+  ptypes[(int)(tp)].ca1 = ca;
+  }
+
+void SimpleScene::SetPTypeVelocity(SS_PType tp, float xv, float yv, float zv) {
+  ptypes[(int)(tp)].xv = xv;
+  ptypes[(int)(tp)].yv = yv;
+  ptypes[(int)(tp)].zv = zv;
+  }
+
+void SimpleScene::SetPTypeSize(SS_PType tp, float sz) {
+  ptypes[(int)(tp)].sz0 = sz;
+  ptypes[(int)(tp)].sz1 = sz;
+  }
+
+void SimpleScene::SetPTypeSize0(SS_PType tp, float sz) {
+  ptypes[(int)(tp)].sz0 = sz;
+  }
+
+void SimpleScene::SetPTypeSize1(SS_PType tp, float sz) {
+  ptypes[(int)(tp)].sz1 = sz;
+  }
+
+void SimpleScene::SetPTypeDuration(SS_PType tp, Uint32 dur) {
+  ptypes[(int)(tp)].dur = dur;
+  }
+
+SS_Particle SimpleScene::AddParticle(SS_PType tp) {
+  Particle part = { tp };
+  parts.push_back(part);
+  return (SS_Particle)(parts.size() - 1);
+  }
+
+void SimpleScene::SetParticleType(SS_Particle part, SS_PType tp) {
+  parts[(int)(part)].type = tp;
+  }
+
+void SimpleScene::SetParticlePosition(SS_Particle part, float xp, float yp, float zp) {
+  parts[(int)(part)].xp = xp;
+  parts[(int)(part)].yp = yp;
+  parts[(int)(part)].zp = zp;
+  }
+
+void SimpleScene::SetParticleTime(SS_Particle part, Uint32 start) {
+  parts[(int)(part)].start = start;
   }
 
 void SimpleScene::Clear() {
@@ -89,9 +174,9 @@ bool SimpleScene::DrawParticles(Uint32 offset) {
   glDepthMask(GL_FALSE);
   glBegin(GL_QUADS);
 
-  vector<SimpleScene_Particle>::iterator part = parts.begin();
+  vector<Particle>::iterator part = parts.begin();
   for(; part != parts.end(); ++part) {
-    SimpleScene_ParticleType *type = &(ptypes[part->type]);
+    PType *type = &(ptypes[part->type]);
     if(part->start <= offset && (part->start + type->dur) > offset) {
       float tm, sz, cr, cg, cb, ca, xp, yp, zp, xxo, xyo, yxo, yyo, zxo, zyo;
       tm = (offset - part->start) / float(type->dur);
