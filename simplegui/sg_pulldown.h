@@ -27,7 +27,7 @@
 #include "simpletexture.h"
 #include "sg_colors.h"
 
-class SG_Button;
+class SG_StickyButton;
 class SG_Menu;
 
 class SG_PullDown : public SG_Compound, public SG_MultiText{
@@ -48,7 +48,7 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  SG_Button *but;
+  SG_StickyButton *but;
   SG_Menu *menu;
   };
 

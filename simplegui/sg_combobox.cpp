@@ -29,6 +29,7 @@
 #include "sg_menu.h"
 #include "sg_combobox.h"
 #include "sg_editable.h"
+#include "sg_stickybutton.h"
 
 const int binvpro = 8; //FIXME: Changable?
 
@@ -38,7 +39,7 @@ SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
 	SimpleTexture mtex, SimpleTexture mtex_dis, SimpleTexture mtex_sel)
 	: SG_Compound(binvpro, 1, 0.0, 0.0) {
 
-  opb = new SG_Button("v", btex, btex_dis, btex_click);
+  opb = new SG_StickyButton("v", btex, btex_dis, btex_click);
   opb->SetAlignment(SG_ALIGN_CENTER);
   AddWidget(opb, binvpro-1, 0, 1, 1);
 
@@ -59,7 +60,7 @@ SG_ComboBox::~SG_ComboBox() {
   }
 
 bool SG_ComboBox::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
+  if(event->user.code == SG_EVENT_STICKYON) {
     current_sg->SetCurrentWidget(menu);
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
@@ -67,10 +68,17 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
     return 1;
     }
   if(current_sg->CurrentWidget() != (SG_Widget*)menu) {
-    if(opb->State() == 2) opb->SetState(0);
+    if(opb->State() != 0) {
+      opb->TurnOff();
+      opb->SetState(0);
+      }
     }
   if(event->user.data1 == (void*)(SG_MultiText*)menu) {
     if(event->user.code == SG_EVENT_MENU) {
+      if(opb->State() != 0) {
+	opb->TurnOff();
+	opb->SetState(0);
+	}
       Set(((int*)(event->user.data2))[0]);
       event->user.code = SG_EVENT_NEWTEXT;
       event->user.data1 = (void*)(SG_Text*)this;

@@ -24,13 +24,13 @@
 #include "sg_pulldown.h"
 #include "sg_globals.h"
 #include "sg_events.h"
-#include "sg_button.h"
+#include "sg_stickybutton.h"
 #include "sg_menu.h"
 
 SG_PullDown::SG_PullDown(const string &mes, const vector<string> &itms,
 	SimpleTexture tex, SimpleTexture dis_tex, SimpleTexture click_tex)
 	: SG_Compound(1, 1, 0.0, 0.0) {
-  but = new SG_Button(mes, tex, dis_tex, click_tex);
+  but = new SG_StickyButton(mes, tex, dis_tex, click_tex);
   AddWidget(but, 0, 0);
 
   menu = new SG_Menu(itms);
@@ -43,7 +43,7 @@ SG_PullDown::~SG_PullDown() {
   }
 
 bool SG_PullDown::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
+  if(event->user.code == SG_EVENT_STICKYON) {
     current_sg->SetCurrentWidget(menu);
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
@@ -51,9 +51,18 @@ bool SG_PullDown::ChildEvent(SDL_Event *event) {
     return 1;
     }
   if(current_sg->CurrentWidget() != (SG_Widget*)menu) {
-    if(but->State() == 2) but->SetState(0);
+    if(but->State() != 0) {
+      but->TurnOff();
+      but->SetState(0);
+      }
     }
   if(event->user.data1 == (void*)(SG_MultiText*)menu) {
+    if(event->user.code == SG_EVENT_MENU) {
+      if(but->State() != 0) {
+	but->TurnOff();
+	but->SetState(0);
+	}
+      }
     event->user.data1 = (void*)(SG_MultiText*)this;
     return 1;	// Pass menu events through as my events
     }

@@ -293,7 +293,16 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
   if(event->type == SDL_MOUSEBUTTONDOWN) {
     mb_state |= SDL_BUTTON(event->button.button);
-    if(current_widget) return 0;		// Ignore another press
+    if(current_widget) {
+      mousex = float(event->button.x);
+      mousey = float(event->button.y);
+      ScreenToRelative(mousex, mousey);
+      int ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
+      if(current_widget && ret && event->type != SDL_SG_EVENT) {
+	ret = current_widget->HandleEvent(event, 0.0, 0.0);
+	}
+      if(ret) return ret;
+      }
 
     focus_widget = NULL;	// They must reclaim this if it's still theirs
 
@@ -313,12 +322,13 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       mousey = float(event->button.y);
       ScreenToRelative(mousex, mousey);
 
-      int ret = 0;
-      ret = mWid->HandEventTo(current_widget, event, mousex, mousey);
-      if(current_widget && ret && event->type != SDL_SG_EVENT) {
-	ret = current_widget->HandleEvent(event, 0.0, 0.0);
-	}
+      SG_Widget *cur = current_widget;
       current_widget = NULL; 
+      int ret = 0;
+      ret = mWid->HandEventTo(cur, event, mousex, mousey);
+      if(ret && event->type != SDL_SG_EVENT) {
+	ret = cur->HandleEvent(event, 0.0, 0.0);
+	}
       return ret;
       }
     }

@@ -45,17 +45,29 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
 
   static SG_Event_DataType event_data; //Pointer to this is put in event struct
 
+  if(event->type == SDL_MOUSEBUTTONDOWN) {
+    y -= 1.0;
+    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
+      current_sg->UnsetCurrentWidget();
+      }
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
   if(event->type == SDL_MOUSEBUTTONUP) {
-    current_sg->UnsetCurrentWidget();
     y -= 1.0;
     event->type = SDL_SG_EVENT;
     if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
+      current_sg->SetCurrentWidget(this);
       event->user.code = SG_EVENT_NEEDTORENDER;
       event->user.data1 = NULL;
       event->user.data2 = NULL;
       return 1;		//Missed Menu Options
       }
     else {
+      current_sg->UnsetCurrentWidget();
       event_data.i[0] = (int)(-y)/2;
       event->user.code = SG_EVENT_MENU + menu_id;
       event->user.data1 = (void*)(SG_MultiText*)this;

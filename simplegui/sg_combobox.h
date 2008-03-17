@@ -34,7 +34,7 @@ using namespace std;
 #include "sg_text.h"
 #include "sg_multitext.h"
 
-class SG_Button;
+class SG_StickyButton;
 class SG_TextArea;
 class SG_Menu;
 
@@ -62,7 +62,7 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
-  SG_Button *opb;
+  SG_StickyButton *opb;
   SG_Menu *menu;
   };
 
