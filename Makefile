@@ -85,7 +85,7 @@ install:	all
 	$(INSTALL) -m 644 simple*/*.h $(INCDIR)
 	cat scripts/simple-config.sh | sed 's-/usr/local-$(PREFIX)-g' | sed 's-REVISION-$(REVISION)-g' > simple-config
 	$(INSTALL) -m 755 simple-config $(BINDIR)
-	cat simple-config | sed 's|^arch=.*|arch=\$(ARCH)|g' > $(ARCH)-simple-config
+	cat simple-config | sed 's|^arch=.*|arch=$(ARCH)|g' > $(ARCH)-simple-config
 	$(INSTALL) -m 755 $(ARCH)-simple-config $(BINDIR)
 
 .PHONY: uninstall
