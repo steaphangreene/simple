@@ -193,6 +193,10 @@ void SimpleConnect::InitSlots() {
   Resize(WIDGET_WIDTH, HEADER_SIZE);		//Clear any list widgets
   Resize(WIDGET_WIDTH, HEADER_SIZE + conn.slots.size());
 
+  colmap.clear();
+  teammap.clear();
+  pnamemap.clear();
+
   if(colors.size() <= 1) SetupDefaultColors();
 
   for(unsigned int slot = 0; slot < conn.slots.size(); ++slot) {
