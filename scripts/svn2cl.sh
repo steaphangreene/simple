@@ -7,7 +7,7 @@
 #
 #  Simple* is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
+#  the Free Software Foundation; either version 3 of the License, or
 #  (at your option) any later version.
 #
 #  Simple* is distributed in the hope that it will be useful,
@@ -17,8 +17,8 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with Simple* (see the file named "COPYING");
-#  if not, write to the the Free Software Foundation, Inc.,
-#  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#  If not, see <http://www.gnu.org/licenses/>.
+#  
 # *************************************************************************
 
 svn log -r HEAD:1 | sed 's-(no author)-Unknown-g' | sed 's-^r[0-9]* | \([A-Za-z0-9]*\) | \([0-9-]* [0-9]*:[0-9]*\):.*$-|\2  \1|-g' | grep -v '^$' | grep -v -- ------------------------------------------------------------------------ | sed 's-^\([^|]\)-\t* \1-g' | tr '|' '\n'
