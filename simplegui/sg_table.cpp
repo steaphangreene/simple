@@ -221,6 +221,7 @@ void SG_Table::Resize(int xsz, int ysz) {
     vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
     for(; itrw != widgets.end(); ++itrw, ++itrg) {
       if(itrg->xpos + itrg->xsize > xsz || itrg->ypos + itrg->ysize > ysz) {
+	delete(*itrw);
 	itrw = widgets.erase(itrw);
 	itrg = wgeom.erase(itrg);
 	--itrw;  // Undo ++itrw from for() loop.

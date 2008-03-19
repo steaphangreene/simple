@@ -42,6 +42,7 @@ SG_Dragable::SG_Dragable(SimpleTexture tex) : SG_Panel(tex),
   }
 
 SG_Dragable::~SG_Dragable() {
+  if(label) delete label;
   }
 
 int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
