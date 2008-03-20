@@ -40,6 +40,12 @@ typedef int SS_Model;
 const SS_Model SS_UNDEFINED_MODEL = -1;
 typedef int SS_Object;
 
+enum SS_Action {
+  SS_ACT_NONE = 0,
+  SS_ACT_VISIBLE,
+  SS_ACT_MAX
+  };
+
 class SimpleScene {
 public:
   SimpleScene();
@@ -65,6 +71,7 @@ public:
   void SetObjectSize(SS_Object obj, float sz);
   void SetObjectRotation(SS_Object obj, float ang);
   void SetObjectTarget(SS_Object obj, float xt, float yt, float zt);
+  void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -85,6 +92,11 @@ public:
   void Clear();
 
 protected:
+  struct Action {
+    SS_Action type;
+    Uint32 finish, duration;
+    };
+
   struct Object {
     SS_Model model;
     SS_Skin skin;
@@ -92,6 +104,7 @@ protected:
     float x, y, z;
     float size;
     float ang;
+    vector<SimpleScene::Action> acts;
     };
 
   struct PType {

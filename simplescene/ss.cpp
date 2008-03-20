@@ -78,6 +78,12 @@ SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
   return (SS_Object)(objects.size() - 1);
   }
 
+void SimpleScene::ObjectAct(SS_Object obj,
+	SS_Action act, Uint32 fin, Uint32 dur) {
+  Action newact = { act, fin, dur };
+  objects[(int)(obj)].acts.push_back(newact);
+  }
+
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
   objects[(int)(obj)].skin = skin;
   }
@@ -200,6 +206,12 @@ void SimpleScene::Clear() {
 bool SimpleScene::DrawObjects(Uint32 offset) {
   vector<Object>::const_iterator obj = objects.begin();
   for(; obj != objects.end(); ++obj) {
+    if(obj->acts.size() > 0 && (
+	offset >= obj->acts.begin()->finish
+	|| offset + obj->acts.begin()->duration < obj->acts.begin()->finish)) {
+      continue;
+      }
+
     if(resx0 < resx1 && (obj->x < resx0 || obj->x >= resx1)) continue;
     if(resy0 < resy1 && (obj->y < resy0 || obj->y >= resy1)) continue;
     if(resz0 < resz1 && (obj->z < resz0 || obj->z >= resz1)) continue;
@@ -305,4 +317,3 @@ void SimpleScene::RestrictZ(float z0, float z1) {
   resz0 = z0;
   resz1 = z1;
   }
-
