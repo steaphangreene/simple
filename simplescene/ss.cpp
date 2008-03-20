@@ -46,6 +46,9 @@ SimpleScene::SimpleScene() {
     fprintf(stderr, "ERROR: Created mulitple SimpleScene instances!\n");
     exit(1);
     }
+  resx0 = 0.0; resx1 = 0.0;
+  resy0 = 0.0; resy1 = 0.0;
+  resz0 = 0.0; resz1 = 0.0;
   current = this;
   }
 
@@ -197,6 +200,10 @@ void SimpleScene::Clear() {
 bool SimpleScene::DrawObjects(Uint32 offset) {
   vector<Object>::const_iterator obj = objects.begin();
   for(; obj != objects.end(); ++obj) {
+    if(resx0 < resx1 && (obj->x < resx0 || obj->x >= resx1)) continue;
+    if(resy0 < resy1 && (obj->y < resy0 || obj->y >= resy1)) continue;
+    if(resz0 < resz1 && (obj->z < resz0 || obj->z >= resz1)) continue;
+
     glPushMatrix();
     if(obj->r != 1.0 || obj->g != 1.0 || obj->b != 1.0) {
       glColor4f(obj->r, obj->g, obj->b, 1.0);
@@ -207,8 +214,12 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(obj->x != 0.0 || obj->y != 0.0 || obj->z != 0.0) {
       glTranslatef(obj->x, obj->y, obj->z);
       }
-    if(obj->size != 1.0) glScalef(obj->size, obj->size, obj->size);
-    if(obj->ang != 0.0) glRotatef(obj->ang, 0.0, 0.0, 1.0);
+    if(obj->size != 1.0) {
+      glScalef(obj->size, obj->size, obj->size);
+      }
+    if(obj->ang != 0.0) {
+      glRotatef(obj->ang, 0.0, 0.0, 1.0);
+      }
     if(obj->skin != SS_UNDEFINED_SKIN) {
       glBindTexture(GL_TEXTURE_2D, skins[obj->skin]->GLTexture());
       }
@@ -278,5 +289,20 @@ bool SimpleScene::DrawParticles(Uint32 offset) {
   glDisable(GL_BLEND);
 
   return true;
+  }
+
+void SimpleScene::RestrictX(float x0, float x1) {
+  resx0 = x0;
+  resx1 = x1;
+  }
+
+void SimpleScene::RestrictY(float y0, float y1) {
+  resy0 = y0;
+  resy1 = y1;
+  }
+
+void SimpleScene::RestrictZ(float z0, float z1) {
+  resz0 = z0;
+  resz1 = z1;
   }
 

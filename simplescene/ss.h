@@ -45,6 +45,9 @@ public:
   SimpleScene();
   ~SimpleScene();
 
+  void RestrictX(float x0, float y0);
+  void RestrictY(float z0, float x1);
+  void RestrictZ(float y1, float z1);
   bool Render(Uint32 offset);
 
   static SimpleScene *Current() { return current; };
@@ -116,6 +119,9 @@ protected:
   vector<Particle> parts;
 
   static SimpleScene *current;
+
+  float resx0, resy0, resz0;
+  float resx1, resy1, resz1;
   };
 
 #endif // SS_H
