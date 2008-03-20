@@ -54,8 +54,9 @@ SimpleScene::~SimpleScene() {
   }
 
 bool SimpleScene::Render(Uint32 offset) {
-  DrawParticles(offset);
-  return true;
+  glDisable(GL_LIGHTING);	//FIXME: Real Scene Lighting
+  if(!DrawObjects(offset)) return false;
+  return DrawParticles(offset);
   }
 
 SS_Model SimpleScene::AddModel(SimpleModel *mod) {
@@ -63,14 +64,48 @@ SS_Model SimpleScene::AddModel(SimpleModel *mod) {
   return (SS_Model)(models.size() - 1);
   }
 
-SS_Object SimpleScene::AddObject(SS_Model mod) {
-  Object obj = { mod };
+SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
+  skins.push_back(skin);
+  return (SS_Skin)(skins.size() - 1);
+  }
+
+SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
+  Object obj = { mod, skin, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 };
   objects.push_back(obj);
   return (SS_Object)(objects.size() - 1);
   }
 
-void SimpleScene::SetObjectModel(SS_Model mod) {
-  objects[(int)(mod)].mod = mod;
+void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
+  objects[(int)(obj)].skin = skin;
+  }
+
+void SimpleScene::SetObjectModel(SS_Object obj, SS_Model mod) {
+  objects[(int)(obj)].model = mod;
+  }
+
+void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
+  objects[(int)(obj)].r = r;
+  objects[(int)(obj)].g = g;
+  objects[(int)(obj)].b = b;
+  }
+
+void SimpleScene::SetObjectPosition(SS_Object obj, 
+	float xp, float yp, float zp) {
+  objects[(int)(obj)].x = xp;
+  objects[(int)(obj)].y = yp;
+  objects[(int)(obj)].z = zp;
+  }
+
+void SimpleScene::SetObjectRotation(SS_Object obj, float ang) {
+  objects[(int)(obj)].ang = ang;
+  }
+
+void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
+  objects[(int)(obj)].size = sz;
+  }
+
+void SimpleScene::SetObjectTarget(SS_Object obj, float xt, float yt, float zt) {
+  //FIXME: Implement!
   }
 
 SS_PType SimpleScene::AddPType() {
@@ -157,6 +192,32 @@ void SimpleScene::SetParticleTime(SS_Particle part, Uint32 start) {
 void SimpleScene::Clear() {
   ptypes.clear();
   parts.clear();
+  }
+
+bool SimpleScene::DrawObjects(Uint32 offset) {
+  vector<Object>::const_iterator obj = objects.begin();
+  for(; obj != objects.end(); ++obj) {
+    glPushMatrix();
+    if(obj->r != 1.0 || obj->g != 1.0 || obj->b != 1.0) {
+      glColor4f(obj->r, obj->g, obj->b, 1.0);
+      }
+    else {
+      glColor4f(1.0, 1.0, 1.0, 1.0);
+      }
+    if(obj->x != 0.0 || obj->y != 0.0 || obj->z != 0.0) {
+      glTranslatef(obj->x, obj->y, obj->z);
+      }
+    if(obj->size != 1.0) glScalef(obj->size, obj->size, obj->size);
+    if(obj->ang != 0.0) glRotatef(obj->ang, 0.0, 0.0, 1.0);
+    if(obj->skin != SS_UNDEFINED_SKIN) {
+      glBindTexture(GL_TEXTURE_2D, skins[obj->skin]->GLTexture());
+      }
+    if(obj->model != SS_UNDEFINED_MODEL) {
+      models[obj->model]->Render(offset);
+      }
+    glPopMatrix();
+    }  
+  return true;
   }
 
 bool SimpleScene::DrawParticles(Uint32 offset) {

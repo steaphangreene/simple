@@ -31,12 +31,14 @@ using namespace std;
 class SimpleModel;
 class SimpleTexture;
 
-typedef int SS_Particle;
 typedef int SS_PType;
 const SS_PType SS_UNDEFINED_PARTICLETYPE = -1;
-typedef int SS_Object;
+typedef int SS_Particle;
+typedef int SS_Skin;
+const SS_Skin SS_UNDEFINED_SKIN = -1;
 typedef int SS_Model;
 const SS_Model SS_UNDEFINED_MODEL = -1;
+typedef int SS_Object;
 
 class SimpleScene {
 public:
@@ -47,10 +49,19 @@ public:
 
   static SimpleScene *Current() { return current; };
 
+  SS_Skin AddSkin(SimpleTexture *skin);
+
   SS_Model AddModel(SimpleModel *mod);
 
-  SS_Object AddObject(SS_Model mod = SS_UNDEFINED_MODEL);
-  void SetObjectModel(SS_Model mod);
+  SS_Object AddObject(
+	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);
+  void SetObjectModel(SS_Object obj, SS_Model mod);
+  void SetObjectSkin(SS_Object obj, SS_Model skin);
+  void SetObjectColor(SS_Object obj, float r, float g, float b);
+  void SetObjectPosition(SS_Object obj, float xp, float yp, float zp=0.0);
+  void SetObjectSize(SS_Object obj, float sz);
+  void SetObjectRotation(SS_Object obj, float ang);
+  void SetObjectTarget(SS_Object obj, float xt, float yt, float zt);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -72,7 +83,12 @@ public:
 
 protected:
   struct Object {
-    SS_Model mod;
+    SS_Model model;
+    SS_Skin skin;
+    float r, g, b;
+    float x, y, z;
+    float size;
+    float ang;
     };
 
   struct PType {
@@ -90,8 +106,10 @@ protected:
     Uint32 start;
     };
 
+  bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 
+  vector<SimpleTexture *> skins;
   vector<SimpleModel *> models;
   vector<Object> objects;
   vector<PType> ptypes;
