@@ -132,21 +132,96 @@ void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) 
     }
   }
 
-bool SG_DNDBoxes::CanFit(int x1, int y1, int xs, int ys, Uint32 tps) {
+bool SG_DNDBoxes::CanFit(int &x1, int &y1, int xs, int ys, Uint32 tps) {
+  fprintf(stderr, "Test\n");
   if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
         || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
     return false;
     }
 
+  if(!basecell[y1*xsize + x1]) {
+    for(int step = 1; step < 5; ++step) {	//FIXME: Auto-Detect Max Step
+      for(int lean = 0; lean < step; ++lean) {
+	if(basecell[(y1-step)*xsize + (x1-lean)]) {
+	  x1 -= lean;
+	  y1 -= step;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1-lean)*xsize + (x1-step)]) {
+	  x1 -= step;
+	  y1 -= lean;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1-step)*xsize + (x1+lean)]) {
+	  x1 += lean;
+	  y1 -= step;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1+lean)*xsize + (x1-step)]) {
+	  x1 -= step;
+	  y1 += lean;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1+step)*xsize + (x1-lean)]) {
+	  x1 -= lean;
+	  y1 += step;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1-lean)*xsize + (x1+step)]) {
+	  x1 += step;
+	  y1 -= lean;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1+step)*xsize + (x1+lean)]) {
+	  x1 += lean;
+	  y1 += step;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	else if(basecell[(y1+lean)*xsize + (x1+step)]) {
+	  x1 += step;
+	  y1 += lean;
+	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	  }
+	}
+      if(basecell[(y1-step)*xsize + (x1-step)]) {
+	y1 -= step;
+	x1 -= step;
+	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	}
+      else if(basecell[(y1-step)*xsize + (x1+step)]) {
+	y1 -= step;
+	x1 += step;
+	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	}
+      else if(basecell[(y1+step)*xsize + (x1+step)]) {
+	y1 += step;
+	x1 += step;
+	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	}
+      else if(basecell[(y1+step)*xsize + (x1-step)]) {
+	y1 += step;
+	x1 -= step;
+	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
+	}
+      }
+    }
+fit:
+
   if(!basecell[y1*xsize + x1]) return false;
+
+  fprintf(stderr, "->1\n");
 
   for(int x = x1; x < x1+xs; ++x) {
     for(int y = y1; y < y1+ys; ++y) {
+      fprintf(stderr, "->2 (%d, %d)\n", x, y);
       if(!present[y*xsize + x]) return false;
+      fprintf(stderr, "->3 (%d, %d)\n", x, y);
       if(occupied[y*xsize + x]) return false;
+      fprintf(stderr, "->4 (%d, %d)\n", x, y);
       if((invalids[y*xsize + x] & tps) != 0) return false;
       }
     }
+  fprintf(stderr, "->Pass\n");
   return true;
   }
 

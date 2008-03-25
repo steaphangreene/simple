@@ -53,7 +53,7 @@ public:
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-  bool CanFit(int x1, int y1, int xs=1, int ys=1, Uint32 tps = 0);
+  bool CanFit(int &x1, int &y1, int xs=1, int ys=1, Uint32 tps = 0);
   void UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
   void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
 
