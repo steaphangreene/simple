@@ -49,6 +49,7 @@ SimpleScene::SimpleScene() {
   resx0 = 0.0; resx1 = 0.0;
   resy0 = 0.0; resy1 = 0.0;
   resz0 = 0.0; resz1 = 0.0;
+  next_obj = 1;
   current = this;
   }
 
@@ -73,44 +74,50 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  Object obj = { mod, skin, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 };
-  objects.push_back(obj);
-  return (SS_Object)(objects.size() - 1);
+  const Coord pos = { 0.0, 0.0, 0.0 };
+  const Object obj = { mod, skin, 1.0, 1.0, 1.0, 1.0, 0.0 };
+  multimap<Coord, Object>::iterator newobj =
+	objects.insert(pair<Coord, Object>(pos, obj));
+  objlist[next_obj] = newobj;
+  return next_obj++;
   }
 
 void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
   Action newact = { act, fin, dur };
-  objects[(int)(obj)].acts.push_back(newact);
+  objlist[obj]->second.acts.push_back(newact);
   }
 
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
-  objects[(int)(obj)].skin = skin;
+  objlist[obj]->second.skin = skin;
   }
 
 void SimpleScene::SetObjectModel(SS_Object obj, SS_Model mod) {
-  objects[(int)(obj)].model = mod;
+  objlist[obj]->second.model = mod;
   }
 
 void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
-  objects[(int)(obj)].r = r;
-  objects[(int)(obj)].g = g;
-  objects[(int)(obj)].b = b;
+  objlist[obj]->second.r = r;
+  objlist[obj]->second.g = g;
+  objlist[obj]->second.b = b;
   }
 
 void SimpleScene::SetObjectPosition(SS_Object obj, 
 	float xp, float yp, float zp) {
-  objects[(int)(obj)].x = xp;
-  objects[(int)(obj)].y = yp;
-  objects[(int)(obj)].z = zp;
+  Coord pos = { xp, yp, zp };
+  multimap<Coord, Object>::iterator tmp = objlist[obj];
+  multimap<Coord, Object>::iterator newobj =
+	objects.insert(pair<Coord, Object>(pos, tmp->second));
+  objlist[obj] = newobj;
+  objects.erase(tmp);
   }
 
 void SimpleScene::SetObjectRotation(SS_Object obj, float ang) {
-  objects[(int)(obj)].ang = ang;
+  objlist[obj]->second.ang = ang;
   }
 
 void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
-  objects[(int)(obj)].size = sz;
+  objlist[obj]->second.size = sz;
   }
 
 void SimpleScene::SetObjectTarget(SS_Object obj, float xt, float yt, float zt) {
@@ -204,42 +211,59 @@ void SimpleScene::Clear() {
   }
 
 bool SimpleScene::DrawObjects(Uint32 offset) {
-  vector<Object>::const_iterator obj = objects.begin();
+  float xp = 0.0, yp = 0.0, zp = 0.0;
+
+  glPushMatrix();
+  multimap<Coord, Object>::const_iterator obj = objects.begin();
   for(; obj != objects.end(); ++obj) {
-    if(obj->acts.size() > 0 && (
-	offset >= obj->acts.begin()->finish
-	|| offset + obj->acts.begin()->duration < obj->acts.begin()->finish)) {
+    if(obj->second.acts.size() > 0 && (
+	offset >= obj->second.acts.begin()->finish
+	|| offset + obj->second.acts.begin()->duration < obj->second.acts.begin()->finish)) {
       continue;
       }
 
-    if(resx0 < resx1 && (obj->x < resx0 || obj->x >= resx1)) continue;
-    if(resy0 < resy1 && (obj->y < resy0 || obj->y >= resy1)) continue;
-    if(resz0 < resz1 && (obj->z < resz0 || obj->z >= resz1)) continue;
+    if(resx0 < resx1 && (obj->first.x < resx0 || obj->first.x >= resx1)) continue;
+    if(resy0 < resy1 && (obj->first.y < resy0 || obj->first.y >= resy1)) continue;
+    if(resz0 < resz1 && (obj->first.z < resz0 || obj->first.z >= resz1)) continue;
 
-    glPushMatrix();
-    if(obj->r != 1.0 || obj->g != 1.0 || obj->b != 1.0) {
-      glColor4f(obj->r, obj->g, obj->b, 1.0);
+    if(obj->first.x != xp || obj->first.y != yp || obj->first.z != zp) {
+      glPopMatrix();
+      glPushMatrix();
+      glTranslatef(obj->first.x, obj->first.y, obj->first.z);
+      xp = obj->first.x;
+      yp = obj->first.y;
+      zp = obj->first.z;
       }
-    else {
+    if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
+      glColor4f(obj->second.r, obj->second.g, obj->second.b, 1.0);
+      }
+    if(obj->second.size != 1.0) {
+      glPushMatrix();
+      glScalef(obj->second.size, obj->second.size, obj->second.size);
+      }
+    if(obj->second.ang != 0.0) {
+      glPushMatrix();
+      glRotatef(obj->second.ang, 0.0, 0.0, 1.0);
+      }
+
+    if(obj->second.skin != SS_UNDEFINED_SKIN) {
+      glBindTexture(GL_TEXTURE_2D, skins[obj->second.skin]->GLTexture());
+      }
+    if(obj->second.model != SS_UNDEFINED_MODEL) {
+      models[obj->second.model]->Render(offset);
+      }
+
+    if(obj->second.ang != 0.0) {
+      glPopMatrix();
+      }
+    if(obj->second.size != 1.0) {
+      glPopMatrix();
+      }
+    if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
       glColor4f(1.0, 1.0, 1.0, 1.0);
       }
-    if(obj->x != 0.0 || obj->y != 0.0 || obj->z != 0.0) {
-      glTranslatef(obj->x, obj->y, obj->z);
-      }
-    if(obj->size != 1.0) {
-      glScalef(obj->size, obj->size, obj->size);
-      }
-    if(obj->ang != 0.0) {
-      glRotatef(obj->ang, 0.0, 0.0, 1.0);
-      }
-    if(obj->skin != SS_UNDEFINED_SKIN) {
-      glBindTexture(GL_TEXTURE_2D, skins[obj->skin]->GLTexture());
-      }
-    if(obj->model != SS_UNDEFINED_MODEL) {
-      models[obj->model]->Render(offset);
-      }
-    glPopMatrix();
     }  
+  glPopMatrix();
   return true;
   }
 

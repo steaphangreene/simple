@@ -25,6 +25,7 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 
+#include <map>
 #include <vector>
 using namespace std;
 
@@ -101,7 +102,6 @@ protected:
     SS_Model model;
     SS_Skin skin;
     float r, g, b;
-    float x, y, z;
     float size;
     float ang;
     vector<SimpleScene::Action> acts;
@@ -122,14 +122,33 @@ protected:
     Uint32 start;
     };
 
+  struct Coord {
+    float x, y, z;
+    //These are so set<> and map<> can sort by these, and for basic comparisons.
+    bool operator < (const SimpleScene::Coord &b) const {
+      return (z < b.z || (z == b.z && (y < b.y || (y == b.y && x < b.x))));
+      }
+    bool operator > (const SimpleScene::Coord &b) const {
+      return (z > b.z || (z == b.z && (y > b.y || (y == b.y && x > b.x))));
+      }
+    bool operator != (const SimpleScene::Coord &b) const {
+      return (z != b.z || y != b.y || x != b.x);
+      }
+    bool operator == (const SimpleScene::Coord &b) const {
+      return (z != b.z || y != b.y || x != b.x);
+      }
+    };
+
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 
   vector<SimpleTexture *> skins;
   vector<SimpleModel *> models;
-  vector<Object> objects;
+  multimap<Coord, Object> objects;
+  map<unsigned int, multimap<Coord, Object>::iterator> objlist;
   vector<PType> ptypes;
   vector<Particle> parts;
+  unsigned int next_obj;
 
   static SimpleScene *current;
 
