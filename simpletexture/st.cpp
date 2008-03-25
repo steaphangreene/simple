@@ -595,9 +595,6 @@ void SimpleTexture::BuildTextTexture() {
     xsize = nextpoweroftwo(bxsize);	// Final values
     ysize = nextpoweroftwo(bysize);
 
-    int max;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
-
     xfact = (float)(bxsize) / (float)(xsize);
     yfact = (float)(bysize) / (float)(ysize);
     }
