@@ -630,7 +630,8 @@ void SimpleTexture::BuildTextTexture() {
   if(text->rendered_text == NULL) {	// Create persistent text surface
     SDL_Rect drec = { 0, 0, 0, 0 };
     text->rendered_text = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	text->text_xsize, text->text_ysize, 32, ST_SDL_RGBA_COLFIELDS);
+	text->text_xsize, text->text_ysize, 32,		//FIXME: SDL Bug
+	0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF); //^Needs wrong masks
     for(int ln = 0; ln < int(text->lines.size()); ++ln) {
       if(text->lines[ln].length() > 0) {
 	SDL_Surface *tmp_text = TTF_RenderText_Blended(
