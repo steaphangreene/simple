@@ -154,6 +154,8 @@ protected:
 
   float resx0, resy0, resz0;
   float resx1, resy1, resz1;
+  float xlim0, ylim0, zlim0;
+  float xlim1, ylim1, zlim1;
   };
 
 #endif // SS_H

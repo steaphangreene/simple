@@ -65,6 +65,9 @@ public:
   void SetFullScreenMode(int xs, int ys);
   void SetWindowedMode(int xs, int ys);
 
+  void GetViewLimits(
+	float &x0, float &y0, float &z0, float &x1, float &y1, float &z1);
+
   static SimpleVideo *Current() { return current; };
   static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated
 

@@ -639,3 +639,65 @@ void SimpleVideo::SetWindowedMode(int xs, int ys) {
   event.resize.h = ys;
   SDL_PushEvent(&event);
   }
+
+void SimpleVideo::GetViewLimits(
+	float &x0, float &y0, float &z0, float &x1, float &y1, float &z1) {
+  z0 = minz;
+  z1 = maxz;
+
+  double x = -1.0, y = -1.0;
+  SimpleVideo::ScreenToMap(x, y, z0);
+  x0 = x;
+  x1 = x;
+  y0 = y;
+  y1 = y;
+
+  x = 1.0, y = -1.0;
+  SimpleVideo::ScreenToMap(x, y, z0);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = 1.0, y = 1.0;
+  SimpleVideo::ScreenToMap(x, y, z0);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = -1.0, y = 1.0;
+  SimpleVideo::ScreenToMap(x, y, z0);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = -1.0, y = -1.0;
+  SimpleVideo::ScreenToMap(x, y, z1);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = 1.0, y = -1.0;
+  SimpleVideo::ScreenToMap(x, y, z1);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = 1.0, y = 1.0;
+  SimpleVideo::ScreenToMap(x, y, z1);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+
+  x = -1.0, y = 1.0;
+  SimpleVideo::ScreenToMap(x, y, z1);
+  if(x0 > x) x0 = x;
+  if(x1 < x) x1 = x;
+  if(y0 > y) y0 = y;
+  if(y1 < y) y1 = y;
+  }

@@ -35,11 +35,11 @@ WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/ss.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplemodel
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplemodel -I../simplevideo
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	ss.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplemodel
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplemodel -I../simplevideo
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
 $(ARCH):

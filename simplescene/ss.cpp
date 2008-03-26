@@ -38,6 +38,7 @@ using namespace std;
 #include "ss.h"
 #include "simpletexture.h"
 #include "simplemodel.h"
+#include "simplevideo.h"
 
 SimpleScene *SimpleScene::current = NULL;
 
@@ -59,6 +60,22 @@ SimpleScene::~SimpleScene() {
 
 bool SimpleScene::Render(Uint32 offset) {
   glDisable(GL_LIGHTING);	//FIXME: Real Scene Lighting
+  if(SimpleVideo::Current() != NULL) {	//FIXME: What if neither way is defined?
+    SimpleVideo::Current()->GetViewLimits(
+	xlim0, ylim0, zlim0, xlim1, ylim1, zlim1);
+    }
+  if(resx0 < resx1) {
+    if(xlim0 < resx0) xlim0 = resx0;
+    if(xlim1 > resx1) xlim1 = resx1;
+    }
+  if(resy0 < resy1) {
+    if(ylim0 < resy0) ylim0 = resy0;
+    if(ylim1 > resy1) ylim1 = resy1;
+    }
+  if(resz0 < resz1) {
+    if(zlim0 < resz0) zlim0 = resz0;
+    if(zlim1 > resz1) zlim1 = resz1;
+    }
   if(!DrawObjects(offset)) return false;
   return DrawParticles(offset);
   }
@@ -222,9 +239,18 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       continue;
       }
 
-    if(resx0 < resx1 && (obj->first.x < resx0 || obj->first.x >= resx1)) continue;
-    if(resy0 < resy1 && (obj->first.y < resy0 || obj->first.y >= resy1)) continue;
-    if(resz0 < resz1 && (obj->first.z < resz0 || obj->first.z >= resz1)) continue;
+    if(xlim0 < xlim1 && (
+	(obj->first.x + obj->second.size) < xlim0
+	|| (obj->first.x - obj->second.size) >= xlim1
+	)) continue;
+    if(ylim0 < ylim1 && (
+	(obj->first.y + obj->second.size) < ylim0
+	|| (obj->first.y - obj->second.size) >= ylim1
+	)) continue;
+    if(zlim0 < zlim1 && (
+	(obj->first.z + obj->second.size) < zlim0
+	|| (obj->first.z - obj->second.size) >= zlim1
+	)) continue;
 
     if(obj->first.x != xp || obj->first.y != yp || obj->first.z != zp) {
       glPopMatrix();
