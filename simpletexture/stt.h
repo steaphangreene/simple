@@ -37,15 +37,15 @@ protected:
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col);
   };
 
-extern unsigned char st_col_u32b1[4];
-extern unsigned char st_col_u32b2[4];
-extern unsigned char st_col_u32b3[4];
-extern unsigned char st_col_u32b4[4];
+extern Uint8 st_col_u32b1[4];
+extern Uint8 st_col_u32b2[4];
+extern Uint8 st_col_u32b3[4];
+extern Uint8 st_col_u32b4[4];
 
-#define ST_COL_U32B1 (*((unsigned long *)(st_col_u32b1)))
-#define ST_COL_U32B2 (*((unsigned long *)(st_col_u32b2)))
-#define ST_COL_U32B3 (*((unsigned long *)(st_col_u32b3)))
-#define ST_COL_U32B4 (*((unsigned long *)(st_col_u32b4)))
+#define ST_COL_U32B1 (*((Uint32 *)(st_col_u32b1)))
+#define ST_COL_U32B2 (*((Uint32 *)(st_col_u32b2)))
+#define ST_COL_U32B3 (*((Uint32 *)(st_col_u32b3)))
+#define ST_COL_U32B4 (*((Uint32 *)(st_col_u32b4)))
 
 #define ST_SDL_RGBA_COLFIELDS ST_COL_U32B1, ST_COL_U32B2, ST_COL_U32B3, ST_COL_U32B4
 
