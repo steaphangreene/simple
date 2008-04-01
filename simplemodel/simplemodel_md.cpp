@@ -63,6 +63,9 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 
   CalcTransforms(cur_transforms, identity4x4, -1, anim_info);
  
+  glEnable(GL_BLEND);
+  glEnable(GL_TEXTURE_2D);
+    
   MDXVertex vert;
   for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it == geosets.begin(); ++geo_it) {
     geo_it->CalculateGroupMatrices(cur_transforms);
@@ -75,10 +78,9 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       MDXVertex vec2 = geo_it->vertices.at(v2);
       MDXVertex vec3 = geo_it->vertices.at(v3);
     
-      glEnable(GL_BLEND);
-      glEnable(GL_TEXTURE_2D);
-    
-      glBindTexture(GL_TEXTURE_2D, texture.at(geo_it->texture_id)->GLTexture());
+      if(texture.at(geo_it->texture_id)->GLTexture() != 0) {
+	glBindTexture(GL_TEXTURE_2D, texture.at(geo_it->texture_id)->GLTexture());
+	}
       glBegin(GL_TRIANGLES);
         Uint32 mindex = geo_it->vertex_groups.at(v1);
         MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
@@ -118,6 +120,8 @@ void SimpleModel_MD::MDXGeoset::CalculateGroupMatrices(TransformInfo & current_t
   This is where we accumulate the bone transforms. m_id refers to which transformation matrix were building. m_count refers to how many elements in the geoset's matrices vector that were going to look at. m_start is index saying at which element we start at. We basically loop and for every i that we look at in matrices, we add bone_transform[matrices[i]] to the transformation matrix for render time m_id. Once were done we scale it by m_count.
 */
 void SimpleModel_MD::MDXGeoset::AccumulateBoneTransforms(TransformInfo & cur_trans, const Uint32 m_id, const Uint32 m_count, const Uint32 m_start) const {
+    memset(cur_trans.geoset_matrices.at(m_id).data, 0, sizeof(Matrix4x4));
+
     for(Uint32 i = 0; i < m_count; ++i)
       Add(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), cur_trans.bone_transforms.at(matrices.at(m_start + i)));
     
