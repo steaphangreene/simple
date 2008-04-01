@@ -761,7 +761,7 @@ string SimpleModel_MDX::GetNextToken(SDL_RWops * model) {
       return buffer;
       }
     else {
-//      fprintf(stderr, "WARNING: Unknown token '%s' in MDX file!\n", buffer.c_str());
+//      fprintf(stderr, "WARNING: Unhandled token '%s' in MDX file!\n", buffer.c_str());
       return "SKIP";
       }
     } 

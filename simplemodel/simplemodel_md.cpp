@@ -67,7 +67,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
   glEnable(GL_TEXTURE_2D);
     
   MDXVertex vert;
-  for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it == geosets.begin(); ++geo_it) {
+  for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it != geosets.end(); ++geo_it) {
     geo_it->CalculateGroupMatrices(cur_transforms);
     for(vector<Uint16>::const_iterator indx_it = geo_it->indices.begin(); indx_it != geo_it->indices.end(); indx_it += 3) {
       Uint32 v1 = *indx_it;
@@ -282,10 +282,10 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
       
       return true;
       }
-    };
+    }
 
   return false;
-  };
+  }
 
 int SimpleModel_MD::CalcBaseFrame(Uint32 cur_time, const vector<int> &anim,
     const vector<Uint32> &start_time, float &offset) const {
