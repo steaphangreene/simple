@@ -93,6 +93,10 @@ bool SimpleModel_MDX::Load(const string &filenm,
       if(HandleGeosets(model) == false)
         return false;
       }
+    else if(token == "GEOA") {
+      if(HandleGeosetAnims(model) == false)
+        return false;
+      }
     else if(token == "BONE") {
       if(HandleBones(model) == false)
         return false;
@@ -316,6 +320,77 @@ bool SimpleModel_MDX::HandleGeosets(SDL_RWops * model) {
 
 //  fprintf(stderr, "Number of geosets %d.\n", geosets.size());
 
+  return true;
+  }
+
+bool SimpleModel_MDX::HandleGeosetAnims(SDL_RWops * model) {
+  Uint32 chunk_size = 0;
+  Uint32 file_offset = SDL_RWtell(model);
+  Uint32 bytes_read = 0;
+
+  freadLE(chunk_size, model);
+
+  bytes_read = SDL_RWtell(model) - file_offset;
+  while(bytes_read <= chunk_size) {
+    if(HandleGeosetAnim(model) == false) return false;
+    bytes_read = SDL_RWtell(model) - file_offset;
+    }
+  return true;
+  }
+
+bool SimpleModel_MDX::HandleGeosetAnim(SDL_RWops * model) {
+  Uint32 chunk_size = 0;
+  Uint32 file_offset = SDL_RWtell(model);
+  Uint32 bytes_read = 0;
+
+  freadLE(chunk_size, model);
+
+  MDXGeosetAnim geoanim;
+
+  freadLE(geoanim.static_alpha, model);
+  freadLE(geoanim.color_animation, model);
+  freadLE(geoanim.color[0], model);
+  freadLE(geoanim.color[1], model);
+  freadLE(geoanim.color[2], model);
+  freadLE(geoanim.geoset_id, model);
+
+  bytes_read = SDL_RWtell(model) - file_offset;
+  while(bytes_read < chunk_size) {
+    Uint8 tag_name[4];
+
+    SDL_RWread(model, &tag_name, 1, sizeof(tag_name));
+
+    if(!strncmp((char *)tag_name, "KGAO", 4)) {
+      MDXVisibilityInfo_KATV alpha;
+
+      freadLE(alpha.nunks, model);
+      freadLE(alpha.line_type, model);
+      freadLE(alpha.global_seq_id, model);
+
+      alpha.key_frames.resize(alpha.nunks);
+      for(Uint32 key = 0; key < alpha.nunks; ++key) {
+	freadLE(alpha.key_frames[key].frame, model);
+	freadLE(alpha.key_frames[key].state, model);
+	if(alpha.line_type > 1) {
+	  SDL_RWseek(model, 8, SEEK_CUR);
+	  }
+	//fprintf(stderr, "KEY_FRAME[%d][%d] %d: %f [%d]\n",
+	//	geoanim.geoset_id, alpha.global_seq_id,
+	//	alpha.key_frames[key].frame, alpha.key_frames[key].state, alpha.line_type);
+	}
+      geoanim.alpha_info.push_back(alpha);
+      }
+    else if(!strncmp((char *)tag_name, "KGAC", 4)) {
+      fprintf(stderr, "WARNING: Unhandled 'KGAC' tag!\n");
+      //FIXME: Write this!
+      }
+    else {
+      fprintf(stderr, "ERROR: Invalid tag in GEOA %.8X!\n", *((Uint32*)(tag_name)));
+      exit(0);
+      }
+    bytes_read = SDL_RWtell(model) - file_offset;
+    }
+  geosetanims.push_back(geoanim);
   return true;
   }
 
@@ -785,6 +860,8 @@ bool SimpleModel_MDX::IsIgnoredToken(const string & token) {
   else if(token == "TEXS")
     return false;
   else if(token == "GEOS")
+    return false;
+  else if(token == "GEOA")
     return false;
   else if(token == "BONE")
     return false;

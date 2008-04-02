@@ -68,6 +68,17 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
     
   MDXVertex vert;
   for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it != geosets.end(); ++geo_it) {
+    float alpha = 1.0;
+
+    for(Uint32 ctr = 0; ctr < geosetanims.size(); ++ctr) {
+      if(geosetanims[ctr].geoset_id == geo_it - geosets.begin()) {
+	alpha = geosetanims[ctr].AlphaAt(anim_info);
+	}
+      }
+    if(alpha <= 0.0) continue;
+
+    if(alpha != 1.0) glColor4f(1.0, 1.0, 1.0, alpha);
+
     geo_it->CalculateGroupMatrices(cur_transforms);
     for(vector<Uint16>::const_iterator indx_it = geo_it->indices.begin(); indx_it != geo_it->indices.end(); indx_it += 3) {
       Uint32 v1 = *indx_it;
@@ -78,7 +89,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       MDXVertex vec2 = geo_it->vertices.at(v2);
       MDXVertex vec3 = geo_it->vertices.at(v3);
     
-      if(texture.at(geo_it->texture_id)->GLTexture() != 0) {
+      if(texture.size() > geo_it->texture_id && texture.at(geo_it->texture_id)->GLTexture() != 0) {
 	glBindTexture(GL_TEXTURE_2D, texture.at(geo_it->texture_id)->GLTexture());
 	}
       glBegin(GL_TRIANGLES);
@@ -98,6 +109,8 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
         glVertex3f(vert.x, vert.y, vert.z);
       glEnd();
       }
+
+    if(alpha != 1.0) glColor4f(1.0, 1.0, 1.0, 1.0);
     }
   glPopMatrix();
   return true;
@@ -315,18 +328,20 @@ int SimpleModel_MD::NormalizeFrame(const vector<int> &anim, int frame) const {
       }
 
     int end = sequences[anim[0]].end;
-	int start = sequences.at(anim.at(0)).start;
+    int start = sequences.at(anim.at(0)).start;
     bool loop = sequences[anim[0]].loop;
 
     if(frame >= end && loop == true) {
-	  frame %= (end - start);
-	  frame += start;
-	  } 
-	else if(frame >= end)
+      frame %= (end - start);
+      frame += start;
+      } 
+    else if(frame >= end) {
       frame = end - 1;
+      }
     } 
-  else
+  else {
     frame = 0;
+    }
 
   return frame;
   }
@@ -345,3 +360,36 @@ void SimpleModel_MD::MatVecMult(MDXVertex & res, const Matrix4x4 & m, const MDXV
   res.y = m.data[1] * v.x + m.data[5] * v.y + v.z * m.data[9] + m.data[13];
   res.z = m.data[2] * v.x + m.data[6] * v.y + v.z * m.data[10] + m.data[14];
   };
+
+float SimpleModel_MD::MDXGeosetAnim::AlphaAt(const AnimationInfo &anim) const {
+  if(static_alpha != 1.0) return static_alpha;	//FIXME: Do I use this at all?
+
+  InterpolationTypes interp = InterpolationNone;
+  Uint32 frame0 = 0, frame1 = 0xFFFFFFFF;
+  float alpha0 = 1.0, alpha1 = 1.0;
+
+  vector<MDXVisibilityInfo_KATV>::const_iterator alpha = alpha_info.begin();
+  for(; alpha != alpha_info.end(); ++alpha) {
+    vector<MDXKeyFrameV>::const_iterator key = alpha->key_frames.begin();
+    for(; key != alpha->key_frames.end(); ++key) {
+      if(key->frame <= anim.cur_frame && frame0 <= key->frame) {
+	frame0 = key->frame;
+	alpha0 = key->state;
+	interp = (InterpolationTypes)(alpha->line_type);
+	}
+      else if(key->frame > anim.cur_frame && frame1 >= key->frame) {
+	frame1 = key->frame;
+	alpha1 = key->state;
+	}
+      }
+    }
+
+  if(interp == InterpolationNone) return alpha0;
+
+  float weight = anim.cur_frame + anim.interpolation_weight;
+  weight -= frame0;
+  weight /= (frame1-frame0);
+
+  //FIXME: Support Non-Linear Interpolation Types
+  return (alpha0 * (1.0 - weight) + alpha1 * weight);
+  }

@@ -43,6 +43,8 @@ protected:
   bool HandleGlobalSequences(SDL_RWops *);
   bool HandleTextures(const string &filenm, SDL_RWops *);
   bool HandleGeosets(SDL_RWops *);
+  bool HandleGeosetAnims(SDL_RWops *);
+  bool HandleGeosetAnim(SDL_RWops *);
   bool HandleBones(SDL_RWops *);
   bool HandlePivots(SDL_RWops *);
   bool HandleHelpers(SDL_RWops *);

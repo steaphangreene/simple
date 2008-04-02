@@ -37,7 +37,7 @@ protected:
 	const vector<Uint32> &start_time = vector<Uint32>(),
 	Uint32 anim_offset = 0) const;
 
-  enum InterpolationTypes {InterpolationTypeLinear = 1, InterpolationTypeHermite = 2, InterpolationTypeBezier = 3};
+  enum InterpolationTypes {InterpolationNone = 0, InterpolationTypeLinear = 1, InterpolationTypeHermite = 2, InterpolationTypeBezier = 3};
 
   struct MDXVertex {
     MDXVertex() {x = 0.0; y = 0.0; z = 0.0;};
@@ -157,11 +157,13 @@ protected:
     };
 
   struct MDXGeosetAnim {
+    float AlphaAt(const AnimationInfo &anim) const;
+
     float static_alpha;         // If static_alpha = 1.0 then we use the KGAO struct
     Uint32 color_animation;     // none = 0, drop shadow = 1, color = 2, both = 3, default is 1
     float color[3];             // R, G, B
     Uint32 geoset_id;
-    // FIXME: MDXAlphaInfo_KGAO alpha_info;
+    vector<MDXVisibilityInfo_KATV> alpha_info;
     // FIXME: MDXColorInfo_KGAC color_info;
     };
 
@@ -231,6 +233,7 @@ protected:
   MDXGlobalSequence global_sequences;
   vector<MDXTexture> textures;
   vector<MDXGeoset> geosets;
+  vector<MDXGeosetAnim> geosetanims;
   vector<MDXBone> bones;
   vector<MDXVertex> pivots;
   };
