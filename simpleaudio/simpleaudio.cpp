@@ -202,3 +202,6 @@ SimpleAudio::SimpleAudio(int bufsize) {
   Mix_AllocateChannels(16);	//FIXME: Make this dynamic
   audio_initialized = true;
   }
+
+SimpleAudio::~SimpleAudio() {
+  }
