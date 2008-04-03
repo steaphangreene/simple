@@ -138,9 +138,6 @@ bool SimpleModel_MDX::Load(const string &filenm,
 	texture[tex - textures.begin()]
 		= new SimpleTexture(filenm + "/" + defskin);
 	}
-      else {
-	fprintf(stderr, "%s != %s\n", defskin.c_str(), (char*)(tex->path));
-	}
       }
     }
 
