@@ -89,9 +89,20 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       MDXVertex vec2 = geo_it->vertices.at(v2);
       MDXVertex vec3 = geo_it->vertices.at(v3);
     
-      Uint32 tex = materials[geo_it->material_id].layers[0].texture_id;
-      if(texture.size() > tex && texture.at(tex)->GLTexture() != 0) {
-	glBindTexture(GL_TEXTURE_2D, texture.at(tex)->GLTexture());
+      vector<MDXLayer>::const_iterator
+		layer = materials[geo_it->material_id].layers.begin(),
+		end = materials[geo_it->material_id].layers.end();
+      for(; layer != end; ++layer) {
+	if(layer->texture_id < texture.size()
+		&& texture.at(layer->texture_id)->GLTexture() != 0) {
+	  break;
+	  }
+	}
+      if(layer != end) {
+	glBindTexture(GL_TEXTURE_2D, texture.at(layer->texture_id)->GLTexture());
+	}
+      else {
+	continue;	// Don't show it if there's not texture for it!
 	}
       glBegin(GL_TRIANGLES);
         Uint32 mindex = geo_it->vertex_groups.at(v1);

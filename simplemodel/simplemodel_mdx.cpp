@@ -133,9 +133,13 @@ bool SimpleModel_MDX::Load(const string &filenm,
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
       if(is_same_filename(defskin, (char*)(tex->path))) {
+	//fprintf(stderr, "Replacing texture %d\n", tex - textures.begin());
 	delete(texture[tex - textures.begin()]);
 	texture[tex - textures.begin()]
 		= new SimpleTexture(filenm + "/" + defskin);
+	}
+      else {
+	fprintf(stderr, "%s != %s\n", defskin.c_str(), (char*)(tex->path));
 	}
       }
     }
