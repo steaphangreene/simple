@@ -64,8 +64,8 @@ bool SimpleModel_MDX::Load(const string &filenm,
 
   HandleMagicWord(model);
 
-  if(defskin.length() > 0)
-    texture.push_back(new SimpleTexture(filenm + "/" + defskin));
+//  if(defskin.length() > 0)
+//    texture.push_back(new SimpleTexture(filenm + "/" + defskin));
 
   while((token = GetNextToken(model)) != "EOB") {
 //    fprintf(stderr, "Current token is '%s'.\n", token.c_str());
