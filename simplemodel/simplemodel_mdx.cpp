@@ -64,9 +64,6 @@ bool SimpleModel_MDX::Load(const string &filenm,
 
   HandleMagicWord(model);
 
-//  if(defskin.length() > 0)
-//    texture.push_back(new SimpleTexture(filenm + "/" + defskin));
-
   while((token = GetNextToken(model)) != "EOB") {
 //    fprintf(stderr, "Current token is '%s'.\n", token.c_str());
     if(token == "VERS") {
@@ -120,6 +117,9 @@ bool SimpleModel_MDX::Load(const string &filenm,
       return false;
       }
     }
+
+  if(defskin.length() > 0)
+    texture[0] = new SimpleTexture(filenm + "/" + defskin);
 
   SDL_RWclose(model);
   return true;
@@ -437,8 +437,11 @@ bool SimpleModel_MDX::HandleGeosetAnim(SDL_RWops * model) {
       geoanim.alpha_info.push_back(alpha);
       }
     else if(!strncmp((char *)tag_name, "KGAC", 4)) {
-      fprintf(stderr, "WARNING: Unhandled 'KGAC' tag!\n");
-      //FIXME: Write this!
+      Uint32 num, type;
+      freadLE(num, model);
+      freadLE(type, model);
+      SDL_RWseek(model, 4+(16+(24*(type > 0)))*num, SEEK_CUR);
+      //FIXME: Really handle this!
       }
     else {
       fprintf(stderr, "ERROR: Invalid tag in GEOA %.8X!\n", *((Uint32*)(tag_name)));
