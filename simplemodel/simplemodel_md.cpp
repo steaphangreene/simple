@@ -89,8 +89,9 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       MDXVertex vec2 = geo_it->vertices.at(v2);
       MDXVertex vec3 = geo_it->vertices.at(v3);
     
-      if(texture.size() > geo_it->texture_id && texture.at(geo_it->texture_id)->GLTexture() != 0) {
-	glBindTexture(GL_TEXTURE_2D, texture.at(geo_it->texture_id)->GLTexture());
+      Uint32 tex = materials[geo_it->material_id].layers[0].texture_id;
+      if(texture.size() > tex && texture.at(tex)->GLTexture() != 0) {
+	glBindTexture(GL_TEXTURE_2D, texture.at(tex)->GLTexture());
 	}
       glBegin(GL_TRIANGLES);
         Uint32 mindex = geo_it->vertex_groups.at(v1);

@@ -45,6 +45,8 @@ protected:
   bool HandleGeosets(SDL_RWops *);
   bool HandleGeosetAnims(SDL_RWops *);
   bool HandleGeosetAnim(SDL_RWops *);
+  bool HandleMaterials(SDL_RWops *);
+  bool HandleMaterial(SDL_RWops *);
   bool HandleBones(SDL_RWops *);
   bool HandlePivots(SDL_RWops *);
   bool HandleHelpers(SDL_RWops *);

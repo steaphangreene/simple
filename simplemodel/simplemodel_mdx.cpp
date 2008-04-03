@@ -93,6 +93,10 @@ bool SimpleModel_MDX::Load(const string &filenm,
       if(HandleGeosets(model) == false)
         return false;
       }
+    else if(token == "MTLS") {
+      if(HandleMaterials(model) == false)
+        return false;
+      }
     else if(token == "GEOA") {
       if(HandleGeosetAnims(model) == false)
         return false;
@@ -235,9 +239,9 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
 
     string buffer;
     buffer = filenm + "/" + (char *)(it->path);
-//    fprintf(stderr, "%s\n", buffer.c_str());
     texture.push_back(new SimpleTexture(buffer));
-//    fprintf(stderr, "%d\n", (*(texture.end() - 1))->GLTexture());
+//    fprintf(stderr, "[%d->%d] %s\n", it->replacable_id,
+//	(*(texture.end() - 1))->GLTexture(), buffer.c_str());
     }
 
   return true;
@@ -278,7 +282,7 @@ bool SimpleModel_MDX::HandleGeosets(SDL_RWops * model) {
     if(HandleMatrices(model, new_geoset.matrices) == false)
       return false;
 
-    freadLE(new_geoset.texture_id, model);
+    freadLE(new_geoset.material_id, model);
     freadLE(new_geoset.selection_group, model);
     freadLE(new_geoset.selectable, model);
     freadLE(new_geoset.bound_radius, model);
@@ -323,6 +327,58 @@ bool SimpleModel_MDX::HandleGeosets(SDL_RWops * model) {
   return true;
   }
 
+bool SimpleModel_MDX::HandleMaterials(SDL_RWops * model) {
+  Uint32 chunk_size = 0;
+  Uint32 file_offset = SDL_RWtell(model);
+  Uint32 bytes_read = 0;
+
+  freadLE(chunk_size, model);
+
+  bytes_read = SDL_RWtell(model) - file_offset;
+  while(bytes_read < chunk_size) {
+    if(HandleMaterial(model) == false) return false;
+    bytes_read = SDL_RWtell(model) - file_offset;
+    }
+  return true;
+  }
+
+bool SimpleModel_MDX::HandleMaterial(SDL_RWops * model) {
+  Uint32 chunk_size = 0;
+  Uint32 file_offset = SDL_RWtell(model);
+  Uint32 bytes_read = 0;
+
+  freadLE(chunk_size, model);
+
+  MDXMaterial material;
+
+  freadLE(material.priority_plane, model);
+  freadLE(material.render_mode, model);
+
+  Uint8 tag_name[4];
+  SDL_RWread(model, &tag_name, 1, sizeof(tag_name));
+  if(strncmp((char*)tag_name, "LAYS", 4)) {
+    fprintf(stderr, "ERROR: Layer didn't start with 'LAYS' tag %.8X!\n", *((Uint32*)(tag_name)));
+    return false;
+    }
+
+  Uint32 num_layers;
+  freadLE(num_layers, model);
+
+  bytes_read = SDL_RWtell(model) - file_offset;
+  while(material.layers.size() < num_layers) {
+    MDXLayer layer;
+    Uint32 layer_size;
+    freadLE(layer_size, model);
+    SDL_RWseek(model, 8, SEEK_CUR);
+    freadLE(layer.texture_id, model);
+    SDL_RWseek(model, layer_size - 16, SEEK_CUR);
+    bytes_read = SDL_RWtell(model) - file_offset;
+    material.layers.push_back(layer);
+    }
+  materials.push_back(material);
+  return true;
+  }
+
 bool SimpleModel_MDX::HandleGeosetAnims(SDL_RWops * model) {
   Uint32 chunk_size = 0;
   Uint32 file_offset = SDL_RWtell(model);
@@ -331,7 +387,7 @@ bool SimpleModel_MDX::HandleGeosetAnims(SDL_RWops * model) {
   freadLE(chunk_size, model);
 
   bytes_read = SDL_RWtell(model) - file_offset;
-  while(bytes_read <= chunk_size) {
+  while(bytes_read < chunk_size) {
     if(HandleGeosetAnim(model) == false) return false;
     bytes_read = SDL_RWtell(model) - file_offset;
     }
@@ -860,6 +916,8 @@ bool SimpleModel_MDX::IsIgnoredToken(const string & token) {
   else if(token == "TEXS")
     return false;
   else if(token == "GEOS")
+    return false;
+  else if(token == "MTLS")
     return false;
   else if(token == "GEOA")
     return false;

@@ -186,6 +186,21 @@ protected:
     vector<Matrix4x4> geoset_matrices;
     };
 
+  struct MDXLayer {
+    Uint32 filter_mode;
+    Uint32 shading;
+    Uint32 texture_id;
+    Uint32 vert_anim_id;
+    Uint32 coord_id;
+    float alpha;
+    };
+
+  struct MDXMaterial {
+    Uint32 priority_plane;
+    Uint32 render_mode;
+    vector<MDXLayer> layers;
+    };
+
   struct MDXGeoset {
     void CalculateGroupMatrices(TransformInfo &) const;
     void AccumulateBoneTransforms(TransformInfo &, const Uint32, const Uint32, const Uint32) const;  
@@ -198,7 +213,7 @@ protected:
     vector<Uint8> vertex_groups;
     vector<Uint32> group_counts;
     vector<Uint32> matrices;
-    Uint32 texture_id;
+    Uint32 material_id;
     Uint32 selection_group;
     Uint32 selectable;                  // Doesn't seem relevant to us, none = 0, 4 = unselectable
     float bound_radius;
@@ -234,6 +249,7 @@ protected:
   vector<MDXTexture> textures;
   vector<MDXGeoset> geosets;
   vector<MDXGeosetAnim> geosetanims;
+  vector<MDXMaterial> materials;
   vector<MDXBone> bones;
   vector<MDXVertex> pivots;
   };
