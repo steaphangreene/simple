@@ -44,8 +44,15 @@ SimpleModel_MDX::SimpleModel_MDX() : SimpleModel_MD() {
 SimpleModel_MDX::~SimpleModel_MDX() {
   }
 
-static bool is_same_filename (const string &f1, const string f2) {
-  return true;
+static bool is_same_filename (const string &cf1, const string cf2) {
+  string f1 = cf1;
+  string f2 = cf2;
+  while(f1.find_first_of("/\\") < f1.size()) { f1 = f1.substr(1); }
+  while(f2.find_first_of("/\\") < f1.size()) { f2 = f2.substr(1); }
+  if(!(strcasecmp(f1.c_str(), f2.c_str()))) {
+    return true;
+    }
+  return false;
   }
 
 bool SimpleModel_MDX::Load(const string &filenm,
