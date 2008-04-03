@@ -85,11 +85,15 @@ int main(int argc, char **argv) {
   int xs=800, ys=600;
   char *modname = "models/players/trooper";
   char *weapname = "models/weapons2/machinegun";
+  Uint32 bgcolor = 0x000000;	// Default Background Color is Black
 
   int barg = 1;
-  while(argc > barg && (strcmp(argv[barg], "-s") == 0 || strcmp(argv[barg], "-w") == 0)) {
+  while(argc > barg && (strcmp(argv[barg], "-s") == 0
+		|| strcmp(argv[barg], "-c") == 0
+		|| strcmp(argv[barg], "-w") == 0
+	)) {
     if(argc <= barg+1) {
-      fprintf(stderr, "ERROR: -s/-w requires file argument\n");
+      fprintf(stderr, "ERROR: -s/-w/-c requires file argument\n");
       exit(1);
       }
     if(strcmp(argv[barg], "-s") == 0) {
@@ -97,6 +101,9 @@ int main(int argc, char **argv) {
       }
     else if(strcmp(argv[barg], "-w") == 0) {
       weapname = argv[barg+1];
+      }
+    else if(strcmp(argv[barg], "-c") == 0) {
+      bgcolor = strtoul(argv[barg+1], NULL, 0);
       }
     barg += 2;
     }
@@ -109,7 +116,7 @@ int main(int argc, char **argv) {
     modname = argv[barg];
     }
 
-  if(!init_renderer(xs, ys)) {
+  if(!init_renderer(xs, ys, bgcolor)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
     }
 

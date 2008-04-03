@@ -22,7 +22,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-int init_renderer(int, int);
+int init_renderer(int xs, int ys, Uint32 bgcolor=0x000000);
 int start_scene();
 int finish_scene();
 void toggle_fullscreen(void);
