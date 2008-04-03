@@ -44,6 +44,10 @@ SimpleModel_MDX::SimpleModel_MDX() : SimpleModel_MD() {
 SimpleModel_MDX::~SimpleModel_MDX() {
   }
 
+static bool is_same_filename (const string &f1, const string f2) {
+  return true;
+  }
+
 bool SimpleModel_MDX::Load(const string &filenm,
 	const string &modelnm, const string &defskin) {
 //  fprintf(stderr, "Opening '%s'\n", filenm.c_str());
@@ -118,8 +122,16 @@ bool SimpleModel_MDX::Load(const string &filenm,
       }
     }
 
-  if(defskin.length() > 0)
-    texture[0] = new SimpleTexture(filenm + "/" + defskin);
+  if(defskin.length() > 0) {
+    vector<MDXTexture>::const_iterator tex = textures.begin();
+    for(; tex != textures.end(); ++tex) {
+      if(is_same_filename(defskin, (char*)(tex->path))) {
+	delete(texture[tex - textures.begin()]);
+	texture[tex - textures.begin()]
+		= new SimpleTexture(filenm + "/" + defskin);
+	}
+      }
+    }
 
   SDL_RWclose(model);
   return true;
