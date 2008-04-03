@@ -47,8 +47,17 @@ SimpleModel_MDX::~SimpleModel_MDX() {
 static bool is_same_filename (const string &cf1, const string cf2) {
   string f1 = cf1;
   string f2 = cf2;
-  while(f1.find_first_of("/\\") < f1.size()) { f1 = f1.substr(1); }
-  while(f2.find_first_of("/\\") < f2.size()) { f2 = f2.substr(1); }
+  size_t loc;
+  loc = f1.find_first_of("/\\");
+  while(loc >= 0 && loc < f1.size()) {
+    f1 = f1.substr(1);
+    loc = f1.find_first_of("/\\");
+    }
+  loc = f2.find_first_of("/\\");
+  while(loc >= 0 && loc < f2.size()) {
+    f2 = f2.substr(1);
+    loc = f2.find_first_of("/\\");
+    }
   if(!(strcasecmp(f1.c_str(), f2.c_str()))) {
     return true;
     }
