@@ -44,10 +44,22 @@ using namespace std;
 #include "simplemodel_wedge.h"
 #include "simplemodel_sphere.h"
 
-SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinname) {
+SimpleModel *SimpleModel::LoadModel(
+	const string &filename, const string &defskin
+	) {
+  vector<string> skins;
+  if(defskin.length() > 0) skins.push_back(defskin);
+  return LoadModel(filename, skins);
+  }
+
+SimpleModel *SimpleModel::LoadModel(
+	const string &filename, const vector<string> &skins
+	) {
+  string skin = "";
+  if(skins.size() > 0) skin = skins[0];
+
   SDL_RWops *cfg = SDL_RWFromZZIP((filename + "/animation.cfg").c_str(), "rb");
   if(cfg) {
-    string skin = skinname;
     SDL_RWclose(cfg);
     if(skin.length() <= 0) skin = "default";
     return new SimpleModel_Q3Dir(filename, skin);
@@ -56,7 +68,6 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
     cfg = SDL_RWFromZZIP((source_files[snum] + "/" + filename
 	+ "/animation.cfg").c_str(), "rb");
     if(cfg) {
-      string skin = skinname;
       SDL_RWclose(cfg);
       if(skin.length() <= 0) skin = "default";
       return new SimpleModel_Q3Dir(source_files[snum], filename, skin);
@@ -66,34 +77,35 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
   SDL_RWops *md2 = SDL_RWFromZZIP((filename + "/tris.md2").c_str(), "rb");
   if(md2) {
     SDL_RWclose(md2);
-    return new SimpleModel_MD2(filename, "tris.md2", skinname);
+    return new SimpleModel_MD2(filename, "tris.md2", skin);
     }
 
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "obj"))) {
-    return new SimpleModel_OBJ(filename, skinname);
+    return new SimpleModel_OBJ(filename);
     }
 
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
-    return new SimpleModel_3DS(filename, skinname);
+    return new SimpleModel_3DS(filename);
     }
 
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "md3"))) {
     SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
+    if(skin.length() <= 0) skin = "default";
     if(model) {
       SDL_RWclose(model);
       if(filename[0] == '/') {
-	return new SimpleModel_MD3("/", filename, skinname);
+	return new SimpleModel_MD3("/", filename, skin);
 	}
-      return new SimpleModel_MD3(".", filename, skinname);
+      return new SimpleModel_MD3(".", filename, skin);
       }
     for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);
-	return new SimpleModel_MD3(source_files[snum], filename, skinname);
+	return new SimpleModel_MD3(source_files[snum], filename, skin);
 	}
       }
     fprintf(stderr, "WARNING: Failed to load md3 model '%s' - using wedge.\n",
@@ -107,15 +119,15 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
     if(model) {
       SDL_RWclose(model);
       if(filename[0] == '/') {
-	return new SimpleModel_MD2("/", filename, skinname);
+	return new SimpleModel_MD2("/", filename, skin);
 	}
-      return new SimpleModel_MD2(".", filename, skinname);
+      return new SimpleModel_MD2(".", filename, skin);
       }
     for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);
-	return new SimpleModel_MD2(source_files[snum], filename, skinname);
+	return new SimpleModel_MD2(source_files[snum], filename, skin);
 	}
       }
     fprintf(stderr, "WARNING: Failed to load md2 model '%s' - using wedge.\n",
@@ -129,15 +141,15 @@ SimpleModel *SimpleModel::LoadModel(const string &filename, const string &skinna
     if(model) {
       SDL_RWclose(model);
       if(filename[0] == '/') {
-	return new SimpleModel_MDX("/", filename, skinname);
+	return new SimpleModel_MDX("/", filename, skins);
 	}
-      return new SimpleModel_MDX(".", filename, skinname);
+      return new SimpleModel_MDX(".", filename, skins);
       }
     for(Uint32 snum = 0; snum < source_files.size(); ++snum) {
       model = SDL_RWFromZZIP((source_files[snum] + "/" + filename).c_str(), "rb");
       if(model) {
 	SDL_RWclose(model);
-	return new SimpleModel_MDX(source_files[snum], filename, skinname);
+	return new SimpleModel_MDX(source_files[snum], filename, skins);
 	}
       }
     fprintf(stderr, "WARNING: Failed to load mdx model '%s' - using wedge.\n",
@@ -168,7 +180,7 @@ SimpleModel::SimpleModel() {
 SimpleModel::~SimpleModel() {
   }
 
-bool SimpleModel::Load(const string &filenm) {
+bool SimpleModel::Load(const string &filenm, const vector<string> &skin) {
   filename = filenm;
   return false;
   }
@@ -464,7 +476,13 @@ const vector<string> SimpleModel::GetSourceFiles() {
 vector<string> SimpleModel::source_files;
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin) {
-  return SimpleModel::LoadModel(filename, defskin);
+  vector<string> skins;
+  if(defskin.length() > 0) skins.push_back(defskin);
+  return SimpleModel::LoadModel(filename, skins);
+  }
+
+SimpleModel *SM_LoadModel(const string &filename, const vector<string> &skins) {
+  return SimpleModel::LoadModel(filename, skins);
   }
 
 SimpleModel::Matrix4x4 SimpleModel::identity4x4 = {{

@@ -27,11 +27,13 @@
 class SimpleModel_MDX : public SimpleModel_MD {
 public:
   SimpleModel_MDX(const string &filenm,
-	const string &modelnm = "", const string &defskin = "");
+	const string &modelnm = "",
+	const vector<string> &skins = vector<string>()
+	);
   virtual ~SimpleModel_MDX();
 
   virtual bool Load(const string &filenm,
-	const string &modelnm, const string &defskin);
+	const string &modelnm, const vector<string> &skins);
 
 protected:
   SimpleModel_MDX();

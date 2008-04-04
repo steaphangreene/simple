@@ -65,7 +65,8 @@ public:
   void DetachSubmodel(const string &tag);
   void SetAnimOffset(const string &tag, Uint32 offset);
 
-  virtual bool Load(const string &filenm);
+  virtual bool Load(const string &filenm,
+	const vector<string> &skin = vector<string>());
 
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm) {};
@@ -77,6 +78,7 @@ public:
 
   //Exported Utility Functions
   static SimpleModel *LoadModel(const string &filename, const string &defskin = "");
+  static SimpleModel *LoadModel(const string &filename, const vector<string> &skins);
 
 protected:
   virtual bool RenderSelf(Uint32 cur_time,
@@ -182,5 +184,6 @@ protected:
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");
+SimpleModel *SM_LoadModel(const string &filename, const vector<string> &skins);
 
 #endif	//SIMPLEMODEL_H

@@ -83,8 +83,8 @@ static void SetAnim(int which, string anim_name = "") {
 
 int main(int argc, char **argv) {
   int xs=800, ys=600;
-  char *modname = "models/players/trooper";
-  char *weapname = "models/weapons2/machinegun";
+  char *modname = "";
+  char *weapname = "";
   Uint32 bgcolor = 0x000000;	// Default Background Color is Black
 
   int barg = 1;
@@ -108,13 +108,12 @@ int main(int argc, char **argv) {
     barg += 2;
     }
 
-  if((argc-barg) > 2) {
-    fprintf(stderr, "USAGE: %s [-s <search_prefix> [...]] <model_file>|<model_dir> [skin]\n", argv[0]);
+  if((argc-barg) < 1) {
+    fprintf(stderr, "USAGE: %s [-s <search_prefix> [...]] <model_file>|<model_dir> [ skin ... ]\n", argv[0]);
     exit(1);
     }
-  else if((argc-barg) >= 1) {
-    modname = argv[barg];
-    }
+
+  modname = argv[barg];
 
   if(!init_renderer(xs, ys, bgcolor)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
@@ -128,9 +127,11 @@ int main(int argc, char **argv) {
   banner->SetText("Default Animation");
   banner->SetTextAspectRatio(16.0);
 
-  char * skinname = ""; // Use Default Skin
-  if(argc-barg == 2) {
-    skinname = argv[barg+1];
+  vector<string> skinname;
+  barg += 1;
+  while(argc-barg >= 1) {
+    skinname.push_back(argv[barg]);
+    ++barg;
     }
 
   mod = SM_LoadModel(modname, skinname);
@@ -138,9 +139,11 @@ int main(int argc, char **argv) {
     fprintf(stderr, "ERROR: Model load failed\n");
     exit(1);
     }
-  weap = SM_LoadModel(weapname);	//FIXME: Skin?
-  if(weap) {
-    mod->AttachSubmodel("tag_weapon", weap);
+  if(strlen(weapname) > 0) {
+    weap = SM_LoadModel(weapname);	//FIXME: Weapon Skin?
+    if(weap) {
+      mod->AttachSubmodel("tag_weapon", weap);
+      }
     }
 
   anims.push_back(0);

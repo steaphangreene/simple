@@ -34,8 +34,8 @@ using namespace std;
 #include "saferead.h"
 
 SimpleModel_MDX::SimpleModel_MDX(const string &filenm,
-	const string &modelnm, const string &defskin) : SimpleModel_MD() {
-  Load(filenm, modelnm, defskin);
+	const string &modelnm, const vector<string> &skins) : SimpleModel_MD() {
+  Load(filenm, modelnm, skins);
   }
 
 SimpleModel_MDX::SimpleModel_MDX() : SimpleModel_MD() {
@@ -65,7 +65,7 @@ static bool is_same_filename (const string &cf1, const string cf2) {
   }
 
 bool SimpleModel_MDX::Load(const string &filenm,
-	const string &modelnm, const string &defskin) {
+	const string &modelnm, const vector<string> &skins) {
 //  fprintf(stderr, "Opening '%s'\n", filenm.c_str());
   string token;
 
@@ -138,14 +138,14 @@ bool SimpleModel_MDX::Load(const string &filenm,
       }
     }
 
-  if(defskin.length() > 0) {
+  for(unsigned int skin=0; skin < skins.size(); ++skin) {
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
-      if(is_same_filename(defskin, (char*)(tex->path))) {
+      if(is_same_filename(skins[skin], (char*)(tex->path))) {
 	//fprintf(stderr, "Replacing texture %d\n", tex - textures.begin());
 	delete(texture[tex - textures.begin()]);
 	texture[tex - textures.begin()]
-		= new SimpleTexture(filenm + "/" + defskin);
+		= new SimpleTexture(filenm + "/" + skins[skin]);
 	}
       }
     }
