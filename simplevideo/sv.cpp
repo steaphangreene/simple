@@ -268,15 +268,8 @@ bool SimpleVideo::StartScene() {
 	zmin_clip, zmax_clip);
     }
   else {
-    //FIXME: This clip calculation is wrong
-    double zmin_clip, zmax_clip, xdist, ydist;
-    xdist = (vdist*sin(DEG2RAD(down)) + zm);
-    ydist = (vdist*cos(DEG2RAD(down)) + z - minz);
-    zmax_clip = sqrt(xdist*xdist + ydist*ydist);
-    xdist = (vdist*sin(DEG2RAD(down)) - zm);
-    ydist = (vdist*cos(DEG2RAD(down)) + z - maxz);
-    zmin_clip = sqrt(xdist*xdist + ydist*ydist);
-    gluPerspective(yfov, aspect, zmin_clip, zmax_clip);
+    //FIXME: Do a real clip/view-range calculation
+    gluPerspective(yfov, aspect, 0.5, 16.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
