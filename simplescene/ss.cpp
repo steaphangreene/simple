@@ -99,10 +99,48 @@ SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
   return next_obj++;
   }
 
+void SimpleScene::SimplifyActs(SS_Object obj) {
+  vector<SimpleScene::Action>::iterator act;
+  map<SS_Action, vector<SimpleScene::Action>::iterator> baseact;
+  act = objlist[obj]->second.acts.begin();
+  for(; act != objlist[obj]->second.acts.end(); ++act) {
+    SS_Action type = objlist[obj]->second.acts.begin()->type;
+    if(baseact.count(type) < 1) {
+      baseact[type] = act;
+      }
+    else if(type == SS_ACT_VISIBLE) {
+//      fprintf(stderr, "Combine %d(%d) & %d(%d)?\n",
+//		act->finish, act->duration,
+//		baseact[type]->finish, baseact[type]->duration);
+      if(act->finish + baseact[type]->duration >= baseact[type]->finish
+		&& baseact[type]->finish + act->duration >= act->finish) {
+	if(baseact[type]->finish < act->finish) {
+	  Uint32 diff = act->finish - baseact[type]->finish;
+	  baseact[type]->finish = act->finish;
+	  baseact[type]->duration += diff;
+	  act->duration = baseact[type]->duration;
+	  }
+	else {
+	  Uint32 diff = baseact[type]->finish - act->finish;
+	  act->finish = baseact[type]->finish;
+	  act->duration += diff;
+	  baseact[type]->duration = act->duration;
+	  }
+//	fprintf(stderr, "Combined %d(%d)\n",
+//		baseact[type]->finish, baseact[type]->duration);
+	}
+//      else {
+//	fprintf(stderr, "Not Combined\n");
+//	}
+      }
+    }
+  }
+
 void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
   Action newact = { act, fin, dur };
   objlist[obj]->second.acts.push_back(newact);
+  //SimplifyActs(obj);
   }
 
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
@@ -230,6 +268,7 @@ void SimpleScene::Clear() {
 bool SimpleScene::DrawObjects(Uint32 offset) {
   float xp = 0.0, yp = 0.0, zp = 0.0;
 
+  glColor4f(1.0, 1.0, 1.0, 1.0);
   glPushMatrix();
   multimap<Coord, Object>::const_iterator obj = objects.begin();
   for(; obj != objects.end(); ++obj) {

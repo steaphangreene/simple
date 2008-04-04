@@ -139,6 +139,8 @@ protected:
       }
     };
 
+  void SimplifyActs(SS_Object obj);
+
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 
