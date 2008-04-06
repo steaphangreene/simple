@@ -140,7 +140,7 @@ void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
   Action newact = { act, fin, dur };
   objlist[obj]->second.acts.push_back(newact);
-  //SimplifyActs(obj);
+  SimplifyActs(obj);
   }
 
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
@@ -263,6 +263,11 @@ void SimpleScene::SetParticleTime(SS_Particle part, Uint32 start) {
 void SimpleScene::Clear() {
   ptypes.clear();
   parts.clear();
+  models.clear();
+  skins.clear();
+  objects.clear();
+  objlist.clear();
+  next_obj = 1;
   }
 
 bool SimpleScene::DrawObjects(Uint32 offset) {
