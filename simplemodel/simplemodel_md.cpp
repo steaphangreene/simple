@@ -71,7 +71,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
     float alpha = 1.0;
 
     for(Uint32 ctr = 0; ctr < geosetanims.size(); ++ctr) {
-      if(geosetanims[ctr].geoset_id == geo_it - geosets.begin()) {
+      if(geosetanims[ctr].geoset_id == Uint32(geo_it - geosets.begin())) {
 	alpha = geosetanims[ctr].AlphaAt(anim_info);
 	}
       }
