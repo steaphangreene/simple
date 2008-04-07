@@ -39,6 +39,8 @@ static SimpleModel *weap = NULL;
 
 static SimpleTexture *banner = NULL;
 
+static bool verbose = false;
+
 static void SetAnim(int which, string anim_name = "") {
   static int anim = 0;
   int oldanim = anim;
@@ -89,6 +91,7 @@ int main(int argc, char **argv) {
 
   int barg = 1;
   while(argc > barg && (strcmp(argv[barg], "-s") == 0
+		|| strcmp(argv[barg], "-v") == 0
 		|| strcmp(argv[barg], "-c") == 0
 		|| strcmp(argv[barg], "-w") == 0
 	)) {
@@ -104,6 +107,11 @@ int main(int argc, char **argv) {
       }
     else if(strcmp(argv[barg], "-c") == 0) {
       bgcolor = strtoul(argv[barg+1], NULL, 0);
+      }
+    else if(strcmp(argv[barg], "-v") == 0) {
+      verbose = true;
+      barg += 1;
+      continue;
       }
     barg += 2;
     }
@@ -143,6 +151,14 @@ int main(int argc, char **argv) {
     weap = SM_LoadModel(weapname);	//FIXME: Weapon Skin?
     if(weap) {
       mod->AttachSubmodel("tag_weapon", weap);
+      }
+    }
+
+  if(verbose) {
+    map<string, int>::const_iterator anim = mod->GetAnimations().begin();
+    printf("Model has these animations:\n");
+    for(; anim != mod->GetAnimations().end(); ++anim) {
+      printf("\t%s\n", anim->first.c_str());
       }
     }
 
