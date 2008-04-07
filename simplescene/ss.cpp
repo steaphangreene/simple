@@ -277,10 +277,13 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
   glPushMatrix();
   multimap<Coord, Object>::const_iterator obj = objects.begin();
   for(; obj != objects.end(); ++obj) {
-    if(obj->second.acts.size() > 0 && (
-	offset >= obj->second.acts.begin()->finish
-	|| offset + obj->second.acts.begin()->duration < obj->second.acts.begin()->finish)) {
-      continue;
+    vector<SimpleScene::Action>::const_iterator act;
+    act=obj->second.acts.begin();
+    if(!obj->second.acts.empty()) {
+      for(; act != obj->second.acts.end(); ++act) {
+	if(offset < act->finish && (offset+act->duration) >= act->finish) break;
+	}
+      if(act == obj->second.acts.end()) continue;
       }
 
     if(xlim0 < xlim1 && (
