@@ -142,10 +142,18 @@ bool SimpleModel_MDX::Load(const string &filenm,
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
       if(is_same_filename(skins[skin], (char*)(tex->path))) {
-	//fprintf(stderr, "Replacing texture %d\n", tex - textures.begin());
+	//fprintf(stderr, "Replacing texture %d (%s)\n",
+	//	tex - textures.begin(), skins[skin].c_str());
 	delete(texture[tex - textures.begin()]);
-	texture[tex - textures.begin()]
+	if(skins[skin].c_str()[0] == '/') {
+	  texture[tex - textures.begin()]
+		= new SimpleTexture(skins[skin]);
+	  }
+	else {
+	  texture[tex - textures.begin()]
 		= new SimpleTexture(filenm + "/" + skins[skin]);
+	  }
+	//fprintf(stderr, "->%d\n", texture[tex - textures.begin()]->GLTexture());
 	}
       }
     }
