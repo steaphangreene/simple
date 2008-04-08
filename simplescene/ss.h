@@ -44,6 +44,7 @@ typedef int SS_Object;
 enum SS_Action {
   SS_ACT_NONE = 0,
   SS_ACT_VISIBLE,
+  SS_ACT_HALFCOLOR,
   SS_ACT_MAX
   };
 

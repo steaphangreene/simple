@@ -104,28 +104,32 @@ void SimpleScene::SimplifyActs(SS_Object obj) {
   map<SS_Action, vector<SimpleScene::Action>::iterator> baseact;
   act = objlist[obj]->second.acts.begin();
   for(; act != objlist[obj]->second.acts.end(); ++act) {
-    SS_Action type = objlist[obj]->second.acts.begin()->type;
+    SS_Action type = act->type;
     if(baseact.count(type) < 1) {
       baseact[type] = act;
       }
-    else if(type == SS_ACT_VISIBLE) {
-//      fprintf(stderr, "Combine %d(%d) & %d(%d)?\n",
-//		act->finish, act->duration,
-//		baseact[type]->finish, baseact[type]->duration);
+    else if(type == SS_ACT_VISIBLE || type == SS_ACT_HALFCOLOR) {
+//      fprintf(stderr, "Combine [%d]%d(%d) & [%d]%d(%d)?\n",
+//		act->type, act->finish, act->duration,
+//		baseact[type]->type, baseact[type]->finish, baseact[type]->duration);
       if(act->finish + baseact[type]->duration >= baseact[type]->finish
 		&& baseact[type]->finish + act->duration >= act->finish) {
 	if(baseact[type]->finish < act->finish) {
 	  Uint32 diff = act->finish - baseact[type]->finish;
-	  baseact[type]->finish = act->finish;
 	  baseact[type]->duration += diff;
-	  act->duration = baseact[type]->duration;
+	  baseact[type]->finish += diff;
+	  if(baseact[type]->duration < act->duration)
+	    baseact[type]->duration = act->duration;
 	  }
 	else {
 	  Uint32 diff = baseact[type]->finish - act->finish;
-	  act->finish = baseact[type]->finish;
-	  act->duration += diff;
-	  baseact[type]->duration = act->duration;
+	  if(baseact[type]->duration + diff < act->duration) {
+	    baseact[type]->duration = act->duration + diff;
+	    }
 	  }
+//	act->type = SS_ACT_NONE;
+	act = objlist[obj]->second.acts.erase(act);
+	--act;
 //	fprintf(stderr, "Combined %d(%d)\n",
 //		baseact[type]->finish, baseact[type]->duration);
 	}
@@ -307,7 +311,10 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       yp = obj->first.y;
       zp = obj->first.z;
       }
-    if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
+    if(act->type == SS_ACT_HALFCOLOR) {
+      glColor4f(obj->second.r/2.0, obj->second.g/2.0, obj->second.b/2.0, 1.0);
+      }
+    else if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
       glColor4f(obj->second.r, obj->second.g, obj->second.b, 1.0);
       }
     if(obj->second.size != 1.0) {
@@ -332,7 +339,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(obj->second.size != 1.0) {
       glPopMatrix();
       }
-    if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
+    if(act->type == SS_ACT_HALFCOLOR
+	|| obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
       glColor4f(1.0, 1.0, 1.0, 1.0);
       }
     }  
