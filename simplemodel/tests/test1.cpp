@@ -155,9 +155,10 @@ int main(int argc, char **argv) {
     }
 
   if(verbose) {
-    map<string, int>::const_iterator anim = mod->GetAnimations().begin();
+    map<string, int> anim_map = mod->GetAnimations();
+    map<string, int>::const_iterator anim = anim_map.begin();
     printf("Model has these animations:\n");
-    for(; anim != mod->GetAnimations().end(); ++anim) {
+    for(; anim != anim_map.end(); ++anim) {
       printf("\t%s\n", anim->first.c_str());
       }
     }
