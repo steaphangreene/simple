@@ -127,7 +127,6 @@ void SimpleScene::SimplifyActs(SS_Object obj) {
 	    baseact[type]->duration = act->duration + diff;
 	    }
 	  }
-//	act->type = SS_ACT_NONE;
 	act = objlist[obj]->second.acts.erase(act);
 	--act;
 //	fprintf(stderr, "Combined %d(%d)\n",
