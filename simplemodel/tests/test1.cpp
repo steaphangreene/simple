@@ -168,6 +168,13 @@ int main(int argc, char **argv) {
   times.push_back(SDL_GetTicks());
   times.push_back(SDL_GetTicks());
 
+  { map<string, int> anim_map = mod->GetAnimations();
+    map<string, int>::const_iterator itr = anim_map.begin();
+    for(; itr != anim_map.end(); ++itr) {
+      if(0 == itr->second) banner->SetText(itr->first);
+      }
+    }
+
   int quit = 0;
   float yaw = 0.0, pitch = 0.0;
   float posx = 2.0, posy = 0.0, posz = 0.0;
