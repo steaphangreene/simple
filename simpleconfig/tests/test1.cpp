@@ -43,7 +43,7 @@ static SimpleGUI *gui;
 static SimpleVideo *video;
 
 int main(int argc, char **argv) {
-  char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
+  char *fontfn = NULL;
   int xs=1024, ys=768;
 
   video = new SimpleVideo(xs, ys, 4.0/3.0);
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
   int click = audio_buildsound(click_data, sizeof(click_data));
 
-  gui->LoadFont(fontfn);
+  if(fontfn) gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 

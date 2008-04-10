@@ -45,7 +45,7 @@ using namespace std;
 static SimpleGUI *gui;
 
 int main(int argc, char **argv) {
-  char *fontfn = "fonts/Adventure Subtitles Normal.ttf";
+  char *fontfn = NULL;
   int xs=640, ys=480;
 
   int cur_arg = 1;
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
   gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
 
-  gui->LoadFont(fontfn);
+  if(fontfn) gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
   int white = gui->NewColor(1.0, 1.0, 1.0);

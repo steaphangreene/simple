@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 
   SimpleTexture::SetColor(0, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
   banner = new SimpleTexture(0);
-  banner->LoadFont("fonts/Adventure Subtitles Normal.ttf", 50);
+  banner->SetDefaultFontSize(50);
   banner->type = SIMPLETEXTURE_TRANSCOLOR;
   banner->SetTextAlignment(ST_ALIGN_CENTER);
   banner->SetText("Default Animation");
