@@ -117,6 +117,16 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 	glActiveTextureARB(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture.at(layer->texture_id)->GLTexture());
 	glEnable(GL_TEXTURE_2D);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PREVIOUS);
+	glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_TEXTURE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_TEXTURE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PREVIOUS);
+	glTexEnvf(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_ONE_MINUS_SRC_ALPHA);
 	}
       glBegin(GL_TRIANGLES);
 	Uint32 mindex = geo_it->vertex_groups.at(v1);
