@@ -167,6 +167,7 @@ protected:
 
   void Clear();
   void CopyFrom(const SimpleTexture &in);
+  static void LoadFont(const int pxsz);
 
   GLuint texture;	//Current texture (when active)
 

@@ -30,6 +30,7 @@
 #include "stt_buttonup.h"
 #include "stt_buttondown.h"
 #include "saferead.h"
+#include "simple_font.h"
 
 #define	ST_NUM_SYSTEM_COLORS	32
 
@@ -1036,7 +1037,10 @@ void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
 	fontfn, TTF_GetError());
     return;
     }
+  LoadFont(pxsz);
+  }
 
+void SimpleTexture::LoadFont(const int pxsz) {
   fontyratio = 1.0;
   int load_pxsz = 100;
   Font(load_pxsz); //Initialize font
@@ -1048,7 +1052,6 @@ void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
     Font(load_pxsz); //Create the REAL default font size
 //    fprintf(stderr, "FontYRatio = %f\n", fontyratio);
     }
-
   SetDefaultFontSize(pxsz);
   }
 
@@ -1061,8 +1064,8 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
   if(pxsz < 1) pxsz = default_pxsize;
   if(cur_font.count(pxsz)) return cur_font[pxsz];
   else if(!fontrw) {
-    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
-    return NULL;
+    fontrw = SDL_RWFromMem(simple_font, sizeof(simple_font));
+    LoadFont(pxsz);
     }
 
   if(!TTF_WasInit()) {
@@ -1095,7 +1098,7 @@ list<GLuint> SimpleTexture::trash_tex;
 vector<SDL_Color> SimpleTexture::color;
 SDL_Color SimpleTexture::default_text_color = {0, 0, 0, 0};
 map<int, TTF_Font *> SimpleTexture::cur_font;
-int SimpleTexture::default_pxsize;
+int SimpleTexture::default_pxsize = 20;
 float SimpleTexture::fontyratio = 1.0;
 SDL_RWops *SimpleTexture::fontrw = NULL;
 Uint8 *SimpleTexture::fontdata = NULL;
