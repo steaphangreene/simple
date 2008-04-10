@@ -185,7 +185,8 @@ protected:
   static map<int, TTF_Font *> cur_font;
   static int default_pxsize;
   static float fontyratio;
-  static char *fontfile;
+  static SDL_RWops *fontrw;
+  static Uint8 *fontdata;
 
   static set<SimpleTexture *> all_textures;	//For invalidation
   static bool need_to_reaquire;

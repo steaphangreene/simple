@@ -1004,15 +1004,17 @@ const SDL_Color *SimpleTexture::DefaultTextColor() {
 void SimpleTexture::SetFont(TTF_Font *font) {
   if(!TTF_WasInit()) {
     if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
-	fontfile, TTF_GetError());
+      fprintf(stderr, "ERROR: Unable to load font: %s\n", TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
     }
 
-  if(fontfile) delete [] fontfile;
-  fontfile = NULL;
+  if(fontrw) SDL_RWclose(fontrw);
+  fontrw = NULL;
+  if(fontdata) delete [] fontdata;
+  fontdata = NULL;
+
   cur_font[0] = font;
   fontyratio = 1.0;
   default_pxsize = 0;
@@ -1023,9 +1025,17 @@ void SimpleTexture::SetDefaultFontSize(const int pxsz) {
   }
 
 void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
-  if(fontfile) delete [] fontfile;
-  fontfile = new char[strlen(fontfn)+1];
-  strcpy(fontfile, fontfn);
+  if(fontrw) SDL_RWclose(fontrw);
+  fontrw = NULL;
+  if(fontdata) delete [] fontdata;
+  fontdata = NULL;
+
+  fontrw = SDL_RWFromFile(fontfn, "rb");
+  if(!fontrw) {
+    fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
+	fontfn, TTF_GetError());
+    return;
+    }
 
   fontyratio = 1.0;
   int load_pxsz = 100;
@@ -1050,15 +1060,14 @@ TTF_Font *SimpleTexture::CurrentFont() {
 TTF_Font *SimpleTexture::Font(int pxsz) {
   if(pxsz < 1) pxsz = default_pxsize;
   if(cur_font.count(pxsz)) return cur_font[pxsz];
-  else if(!fontfile) {
-//    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
+  else if(!fontrw) {
+    fprintf(stderr, "WARNING: attempt to resize font size with no loaded font!\n");
     return NULL;
     }
 
   if(!TTF_WasInit()) {
     if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
-	fontfile, TTF_GetError());
+      fprintf(stderr, "ERROR: Unable to load font - %s\n", TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
@@ -1066,9 +1075,11 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
 
   int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);   //Scale to real ptsize
 
-  cur_font[pxsz] = TTF_OpenFont(fontfile, ptsz);
+  cur_font[pxsz] = TTF_OpenFontRW(fontrw, 0, ptsz);
+  SDL_RWseek(fontrw, 0, SEEK_SET);
+
   if(!cur_font[pxsz]) {
-    fprintf(stderr, "ERROR: Unable to load font '%s'!\n", fontfile);
+    fprintf(stderr, "ERROR: Unable to load font!\n");
     exit(1);
     }
 
@@ -1086,7 +1097,8 @@ SDL_Color SimpleTexture::default_text_color = {0, 0, 0, 0};
 map<int, TTF_Font *> SimpleTexture::cur_font;
 int SimpleTexture::default_pxsize;
 float SimpleTexture::fontyratio = 1.0;
-char *SimpleTexture::fontfile = NULL;
+SDL_RWops *SimpleTexture::fontrw = NULL;
+Uint8 *SimpleTexture::fontdata = NULL;
 
 ST_Texturator *SimpleTexture::default_texturator = NULL;
 ST_Texturator *SimpleTexture::invisible_texturator = NULL;
