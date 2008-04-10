@@ -24,6 +24,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cctype>
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
@@ -163,6 +164,16 @@ bool SimpleModel_MDX::Load(const string &filenm,
 			(color_name[skins[skin]] >> 16) / 255.0,
 			((color_name[skins[skin]] >> 8) & 255) / 255.0,
 			(color_name[skins[skin]] & 255) / 255.0
+		));
+	}
+      else if(tex->replacable_id == 1 && isdigit(skins[skin][0])) {
+	delete(texture[tex - textures.begin()]);
+	Uint32 color = strtoul(skins[skin].c_str(), NULL, 0);
+	texture[tex - textures.begin()]	= new SimpleTexture(
+		SimpleTexture::NewColor(
+			(color >> 16) / 255.0,
+			((color >> 8) & 255) / 255.0,
+			(color & 255) / 255.0
 		));
 	}
       }
