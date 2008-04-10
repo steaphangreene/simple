@@ -184,6 +184,12 @@ protected:
   static glBufVBO glBufferDataARB;
   static glDelVBO glDeleteBuffersARB;
   static glIsAVBO glIsBufferARB;
+
+  typedef void (APIENTRY * glActTEX) (GLenum);
+  typedef void (APIENTRY * glMTXCRD2f) (GLenum, GLfloat, GLfloat);
+
+  static glActTEX glActiveTextureARB;
+  static glMTXCRD2f glMultiTexCoord2fARB;
   };
 
 SimpleModel *SM_LoadModel(const string &filename, const string &defskin = "");

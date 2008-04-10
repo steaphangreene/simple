@@ -545,6 +545,8 @@ SimpleModel::glBndVBO SimpleModel::glBindBufferARB = NULL;
 SimpleModel::glBufVBO SimpleModel::glBufferDataARB = NULL;
 SimpleModel::glDelVBO SimpleModel::glDeleteBuffersARB = NULL;
 SimpleModel::glIsAVBO SimpleModel::glIsBufferARB = NULL;
+SimpleModel::glActTEX SimpleModel::glActiveTextureARB = NULL;
+SimpleModel::glMTXCRD2f SimpleModel::glMultiTexCoord2fARB = NULL;
 
 void SimpleModel::SetupGLEXT() {
   SimpleModel::glGenBuffersARB =
@@ -568,6 +570,10 @@ void SimpleModel::SetupGLEXT() {
     SimpleModel::glDeleteBuffersARB = NULL;
     SimpleModel::glIsBufferARB = NULL;
     }
+  SimpleModel::glActiveTextureARB =
+	(glActTEX) SDL_GL_GetProcAddress("glActiveTextureARB");
+  SimpleModel::glMultiTexCoord2fARB =
+	(glMTXCRD2f) SDL_GL_GetProcAddress("glMultiTexCoord2fARB");
   gl_ext_detected = true;
   }
 

@@ -104,22 +104,57 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       else {
 	continue;	// Don't show it if there's not texture for it!
 	}
+      if(layer != end) {
+	++layer;
+	for(; layer != end; ++layer) {
+	  if(layer->texture_id < texture.size()
+		&& texture.at(layer->texture_id)->GLTexture() != 0) {
+	    break;
+	    }
+	  }
+	}
+      if(layer != end) {	// Doing multi-texturing
+	glActiveTextureARB(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture.at(layer->texture_id)->GLTexture());
+	glEnable(GL_TEXTURE_2D);
+	}
       glBegin(GL_TRIANGLES);
-        Uint32 mindex = geo_it->vertex_groups.at(v1);
-        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
-        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v1).coord[0], geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
-        glVertex3f(vert.x, vert.y, vert.z);
+	Uint32 mindex = geo_it->vertex_groups.at(v1);
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
+	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v1).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
+	if(layer != end)
+	  glMultiTexCoord2fARB(GL_TEXTURE1,
+		geo_it->texture_coords_uvas.at(0).at(v1).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
+	glVertex3f(vert.x, vert.y, vert.z);
     
-        mindex = geo_it->vertex_groups.at(v2);
-        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
-        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v2).coord[0], geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
-        glVertex3f(vert.x, vert.y, vert.z);
+	mindex = geo_it->vertex_groups.at(v2);
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
+	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v2).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
+	if(layer != end)
+	  glMultiTexCoord2fARB(GL_TEXTURE1,
+		geo_it->texture_coords_uvas.at(0).at(v2).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
+	glVertex3f(vert.x, vert.y, vert.z);
     
-        mindex = geo_it->vertex_groups.at(v3);
-        MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
-        glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v3).coord[0], geo_it->texture_coords_uvas.at(0).at(v3).coord[1]);
-        glVertex3f(vert.x, vert.y, vert.z);
+	mindex = geo_it->vertex_groups.at(v3);
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
+	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v3).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v3).coord[1]);
+	if(layer != end)
+	  glMultiTexCoord2fARB(GL_TEXTURE1,
+		geo_it->texture_coords_uvas.at(0).at(v3).coord[0],
+		geo_it->texture_coords_uvas.at(0).at(v3).coord[1]);
+	glVertex3f(vert.x, vert.y, vert.z);
       glEnd();
+
+      if(layer != end) {	// Doing multi-texturing
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTextureARB(GL_TEXTURE0);
+	}
       }
 
     if(alpha != 1.0) glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -256,11 +291,11 @@ bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const Animati
 
       // If our current animation starts before start frame and ends after end frame, interpolate into res
       if(anim_info.cur_seq->start <= start_frame->frame && anim_info.cur_seq->end >= end_frame->frame) {
-        float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
-        LERP(res, start_frame->point, end_frame->point, weight);
-        }
+	float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
+	LERP(res, start_frame->point, end_frame->point, weight);
+	}
       else
-        res = start_frame->point;
+	res = start_frame->point;
       
       return true;
       }
@@ -295,15 +330,15 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
       }
     else if(start_frame->frame < anim_info.cur_frame && anim_info.cur_frame < end_frame->frame) {
       if(anim_info.cur_seq->start > start_frame->frame && anim_info.cur_seq->end < end_frame->frame)
-        return false;
+	return false;
 
       if(anim_info.cur_seq->start <= start_frame->frame && anim_info.cur_seq->end >= end_frame->frame) {
-        float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
-        SLERP(res, start_frame->quat, end_frame->quat, weight);
-        //Normalize(res, res);	// This doesn't seem to be required.
-        }
+	float weight = float(anim_info.cur_frame - start_frame->frame) / (end_frame->frame - start_frame->frame);
+	SLERP(res, start_frame->quat, end_frame->quat, weight);
+	//Normalize(res, res);	// This doesn't seem to be required.
+	}
       else
-        res = start_frame->quat;
+	res = start_frame->quat;
       
       return true;
       }
