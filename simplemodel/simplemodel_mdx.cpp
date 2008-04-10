@@ -139,6 +139,7 @@ bool SimpleModel_MDX::Load(const string &filenm,
     }
 
   for(unsigned int skin=0; skin < skins.size(); ++skin) {
+    init_colors();	// Be sure we have the color names
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
       if(is_same_filename(skins[skin], (char*)(tex->path))) {
@@ -154,6 +155,15 @@ bool SimpleModel_MDX::Load(const string &filenm,
 		= new SimpleTexture(filenm + "/" + skins[skin]);
 	  }
 	//fprintf(stderr, "->%d\n", texture[tex - textures.begin()]->GLTexture());
+	}
+      else if(tex->replacable_id == 1 && color_name.count(skins[skin]) > 0) {
+	delete(texture[tex - textures.begin()]);
+	texture[tex - textures.begin()]	= new SimpleTexture(
+		SimpleTexture::NewColor(
+			(color_name[skins[skin]] >> 16) / 255.0,
+			((color_name[skins[skin]] >> 8) & 255) / 255.0,
+			(color_name[skins[skin]] & 255) / 255.0
+		));
 	}
       }
     }
@@ -276,7 +286,14 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
 
     string buffer;
     buffer = filenm + "/" + (char *)(it->path);
-    texture.push_back(new SimpleTexture(buffer));
+    if(it->replacable_id == 0) {
+      texture.push_back(new SimpleTexture(buffer));
+      }
+    else if(it->replacable_id == 1) {	//Team Color (Default is Black)
+      texture.push_back(new SimpleTexture(
+	SimpleTexture::NewColor(0.0, 0.0, 0.0)
+	));
+      }
 //    fprintf(stderr, "[%d->%d] %s\n", it->replacable_id,
 //	(*(texture.end() - 1))->GLTexture(), buffer.c_str());
     }

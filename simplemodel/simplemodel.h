@@ -93,6 +93,9 @@ protected:
   map<Uint32, SimpleModel *> submodels;
   map<Uint32, Uint32> tag_anim_offsets;
 
+  static map<string, Uint32> color_name;
+  static void init_colors();
+
   static vector<string> source_files;
 
   struct Vector2 {
