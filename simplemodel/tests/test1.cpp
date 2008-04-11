@@ -106,7 +106,12 @@ int main(int argc, char **argv) {
       weapname = argv[barg+1];
       }
     else if(strcmp(argv[barg], "-c") == 0) {
-      bgcolor = strtoul(argv[barg+1], NULL, 0);
+      int col = SimpleTexture::ColorByName(argv[barg+1]);
+      bgcolor = SimpleTexture::BGColor(col)->r;
+      bgcolor <<= 8;
+      bgcolor += SimpleTexture::BGColor(col)->g;
+      bgcolor <<= 8;
+      bgcolor += SimpleTexture::BGColor(col)->b;
       }
     else if(strcmp(argv[barg], "-v") == 0) {
       verbose = true;
