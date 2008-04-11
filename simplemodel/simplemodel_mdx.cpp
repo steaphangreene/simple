@@ -140,7 +140,6 @@ bool SimpleModel_MDX::Load(const string &filenm,
     }
 
   for(unsigned int skin=0; skin < skins.size(); ++skin) {
-    init_colors();	// Be sure we have the color names
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
       if(is_same_filename(skins[skin], (char*)(tex->path))) {
@@ -148,8 +147,7 @@ bool SimpleModel_MDX::Load(const string &filenm,
 	//	tex - textures.begin(), skins[skin].c_str());
 	delete(texture[tex - textures.begin()]);
 	if(skins[skin].c_str()[0] == '/') {
-	  texture[tex - textures.begin()]
-		= new SimpleTexture(skins[skin]);
+	  texture[tex - textures.begin()] = new SimpleTexture(skins[skin]);
 	  }
 	else {
 	  texture[tex - textures.begin()]
@@ -157,24 +155,10 @@ bool SimpleModel_MDX::Load(const string &filenm,
 	  }
 	//fprintf(stderr, "->%d\n", texture[tex - textures.begin()]->GLTexture());
 	}
-      else if(tex->replacable_id == 1 && color_name.count(skins[skin]) > 0) {
+      else if(tex->replacable_id == 1
+		&& SimpleTexture::IsColorName(skins[skin]) >= 0) {
 	delete(texture[tex - textures.begin()]);
-	texture[tex - textures.begin()]	= new SimpleTexture(
-		SimpleTexture::NewColor(
-			(color_name[skins[skin]] >> 16) / 255.0,
-			((color_name[skins[skin]] >> 8) & 255) / 255.0,
-			(color_name[skins[skin]] & 255) / 255.0
-		));
-	}
-      else if(tex->replacable_id == 1 && isdigit(skins[skin][0])) {
-	delete(texture[tex - textures.begin()]);
-	Uint32 color = strtoul(skins[skin].c_str(), NULL, 0);
-	texture[tex - textures.begin()]	= new SimpleTexture(
-		SimpleTexture::NewColor(
-			(color >> 16) / 255.0,
-			((color >> 8) & 255) / 255.0,
-			(color & 255) / 255.0
-		));
+	texture[tex - textures.begin()]	= new SimpleTexture(skins[skin]);
 	}
       }
     }

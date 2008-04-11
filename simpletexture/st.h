@@ -135,6 +135,9 @@ public:
 	);
   static const SDL_Color *DefaultTextColor();
 
+  static int ColorByName(const string &cname);
+  static bool IsColorName(const string &cname);
+
   //Font Code (originally from SimpleGUI)
   static void LoadFont(const char *fontfn, int pxsz = 20);
   static void SetDefaultFontSize(const int pxsz);
@@ -192,6 +195,9 @@ protected:
   static set<SimpleTexture *> all_textures;	//For invalidation
   static bool need_to_reaquire;
   static int new_xsize, new_ysize;
+
+  static map<string, Uint32> color_name;
+  static void init_colors();
   };
 
 //Exported Utility Functions
