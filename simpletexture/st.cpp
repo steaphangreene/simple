@@ -1016,7 +1016,7 @@ const SDL_Color *SimpleTexture::DefaultTextColor() {
 void SimpleTexture::SetFont(TTF_Font *font) {
   if(!TTF_WasInit()) {
     if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font: %s\n", TTF_GetError());
+      fprintf(stderr, "ERROR: Unable to init fonts: %s\n", TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
@@ -1042,7 +1042,18 @@ void SimpleTexture::LoadFont(const char *fontfn, const int pxsz) {
   if(fontdata) delete [] fontdata;
   fontdata = NULL;
 
-  fontrw = SDL_RWFromFile(fontfn, "rb");
+  SDL_RWops *fontfl = SDL_RWFromZZIP(fontfn, "rb");
+  if(!fontfl) {
+    fprintf(stderr, "ERROR: Unable to load font file '%s' - %s\n",
+	fontfn, TTF_GetError());
+    return;
+    }
+  int size = SDL_RWseek(fontfl, 0, SEEK_END);
+  SDL_RWseek(fontfl, 0, SEEK_SET);
+  fontdata = new Uint8[size];
+  SDL_RWread(fontfl, fontdata, size, 1);
+  SDL_RWclose(fontfl);
+  fontrw = SDL_RWFromConstMem(fontdata, size);
   if(!fontrw) {
     fprintf(stderr, "ERROR: Unable to load font '%s' - %s\n",
 	fontfn, TTF_GetError());
@@ -1075,13 +1086,13 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
   if(pxsz < 1) pxsz = default_pxsize;
   if(cur_font.count(pxsz)) return cur_font[pxsz];
   else if(!fontrw) {
-    fontrw = SDL_RWFromMem(simple_font, sizeof(simple_font));
+    fontrw = SDL_RWFromConstMem(simple_font, sizeof(simple_font));
     LoadFont(pxsz);
     }
 
   if(!TTF_WasInit()) {
     if(TTF_Init()) {
-      fprintf(stderr, "ERROR: Unable to load font - %s\n", TTF_GetError());
+      fprintf(stderr, "ERROR: Unable to init fonts: %s\n", TTF_GetError());
       exit(1);
       }
     atexit(TTF_Quit);
@@ -1093,7 +1104,7 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
   cur_font[pxsz] = TTF_OpenFontRW(fontrw, 0, ptsz);
 
   if(!cur_font[pxsz]) {
-    fprintf(stderr, "ERROR: Unable to load font!\n");
+    fprintf(stderr, "ERROR: Unable to init font: %s\n", TTF_GetError());
     exit(1);
     }
 
