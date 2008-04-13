@@ -1089,8 +1089,8 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
 
   int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);   //Scale to real ptsize
 
-  cur_font[pxsz] = TTF_OpenFontRW(fontrw, 0, ptsz);
   SDL_RWseek(fontrw, 0, SEEK_SET);
+  cur_font[pxsz] = TTF_OpenFontRW(fontrw, 0, ptsz);
 
   if(!cur_font[pxsz]) {
     fprintf(stderr, "ERROR: Unable to load font!\n");
