@@ -104,7 +104,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	}
       }
     else if(event->key.keysym.unicode < 0x80) {
-      if(isgraph(event->key.keysym.unicode)) {
+      if(isgraph(event->key.keysym.unicode) || (event->key.keysym.unicode == 0x20)) {
 	string newmes = message.append(1, (char)(event->key.keysym.unicode));
 	SetText(newmes);
 	event->type = SDL_SG_EVENT;
