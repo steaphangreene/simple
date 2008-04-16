@@ -38,7 +38,7 @@ public:
   virtual ~SimpleModel();
 
   const map<string, int> GetAnimations() { return animations; };
-  int LookUpAnimation(const string &anim);
+  int LookUpAnimation(const string &anim) const;
 
   const map<string, Uint32> GetTags() { return tags; };
 
