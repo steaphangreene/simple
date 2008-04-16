@@ -63,6 +63,7 @@ public:
   SS_Skin AddSkin(SimpleTexture *skin);
 
   SS_Model AddModel(SimpleModel *mod);
+  const SimpleModel *Model(SS_Model which) { return models[which]; }
 
   SS_Object AddObject(
 	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);
