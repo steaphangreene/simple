@@ -44,6 +44,7 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
 
   if(edit) text = new SG_Editable("0");
   else text = new SG_TextArea("0");
+  text->SetAlignment(SG_ALIGN_RIGHT);
   AddWidget(text, 0, 0, binvpro-1, 2);
   }
 
@@ -52,7 +53,12 @@ SG_Spinner::~SG_Spinner() {
 
 bool SG_Spinner::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONCLICK) {
-    //FIXME: Up/Down
+    if((SG_Widget*)(event->user.data1) == (SG_Widget*)(upb)) {
+      SetValue(Value() + 0.5);	//FIXME: Increment Value
+      }
+    else {
+      SetValue(Value() - 0.5);	//FIXME: Increment Value
+      }
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
@@ -71,4 +77,10 @@ const string &SG_Spinner::Text() {
 
 void SG_Spinner::SetText(const string &itms) {
   fprintf(stderr, "WARNING: Tried to set text of SG_Spinner - use SetValue\n");
+  }
+
+void SG_Spinner::RangerChanged() {
+  char buf[64];
+  sprintf(buf, "%.1f%c", Value(), 0);
+  text->SetText(buf);
   }

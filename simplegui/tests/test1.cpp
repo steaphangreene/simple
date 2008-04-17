@@ -229,6 +229,7 @@ int main(int argc, char **argv) {
 //  tab[1]->AddWidget(text, 0, 9, 2, 1);
 
   spin = new SG_Spinner(true);
+  spin->SetLimits(16.0, 256.0);
   tab[1]->AddWidget(spin, 0, 9, 2, 1);
 
   prog = new SG_ProgressBar("Progress",

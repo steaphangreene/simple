@@ -47,6 +47,8 @@ public:
   virtual const string &Text();
   virtual void SetText(const string &txt);
 
+  virtual void RangerChanged();
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
