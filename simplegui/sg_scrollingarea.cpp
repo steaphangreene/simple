@@ -52,16 +52,18 @@ int SG_ScrollingArea::HandleEvent(SDL_Event *event, float x, float y) {
   int ret = SG_Compound::HandleEvent(event, x, y);
   if(ret != -1) return ret;
 
-  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 4) {
-    SetYValue(YValue() - 0.5);    //FIXME: Use Increment Size?
+  if(event->type == SDL_MOUSEBUTTONDOWN &&
+	event->button.button == SDL_BUTTON_WHEELDOWN) {
+    YDecrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;
     }
-  else if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 5) {
-    SetYValue(YValue() + 0.5);    //FIXME: Use Increment Size?
+  else if(event->type == SDL_MOUSEBUTTONDOWN &&
+	event->button.button == SDL_BUTTON_WHEELUP) {
+    YIncrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
