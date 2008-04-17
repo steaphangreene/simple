@@ -24,6 +24,7 @@
 
 SG_Ranger::SG_Ranger(float spn, float val, float mn, float mx,
 	SG_Ranger2D *par) {
+  inc = 0.5;
   span = spn;
   value = val;
   parent = par;
@@ -96,6 +97,18 @@ float SG_Ranger::Span() {
   if(span < 0.0 && min <= max) return max - min;
   if(span < 0.0) return min - max;
   return span;
+  }
+
+void SG_Ranger::SetIncrement(float i) {
+  inc = i;
+  }
+
+void SG_Ranger::Increment() {
+  SetValue(value + inc);
+  }
+
+void SG_Ranger::Decrement() {
+  SetValue(value - inc);
   }
 
 float SG_Ranger::Value() {

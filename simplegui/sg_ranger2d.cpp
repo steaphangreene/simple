@@ -94,6 +94,30 @@ void SG_Ranger2D::SetYLimits(float ymn, float ymx) {
   RangerChanged();
   }
 
+void SG_Ranger2D::SetXIncrement(float i) {
+  xranger.SetIncrement(i);
+  }
+
+void SG_Ranger2D::XIncrement() {
+  xranger.Increment();
+  }
+
+void SG_Ranger2D::XDecrement() {
+  xranger.Decrement();
+  }
+
+void SG_Ranger2D::SetYIncrement(float i) {
+  yranger.SetIncrement(i);
+  }
+
+void SG_Ranger2D::YIncrement() {
+  yranger.Increment();
+  }
+
+void SG_Ranger2D::YDecrement() {
+  yranger.Decrement();
+  }
+
 void SG_Ranger2D::LinkTo(SG_Ranger2D *other) {
   xranger.LinkTo(&(other->xranger));
   yranger.LinkTo(&(other->yranger));

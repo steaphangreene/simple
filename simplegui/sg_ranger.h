@@ -37,6 +37,9 @@ public:
   void SetSpan(float spn);
   void SetLimits(float mn, float mx);
   void SetActive(float st, float en);
+  void SetIncrement(float i);
+  void Increment();
+  void Decrement();
 
   float Span();
   float Value();
@@ -51,6 +54,7 @@ public:
 protected:
   float span, value;
   float min, max;
+  float inc;
   set<SG_Ranger*> linked;
   SG_Ranger2D *parent;
   };

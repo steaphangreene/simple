@@ -44,6 +44,12 @@ public:
   void SetActive(float xst, float yst, float xen, float yen);
   void SetXActive(float xst, float xen);
   void SetYActive(float yst, float yen);
+  void SetXIncrement(float i);
+  void XIncrement();
+  void XDecrement();
+  void SetYIncrement(float i);
+  void YIncrement();
+  void YDecrement();
 
   float XSpan() { return xranger.Span(); };
   float YSpan() { return yranger.Span(); };

@@ -54,10 +54,10 @@ SG_Spinner::~SG_Spinner() {
 bool SG_Spinner::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONCLICK) {
     if((SG_Widget*)(event->user.data1) == (SG_Widget*)(upb)) {
-      SetValue(Value() + 0.5);	//FIXME: Increment Value
+      Increment();
       }
     else {
-      SetValue(Value() - 0.5);	//FIXME: Increment Value
+      Decrement();
       }
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
