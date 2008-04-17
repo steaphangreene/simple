@@ -306,6 +306,30 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("TORSO_STAND");
     if(anims[1] < 0) anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
 
+    float ang = 0.0;
+    { float oang = 0.0, aprog = 0.0;
+      list<pair<float, Action> >::const_iterator turn =
+	objects[obj->second.obj].turns.begin();
+      for(; turn != objects[obj->second.obj].turns.end(); ++turn) {
+	if(offset < turn->second.finish) {
+	  if(offset + turn->second.duration < turn->second.finish) {
+	    continue;
+	    }
+	  oang = turn->first;
+	  aprog = (float)(offset + turn->second.duration - turn->second.finish)
+		/ (float)(turn->second.duration);
+	  continue;
+	  }
+	ang = turn->first;
+	if(aprog > 0.0) {				// Turning
+	  ang = ang * (1.0 - aprog) + oang * aprog;
+	  anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_TURN");
+	  if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("TURN");
+	  }
+	break;
+	}
+      }
+
     if(prog.count(obj->second.obj) > 0) {		// Moving
       pos.x = (pos.x * (1.0 - prog[obj->second.obj]))
 	+ (toward[obj->second.obj].x * prog[obj->second.obj]);
@@ -318,15 +342,6 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_RUN");
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("WALK");
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
-      }
-
-    float ang = 0.0;
-    list<pair<float, Action> >::const_iterator turn =
-	objects[obj->second.obj].turns.begin();
-    for(; turn != objects[obj->second.obj].turns.end(); ++turn) {
-      if(offset < turn->second.finish) continue;
-      ang = turn->first;
-      break;
       }
 
     vector<SimpleScene::Action>::const_iterator act;
