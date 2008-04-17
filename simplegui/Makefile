@@ -49,7 +49,8 @@ OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_combobox.o $(ARCH)/sg_pulldown.o \
 	$(ARCH)/sg_sliderbar.o $(ARCH)/sg_scrollingarea.o \
 	$(ARCH)/sg_dndboxes.o $(ARCH)/sg_tabs.o \
-	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o
+	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o \
+	$(ARCH)/sg_spinner.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 
@@ -62,7 +63,7 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_compound.win32_o sg_filebrowser.win32_o sg_multitab.win32_o sg_listbox.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
-	sg_passthrough.win32_o sg_translabel.win32_o
+	sg_passthrough.win32_o sg_translabel.win32_o sg_spinner.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
 WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
 

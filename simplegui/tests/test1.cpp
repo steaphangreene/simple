@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
   SG_Scrollable *scroll;
   SG_PassThrough *pass[2];
   SG_TextArea *text;
+  SG_Spinner *spin;
   SG_TransLabel *trans;
   SG_ProgressBar *prog;
 
@@ -222,10 +223,13 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(button[4], 1, 6);
   tab[1]->AddWidget(button[5], 1, 7);
 
-  text = new SG_TextArea(
-	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
-  text->SetMargins(0.2, 0.2);
-  tab[1]->AddWidget(text, 0, 9, 2, 1);
+//  text = new SG_TextArea(
+//	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
+//  text->SetMargins(0.2, 0.2);
+//  tab[1]->AddWidget(text, 0, 9, 2, 1);
+
+  spin = new SG_Spinner(true);
+  tab[1]->AddWidget(spin, 0, 9, 2, 1);
 
   prog = new SG_ProgressBar("Progress",
 	gui->NewColor(0.3, 0.3, 0.3), gui->NewColor(0.6, 0.0, 0.0));

@@ -19,44 +19,38 @@
 //  
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+// This file was created from (or actually IS) a basic compound widget
+// def, so it's not defined and is really just a place-holder for now.
 
-#include "sg_ranger.h"
-#include "sg_ranger2d.h"
-#include "sg_text.h"
-#include "sg_multitext.h"
+#ifndef SG_SPINNER_H
+#define SG_SPINNER_H
 
-#include "sg.h"
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
-#include "sg_table.h"
-#include "sg_scrollable.h"
-#include "sg_autoscroll.h"
-#include "sg_button.h"
-#include "sg_dragable.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
+#include <vector>
+using namespace std;
+
 #include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_spinner.h"
-#include "sg_dndboxes.h"
-#include "sg_tabs.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
+#include "simpletexture.h"
+#include "sg_colors.h"
+#include "sg_text.h"
+#include "sg_ranger.h"
 
-#endif	//SIMPLEGUI_H
+class SG_Button;
+class SG_TextArea;
 
+class SG_Spinner : public SG_Compound, public SG_Text, public SG_Ranger {
+public:
+  SG_Spinner(bool edit = false);
+  virtual ~SG_Spinner();
+//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool ChildEvent(SDL_Event *event);
+
+  virtual const string &Text();
+  virtual void SetText(const string &txt);
+
+protected:
+//  static GL_MODEL Default_Mouse_Cursor;
+  SG_TextArea *text;
+  SG_Button *upb, *downb;
+  };
+
+#endif // SG_SPINNER_H
