@@ -387,6 +387,7 @@ int SimpleModel_MD::NormalizeFrame(const vector<int> &anim, int frame) const {
     bool loop = sequences[anim[0]].loop;
 
     if(frame >= end && loop == true) {
+      frame -= start;
       frame %= (end - start);
       frame += start;
       } 
