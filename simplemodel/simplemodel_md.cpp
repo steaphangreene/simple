@@ -102,15 +102,13 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 	glBindTexture(GL_TEXTURE_2D, texture.at(layer->texture_id)->GLTexture());
 	}
       else {
-	continue;	// Don't show it if there's not texture for it!
+	continue;	// Don't show it if there's no texture for it!
 	}
-      if(layer != end) {
-	++layer;
-	for(; layer != end; ++layer) {
-	  if(layer->texture_id < texture.size()
+      ++layer;
+      for(; layer != end; ++layer) {
+	if(layer->texture_id < texture.size()
 		&& texture.at(layer->texture_id)->GLTexture() != 0) {
-	    break;
-	    }
+	  break;
 	  }
 	}
       if(layer != end) {	// Doing multi-texturing

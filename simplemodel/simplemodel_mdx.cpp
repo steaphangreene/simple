@@ -45,7 +45,7 @@ SimpleModel_MDX::SimpleModel_MDX() : SimpleModel_MD() {
 SimpleModel_MDX::~SimpleModel_MDX() {
   }
 
-static bool is_same_filename (const string &cf1, const string cf2) {
+static bool is_same_filename (const string &cf1, const string &cf2) {
   string f1 = cf1;
   string f2 = cf2;
   size_t loc;
@@ -58,6 +58,9 @@ static bool is_same_filename (const string &cf1, const string cf2) {
   while(loc >= 0 && loc < f2.size()) {
     f2 = f2.substr(1);
     loc = f2.find_first_of("/\\");
+    }
+  if(f1.length() < 1 || f2.length() < 1) {
+    return false;
     }
   if(!(strcasecmp(f1.c_str(), f2.c_str()))) {
     return true;
@@ -143,8 +146,8 @@ bool SimpleModel_MDX::Load(const string &filenm,
     vector<MDXTexture>::const_iterator tex = textures.begin();
     for(; tex != textures.end(); ++tex) {
       if(is_same_filename(skins[skin], (char*)(tex->path))) {
-	//fprintf(stderr, "Replacing texture %d (%s)\n",
-	//	tex - textures.begin(), skins[skin].c_str());
+	//fprintf(stderr, "Replacing texture %d (%s/%s)\n",
+	//	tex - textures.begin(), tex->path, skins[skin].c_str());
 	delete(texture[tex - textures.begin()]);
 	if(skins[skin].c_str()[0] == '/') {
 	  texture[tex - textures.begin()] = new SimpleTexture(skins[skin]);
@@ -156,7 +159,9 @@ bool SimpleModel_MDX::Load(const string &filenm,
 	//fprintf(stderr, "->%d\n", texture[tex - textures.begin()]->GLTexture());
 	}
       else if(tex->replacable_id == 1
-		&& SimpleTexture::IsColorName(skins[skin]) >= 0) {
+		&& SimpleTexture::IsColorName(skins[skin])) {
+	//fprintf(stderr, "Replacing teamcolor %d (%s/%s)\n",
+	//	tex - textures.begin(), tex->path, skins[skin].c_str());
 	delete(texture[tex - textures.begin()]);
 	texture[tex - textures.begin()]	= new SimpleTexture(skins[skin]);
 	}
@@ -288,6 +293,9 @@ bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
       texture.push_back(new SimpleTexture(
 	SimpleTexture::NewColor(0.0, 0.0, 0.0)
 	));
+      }
+    else {
+      texture.push_back(new SimpleTexture("not:real:texture"));
       }
 //    fprintf(stderr, "[%d->%d] %s\n", it->replacable_id,
 //	(*(texture.end() - 1))->GLTexture(), buffer.c_str());
