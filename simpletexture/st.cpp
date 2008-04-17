@@ -1208,7 +1208,13 @@ int SimpleTexture::new_xsize;
 int SimpleTexture::new_ysize;
 
 bool SimpleTexture::IsColorName(const string &cname) {
-  return (color_name.count(cname) > 0);
+  if(color_name.count(cname) < 1) {
+    const char *str = cname.c_str();
+    char *end;
+    strtoul(str, &end, 0);
+    if((*str) == 0 || (*end) != 0) { return false; }
+    }
+  return true;
   }
 
 int SimpleTexture::ColorByName(const string &cname) {
