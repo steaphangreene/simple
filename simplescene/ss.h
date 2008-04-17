@@ -47,6 +47,7 @@ enum SS_Action {
   SS_ACT_VISIBLE,
   SS_ACT_HALFCOLOR,
   SS_ACT_MOVE,
+  SS_ACT_TURN,
   SS_ACT_MAX
   };
 
@@ -72,14 +73,13 @@ public:
   void SetObjectModel(SS_Object obj, SS_Model mod);
   void SetObjectSkin(SS_Object obj, SS_Model skin);
   void SetObjectColor(SS_Object obj, float r, float g, float b);
-  void SetObjectPosition(SS_Object obj, float xp, float yp, float zp=0.0);
   void SetObjectSize(SS_Object obj, float sz);
-  void SetObjectRotation(SS_Object obj, float ang);
   void SetObjectTarget(SS_Object obj, float xt, float yt, float zt);
-  void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
-  void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end,
+  void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
+  void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end = 0,
 	Uint32 dur = 0);
+  void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -111,8 +111,8 @@ protected:
     SS_Skin skin;
     float r, g, b;
     float size;
-    float ang;
     vector<SimpleScene::Action> acts;
+    list<pair<float, Action> > turns;
     };
 
   struct PType {

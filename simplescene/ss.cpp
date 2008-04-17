@@ -91,7 +91,7 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  const Object obj = { mod, skin, 1.0, 1.0, 1.0, 1.0, 0.0 };
+  const Object obj = { mod, skin, 1.0, 1.0, 1.0, 1.0 };
   objects[next_obj] = obj;
   return next_obj++;
   }
@@ -164,15 +164,9 @@ void SimpleScene::MoveObject(SS_Object obj, float xp, float yp, float zp,
   moves.push_front(pair<Coord, Action>(pos, act));
   }
 
-void SimpleScene::SetObjectPosition(SS_Object obj, 
-	float xp, float yp, float zp) {
-  Coord pos = { xp, yp, zp };
-  Action act = { obj, SS_ACT_MOVE, 0, 0 };
-  moves.push_front(pair<Coord, Action>(pos, act));
-  }
-
-void SimpleScene::SetObjectRotation(SS_Object obj, float ang) {
-  objects[obj].ang = ang;
+void SimpleScene::TurnObject(SS_Object obj, float ang, Uint32 end, Uint32 dur) {
+  Action act = { obj, SS_ACT_TURN, end, dur };
+  objects[obj].turns.push_front(pair<float, Action>(ang, act));
   }
 
 void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
@@ -297,7 +291,6 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 
     done.insert(obj->second.obj);			// Mark as Drawn
 
-    float ang = objects[obj->second.obj].ang;
     Coord pos = obj->first;
     vector<int> anims;
     vector<Uint32> times;
@@ -320,14 +313,20 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	+ (toward[obj->second.obj].y * prog[obj->second.obj]);
       pos.z = (pos.z * (1.0 - prog[obj->second.obj]))
 	+ (toward[obj->second.obj].z * prog[obj->second.obj]);
-      ang = 180.0 * atan2f(
-	toward[obj->second.obj].y - pos.y, toward[obj->second.obj].x - pos.x
-	) / M_PI;
 
       anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_WALK");
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_RUN");
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("WALK");
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
+      }
+
+    float ang = 0.0;
+    list<pair<float, Action> >::const_iterator turn =
+	objects[obj->second.obj].turns.begin();
+    for(; turn != objects[obj->second.obj].turns.end(); ++turn) {
+      if(offset < turn->second.finish) continue;
+      ang = turn->first;
+      break;
       }
 
     vector<SimpleScene::Action>::const_iterator act;
