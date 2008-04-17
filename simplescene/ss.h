@@ -26,6 +26,7 @@
 #include "SDL_opengl.h"
 
 #include <map>
+#include <list>
 #include <vector>
 using namespace std;
 
@@ -45,6 +46,7 @@ enum SS_Action {
   SS_ACT_NONE = 0,
   SS_ACT_VISIBLE,
   SS_ACT_HALFCOLOR,
+  SS_ACT_MOVE,
   SS_ACT_MAX
   };
 
@@ -76,6 +78,9 @@ public:
   void SetObjectTarget(SS_Object obj, float xt, float yt, float zt);
   void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
+  void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end,
+	Uint32 dur = 0);
+
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
   void SetPTypeColor0(SS_PType type, float cr, float cg, float cb, float ca);
@@ -96,6 +101,7 @@ public:
 
 protected:
   struct Action {
+    SS_Object obj;
     SS_Action type;
     Uint32 finish, duration;
     };
@@ -148,11 +154,11 @@ protected:
 
   vector<SimpleTexture *> skins;
   vector<SimpleModel *> models;
-  multimap<Coord, Object> objects;
-  map<unsigned int, multimap<Coord, Object>::iterator> objlist;
+  list<pair<Coord, Action> > moves;
+  map<SS_Object, Object> objects;
   vector<PType> ptypes;
   vector<Particle> parts;
-  unsigned int next_obj;
+  SS_Object next_obj;
 
   static SimpleScene *current;
 

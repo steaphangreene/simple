@@ -91,19 +91,16 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  const Coord pos = { 0.0, 0.0, 0.0 };
   const Object obj = { mod, skin, 1.0, 1.0, 1.0, 1.0, 0.0 };
-  multimap<Coord, Object>::iterator newobj =
-	objects.insert(pair<Coord, Object>(pos, obj));
-  objlist[next_obj] = newobj;
+  objects[next_obj] = obj;
   return next_obj++;
   }
 
 void SimpleScene::SimplifyActs(SS_Object obj) {
   vector<SimpleScene::Action>::iterator act;
   map<SS_Action, vector<SimpleScene::Action>::iterator> baseact;
-  act = objlist[obj]->second.acts.begin();
-  for(; act != objlist[obj]->second.acts.end(); ++act) {
+  act = objects[obj].acts.begin();
+  for(; act != objects[obj].acts.end(); ++act) {
     SS_Action type = act->type;
     if(baseact.count(type) < 1) {
       baseact[type] = act;
@@ -127,7 +124,7 @@ void SimpleScene::SimplifyActs(SS_Object obj) {
 	    baseact[type]->duration = act->duration + diff;
 	    }
 	  }
-	act = objlist[obj]->second.acts.erase(act);
+	act = objects[obj].acts.erase(act);
 	--act;
 //	fprintf(stderr, "Combined %d(%d)\n",
 //		baseact[type]->finish, baseact[type]->duration);
@@ -141,41 +138,45 @@ void SimpleScene::SimplifyActs(SS_Object obj) {
 
 void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
-  Action newact = { act, fin, dur };
-  objlist[obj]->second.acts.push_back(newact);
+  Action newact = { obj, act, fin, dur };
+  objects[obj].acts.push_back(newact);
   SimplifyActs(obj);
   }
 
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
-  objlist[obj]->second.skin = skin;
+  objects[obj].skin = skin;
   }
 
 void SimpleScene::SetObjectModel(SS_Object obj, SS_Model mod) {
-  objlist[obj]->second.model = mod;
+  objects[obj].model = mod;
   }
 
 void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
-  objlist[obj]->second.r = r;
-  objlist[obj]->second.g = g;
-  objlist[obj]->second.b = b;
+  objects[obj].r = r;
+  objects[obj].g = g;
+  objects[obj].b = b;
+  }
+
+void SimpleScene::MoveObject(SS_Object obj, float xp, float yp, float zp,
+	Uint32 end, Uint32 dur) {
+  Coord pos = { xp, yp, zp };
+  Action act = { obj, SS_ACT_MOVE, end, dur };
+  moves.push_front(pair<Coord, Action>(pos, act));
   }
 
 void SimpleScene::SetObjectPosition(SS_Object obj, 
 	float xp, float yp, float zp) {
   Coord pos = { xp, yp, zp };
-  multimap<Coord, Object>::iterator tmp = objlist[obj];
-  multimap<Coord, Object>::iterator newobj =
-	objects.insert(pair<Coord, Object>(pos, tmp->second));
-  objlist[obj] = newobj;
-  objects.erase(tmp);
+  Action act = { obj, SS_ACT_MOVE, 0, 0 };
+  moves.push_front(pair<Coord, Action>(pos, act));
   }
 
 void SimpleScene::SetObjectRotation(SS_Object obj, float ang) {
-  objlist[obj]->second.ang = ang;
+  objects[obj].ang = ang;
   }
 
 void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
-  objlist[obj]->second.size = sz;
+  objects[obj].size = sz;
   }
 
 void SimpleScene::SetObjectTarget(SS_Object obj, float xt, float yt, float zt) {
@@ -268,78 +269,127 @@ void SimpleScene::Clear() {
   parts.clear();
   models.clear();
   skins.clear();
+  moves.clear();
   objects.clear();
-  objlist.clear();
   next_obj = 1;
   }
 
 bool SimpleScene::DrawObjects(Uint32 offset) {
   float xp = 0.0, yp = 0.0, zp = 0.0;
 
+  set<SS_Object> done;
+  map<SS_Object, float> prog;
+  map<SS_Object, Coord> toward;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   glPushMatrix();
-  multimap<Coord, Object>::const_iterator obj = objects.begin();
-  for(; obj != objects.end(); ++obj) {
+  list<pair<Coord, Action> >::const_iterator obj = moves.begin();
+  for(; obj != moves.end(); ++obj) {
+    if(done.count(obj->second.obj) > 0) continue;	// Already Drawn
+
+    if(offset < obj->second.finish) {
+      if(offset + obj->second.duration < obj->second.finish) continue;
+      toward[obj->second.obj] = obj->first;
+      prog[obj->second.obj] =
+	(float)(offset + obj->second.duration - obj->second.finish)
+		/ (float)(obj->second.duration);
+      continue;
+      }
+
+    done.insert(obj->second.obj);			// Mark as Drawn
+
+    float ang = objects[obj->second.obj].ang;
+    Coord pos = obj->first;
+    vector<int> anims;
+    vector<Uint32> times;
+
+    anims.push_back(0);
+    anims.push_back(0);
+    times.push_back(0);
+    times.push_back(0);
+
+    anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_IDLE");
+    if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
+
+    anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("TORSO_STAND");
+    if(anims[1] < 0) anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
+
+    if(prog.count(obj->second.obj) > 0) {		// Moving
+      pos.x = (pos.x * (1.0 - prog[obj->second.obj]))
+	+ (toward[obj->second.obj].x * prog[obj->second.obj]);
+      pos.y = (pos.y * (1.0 - prog[obj->second.obj]))
+	+ (toward[obj->second.obj].y * prog[obj->second.obj]);
+      pos.z = (pos.z * (1.0 - prog[obj->second.obj]))
+	+ (toward[obj->second.obj].z * prog[obj->second.obj]);
+      ang = 180.0 * atan2f(
+	toward[obj->second.obj].y - pos.y, toward[obj->second.obj].x - pos.x
+	) / M_PI;
+
+      anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_WALK");
+      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_RUN");
+      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("WALK");
+      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
+      }
+
     vector<SimpleScene::Action>::const_iterator act;
-    act=obj->second.acts.begin();
-    if(!obj->second.acts.empty()) {
-      for(; act != obj->second.acts.end(); ++act) {
+    act=objects[obj->second.obj].acts.begin();
+    if(!objects[obj->second.obj].acts.empty()) {
+      for(; act != objects[obj->second.obj].acts.end(); ++act) {
 	if(offset < act->finish && (offset+act->duration) >= act->finish) break;
 	}
-      if(act == obj->second.acts.end()) continue;
+      if(act == objects[obj->second.obj].acts.end()) continue;
       }
 
     if(xlim0 < xlim1 && (
-	(obj->first.x + obj->second.size) < xlim0
-	|| (obj->first.x - obj->second.size) >= xlim1
+	(pos.x + objects[obj->second.obj].size) < xlim0
+	|| (pos.x - objects[obj->second.obj].size) >= xlim1
 	)) continue;
     if(ylim0 < ylim1 && (
-	(obj->first.y + obj->second.size) < ylim0
-	|| (obj->first.y - obj->second.size) >= ylim1
+	(pos.y + objects[obj->second.obj].size) < ylim0
+	|| (pos.y - objects[obj->second.obj].size) >= ylim1
 	)) continue;
     if(zlim0 < zlim1 && (
-	(obj->first.z + obj->second.size) < zlim0
-	|| (obj->first.z - obj->second.size) >= zlim1
+	(pos.z + objects[obj->second.obj].size) < zlim0
+	|| (pos.z - objects[obj->second.obj].size) >= zlim1
 	)) continue;
 
-    if(obj->first.x != xp || obj->first.y != yp || obj->first.z != zp) {
+    if(pos.x != xp || pos.y != yp || pos.z != zp) {
       glPopMatrix();
       glPushMatrix();
-      glTranslatef(obj->first.x, obj->first.y, obj->first.z);
-      xp = obj->first.x;
-      yp = obj->first.y;
-      zp = obj->first.z;
+      glTranslatef(pos.x, pos.y, pos.z);
+      xp = pos.x;
+      yp = pos.y;
+      zp = pos.z;
       }
     if(act->type == SS_ACT_HALFCOLOR) {
-      glColor4f(obj->second.r/2.0, obj->second.g/2.0, obj->second.b/2.0, 1.0);
+      glColor4f(objects[obj->second.obj].r/2.0, objects[obj->second.obj].g/2.0, objects[obj->second.obj].b/2.0, 1.0);
       }
-    else if(obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
-      glColor4f(obj->second.r, obj->second.g, obj->second.b, 1.0);
+    else if(objects[obj->second.obj].r != 1.0 || objects[obj->second.obj].g != 1.0 || objects[obj->second.obj].b != 1.0) {
+      glColor4f(objects[obj->second.obj].r, objects[obj->second.obj].g, objects[obj->second.obj].b, 1.0);
       }
-    if(obj->second.size != 1.0) {
+    if(objects[obj->second.obj].size != 1.0) {
       glPushMatrix();
-      glScalef(obj->second.size, obj->second.size, obj->second.size);
+      glScalef(objects[obj->second.obj].size, objects[obj->second.obj].size, objects[obj->second.obj].size);
       }
-    if(obj->second.ang != 0.0) {
+    if(ang != 0.0) {
       glPushMatrix();
-      glRotatef(obj->second.ang, 0.0, 0.0, 1.0);
+      glRotatef(ang, 0.0, 0.0, 1.0);
       }
 
-    if(obj->second.skin != SS_UNDEFINED_SKIN) {
-      glBindTexture(GL_TEXTURE_2D, skins[obj->second.skin]->GLTexture());
+    if(objects[obj->second.obj].skin != SS_UNDEFINED_SKIN) {
+      glBindTexture(GL_TEXTURE_2D, skins[objects[obj->second.obj].skin]->GLTexture());
       }
-    if(obj->second.model != SS_UNDEFINED_MODEL) {
-      models[obj->second.model]->Render(offset);
+    if(objects[obj->second.obj].model != SS_UNDEFINED_MODEL) {
+      models[objects[obj->second.obj].model]->Render(offset, anims, times);
       }
 
-    if(obj->second.ang != 0.0) {
+    if(ang != 0.0) {
       glPopMatrix();
       }
-    if(obj->second.size != 1.0) {
+    if(objects[obj->second.obj].size != 1.0) {
       glPopMatrix();
       }
     if(act->type == SS_ACT_HALFCOLOR
-	|| obj->second.r != 1.0 || obj->second.g != 1.0 || obj->second.b != 1.0) {
+	|| objects[obj->second.obj].r != 1.0 || objects[obj->second.obj].g != 1.0 || objects[obj->second.obj].b != 1.0) {
       glColor4f(1.0, 1.0, 1.0, 1.0);
       }
     }  
