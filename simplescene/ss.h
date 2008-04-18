@@ -80,6 +80,9 @@ public:
   void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end = 0,
 	Uint32 dur = 0);
   void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
+  void ShowObject(SS_Object obj, Uint32 fin, Uint32 dur);
+  void ColorObject(SS_Object obj, float r, float g, float b,
+	Uint32 fin = 0, Uint32 dur = 0);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);

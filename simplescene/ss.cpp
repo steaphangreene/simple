@@ -143,6 +143,19 @@ void SimpleScene::ObjectAct(SS_Object obj,
   SimplifyActs(obj);
   }
 
+void SimpleScene::ShowObject(SS_Object obj, Uint32 fin, Uint32 dur) {
+  Action newact = { obj, SS_ACT_VISIBLE, fin, dur };
+  objects[obj].acts.push_back(newact);
+  SimplifyActs(obj);
+  }
+
+void SimpleScene::ColorObject(SS_Object obj, float r, float g, float b,
+	Uint32 fin, Uint32 dur) {
+  Action newact = { obj, SS_ACT_HALFCOLOR, fin, dur };
+  objects[obj].acts.push_back(newact);
+  SimplifyActs(obj);
+  }
+
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
   objects[obj].skin = skin;
   }
