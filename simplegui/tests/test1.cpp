@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
   SG_ProgressBar *prog;
 
   tab[0] = new SG_Table(4, 12);
-  tab[1] = new SG_Table(2, 12);
+  tab[1] = new SG_Table(2, 13);
 
   scroll = new SG_Scrollable(2.0, 2.0);
   scroll->SetBorder(0.125, 0.125);
@@ -223,15 +223,17 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(button[4], 1, 6);
   tab[1]->AddWidget(button[5], 1, 7);
 
-//  text = new SG_TextArea(
-//	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
-//  text->SetMargins(0.2, 0.2);
-//  tab[1]->AddWidget(text, 0, 9, 2, 1);
+  text = new SG_TextArea(
+	"Text Area Is Here", gui->NewColor(0.6, 0.4, 0.3));
+  text->SetMargins(0.2, 0.2);
+  tab[1]->AddWidget(text, 0, 9, 2, 1);
 
   spin = new SG_Spinner(true);
   spin->SetLimits(16.0, 256.0);
   spin->SetIncrement(16.0);
-  tab[1]->AddWidget(spin, 0, 9, 2, 1);
+  tab[1]->AddWidget(spin, 0, 10, 2, 1);
+
+  name[spin] = "Spinner";
 
   prog = new SG_ProgressBar("Progress",
 	gui->NewColor(0.3, 0.3, 0.3), gui->NewColor(0.6, 0.0, 0.0));
@@ -247,11 +249,11 @@ int main(int argc, char **argv) {
   SG_TransLabel *stack3 = new SG_TransLabel("Not Me");
   stack1->SetBackground(stack2);
   stack1->AddWidget(stack3);
-  tab[1]->AddWidget(stack1, 0, 10, 1, 1);
+  tab[1]->AddWidget(stack1, 0, 11, 1, 1);
   stack3->Ignore();
 
   SG_SliderBar *slide = new SG_SliderBar();
-  tab[1]->AddWidget(slide, 0, 11, 2, 1);
+  tab[1]->AddWidget(slide, 0, 12, 2, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
 
@@ -406,6 +408,11 @@ int main(int argc, char **argv) {
 	  audio_play(click, 8, 8);
 	  }
 	else if(event.user.code == SG_EVENT_NEEDTORENDER) {
+	  }
+	else if(event.user.code == SG_EVENT_MOVE) {
+	  printf("Received SG_EVENT_MOVE from %s - Value: %.2f.\n",
+		name[(SG_Widget*)(event.user.data1)].c_str(),
+		*((float *)(event.user.data2)));
 	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);

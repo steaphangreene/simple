@@ -51,6 +51,8 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
 SG_Spinner::~SG_Spinner() {
   }
 
+static SG_Event_DataType event_data;
+
 bool SG_Spinner::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONCLICK) {
     if((SG_Widget*)(event->user.data1) == (SG_Widget*)(upb)) {
@@ -59,9 +61,10 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
     else {
       Decrement();
       }
-    event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = NULL;
-    event->user.data2 = NULL;
+    event->user.code = SG_EVENT_MOVE;
+    event->user.data1 = (void*)(SG_Ranger*)this;
+    event_data.f[0] = Value();
+    event->user.data2 = (void*)&event_data;
     return 1;
     }
   return 0; // Silence children doing other things
