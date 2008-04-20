@@ -69,7 +69,7 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
     return 1;
     }
   else if(event->user.code == SG_EVENT_NEWTEXT) {
-    SetValue(strtof(Text().c_str(), NULL));
+    SetValue(strtof(text->Text().c_str(), NULL));
     event->user.code = SG_EVENT_MOVE;
     event->user.data1 = (void*)(SG_Ranger*)this;
     event_data.f[0] = Value();
@@ -82,14 +82,6 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
 //  bool SG_Spinner::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_Spinner::Default_Mouse_Cursor = NULL;
-
-const string &SG_Spinner::Text() {
-  return text->Text();
-  }
-
-void SG_Spinner::SetText(const string &itms) {
-  fprintf(stderr, "WARNING: Tried to set text of SG_Spinner - use SetValue\n");
-  }
 
 void SG_Spinner::RangerChanged() {
   char buf[64];

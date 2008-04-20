@@ -37,15 +37,12 @@ using namespace std;
 class SG_Button;
 class SG_TextArea;
 
-class SG_Spinner : public SG_Compound, public SG_Text, public SG_Ranger {
+class SG_Spinner : public SG_Compound, public SG_Ranger {
 public:
   SG_Spinner(bool edit = false);
   virtual ~SG_Spinner();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
-
-  virtual const string &Text();
-  virtual void SetText(const string &txt);
 
   virtual void RangerChanged();
 
