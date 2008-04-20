@@ -69,7 +69,14 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
     return 1;
     }
   else if(event->user.code == SG_EVENT_NEWTEXT) {
-    SetValue(strtof(text->Text().c_str(), NULL));
+    float v = strtof(text->Text().c_str(), NULL);
+    v -= Min();
+    v /= (float)(inc);
+    v += 0.5;
+    v = (float)((int)(v));
+    v *= (float)(inc);
+    v += Min();
+    SetValue(v);
     event->user.code = SG_EVENT_MOVE;
     event->user.data1 = (void*)(SG_Ranger*)this;
     event_data.f[0] = Value();
