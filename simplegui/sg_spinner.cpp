@@ -45,6 +45,7 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
   if(edit) text = new SG_Editable("0");
   else text = new SG_TextArea("0");
   text->SetAlignment(SG_ALIGN_RIGHT);
+  text->SetVisibleSize(SG_KEEPASPECT, 1);
   AddWidget(text, 0, 0, binvpro-1, 2);
   }
 
@@ -61,6 +62,14 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
     else {
       Decrement();
       }
+    event->user.code = SG_EVENT_MOVE;
+    event->user.data1 = (void*)(SG_Ranger*)this;
+    event_data.f[0] = Value();
+    event->user.data2 = (void*)&event_data;
+    return 1;
+    }
+  else if(event->user.code == SG_EVENT_NEWTEXT) {
+    SetValue(strtof(Text().c_str(), NULL));
     event->user.code = SG_EVENT_MOVE;
     event->user.data1 = (void*)(SG_Ranger*)this;
     event_data.f[0] = Value();
