@@ -54,6 +54,31 @@ SG_Spinner::~SG_Spinner() {
 
 static SG_Event_DataType event_data;
 
+int SG_Spinner::HandleEvent(SDL_Event *event, float x, float y) {
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  if(event->type == SDL_MOUSEBUTTONDOWN &&
+	event->button.button == SDL_BUTTON_WHEELDOWN) {
+    Decrement();
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  else if(event->type == SDL_MOUSEBUTTONDOWN &&
+	event->button.button == SDL_BUTTON_WHEELUP) {
+    Increment();
+    event->type = SDL_SG_EVENT;
+    event->user.code = SG_EVENT_NEEDTORENDER;
+    event->user.data1 = NULL;
+    event->user.data2 = NULL;
+    return 1;
+    }
+  return SG_Compound::HandleEvent(event, x, y);
+  }
+
 bool SG_Spinner::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONCLICK) {
     if((SG_Widget*)(event->user.data1) == (SG_Widget*)(upb)) {

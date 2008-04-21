@@ -42,6 +42,7 @@ public:
   SG_Spinner(bool edit = false);
   virtual ~SG_Spinner();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual void RangerChanged();
