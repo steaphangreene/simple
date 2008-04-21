@@ -92,6 +92,14 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
 
 void SG_Spinner::RangerChanged() {
   char buf[64];
-  sprintf(buf, "%.1f%c", Value(), 0);
+  if(value == (int)(value) && min == (int)(min)) {
+    sprintf(buf, "%.0f%c", Value(), 0);
+    }
+  else if(value*10.0 == (int)(value*10.0) && min*10.0 == (int)(min*10.0)) {
+    sprintf(buf, "%.1f%c", Value(), 0);
+    }
+  else {	//FIXME: More cases.
+    sprintf(buf, "%.2f%c", Value(), 0);
+    }
   text->SetText(buf);
   }
