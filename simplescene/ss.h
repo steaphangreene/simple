@@ -44,8 +44,6 @@ typedef int SS_Object;
 
 enum SS_Action {
   SS_ACT_NONE = 0,
-  SS_ACT_VISIBLE,
-  SS_ACT_HALFCOLOR,
   SS_ACT_MOVE,
   SS_ACT_TURN,
   SS_ACT_MAX
@@ -80,9 +78,9 @@ public:
   void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end = 0,
 	Uint32 dur = 0);
   void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
-  void ShowObject(SS_Object obj, Uint32 fin, Uint32 dur);
-  void ColorObject(SS_Object obj, float r, float g, float b,
-	Uint32 fin = 0, Uint32 dur = 0);
+  void ShowObject(SS_Object obj, Uint32 fin);
+  void HideObject(SS_Object obj, Uint32 fin);
+  void ColorObject(SS_Object obj, float r, float g, float b, Uint32 tm = 0);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -109,12 +107,17 @@ protected:
     Uint32 finish, duration;
     };
 
+  struct Color {
+    float r, g, b;
+    };
+
   struct Object {
     SS_Model model;
     SS_Skin skin;
-    float r, g, b;
     float size;
+    vector<Uint32> show;
     vector<SimpleScene::Action> acts;
+    list<pair<Color, Uint32> > col;
     list<pair<float, Action> > turns;
     };
 
@@ -149,8 +152,6 @@ protected:
       return (z != b.z || y != b.y || x != b.x);
       }
     };
-
-  void SimplifyActs(SS_Object obj);
 
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);

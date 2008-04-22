@@ -91,69 +91,29 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  const Object obj = { mod, skin, 1.0, 1.0, 1.0, 1.0 };
+  const Object obj = { mod, skin, 1.0 };
   objects[next_obj] = obj;
   return next_obj++;
-  }
-
-void SimpleScene::SimplifyActs(SS_Object obj) {
-  vector<SimpleScene::Action>::iterator act;
-  map<SS_Action, vector<SimpleScene::Action>::iterator> baseact;
-  act = objects[obj].acts.begin();
-  for(; act != objects[obj].acts.end(); ++act) {
-    SS_Action type = act->type;
-    if(baseact.count(type) < 1) {
-      baseact[type] = act;
-      }
-    else if(type == SS_ACT_VISIBLE || type == SS_ACT_HALFCOLOR) {
-//      fprintf(stderr, "Combine [%d]%d(%d) & [%d]%d(%d)?\n",
-//		act->type, act->finish, act->duration,
-//		baseact[type]->type, baseact[type]->finish, baseact[type]->duration);
-      if(act->finish + baseact[type]->duration >= baseact[type]->finish
-		&& baseact[type]->finish + act->duration >= act->finish) {
-	if(baseact[type]->finish < act->finish) {
-	  Uint32 diff = act->finish - baseact[type]->finish;
-	  baseact[type]->duration += diff;
-	  baseact[type]->finish += diff;
-	  if(baseact[type]->duration < act->duration)
-	    baseact[type]->duration = act->duration;
-	  }
-	else {
-	  Uint32 diff = baseact[type]->finish - act->finish;
-	  if(baseact[type]->duration + diff < act->duration) {
-	    baseact[type]->duration = act->duration + diff;
-	    }
-	  }
-	act = objects[obj].acts.erase(act);
-	--act;
-//	fprintf(stderr, "Combined %d(%d)\n",
-//		baseact[type]->finish, baseact[type]->duration);
-	}
-//      else {
-//	fprintf(stderr, "Not Combined\n");
-//	}
-      }
-    }
   }
 
 void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
   Action newact = { obj, act, fin, dur };
   objects[obj].acts.push_back(newact);
-  SimplifyActs(obj);
   }
 
-void SimpleScene::ShowObject(SS_Object obj, Uint32 fin, Uint32 dur) {
-  Action newact = { obj, SS_ACT_VISIBLE, fin, dur };
-  objects[obj].acts.push_back(newact);
-  SimplifyActs(obj);
+void SimpleScene::ShowObject(SS_Object obj, Uint32 tm) {
+  objects[obj].show.push_back(tm);
   }
 
-void SimpleScene::ColorObject(SS_Object obj, float r, float g, float b,
-	Uint32 fin, Uint32 dur) {
-  Action newact = { obj, SS_ACT_HALFCOLOR, fin, dur };
-  objects[obj].acts.push_back(newact);
-  SimplifyActs(obj);
+void SimpleScene::HideObject(SS_Object obj, Uint32 tm) {
+  objects[obj].show.push_back(tm);
+  }
+
+void SimpleScene::ColorObject(SS_Object obj,
+	float r, float g, float b, Uint32 tm) {
+  Color c = { r, g, b };
+  objects[obj].col.push_back(pair<Color, Uint32>(c, tm));
   }
 
 void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
@@ -165,9 +125,8 @@ void SimpleScene::SetObjectModel(SS_Object obj, SS_Model mod) {
   }
 
 void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
-  objects[obj].r = r;
-  objects[obj].g = g;
-  objects[obj].b = b;
+  Color c = { r, g, b };
+  objects[obj].col.push_back(pair<Color, Uint32>(c, 0));
   }
 
 void SimpleScene::MoveObject(SS_Object obj, float xp, float yp, float zp,
@@ -357,13 +316,13 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
       }
 
-    vector<SimpleScene::Action>::const_iterator act;
-    act=objects[obj->second.obj].acts.begin();
-    if(!objects[obj->second.obj].acts.empty()) {
-      for(; act != objects[obj->second.obj].acts.end(); ++act) {
-	if(offset < act->finish && (offset+act->duration) >= act->finish) break;
+    vector<Uint32>::const_iterator show;
+    show=objects[obj->second.obj].show.begin();
+    if(!objects[obj->second.obj].show.empty()) {
+      for(; show != objects[obj->second.obj].show.end(); ++show) {
+	if(offset >= (*show)) break;
 	}
-      if(act == objects[obj->second.obj].acts.end()) continue;
+      if(show == objects[obj->second.obj].show.end()) continue;
       }
 
     if(xlim0 < xlim1 && (
@@ -387,11 +346,21 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       yp = pos.y;
       zp = pos.z;
       }
-    if(act->type == SS_ACT_HALFCOLOR) {
-      glColor4f(objects[obj->second.obj].r/2.0, objects[obj->second.obj].g/2.0, objects[obj->second.obj].b/2.0, 1.0);
+
+    Color col = { 1.0, 1.0, 1.0 };
+    if(!objects[obj->second.obj].col.empty()) {
+      list<pair<Color, Uint32> >::const_reverse_iterator icol
+		= objects[obj->second.obj].col.rbegin();
+      for(; icol != objects[obj->second.obj].col.rend(); ++icol) {
+	if(offset >= icol->second) {
+	  col = icol->first;
+	  break;
+	  }
+	}
       }
-    else if(objects[obj->second.obj].r != 1.0 || objects[obj->second.obj].g != 1.0 || objects[obj->second.obj].b != 1.0) {
-      glColor4f(objects[obj->second.obj].r, objects[obj->second.obj].g, objects[obj->second.obj].b, 1.0);
+
+    if(col.r != 1.0 || col.g != 1.0 || col.b != 1.0) {
+      glColor4f(col.r, col.g, col.b, 1.0);
       }
     if(objects[obj->second.obj].size != 1.0) {
       glPushMatrix();
@@ -415,8 +384,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(objects[obj->second.obj].size != 1.0) {
       glPopMatrix();
       }
-    if(act->type == SS_ACT_HALFCOLOR
-	|| objects[obj->second.obj].r != 1.0 || objects[obj->second.obj].g != 1.0 || objects[obj->second.obj].b != 1.0) {
+    if(col.r != 1.0 || col.g != 1.0 || col.b != 1.0) {
       glColor4f(1.0, 1.0, 1.0, 1.0);
       }
     }  
