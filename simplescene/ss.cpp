@@ -98,8 +98,8 @@ SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
 
 void SimpleScene::ObjectAct(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
-  Action newact = { obj, act, fin, dur };
-  objects[obj].acts.push_back(newact);
+  ActionData newact = { obj, fin, dur };
+  objects[obj].acts.push_back(pair<SS_Action, ActionData>(act, newact));
   }
 
 void SimpleScene::ShowObject(SS_Object obj, Uint32 tm) {
@@ -132,13 +132,13 @@ void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
 void SimpleScene::MoveObject(SS_Object obj, float xp, float yp, float zp,
 	Uint32 end, Uint32 dur) {
   Coord pos = { xp, yp, zp };
-  Action act = { obj, SS_ACT_MOVE, end, dur };
-  moves.push_front(pair<Coord, Action>(pos, act));
+  ActionData act = { obj, end, dur };
+  moves.push_front(pair<Coord, ActionData>(pos, act));
   }
 
 void SimpleScene::TurnObject(SS_Object obj, float ang, Uint32 end, Uint32 dur) {
-  Action act = { obj, SS_ACT_TURN, end, dur };
-  objects[obj].turns.push_front(pair<float, Action>(ang, act));
+  ActionTime act = { end, dur };
+  objects[obj].turns.push_front(pair<float, ActionTime>(ang, act));
   }
 
 void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
@@ -248,7 +248,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
   map<SS_Object, Coord> toward;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   glPushMatrix();
-  list<pair<Coord, Action> >::const_iterator obj = moves.begin();
+  list<pair<Coord, ActionData> >::const_iterator obj = moves.begin();
   for(; obj != moves.end(); ++obj) {
     if(done.count(obj->second.obj) > 0) continue;	// Already Drawn
 
@@ -280,7 +280,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 
     float ang = 0.0;
     { float oang = 0.0, aprog = 0.0;
-      list<pair<float, Action> >::const_iterator turn =
+      list<pair<float, ActionTime> >::const_iterator turn =
 	objects[obj->second.obj].turns.begin();
       for(; turn != objects[obj->second.obj].turns.end(); ++turn) {
 	if(offset < turn->second.finish) {
@@ -316,7 +316,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
       }
 
-    vector<Uint32>::const_iterator show;
+    list<Uint32>::const_iterator show;
     show=objects[obj->second.obj].show.begin();
     if(!objects[obj->second.obj].show.empty()) {
       for(; show != objects[obj->second.obj].show.end(); ++show) {

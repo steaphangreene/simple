@@ -44,8 +44,6 @@ typedef int SS_Object;
 
 enum SS_Action {
   SS_ACT_NONE = 0,
-  SS_ACT_MOVE,
-  SS_ACT_TURN,
   SS_ACT_MAX
   };
 
@@ -101,39 +99,17 @@ public:
   void Clear();
 
 protected:
-  struct Action {
+  struct ActionData {
     SS_Object obj;
-    SS_Action type;
+    Uint32 finish, duration;
+    };
+
+  struct ActionTime {
     Uint32 finish, duration;
     };
 
   struct Color {
     float r, g, b;
-    };
-
-  struct Object {
-    SS_Model model;
-    SS_Skin skin;
-    float size;
-    vector<Uint32> show;
-    vector<SimpleScene::Action> acts;
-    list<pair<Color, Uint32> > col;
-    list<pair<float, Action> > turns;
-    };
-
-  struct PType {
-    SimpleTexture *tex;
-    float cr0, cg0, cb0, ca0;
-    float cr1, cg1, cb1, ca1;
-    float xv, yv, zv;
-    float sz0, sz1;
-    Uint32 dur;
-    };
-
-  struct Particle {
-    SS_PType type;
-    float xp, yp, zp;
-    Uint32 start;
     };
 
   struct Coord {
@@ -153,12 +129,37 @@ protected:
       }
     };
 
+  struct Object {
+    SS_Model model;
+    SS_Skin skin;
+    float size;
+    list<Uint32> show;
+    list<pair<SS_Action, ActionData> > acts;
+    list<pair<Color, Uint32> > col;
+    list<pair<float, ActionTime> > turns;
+    };
+
+  struct PType {
+    SimpleTexture *tex;
+    float cr0, cg0, cb0, ca0;
+    float cr1, cg1, cb1, ca1;
+    float xv, yv, zv;
+    float sz0, sz1;
+    Uint32 dur;
+    };
+
+  struct Particle {
+    SS_PType type;
+    float xp, yp, zp;
+    Uint32 start;
+    };
+
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 
   vector<SimpleTexture *> skins;
   vector<SimpleModel *> models;
-  list<pair<Coord, Action> > moves;
+  list<pair<Coord, ActionData> > moves;
   map<SS_Object, Object> objects;
   vector<PType> ptypes;
   vector<Particle> parts;
