@@ -34,11 +34,11 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	$(ARCH)/sc.o
+OBJS:=	$(ARCH)/sc.o $(ARCH)/sc_conn.o
 CXXFLAGS:=	$(FLAGS) -I../simplegui -I../simpletexture
 CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
-WOBJS:=	sc.win32_o
+WOBJS:=	sc.win32_o sc_conn.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui
 WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
