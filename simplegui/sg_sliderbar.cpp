@@ -43,12 +43,12 @@ SG_SliderBar::SG_SliderBar(bool vert,
     Resize(1, 11);
     incb = new SG_Button("", b1tex, b1tex_dis, b1tex_click);
     decb = new SG_Button("", b2tex, b2tex_dis, b2tex_click);
-    incb->SetTexturator(stt_upbutt_up, 0);
-    incb->SetTexturator(stt_upbutt_dn, 2);
-    decb->SetTexturator(stt_dnbutt_up, 0);
-    decb->SetTexturator(stt_dnbutt_dn, 2);
-    AddWidget(incb, 0, 0);
-    AddWidget(decb, 0, ysize-1);
+    incb->SetTexturator(stt_dnbutt_up, 0);
+    incb->SetTexturator(stt_dnbutt_dn, 2);
+    decb->SetTexturator(stt_upbutt_up, 0);
+    decb->SetTexturator(stt_upbutt_dn, 2);
+    AddWidget(incb, 0, ysize-1);
+    AddWidget(decb, 0, 0);
     AddWidget(handle, 0, 1);	//Hardcoded initial placement (for now)
     handle->SetYDisplayLimits(0.0, 16.0);
     handle->LinkYFrom(this);
@@ -101,7 +101,17 @@ int SG_SliderBar::HandleEvent(SDL_Event *event, float x, float y) {
 
 bool SG_SliderBar::ChildEvent(SDL_Event *event) {
   if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    // FIXME: Unimplemented
+    if((SG_Widget*)(event->user.data1) == (SG_Widget*)(incb)) {
+      Increment();
+      }
+    else {
+      Decrement();
+      }
+    event->user.code = SG_EVENT_MOVE;
+    event->user.data1 = (void*)(SG_Ranger*)this;
+    event_data.f[0] = Value();
+    event->user.data2 = (void*)&event_data;
+    return 1;
     }
   else if(event->user.code == SG_EVENT_MOVE2D) {
     event->user.code = SG_EVENT_MOVE;
