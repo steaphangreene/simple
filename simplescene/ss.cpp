@@ -306,9 +306,13 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 
     anims[0] = models[model]->LookUpAnimation("LEGS_IDLE");
     if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("STAND");
+    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Stand");
+    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Stand 1");
 
     anims[1] = models[model]->LookUpAnimation("TORSO_STAND");
     if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("STAND");
+    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("Stand");
+    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("Stand 1");
 
     float ang = 0.0;
     { float oang = 0.0, tprog = 0.0;
@@ -346,6 +350,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("LEGS_RUN");
       if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("WALK");
       if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("RUN");
+      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Walk");
+      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Walk 1");
       }
 
     list<Uint32>::const_iterator show;
