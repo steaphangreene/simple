@@ -36,14 +36,19 @@ const int binvpro = 8; //FIXME: Changable?
 SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
 
   SDL_Color txt = {0, 0, 0, 255};
-  if(!incbuttonup_texturator) incbuttonup_texturator = new STT_IncButtonUp(txt);
-//  if(!incbuttondown_texturator) incbuttondown_texturator = new STT_IncButtonDown;
-//  if(!decbuttonup_texturator) decbuttonup_texturator = new STT_IncButtonUp;
-//  if(!decbuttondown_texturator) decbuttondown_texturator = new STT_IncButtonDown;
+  if(!incbuttonup_texturator)
+	incbuttonup_texturator = new STT_IncButtonUp(txt);
+  if(!incbuttondown_texturator)
+	incbuttondown_texturator = new STT_IncButtonDown(txt);
+//  if(!decbuttonup_texturator)
+//	decbuttonup_texturator = new STT_IncButtonUp(txt);
+//  if(!decbuttondown_texturator) decbuttondown_texturator =
+//	new STT_IncButtonDown(txt);
 
   upb = new SG_Button();
   upb->SetAlignment(SG_ALIGN_CENTER);
   upb->SetTexturator(incbuttonup_texturator, 0);
+  upb->SetTexturator(incbuttondown_texturator, 2);
   AddWidget(upb, binvpro-1, 0, 1, 1);
   downb = new SG_Button("v");
   downb->SetAlignment(SG_ALIGN_CENTER);
