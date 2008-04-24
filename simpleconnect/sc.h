@@ -109,6 +109,21 @@ class SimpleConnect : public SG_Compound {
 public:
   class Connection {
     public:
+	struct Conn
+	{
+		SlotData data;
+		unsigned int last_active;
+		char* password; // NOT STAYING HERE
+	};
+
+	struct Conn_Setup
+	{
+		TCPsocket tcp;	
+		queue<string> recv_buffer; // contains buffered data recieved over TCP
+		queue<void*> send_buffer; // contains buffered sending data.
+		SimpleConnections sc;
+	};
+
 	Connection() {};
 	Connection(TCPsocket sock); //connection for client
 	Connection(TCPsocket sock, SimpleConnections sconn); //connection for server
@@ -137,7 +152,8 @@ public:
     private:
 	TCPsocket socket;
 	SimpleConnections sc;
-	queue<void*> recv_buffer; // contains buffered data recieved over TCP
+	static list<string> tokenize(char*);
+	queue<string> recv_buffer; // contains buffered data recieved over TCP
 	queue<void*> send_buffer; // contains buffered sending data.
 	static int RunClient(void*); // client thread.
 	static int RunServer(void*); // server thread.
