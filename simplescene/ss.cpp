@@ -91,8 +91,12 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  const Object obj = { mod, skin };
-  objects[next_obj] = obj;
+  ActionTime act = { 0, 0 };
+  objects[next_obj];	// Initializes That Element
+  if(mod != SS_UNDEFINED_MODEL)
+    objects[next_obj].model.push_back(pair<SS_Model, ActionTime>(mod, act));
+  if(skin != SS_UNDEFINED_SKIN)
+    objects[next_obj].skin.push_back(pair<SS_Skin, ActionTime>(skin, act));
   return next_obj++;
   }
 
@@ -116,17 +120,18 @@ void SimpleScene::ColorObject(SS_Object obj,
   objects[obj].col.push_back(pair<Color, Uint32>(c, tm));
   }
 
-void SimpleScene::SetObjectSkin(SS_Object obj, SS_Skin skin) {
-  objects[obj].skin = skin;
+void SimpleScene::SkinObject(SS_Object obj, SS_Skin skin,
+	Uint32 end, Uint32 dur) {
+  ActionTime act = { end, dur };
+  if(skin != SS_UNDEFINED_SKIN)
+    objects[obj].skin.push_front(pair<SS_Skin, ActionTime>(skin, act));
   }
 
-void SimpleScene::SetObjectModel(SS_Object obj, SS_Model mod) {
-  objects[obj].model = mod;
-  }
-
-void SimpleScene::SetObjectColor(SS_Object obj, float r, float g, float b) {
-  Color c = { r, g, b };
-  objects[obj].col.push_back(pair<Color, Uint32>(c, 0));
+void SimpleScene::ModelObject(SS_Object obj, SS_Model mod,
+	Uint32 end, Uint32 dur) {
+  ActionTime act = { end, dur };
+  if(mod != SS_UNDEFINED_MODEL)
+    objects[obj].model.push_front(pair<SS_Model, ActionTime>(mod, act));
   }
 
 void SimpleScene::MoveObject(SS_Object obj, float xp, float yp, float zp,
@@ -146,7 +151,8 @@ void SimpleScene::SizeObject(SS_Object obj, float sz, Uint32 end, Uint32 dur) {
   objects[obj].size.push_front(pair<float, ActionTime>(sz, act));
   }
 
-void SimpleScene::SetObjectTarget(SS_Object obj, float xt, float yt, float zt) {
+void SimpleScene::TargetObject(SS_Object obj, float xt, float yt, float zt,
+	Uint32 end, Uint32 dur) {
   //FIXME: Implement!
   }
 
@@ -273,11 +279,28 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     times.push_back(0);
     times.push_back(0);
 
-    anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_IDLE");
-    if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
+    SS_Model model = SS_UNDEFINED_MODEL;
+    { list<pair<SS_Model, ActionTime> >::const_iterator mod;
+      mod=objects[obj->second.obj].model.begin();
+      if(!objects[obj->second.obj].model.empty()) {
+	for(; mod != objects[obj->second.obj].model.end(); ++mod) {
+	  if(offset >= mod->second.finish) break;
+	  }
+	if(mod != objects[obj->second.obj].model.end()) {
+	  model = mod->first;
+	  }
+	}
+      }
+    SS_Skin skin = SS_UNDEFINED_SKIN;
 
-    anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("TORSO_STAND");
-    if(anims[1] < 0) anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
+    if(objects[obj->second.obj].skin.size() > 0)
+      skin = objects[obj->second.obj].skin.begin()->first;
+
+    anims[0] = models[model]->LookUpAnimation("LEGS_IDLE");
+    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("STAND");
+
+    anims[1] = models[model]->LookUpAnimation("TORSO_STAND");
+    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("STAND");
 
     float ang = 0.0;
     { float oang = 0.0, tprog = 0.0;
@@ -296,8 +319,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	ang = turn->first;
 	if(tprog > 0.0) {				// Turning
 	  ang = ang * (1.0 - tprog) + oang * tprog;
-	  anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_TURN");
-	  if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("TURN");
+	  anims[0] = models[model]->LookUpAnimation("LEGS_TURN");
+	  if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("TURN");
 	  }
 	break;
 	}
@@ -311,10 +334,10 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       pos.z = (pos.z * (1.0 - prog[obj->second.obj]))
 	+ (toward[obj->second.obj].z * prog[obj->second.obj]);
 
-      anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_WALK");
-      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_RUN");
-      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("WALK");
-      if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("RUN");
+      anims[0] = models[model]->LookUpAnimation("LEGS_WALK");
+      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("LEGS_RUN");
+      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("WALK");
+      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("RUN");
       }
 
     list<Uint32>::const_iterator show;
@@ -388,11 +411,11 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       glRotatef(ang, 0.0, 0.0, 1.0);
       }
 
-    if(objects[obj->second.obj].skin != SS_UNDEFINED_SKIN) {
-      glBindTexture(GL_TEXTURE_2D, skins[objects[obj->second.obj].skin]->GLTexture());
+    if(skin != SS_UNDEFINED_SKIN) {
+      glBindTexture(GL_TEXTURE_2D, skins[skin]->GLTexture());
       }
-    if(objects[obj->second.obj].model != SS_UNDEFINED_MODEL) {
-      models[objects[obj->second.obj].model]->Render(offset, anims, times);
+    if(model != SS_UNDEFINED_MODEL) {
+      models[model]->Render(offset, anims, times);
       }
 
     if(ang != 0.0) {
