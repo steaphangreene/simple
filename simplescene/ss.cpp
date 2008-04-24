@@ -91,7 +91,7 @@ SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   }
 
 SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
-  const Object obj = { mod, skin, 1.0 };
+  const Object obj = { mod, skin };
   objects[next_obj] = obj;
   return next_obj++;
   }
@@ -141,8 +141,9 @@ void SimpleScene::TurnObject(SS_Object obj, float ang, Uint32 end, Uint32 dur) {
   objects[obj].turns.push_front(pair<float, ActionTime>(ang, act));
   }
 
-void SimpleScene::SetObjectSize(SS_Object obj, float sz) {
-  objects[obj].size = sz;
+void SimpleScene::SizeObject(SS_Object obj, float sz, Uint32 end, Uint32 dur) {
+  ActionTime act = { end, dur };
+  objects[obj].size.push_front(pair<float, ActionTime>(sz, act));
   }
 
 void SimpleScene::SetObjectTarget(SS_Object obj, float xt, float yt, float zt) {
@@ -279,7 +280,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(anims[1] < 0) anims[1] = models[objects[obj->second.obj].model]->LookUpAnimation("STAND");
 
     float ang = 0.0;
-    { float oang = 0.0, aprog = 0.0;
+    { float oang = 0.0, tprog = 0.0;
       list<pair<float, ActionTime> >::const_iterator turn =
 	objects[obj->second.obj].turns.begin();
       for(; turn != objects[obj->second.obj].turns.end(); ++turn) {
@@ -288,13 +289,13 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	    continue;
 	    }
 	  oang = turn->first;
-	  aprog = (float)(offset + turn->second.duration - turn->second.finish)
+	  tprog = (float)(offset + turn->second.duration - turn->second.finish)
 		/ (float)(turn->second.duration);
 	  continue;
 	  }
 	ang = turn->first;
-	if(aprog > 0.0) {				// Turning
-	  ang = ang * (1.0 - aprog) + oang * aprog;
+	if(tprog > 0.0) {				// Turning
+	  ang = ang * (1.0 - tprog) + oang * tprog;
 	  anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("LEGS_TURN");
 	  if(anims[0] < 0) anims[0] = models[objects[obj->second.obj].model]->LookUpAnimation("TURN");
 	  }
@@ -325,18 +326,34 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(show == objects[obj->second.obj].show.end()) continue;
       }
 
-    if(xlim0 < xlim1 && (
-	(pos.x + objects[obj->second.obj].size) < xlim0
-	|| (pos.x - objects[obj->second.obj].size) >= xlim1
-	)) continue;
-    if(ylim0 < ylim1 && (
-	(pos.y + objects[obj->second.obj].size) < ylim0
-	|| (pos.y - objects[obj->second.obj].size) >= ylim1
-	)) continue;
-    if(zlim0 < zlim1 && (
-	(pos.z + objects[obj->second.obj].size) < zlim0
-	|| (pos.z - objects[obj->second.obj].size) >= zlim1
-	)) continue;
+    float size = 1.0;
+    { float osize = 1.0, tprog = 0.0;
+      list<pair<float, ActionTime> >::const_iterator sz =
+	objects[obj->second.obj].size.begin();
+      for(; sz != objects[obj->second.obj].size.end(); ++sz) {
+	if(offset < sz->second.finish) {
+	  if(offset + sz->second.duration < sz->second.finish) {
+	    continue;
+	    }
+	  osize = sz->first;
+	  tprog = (float)(offset + sz->second.duration - sz->second.finish)
+		/ (float)(sz->second.duration);
+	  continue;
+	  }
+	size = sz->first;
+	break;
+	}
+      if(tprog > 0.0) {				// Resizing
+	size = size * (1.0 - tprog) + osize * tprog;
+	}
+      }
+
+    if(xlim0 < xlim1 && ((pos.x + size) < xlim0 || (pos.x - size) >= xlim1))
+      continue;
+    if(ylim0 < ylim1 && ((pos.y + size) < ylim0 || (pos.y - size) >= ylim1))
+      continue;
+    if(zlim0 < zlim1 && ((pos.z + size) < zlim0 || (pos.z - size) >= zlim1))
+      continue;
 
     if(pos.x != xp || pos.y != yp || pos.z != zp) {
       glPopMatrix();
@@ -362,9 +379,9 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(col.r != 1.0 || col.g != 1.0 || col.b != 1.0) {
       glColor4f(col.r, col.g, col.b, 1.0);
       }
-    if(objects[obj->second.obj].size != 1.0) {
+    if(size != 1.0) {
       glPushMatrix();
-      glScalef(objects[obj->second.obj].size, objects[obj->second.obj].size, objects[obj->second.obj].size);
+      glScalef(size, size, size);
       }
     if(ang != 0.0) {
       glPushMatrix();
@@ -381,7 +398,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(ang != 0.0) {
       glPopMatrix();
       }
-    if(objects[obj->second.obj].size != 1.0) {
+    if(size != 1.0) {
       glPopMatrix();
       }
     if(col.r != 1.0 || col.g != 1.0 || col.b != 1.0) {

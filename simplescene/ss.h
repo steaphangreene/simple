@@ -69,10 +69,10 @@ public:
   void SetObjectModel(SS_Object obj, SS_Model mod);
   void SetObjectSkin(SS_Object obj, SS_Model skin);
   void SetObjectColor(SS_Object obj, float r, float g, float b);
-  void SetObjectSize(SS_Object obj, float sz);
   void SetObjectTarget(SS_Object obj, float xt, float yt, float zt);
 
   void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
+  void SizeObject(SS_Object obj, float sz, Uint32 end = 0, Uint32 dur = 0);
   void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end = 0,
 	Uint32 dur = 0);
   void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
@@ -132,11 +132,11 @@ protected:
   struct Object {
     SS_Model model;
     SS_Skin skin;
-    float size;
+    list<pair<float, ActionTime> > size;
     list<Uint32> show;
-    list<pair<SS_Action, ActionData> > acts;
     list<pair<Color, Uint32> > col;
     list<pair<float, ActionTime> > turns;
+    list<pair<SS_Action, ActionData> > acts;
     };
 
   struct PType {
