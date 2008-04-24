@@ -41,11 +41,11 @@ using namespace std;
 SimpleConnect::Connection::Connection(TCPsocket sock)
 {
  	socket = sock;
-	Conn_Setup* set;
-	set->tcp = sock;
-	set->recv_buffer = recv_buffer;
-	set->send_buffer = send_buffer;
-	networking_thread = SDL_CreateThread(RunClient, (void*)set);
+	Conn_Setup setup;
+	setup.tcp = sock;
+	setup.recv_buffer = recv_buffer;
+	setup.send_buffer = send_buffer;
+	networking_thread = SDL_CreateThread(RunClient, (void*)&setup);
 }
 
 // constructer for creating a server connection.
@@ -53,12 +53,12 @@ SimpleConnect::Connection::Connection(TCPsocket sock, SimpleConnections sconn)
 {
 	socket = sock;
 	sc = sconn;
-	Conn_Setup* set;
-	set->tcp = sock;
-	set->recv_buffer = recv_buffer;
-	set->send_buffer = send_buffer;
-	set->sc = sc;
-	networking_thread = SDL_CreateThread(RunServer, (void*)set);
+	Conn_Setup setup;
+	setup.tcp = sock;
+	setup.recv_buffer = recv_buffer;
+	setup.send_buffer = send_buffer;
+	setup.sc = sc;
+	networking_thread = SDL_CreateThread(RunServer, (void*)&setup);
 }
 
 
@@ -122,13 +122,13 @@ int SimpleConnect::Connection::RunClient(void* s)
 {
 	// runs the client thread which recieves information from the server if they send something
         // and adds the recieved values to a queue which can be taken from using recv().
-	Conn_Setup* set = (Conn_Setup*)s;
+	Conn_Setup* setup = (Conn_Setup*)s;
 	
-	queue<string> recv_buffer = set->recv_buffer;
-	queue<void*> send_buffer = set->send_buffer;
+	queue<string> recv_buffer = setup->recv_buffer;
+	queue<void*> send_buffer = setup->send_buffer;
 
 	int quit, connected, failed;
-	TCPsocket socket = set->tcp;
+	TCPsocket socket = setup->tcp;
 	IPaddress* ip = SDLNet_TCP_GetPeerAddress(socket);    // Server address 
 	if(!ip)
 	{
@@ -210,11 +210,11 @@ int SimpleConnect::Connection::RunServer(void* s)
 	// runs the server thread which recieves information from a SocketSet of clients. This will
 	// add their messages to a queue of messages which are delimited by socket number.
 
-	Conn_Setup* set = (Conn_Setup*)s;
-	queue<string> recv_buffer = set->recv_buffer;
-	queue<void*> send_buffer = set->send_buffer;
-	TCPsocket sd = set->tcp;
-	SimpleConnections sc = set->sc;
+	Conn_Setup* setup = (Conn_Setup*)s;
+	queue<string> recv_buffer = setup->recv_buffer;
+	queue<void*> send_buffer = setup->send_buffer;
+	TCPsocket sd = setup->tcp;
+	SimpleConnections sc = setup->sc;
 
 	SDLNet_SocketSet cnx_set = sc.tcpset;
 	TCPsocket sock; // sock descr & client sock descr
