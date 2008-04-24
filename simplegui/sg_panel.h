@@ -44,6 +44,7 @@ public:
   void SetTransparent(bool val = true);
 
   void SetTexture(SimpleTexture tex, int st = SG_STATE_DEFAULT);
+  void SetTexturator(ST_Texturator *stt, int st = SG_STATE_DEFAULT);
 
   //For Internal Use Only!
   void SetState(int st) { state = st; };

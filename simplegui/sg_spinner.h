@@ -51,6 +51,11 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
   SG_Button *upb, *downb;
+
+  static ST_Texturator *incbuttonup_texturator;
+  static ST_Texturator *incbuttondown_texturator;
+  static ST_Texturator *decbuttonup_texturator;
+  static ST_Texturator *decbuttondown_texturator;
   };
 
 #endif // SG_SPINNER_H
