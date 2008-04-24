@@ -280,8 +280,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     times.push_back(0);
 
     SS_Model model = SS_UNDEFINED_MODEL;
-    { list<pair<SS_Model, ActionTime> >::const_iterator mod;
-      mod=objects[obj->second.obj].model.begin();
+    { list<pair<SS_Model, ActionTime> >::const_iterator mod
+		= objects[obj->second.obj].model.begin();
       if(!objects[obj->second.obj].model.empty()) {
 	for(; mod != objects[obj->second.obj].model.end(); ++mod) {
 	  if(offset >= mod->second.finish) break;
@@ -292,9 +292,17 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	}
       }
     SS_Skin skin = SS_UNDEFINED_SKIN;
-
-    if(objects[obj->second.obj].skin.size() > 0)
-      skin = objects[obj->second.obj].skin.begin()->first;
+    { list<pair<SS_Skin, ActionTime> >::const_iterator skn
+		= objects[obj->second.obj].skin.begin();
+      if(!objects[obj->second.obj].skin.empty()) {
+	for(; skn != objects[obj->second.obj].skin.end(); ++skn) {
+	  if(offset >= skn->second.finish) break;
+	  }
+	if(skn != objects[obj->second.obj].skin.end()) {
+	  skin = skn->first;
+	  }
+	}
+      }
 
     anims[0] = models[model]->LookUpAnimation("LEGS_IDLE");
     if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("STAND");
