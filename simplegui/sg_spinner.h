@@ -29,8 +29,6 @@
 using namespace std;
 
 #include "sg_compound.h"
-#include "simpletexture.h"
-#include "sg_colors.h"
 #include "sg_text.h"
 #include "sg_ranger.h"
 
@@ -51,11 +49,6 @@ protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
   SG_Button *upb, *downb;
-
-  static ST_Texturator *incbuttonup_texturator;
-  static ST_Texturator *incbuttondown_texturator;
-  static ST_Texturator *decbuttonup_texturator;
-  static ST_Texturator *decbuttondown_texturator;
   };
 
 #endif // SG_SPINNER_H

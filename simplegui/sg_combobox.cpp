@@ -39,8 +39,10 @@ SG_ComboBox::SG_ComboBox(const vector<string> &options, bool edit,
 	SimpleTexture mtex, SimpleTexture mtex_dis, SimpleTexture mtex_sel)
 	: SG_Compound(binvpro, 1, 0.0, 0.0) {
 
-  opb = new SG_StickyButton("v", btex, btex_dis, btex_click);
+  opb = new SG_StickyButton("", btex, btex_dis, btex_click);
   opb->SetAlignment(SG_ALIGN_CENTER);
+  opb->SetTexturator(stt_dnbutt_up, 0);
+  opb->SetTexturator(stt_dnbutt_dn, 2);
   AddWidget(opb, binvpro-1, 0, 1, 1);
 
   string message;

@@ -23,6 +23,7 @@
 #define SG_COMPOUND_H
 
 #include "sg_table.h"
+#include "simpletexture.h"
 
 class SG_Compound : public SG_Table {
 public:
@@ -36,6 +37,15 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
+
+  static ST_Texturator *stt_upbutt_up;
+  static ST_Texturator *stt_upbutt_dn;
+  static ST_Texturator *stt_dnbutt_up;
+  static ST_Texturator *stt_dnbutt_dn;
+  static ST_Texturator *stt_rtbutt_up;
+  static ST_Texturator *stt_rtbutt_dn;
+  static ST_Texturator *stt_ltbutt_up;
+  static ST_Texturator *stt_ltbutt_dn;
   };
 
 #endif // SG_COMPOUND_H

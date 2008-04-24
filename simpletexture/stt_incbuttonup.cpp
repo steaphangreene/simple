@@ -21,11 +21,11 @@
 
 #include "stt_incbuttonup.h"
 
-STT_IncButtonUp::STT_IncButtonUp(const SDL_Color &txtcol) {
+STT_UpButton_Up::STT_UpButton_Up(const SDL_Color &txtcol) {
   textcol = txtcol;
   }
 
-SDL_Surface *STT_IncButtonUp::BuildTexture(SDL_Surface *surf,
+SDL_Surface *STT_UpButton_Up::BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
   SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
 	base_col(col), light_col(col), dark_col(col));

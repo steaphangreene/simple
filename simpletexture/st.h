@@ -30,6 +30,7 @@
 using namespace std;
 
 #include "SDL.h"
+#include "SDL_opengl.h"
 
 #include "stt.h"
 

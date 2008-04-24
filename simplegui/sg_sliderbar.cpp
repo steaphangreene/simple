@@ -41,8 +41,12 @@ SG_SliderBar::SG_SliderBar(bool vert,
 
   if(vertical) {
     Resize(1, 11);
-    incb = new SG_Button("^", b1tex, b1tex_dis, b1tex_click);
-    decb = new SG_Button("v", b2tex, b2tex_dis, b2tex_click);
+    incb = new SG_Button("", b1tex, b1tex_dis, b1tex_click);
+    decb = new SG_Button("", b2tex, b2tex_dis, b2tex_click);
+    incb->SetTexturator(stt_upbutt_up, 0);
+    incb->SetTexturator(stt_upbutt_dn, 2);
+    decb->SetTexturator(stt_dnbutt_up, 0);
+    decb->SetTexturator(stt_dnbutt_dn, 2);
     AddWidget(incb, 0, 0);
     AddWidget(decb, 0, ysize-1);
     AddWidget(handle, 0, 1);	//Hardcoded initial placement (for now)

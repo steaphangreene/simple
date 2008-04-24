@@ -26,6 +26,11 @@
 
 SG_Compound::SG_Compound(int xsz, int ysz, float xbor, float ybor)
 	: SG_Table(xsz, ysz, xbor, ybor) {
+  SDL_Color txt = {0, 0, 0, 255};
+  if(!stt_upbutt_up) stt_upbutt_up = new STT_UpButton_Up(txt);
+  if(!stt_upbutt_dn) stt_upbutt_dn = new STT_UpButton_Down(txt);
+  if(!stt_dnbutt_up) stt_dnbutt_up = new STT_DownButton_Up(txt);
+  if(!stt_dnbutt_dn) stt_dnbutt_dn = new STT_DownButton_Down(txt);
   }
 
 SG_Compound::~SG_Compound() {
@@ -76,3 +81,13 @@ bool SG_Compound::ChildEvent(SDL_Event *event) {
 //  bool SG_Compound::SetDefaultCursor(GL_MODEL *cur);
   
 //  static GL_MODEL SG_Compound::Default_Mouse_Cursor = NULL;
+
+ST_Texturator *SG_Compound::stt_upbutt_up = NULL;
+ST_Texturator *SG_Compound::stt_upbutt_dn = NULL;
+ST_Texturator *SG_Compound::stt_dnbutt_up = NULL;
+ST_Texturator *SG_Compound::stt_dnbutt_dn = NULL;
+ST_Texturator *SG_Compound::stt_rtbutt_up = NULL;
+ST_Texturator *SG_Compound::stt_rtbutt_dn = NULL;
+ST_Texturator *SG_Compound::stt_ltbutt_up = NULL;
+ST_Texturator *SG_Compound::stt_ltbutt_dn = NULL;
+

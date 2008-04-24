@@ -24,9 +24,9 @@
 
 #include "stt_button.h"
 
-class STT_DecButtonDown : public STT_Button {
+class STT_DownButton_Down : public STT_Button {
 public:
-  STT_DecButtonDown(const SDL_Color &txtcol);
+  STT_DownButton_Down(const SDL_Color &txtcol);
 protected:
   virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col

@@ -21,11 +21,11 @@
 
 #include "stt_decbuttondown.h"
 
-STT_DecButtonDown::STT_DecButtonDown(const SDL_Color &txtcol) {
+STT_DownButton_Down::STT_DownButton_Down(const SDL_Color &txtcol) {
   textcol = txtcol;
   }
 
-SDL_Surface *STT_DecButtonDown::BuildTexture(SDL_Surface *surf,
+SDL_Surface *STT_DownButton_Down::BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
   SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
 	base_col(col), dark_col(col), light_col(col));
