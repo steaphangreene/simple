@@ -26,7 +26,7 @@
 
 class SG_ProgressBar : public SG_TextArea {
 public:
-  SG_ProgressBar(string mes, SimpleTexture c = SG_COL_LOW,
+  SG_ProgressBar(const string mes = "", SimpleTexture c = SG_COL_LOW,
 	SimpleTexture dc = SG_COL_HIGH);
   virtual ~SG_ProgressBar();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);

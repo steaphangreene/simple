@@ -26,7 +26,7 @@
 
 class SG_StickyButton : public SG_Button {
 public:
-  SG_StickyButton(string mes, SimpleTexture tex = SG_COL_RAISED,
+  SG_StickyButton(const string mes = "", SimpleTexture tex = SG_COL_RAISED,
 	SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW,
 	SimpleTexture down_tex = SG_COL_HIGH );
   virtual ~SG_StickyButton();

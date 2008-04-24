@@ -42,7 +42,7 @@ using namespace std;
 
 class SG_TextArea : public SG_Panel, public SG_Text, public SG_Ranger2D {
 public:
-  SG_TextArea(string mes, SimpleTexture tex = SG_COL_BG,
+  SG_TextArea(const string mes = "", SimpleTexture tex = SG_COL_BG,
 	SimpleTexture dis_tex = SG_COL_BG, float mx = 0.03125, float my = 0.125);
   virtual ~SG_TextArea();
   virtual int HandleEvent(SDL_Event *event, float x, float y);

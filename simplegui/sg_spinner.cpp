@@ -63,7 +63,7 @@ int SG_Spinner::HandleEvent(SDL_Event *event, float x, float y) {
     Decrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = NULL;
+    event->user.data1 = (void*)(SG_Widget*)this;
     event->user.data2 = NULL;
     return 1;
     }
@@ -72,7 +72,7 @@ int SG_Spinner::HandleEvent(SDL_Event *event, float x, float y) {
     Increment();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = NULL;
+    event->user.data1 = (void*)(SG_Widget*)this;
     event->user.data2 = NULL;
     return 1;
     }

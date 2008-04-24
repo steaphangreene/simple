@@ -26,7 +26,7 @@
 
 class SG_Button : public SG_TextArea {
 public:
-  SG_Button(const string &mes, SimpleTexture tex = SG_COL_RAISED,
+  SG_Button(const string &mes = "", SimpleTexture tex = SG_COL_RAISED,
 	SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_Button();
   virtual int HandleEvent(SDL_Event *event, float x, float y);

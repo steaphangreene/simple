@@ -30,7 +30,8 @@ using namespace std;
 
 class SG_TransLabel : public SG_TextArea {
 public:
-  SG_TransLabel(string mes, int col = -1, float mx = 0.125, float my = 0.125);
+  SG_TransLabel(const string mes = "", int col = -1,
+	float mx = 0.125, float my = 0.125);
   virtual ~SG_TransLabel();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   

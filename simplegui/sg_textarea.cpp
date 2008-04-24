@@ -28,7 +28,8 @@
 
 #include <math.h>
 
-SG_TextArea::SG_TextArea(string mes, SimpleTexture tex, SimpleTexture dis_tex,
+SG_TextArea::SG_TextArea(const string mes,
+	SimpleTexture tex, SimpleTexture dis_tex,
 	float mx, float my) : SG_Panel(tex) {
   dis_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(dis_tex);
