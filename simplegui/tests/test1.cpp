@@ -253,6 +253,7 @@ int main(int argc, char **argv) {
   stack3->Ignore();
 
   SG_SliderBar *slide = new SG_SliderBar();
+  slide->SetIncrement(0.0625);
   tab[1]->AddWidget(slide, 0, 12, 2, 1);
 
   tab[1]->SetBorder(0.0625, 0.125);
