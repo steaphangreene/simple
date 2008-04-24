@@ -19,16 +19,16 @@
 //  
 // *************************************************************************
 
-#include "stt_incbuttonup.h"
+#include "stt_upbuttondown.h"
 
-STT_UpButton_Up::STT_UpButton_Up(const SDL_Color &txtcol) {
+STT_UpButton_Down::STT_UpButton_Down(const SDL_Color &txtcol) {
   textcol = txtcol;
   }
 
-SDL_Surface *STT_UpButton_Up::BuildTexture(SDL_Surface *surf,
+SDL_Surface *STT_UpButton_Down::BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
   SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
-	base_col(col), light_col(col), dark_col(col));
+	base_col(col), dark_col(col), light_col(col));
 
   Uint32 width = ysize/16;
   if(width > xsize/16) width = xsize/16;

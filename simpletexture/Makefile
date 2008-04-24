@@ -36,8 +36,8 @@ WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/
 OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \
 	$(ARCH)/stt_buttonup.o $(ARCH)/stt_buttondown.o \
-	$(ARCH)/stt_incbuttonup.o $(ARCH)/stt_incbuttondown.o \
-	$(ARCH)/stt_decbuttonup.o $(ARCH)/stt_decbuttondown.o
+	$(ARCH)/stt_upbuttonup.o $(ARCH)/stt_upbuttondown.o \
+	$(ARCH)/stt_downbuttonup.o $(ARCH)/stt_downbuttondown.o
 CXXFLAGS:=	$(FLAGS)
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 

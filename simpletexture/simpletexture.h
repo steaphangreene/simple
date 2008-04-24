@@ -27,9 +27,13 @@
 #include "stt_default.h"
 #include "stt_buttonup.h"
 #include "stt_buttondown.h"
-#include "stt_incbuttonup.h"
-#include "stt_incbuttondown.h"
-#include "stt_decbuttonup.h"
-#include "stt_decbuttondown.h"
+#include "stt_upbuttonup.h"
+#include "stt_upbuttondown.h"
+#include "stt_downbuttonup.h"
+#include "stt_downbuttondown.h"
+//#include "stt_rightbuttonup.h"
+//#include "stt_rightbuttondown.h"
+//#include "stt_leftbuttonup.h"
+//#include "stt_leftbuttondown.h"
 
 #endif  //SIMPLETEXTURE_H
