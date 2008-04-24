@@ -19,14 +19,14 @@
 //  
 // *************************************************************************
 
-#ifndef STT_UPBUTTONDOWN_H
-#define STT_UPBUTTONDOWN_H
+#ifndef STT_DOWNBUTTONDOWN_H
+#define STT_DOWNBUTTONDOWN_H
 
 #include "stt_button.h"
 
-class STT_UpButton_Down : public STT_Button {
+class STT_DownButton_Down : public STT_Button {
 public:
-  STT_UpButton_Down(const SDL_Color &txtcol);
+  STT_DownButton_Down(const SDL_Color &txtcol);
 protected:
   virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
 	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
@@ -34,4 +34,4 @@ protected:
   SDL_Color textcol;
   };
 
-#endif // STT_UPBUTTONDOWN_H
+#endif // STT_DOWNBUTTONDOWN_H

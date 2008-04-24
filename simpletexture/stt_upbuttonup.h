@@ -19,8 +19,8 @@
 //  
 // *************************************************************************
 
-#ifndef STT_INCBUTTONUP_H
-#define STT_INCBUTTONUP_H
+#ifndef STT_UPBUTTONUP_H
+#define STT_UPBUTTONUP_H
 
 #include "stt_button.h"
 
@@ -34,4 +34,4 @@ protected:
   SDL_Color textcol;
   };
 
-#endif // STT_INCBUTTONUP_H
+#endif // STT_UPBUTTONUP_H

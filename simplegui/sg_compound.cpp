@@ -31,6 +31,10 @@ SG_Compound::SG_Compound(int xsz, int ysz, float xbor, float ybor)
   if(!stt_upbutt_dn) stt_upbutt_dn = new STT_UpButton_Down(txt);
   if(!stt_dnbutt_up) stt_dnbutt_up = new STT_DownButton_Up(txt);
   if(!stt_dnbutt_dn) stt_dnbutt_dn = new STT_DownButton_Down(txt);
+  if(!stt_rtbutt_up) stt_rtbutt_up = new STT_RightButton_Up(txt);
+  if(!stt_rtbutt_dn) stt_rtbutt_dn = new STT_RightButton_Down(txt);
+  if(!stt_ltbutt_up) stt_ltbutt_up = new STT_LeftButton_Up(txt);
+  if(!stt_ltbutt_dn) stt_ltbutt_dn = new STT_LeftButton_Down(txt);
   }
 
 SG_Compound::~SG_Compound() {

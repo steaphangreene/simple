@@ -19,19 +19,35 @@
 //  
 // *************************************************************************
 
-#ifndef STT_UPBUTTONDOWN_H
-#define STT_UPBUTTONDOWN_H
+#include "stt_downbuttonup.h"
 
-#include "stt_button.h"
+STT_DownButton_Up::STT_DownButton_Up(const SDL_Color &txtcol) {
+  textcol = txtcol;
+  }
 
-class STT_UpButton_Down : public STT_Button {
-public:
-  STT_UpButton_Down(const SDL_Color &txtcol);
-protected:
-  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	);
-  SDL_Color textcol;
-  };
+SDL_Surface *STT_DownButton_Up::BuildTexture(SDL_Surface *surf,
+	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
+  SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
+	base_col(col), light_col(col), dark_col(col));
 
-#endif // STT_UPBUTTONDOWN_H
+  Uint32 width = ysize/16;
+  if(width > xsize/16) width = xsize/16;
+  if(width < 1) width = 1;
+
+  SDL_Rect point = { width * 2, width * 2, width, width };
+
+  for(Uint32 pos = xsize/4; pos <= xsize / 2; ++pos) {
+    point.x = pos;
+    point.y = ysize/2;
+    point.h = (ysize * pos / xsize) - xsize/4;
+    SDL_FillRect(ret, &point, SDL_MapRGB(
+	ret->format, textcol.r, textcol.g, textcol.b
+	));
+    point.x = xsize - pos;
+    SDL_FillRect(ret, &point, SDL_MapRGB(
+	ret->format, textcol.r, textcol.g, textcol.b
+	));
+    }
+
+  return ret;
+  }

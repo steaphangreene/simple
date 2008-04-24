@@ -37,7 +37,9 @@ OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \
 	$(ARCH)/stt_buttonup.o $(ARCH)/stt_buttondown.o \
 	$(ARCH)/stt_upbuttonup.o $(ARCH)/stt_upbuttondown.o \
-	$(ARCH)/stt_downbuttonup.o $(ARCH)/stt_downbuttondown.o
+	$(ARCH)/stt_downbuttonup.o $(ARCH)/stt_downbuttondown.o \
+	$(ARCH)/stt_rightbuttonup.o $(ARCH)/stt_leftbuttondown.o \
+	$(ARCH)/stt_leftbuttonup.o $(ARCH)/stt_rightbuttondown.o
 CXXFLAGS:=	$(FLAGS)
 CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
 

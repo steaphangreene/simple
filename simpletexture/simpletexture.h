@@ -31,9 +31,9 @@
 #include "stt_upbuttondown.h"
 #include "stt_downbuttonup.h"
 #include "stt_downbuttondown.h"
-//#include "stt_rightbuttonup.h"
-//#include "stt_rightbuttondown.h"
-//#include "stt_leftbuttonup.h"
-//#include "stt_leftbuttondown.h"
+#include "stt_rightbuttonup.h"
+#include "stt_rightbuttondown.h"
+#include "stt_leftbuttonup.h"
+#include "stt_leftbuttondown.h"
 
 #endif  //SIMPLETEXTURE_H
