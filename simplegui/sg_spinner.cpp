@@ -40,18 +40,20 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
 	incbuttonup_texturator = new STT_IncButtonUp(txt);
   if(!incbuttondown_texturator)
 	incbuttondown_texturator = new STT_IncButtonDown(txt);
-//  if(!decbuttonup_texturator)
-//	decbuttonup_texturator = new STT_IncButtonUp(txt);
-//  if(!decbuttondown_texturator) decbuttondown_texturator =
-//	new STT_IncButtonDown(txt);
+  if(!decbuttonup_texturator)
+	decbuttonup_texturator = new STT_DecButtonUp(txt);
+  if(!decbuttondown_texturator)
+	decbuttondown_texturator = new STT_DecButtonDown(txt);
 
   upb = new SG_Button();
   upb->SetAlignment(SG_ALIGN_CENTER);
   upb->SetTexturator(incbuttonup_texturator, 0);
   upb->SetTexturator(incbuttondown_texturator, 2);
   AddWidget(upb, binvpro-1, 0, 1, 1);
-  downb = new SG_Button("v");
+  downb = new SG_Button();
   downb->SetAlignment(SG_ALIGN_CENTER);
+  downb->SetTexturator(decbuttonup_texturator, 0);
+  downb->SetTexturator(decbuttondown_texturator, 2);
   AddWidget(downb, binvpro-1, 1, 1, 1);
 
   if(edit) text = new SG_Editable("0");

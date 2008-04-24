@@ -19,17 +19,19 @@
 //  
 // *************************************************************************
 
-#ifndef SIMPLETEXTURE_H
-#define SIMPLETEXTURE_H
+#ifndef STT_DECBUTTONUP_H
+#define STT_DECBUTTONUP_H
 
-#include "st.h"
-#include "stt.h"
-#include "stt_default.h"
-#include "stt_buttonup.h"
-#include "stt_buttondown.h"
-#include "stt_incbuttonup.h"
-#include "stt_incbuttondown.h"
-#include "stt_decbuttonup.h"
-#include "stt_decbuttondown.h"
+#include "stt_button.h"
 
-#endif  //SIMPLETEXTURE_H
+class STT_DecButtonUp : public STT_Button {
+public:
+  STT_DecButtonUp(const SDL_Color &txtcol);
+protected:
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
+	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
+	);
+  SDL_Color textcol;
+  };
+
+#endif // STT_DECBUTTONUP_H
