@@ -18,9 +18,7 @@ Fix all the in-code "FIXME"s
 Better handle modal popups and text focus of widgets.
 Implement actual mouse cursors, including adjustable focus points
 Implement ProgressBar
-Implement FileBrowser
-Implement RadioButtons
-Implement increments and inc/dec buttons on sliderbars/rangers.
+Really Implement FileBrowser
 
 -=Wishlist=-
 Widget-specific fonts?
