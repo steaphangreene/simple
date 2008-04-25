@@ -216,7 +216,7 @@ bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
   if(fac != 0.0 || elv != 0.0) {
     glPushMatrix();
     if(fac != 0.0) glRotatef(fac, 0.0, 0.0, 1.0);
-    if(elv != 0.0) glRotatef(elv, 1.0, 0.0, 0.0);
+    if(elv != 0.0) glRotatef(elv, 0.0, -1.0, 0.0);
     }
   bool ret = RenderSelf(cur_time, anim, start_time, anim_offset);
   if(!ret) return ret;
