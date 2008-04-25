@@ -136,6 +136,7 @@ protected:
     list<pair<Color, Uint32> > col;
     list<pair<float, ActionTime> > turns;
     list<pair<SS_Action, ActionData> > acts;
+    list<pair<Coord, ActionTime> > targets;
     };
 
   struct PType {

@@ -153,7 +153,9 @@ void SimpleScene::SizeObject(SS_Object obj, float sz, Uint32 end, Uint32 dur) {
 
 void SimpleScene::TargetObject(SS_Object obj, float xt, float yt, float zt,
 	Uint32 end, Uint32 dur) {
-  //FIXME: Implement!
+  Coord targ = { xt, yt, zt };
+  ActionTime act = { end, dur };
+  objects[obj].targets.push_front(pair<Coord, ActionTime>(targ, act));
   }
 
 SS_PType SimpleScene::AddPType() {
@@ -401,6 +403,21 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       zp = pos.z;
       }
 
+    float facing = 0.0, elevation = 0.0;
+    { list<pair<Coord, ActionTime> >::const_iterator targ
+		= objects[obj->second.obj].targets.begin();
+      for(; targ != objects[obj->second.obj].targets.end(); ++targ) {
+	if(offset >= targ->second.finish) {
+	  float dx = targ->first.x - xp;
+	  float dy = targ->first.y - yp;
+	  float dz = targ->first.z - zp;
+	  facing = 180.0 * atan2f(dy, dx) / M_PI - ang;
+	  elevation = 180.0 * atan2f(dz, sqrt(dx*dx + dy*dy)) / M_PI;
+	  break;
+	  }
+	}
+      }
+
     Color col = { 1.0, 1.0, 1.0 };
     if(!objects[obj->second.obj].col.empty()) {
       list<pair<Color, Uint32> >::const_reverse_iterator icol
@@ -429,7 +446,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       glBindTexture(GL_TEXTURE_2D, skins[skin]->GLTexture());
       }
     if(model != SS_UNDEFINED_MODEL) {
-      models[model]->Render(offset, anims, times);
+      models[model]->Render(offset, anims, times, 0, facing, elevation);
       }
 
     if(ang != 0.0) {

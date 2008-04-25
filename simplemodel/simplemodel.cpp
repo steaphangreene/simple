@@ -211,11 +211,18 @@ bool SimpleModel::MoveToTag(const string &tagname, Uint32 cur_time,
 
 
 bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
-  if(!RenderSelf(cur_time, anim, start_time, anim_offset)) return false;
+	const vector<Uint32> &start_time, Uint32 anim_offset,
+	float fac, float elv) const {
+  if(fac != 0.0 || elv != 0.0) {
+    glPushMatrix();
+    if(fac != 0.0) glRotatef(fac, 0.0, 0.0, 1.0);
+    if(elv != 0.0) glRotatef(elv, 1.0, 0.0, 0.0);
+    }
+  bool ret = RenderSelf(cur_time, anim, start_time, anim_offset);
+  if(!ret) return ret;
   map<Uint32, SimpleModel*>::const_iterator itr = submodels.begin();
   for(; itr != submodels.end(); ++itr) {
-    bool ret = false;
+    ret = false;
     glPushMatrix();
     if(MoveToTag(itr->first, cur_time, anim, start_time, anim_offset)) {
       if(itr->second->Render(cur_time, anim, start_time,
@@ -223,6 +230,9 @@ bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
 	ret = true;
 	}
       }
+    glPopMatrix();
+    }
+  if(fac != 0.0 || elv != 0.0) {
     glPopMatrix();
     }
   return true;
