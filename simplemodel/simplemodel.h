@@ -92,6 +92,7 @@ protected:
   map<string, Uint32> tags;
   map<Uint32, SimpleModel *> submodels;
   map<Uint32, Uint32> tag_anim_offsets;
+  set<Uint32> target_models;
 
   static vector<string> source_files;
 

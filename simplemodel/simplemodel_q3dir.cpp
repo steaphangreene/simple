@@ -62,7 +62,11 @@ bool SimpleModel_Q3Dir::Load(const string &pack, const string &filenm, const str
 
   torso = new SimpleModel_MD3(pack, torsofile, defskin);
   SetAnimOffset("tag_torso", 1);
-  if(torso) AttachSubmodel("tag_torso", torso);
+  if(torso) {
+    Uint32 tnum = TagNameToIndex("tag_torso");
+    AttachSubmodel(tnum, torso);
+    target_models.insert(tnum);
+    }
 
   head = new SimpleModel_MD3(pack, headfile, defskin);
   if(torso && head) torso->AttachSubmodel("tag_head", head);
