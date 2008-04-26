@@ -59,6 +59,7 @@
 #define	SG_EVENT_DRAGRELEASE	504
 
 //SG_Alignment Actions (2-Digit Ternary: MSD=Verticle, LSD=Horizontal)
+#define SG_EDGE_BEGIN		600	// For Testing Range of Events
 #define SG_EDGE_DOWNLEFT	600
 #define SG_EDGE_DOWN		601
 #define SG_EDGE_DOWNRIGHT	602
@@ -68,6 +69,7 @@
 #define SG_EDGE_UPLEFT		606
 #define SG_EDGE_UP		607
 #define SG_EDGE_UPRIGHT		608
+#define SG_EDGE_END		609	// For Testing Range of Events
 
 //SG_Passthrough Actions
 #define	SG_EVENT_CLICK		1000
