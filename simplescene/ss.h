@@ -59,7 +59,7 @@ public:
 
   SS_Model AddModel(SimpleModel *mod);
   const SimpleModel *GetModel(SS_Model which) { return models[which].model; }
-  void SetAnim(SS_Model mod, int id, string anim, int submodel = 0);
+  void SetModelAnim(SS_Model mod, int id, string an, int submodel = 0);
 
   SS_Object AddObject(
 	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);

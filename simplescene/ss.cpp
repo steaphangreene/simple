@@ -86,11 +86,11 @@ SS_Model SimpleScene::AddModel(SimpleModel *mod) {
   return (SS_Model)(models.size() - 1);
   }
 
-void SimpleScene::SetAnim(SS_Model mod, int id, string anim, int submodel) {
+void SimpleScene::SetModelAnim(SS_Model mod, int id, string an, int submodel) {
   if(models[mod].model) {
-    int an = models[mod].model->LookUpAnimation(anim);
+    int anim = models[mod].model->LookUpAnimation(an);
     models[mod].animmap.
-	insert(pair<int, pair<int, int> >(id, pair<int, int>(an, submodel)));
+	insert(pair<int, pair<int, int> >(id, pair<int, int>(anim, submodel)));
     }
   }
 
@@ -456,6 +456,21 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       glBindTexture(GL_TEXTURE_2D, skins[skin].tex->GLTexture());
       }
     if(model != SS_UNDEFINED_MODEL) {
+      list<pair<SS_Action, ActionTime> >::const_reverse_iterator act
+		= objects[obj->second.obj].acts.rbegin();
+      for(; act != objects[obj->second.obj].acts.rend(); ++act) {
+	if(offset + act->second.duration >= act->second.finish
+		&& models[model].animmap.count(act->first) > 0) {
+	  multimap<int, pair<int, int> >::const_iterator anim
+		= models[model].animmap.find(act->first);
+	  for(; anim != models[model].animmap.upper_bound(act->first); ++anim) {
+	    anims[anim->second.second] = anim->second.first;
+	    times[anim->second.second] = act->second.finish - act->second.duration;
+	    }
+	  break;
+	  }
+	}
+
       models[model].model->Render(offset, anims, times, 0, facing, elevation);
       }
 
