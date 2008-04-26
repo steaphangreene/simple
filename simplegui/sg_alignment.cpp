@@ -27,6 +27,7 @@
 SG_Alignment::SG_Alignment(float xbor, float ybor) : SG_Widget() {
   SetBorder(xbor, ybor);
   background = NULL;
+  last_edge_event = 0;
   }
 
 SG_Alignment::~SG_Alignment() {
