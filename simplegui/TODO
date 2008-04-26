@@ -11,7 +11,6 @@ Combine SELECT, SELECT_ITEM and SELECTTEXT events with MultiText.
 Clean up multiple redundant calls to RangerChanged during SG_Ranger2D events.
 
 -=TODO=-
-SG_Menu should be parallel to, not derived from SG_Button.
 
 -=To Flush Out=-
 Fix all the in-code "FIXME"s
@@ -26,3 +25,4 @@ Add time offset to AnimatedPanel widget?
 Console widget?
 Determine state dynamically based on flags and flag changes?
 Typecastor for char * (separated by '\n's) to vector<string>?
+Should SG_Menu be parallel to, not derived from SG_Button?
