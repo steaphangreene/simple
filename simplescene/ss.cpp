@@ -86,6 +86,14 @@ SS_Model SimpleScene::AddModel(SimpleModel *mod) {
   return (SS_Model)(models.size() - 1);
   }
 
+void SimpleScene::SetAnim(SS_Model mod, int id, string anim, int submodel) {
+  if(models[mod].model) {
+    int an = models[mod].model->LookUpAnimation(anim);
+    models[mod].animmap.
+	insert(pair<int, pair<int, int> >(id, pair<int, int>(an, submodel)));
+    }
+  }
+
 SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
   Skin s = { skin };
   skins.push_back(s);
