@@ -89,6 +89,10 @@ SS_Model SimpleScene::AddModel(SimpleModel *mod) {
 void SimpleScene::SetModelAnim(SS_Model mod, int id, string an, int submodel) {
   if(models[mod].model) {
     int anim = models[mod].model->LookUpAnimation(an);
+    if(anim < 0) {
+      fprintf(stderr, "WARNING: Failed to lookup animation '%s'\n", an.c_str());
+      return;
+      }
     models[mod].animmap.
 	insert(pair<int, pair<int, int> >(id, pair<int, int>(anim, submodel)));
     }
