@@ -71,6 +71,7 @@ public:
   void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
   void TargetObject(SS_Object obj, float xt, float yt, float zt,
 	Uint32 end = 0, Uint32 dur = 0);
+  void UnTargetObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
   void ShowObject(SS_Object obj, Uint32 fin);
   void HideObject(SS_Object obj, Uint32 fin);
   void ColorObject(SS_Object obj, float r, float g, float b, Uint32 tm = 0);

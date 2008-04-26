@@ -40,6 +40,10 @@ using namespace std;
 #include "simplemodel.h"
 #include "simplevideo.h"
 
+#ifndef HUGE_VAL	//FIXME: Is there A More Portable Way?
+#define HUGE_VAL (1.0/0.0)
+#endif
+
 SimpleScene *SimpleScene::current = NULL;
 
 SimpleScene::SimpleScene() {
@@ -168,6 +172,12 @@ void SimpleScene::SizeObject(SS_Object obj, float sz, Uint32 end, Uint32 dur) {
 void SimpleScene::TargetObject(SS_Object obj, float xt, float yt, float zt,
 	Uint32 end, Uint32 dur) {
   Coord targ = { xt, yt, zt };
+  ActionTime act = { end, dur };
+  objects[obj].targets.push_front(pair<Coord, ActionTime>(targ, act));
+  }
+
+void SimpleScene::UnTargetObject(SS_Object obj, Uint32 end, Uint32 dur) {
+  Coord targ = { HUGE_VAL, HUGE_VAL, HUGE_VAL };
   ActionTime act = { end, dur };
   objects[obj].targets.push_front(pair<Coord, ActionTime>(targ, act));
   }
@@ -422,11 +432,13 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 		= objects[obj->second.obj].targets.begin();
       for(; targ != objects[obj->second.obj].targets.end(); ++targ) {
 	if(offset >= targ->second.finish) {
-	  float dx = targ->first.x - xp;
-	  float dy = targ->first.y - yp;
-	  float dz = targ->first.z - zp;
-	  facing = 180.0 * atan2f(dy, dx) / M_PI - ang;
-	  elevation = 180.0 * atan2f(dz, sqrt(dx*dx + dy*dy)) / M_PI;
+	  if(targ->first.x != HUGE_VAL) {
+	    float dx = targ->first.x - xp;
+	    float dy = targ->first.y - yp;
+	    float dz = targ->first.z - zp;
+	    facing = 180.0 * atan2f(dy, dx) / M_PI - ang;
+	    elevation = 180.0 * atan2f(dz, sqrt(dx*dx + dy*dy)) / M_PI;
+	    }
 	  break;
 	  }
 	}
