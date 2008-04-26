@@ -129,6 +129,7 @@ int main(int argc, char **argv) {
   gui->MasterWidget()->RemoveWidget(tab[0]);	//Just to be sure it works!
   gui->MasterWidget()->AddWidget(tab[0]);
 
+  tab[0]->EnableEdgeEvents();
   tab[0]->AddWidget(pass[0], 0, 0, 3, 12);
   tab[0]->AddWidget(tab[1], 3, 0, 1, 12);
   tab[1]->AddWidget(scroll, 0, 0, 2, 4);
@@ -414,6 +415,33 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EVENT_MOVE from %s - Value: %.2f.\n",
 		name[(SG_Widget*)(event.user.data1)].c_str(),
 		*((float *)(event.user.data2)));
+	  }
+	else if(event.user.code == SG_EDGE_NONE) {
+	  printf("Received SG_EDGE_NONE\n");
+	  }
+	else if(event.user.code == SG_EDGE_UP) {
+	  printf("Received SG_EDGE_UP\n");
+	  }
+	else if(event.user.code == SG_EDGE_DOWN) {
+	  printf("Received SG_EDGE_DOWN\n");
+	  }
+	else if(event.user.code == SG_EDGE_LEFT) {
+	  printf("Received SG_EDGE_LEFT\n");
+	  }
+	else if(event.user.code == SG_EDGE_RIGHT) {
+	  printf("Received SG_EDGE_RIGHT\n");
+	  }
+	else if(event.user.code == SG_EDGE_UPLEFT) {
+	  printf("Received SG_EDGE_UPLEFT\n");
+	  }
+	else if(event.user.code == SG_EDGE_UPRIGHT) {
+	  printf("Received SG_EDGE_UPRIGHT\n");
+	  }
+	else if(event.user.code == SG_EDGE_DOWNLEFT) {
+	  printf("Received SG_EDGE_NONE\n");
+	  }
+	else if(event.user.code == SG_EDGE_DOWNRIGHT) {
+	  printf("Received SG_EDGE_NONE\n");
 	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);

@@ -52,6 +52,9 @@ public:
   void UnsetBackground();
   virtual void SetAspectRatio(double asp);
   virtual void SetAlignment(int align);
+
+  void EnableEdgeEvents();
+  void DisableEdgeEvents();
   
 protected:
   void CalcGeometry();
@@ -62,6 +65,7 @@ protected:
   vector<SG_Widget *> widgets;
   SG_Widget *background;
   float xborder, yborder;
+  int last_edge_event;
   };
 
 #endif // SG_ALIGNMENT_H

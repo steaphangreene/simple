@@ -22,6 +22,7 @@
 #include "SDL_opengl.h"
 
 #include "sg_alignment.h"
+#include "sg_events.h"
 
 SG_Alignment::SG_Alignment(float xbor, float ybor) : SG_Widget() {
   SetBorder(xbor, ybor);
@@ -47,6 +48,30 @@ int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
   int ret = 1;
+
+  if(last_edge_event > 0 && event->type == SDL_MOUSEMOTION) {
+    int etype = SG_EDGE_NONE;
+    if(x < -1.0 + (1.0 / 128)) {
+      etype -= 1;
+      }
+    else if(x > 1.0 - (1.0 / 128)) {
+      etype += 1;
+      }
+    if(y < -1.0 + (1.0 / 128)) {
+      etype -= 3;
+      }
+    else if(y > 1.0 - (1.0 / 128)) {
+      etype += 3;
+      }
+    if(etype != last_edge_event) {
+      last_edge_event = etype;
+      event->type = SDL_SG_EVENT;
+      event->user.code = etype;
+      event->user.data1 = (void*)(SG_Alignment*)this;
+      event->user.data2 = NULL;
+      return 1;
+      }
+    }
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();
@@ -240,4 +265,12 @@ void SG_Alignment::SetAlignment(int align) {
   for(; wid != widgets.end(); ++wid) {
     (*wid)->SetAlignment(align);
     }
+  }
+
+void SG_Alignment::EnableEdgeEvents() {
+  last_edge_event = SG_EDGE_NONE;
+  }
+
+void SG_Alignment::DisableEdgeEvents() {
+  last_edge_event = 0;
   }

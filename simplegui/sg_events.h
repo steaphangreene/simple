@@ -58,6 +58,17 @@
 #define	SG_EVENT_DRAGGRAB	503
 #define	SG_EVENT_DRAGRELEASE	504
 
+//SG_Alignment Actions (2-Digit Ternary: MSD=Verticle, LSD=Horizontal)
+#define SG_EDGE_DOWNLEFT	600
+#define SG_EDGE_DOWN		601
+#define SG_EDGE_DOWNRIGHT	602
+#define SG_EDGE_LEFT		603
+#define SG_EDGE_NONE		604
+#define SG_EDGE_RIGHT		605
+#define SG_EDGE_UPLEFT		606
+#define SG_EDGE_UP		607
+#define SG_EDGE_UPRIGHT		608
+
 //SG_Passthrough Actions
 #define	SG_EVENT_CLICK		1000
 #define	SG_EVENT_LEFTCLICK	1001
