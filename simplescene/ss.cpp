@@ -81,12 +81,14 @@ bool SimpleScene::Render(Uint32 offset) {
   }
 
 SS_Model SimpleScene::AddModel(SimpleModel *mod) {
-  models.push_back(mod);
+  Model m = { mod };
+  models.push_back(m);
   return (SS_Model)(models.size() - 1);
   }
 
 SS_Skin SimpleScene::AddSkin(SimpleTexture *skin) {
-  skins.push_back(skin);
+  Skin s = { skin };
+  skins.push_back(s);
   return (SS_Skin)(skins.size() - 1);
   }
 
@@ -100,10 +102,10 @@ SS_Object SimpleScene::AddObject(SS_Model mod, SS_Skin skin) {
   return next_obj++;
   }
 
-void SimpleScene::ObjectAct(SS_Object obj,
+void SimpleScene::ActObject(SS_Object obj,
 	SS_Action act, Uint32 fin, Uint32 dur) {
-  ActionData newact = { obj, fin, dur };
-  objects[obj].acts.push_back(pair<SS_Action, ActionData>(act, newact));
+  ActionTime newact = { fin, dur };
+  objects[obj].acts.push_back(pair<SS_Action, ActionTime>(act, newact));
   }
 
 void SimpleScene::ShowObject(SS_Object obj, Uint32 tm) {
@@ -306,15 +308,15 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	}
       }
 
-    anims[0] = models[model]->LookUpAnimation("LEGS_IDLE");
-    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("STAND");
-    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Stand");
-    if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Stand 1");
+    anims[0] = models[model].model->LookUpAnimation("LEGS_IDLE");
+    if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("STAND");
+    if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Stand");
+    if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Stand 1");
 
-    anims[1] = models[model]->LookUpAnimation("TORSO_STAND");
-    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("STAND");
-    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("Stand");
-    if(anims[1] < 0) anims[1] = models[model]->LookUpAnimation("Stand 1");
+    anims[1] = models[model].model->LookUpAnimation("TORSO_STAND");
+    if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("STAND");
+    if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("Stand");
+    if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("Stand 1");
 
     float ang = 0.0;
     { float oang = 0.0, tprog = 0.0;
@@ -333,8 +335,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	ang = turn->first;
 	if(tprog > 0.0) {				// Turning
 	  ang = ang * (1.0 - tprog) + oang * tprog;
-	  anims[0] = models[model]->LookUpAnimation("LEGS_TURN");
-	  if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("TURN");
+	  anims[0] = models[model].model->LookUpAnimation("LEGS_TURN");
+	  if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("TURN");
 	  }
 	break;
 	}
@@ -348,12 +350,12 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       pos.z = (pos.z * (1.0 - prog[obj->second.obj]))
 	+ (toward[obj->second.obj].z * prog[obj->second.obj]);
 
-      anims[0] = models[model]->LookUpAnimation("LEGS_WALK");
-      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("LEGS_RUN");
-      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("WALK");
-      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("RUN");
-      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Walk");
-      if(anims[0] < 0) anims[0] = models[model]->LookUpAnimation("Walk 1");
+      anims[0] = models[model].model->LookUpAnimation("LEGS_WALK");
+      if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("LEGS_RUN");
+      if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("WALK");
+      if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("RUN");
+      if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Walk");
+      if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Walk 1");
       }
 
     list<Uint32>::const_iterator show;
@@ -443,10 +445,10 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       }
 
     if(skin != SS_UNDEFINED_SKIN) {
-      glBindTexture(GL_TEXTURE_2D, skins[skin]->GLTexture());
+      glBindTexture(GL_TEXTURE_2D, skins[skin].tex->GLTexture());
       }
     if(model != SS_UNDEFINED_MODEL) {
-      models[model]->Render(offset, anims, times, 0, facing, elevation);
+      models[model].model->Render(offset, anims, times, 0, facing, elevation);
       }
 
     if(ang != 0.0) {

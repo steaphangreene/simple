@@ -41,11 +41,7 @@ const SS_Skin SS_UNDEFINED_SKIN = -1;
 typedef int SS_Model;
 const SS_Model SS_UNDEFINED_MODEL = -1;
 typedef int SS_Object;
-
-enum SS_Action {
-  SS_ACT_NONE = 0,
-  SS_ACT_MAX
-  };
+typedef int SS_Action;
 
 class SimpleScene {
 public:
@@ -62,7 +58,7 @@ public:
   SS_Skin AddSkin(SimpleTexture *skin);
 
   SS_Model AddModel(SimpleModel *mod);
-  const SimpleModel *Model(SS_Model which) { return models[which]; }
+  const SimpleModel *GetModel(SS_Model which) { return models[which].model; }
 
   SS_Object AddObject(
 	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);
@@ -77,7 +73,7 @@ public:
   void ShowObject(SS_Object obj, Uint32 fin);
   void HideObject(SS_Object obj, Uint32 fin);
   void ColorObject(SS_Object obj, float r, float g, float b, Uint32 tm = 0);
-  void ObjectAct(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
+  void ActObject(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -128,6 +124,14 @@ protected:
       }
     };
 
+  struct Model {
+    SimpleModel *model;
+    };
+
+  struct Skin {
+    SimpleTexture *tex;
+    };
+
   struct Object {
     list<pair<SS_Model, ActionTime> > model;
     list<pair<SS_Skin, ActionTime> > skin;
@@ -135,8 +139,8 @@ protected:
     list<Uint32> show;
     list<pair<Color, Uint32> > col;
     list<pair<float, ActionTime> > turns;
-    list<pair<SS_Action, ActionData> > acts;
     list<pair<Coord, ActionTime> > targets;
+    list<pair<SS_Action, ActionTime> > acts;
     };
 
   struct PType {
@@ -157,8 +161,8 @@ protected:
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 
-  vector<SimpleTexture *> skins;
-  vector<SimpleModel *> models;
+  vector<Skin> skins;
+  vector<Model> models;
   list<pair<Coord, ActionData> > moves;
   map<SS_Object, Object> objects;
   vector<PType> ptypes;
