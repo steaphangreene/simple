@@ -170,17 +170,6 @@ int main(int argc, char **argv) {
     SDL_UnlockSurface(nsurf);
     cols.push_back(nsurf);
     }
-/*
-  int black = gui->NewColor(0.0, 0.0, 0.0);
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(white));
-  cols.push_back(SimpleTexture(black));
-  cols.push_back(SimpleTexture(white));
-*/
   anim = new SG_AnimatedPanel(cols, 12.5f);
 
   scroll->SetBackground(panel[1]);
@@ -479,6 +468,39 @@ int main(int argc, char **argv) {
     start_scene();
     gui->Render(SDL_GetTicks());
     finish_scene();
+
+    static int done = false;
+    if(SDL_GetTicks() > 3000 && (!done)) {
+      SDL_Surface *nsurf = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
+	ST_SDL_RGBA_COLFIELDS);
+      SDL_FillRect(nsurf, NULL, SDL_MapRGB(nsurf->format, 0, 0, 255));
+      Uint32 colwht = SDL_MapRGB(nsurf->format, 255, 0, 0);
+      SDL_LockSurface(nsurf);
+      for(int x=0; x < FRAME_DIM; ++x) {
+	for(int y=0; y < FRAME_DIM; ++y) {
+	  if(rand()&32) {
+	    ((Uint32 *)(nsurf->pixels))[y*FRAME_DIM+x] = colwht;
+	    }
+	  }
+	}
+      SDL_UnlockSurface(nsurf);
+      anim->SetTexture(nsurf, 0);
+      anim->SetTexture(nsurf, 1);
+      anim->SetTexture(nsurf, 2);
+      anim->SetTexture(nsurf, 3);
+      anim->SetTexture(nsurf, 4);
+      anim->SetTexture(nsurf, 5);
+      anim->SetTexture(nsurf, 6);
+      anim->SetTexture(nsurf, 7);
+      anim->SetTexture(nsurf, 8);
+      anim->SetTexture(nsurf, 9);
+      anim->SetTexture(nsurf, 10);
+      anim->SetTexture(nsurf, 11);
+      anim->SetTexture(nsurf, 12);
+      anim->SetTexture(nsurf, 13);
+      anim->SetTexture(nsurf, 14);
+      anim->SetTexture(nsurf, 15);
+      }
     }
 
   gui->UnsetPopupWidget(); 
