@@ -52,7 +52,8 @@ int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
-  int ret = 1;
+  int ret = HandleEdgeEvent(event, x, y);
+  if(ret) return ret;
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();

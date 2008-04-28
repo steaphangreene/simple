@@ -48,7 +48,9 @@ SG_PassThrough::~SG_PassThrough() {
 
 bool SG_PassThrough::HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y) {
-  bool ret = false;
+  bool ret = HandleEdgeEvent(event, x, y);
+  if(ret) return ret;
+
 //  if(event->type == SDL_MOUSEBUTTONUP)
 //    fprintf(stderr, "Align/Hand: Button Up at (%f,%f)\n", x, y);
 

@@ -55,7 +55,8 @@ int SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(xsize <= 0 || ysize <= 0) return -1;
 
-  int ret = 1;
+  int ret = HandleEdgeEvent(event, x, y);
+  if(ret) return ret;
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();

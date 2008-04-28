@@ -427,10 +427,10 @@ int main(int argc, char **argv) {
 	  printf("Received SG_EDGE_UPRIGHT\n");
 	  }
 	else if(event.user.code == SG_EDGE_DOWNLEFT) {
-	  printf("Received SG_EDGE_NONE\n");
+	  printf("Received SG_EDGE_DOWNLEFT\n");
 	  }
 	else if(event.user.code == SG_EDGE_DOWNRIGHT) {
-	  printf("Received SG_EDGE_NONE\n");
+	  printf("Received SG_EDGE_DOWNRIGHT\n");
 	  }
 	else {
 	  printf("Received Unknown SG_EVENT #%d.\n", event.user.code);

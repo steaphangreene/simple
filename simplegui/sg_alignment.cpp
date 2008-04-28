@@ -41,15 +41,7 @@ SG_Alignment::~SG_Alignment() {
   background = NULL;
   }
 
-int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
-
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
-
-  int ret = 1;
-
+int SG_Alignment::HandleEdgeEvent(SDL_Event *event, float x, float y) {
   if(last_edge_event > 0 && event->type == SDL_MOUSEMOTION) {
     int etype = SG_EDGE_NONE;
     if(x < -1.0 + (1.0 / 128)) {
@@ -73,6 +65,18 @@ int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
       return 1;
       }
     }
+  return 0;
+  }
+
+int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
+//  if(event->type == SDL_MOUSEBUTTONDOWN)
+//    fprintf(stderr, "Align/Handle: Button Down at (%f,%f)\n", x, y);
+
+  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
+  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+
+  int ret = HandleEdgeEvent(event, x, y);
+  if(ret) return ret;
 
   if(widgets.size() >= 1 && widgets[0]) {
     CalcGeometry();

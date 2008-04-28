@@ -59,6 +59,7 @@ public:
 protected:
   void CalcGeometry();
   SG_AlignmentGeometry cur_geom;
+  int HandleEdgeEvent(SDL_Event *event, float x, float y);
   virtual bool RenderSelf(unsigned long cur_time);
 
 //  static GL_MODEL Default_Mouse_Cursor;
