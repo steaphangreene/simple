@@ -471,35 +471,23 @@ int main(int argc, char **argv) {
 
     static int done = false;
     if(SDL_GetTicks() > 3000 && (!done)) {
-      SDL_Surface *nsurf = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
-	ST_SDL_RGBA_COLFIELDS);
-      SDL_FillRect(nsurf, NULL, SDL_MapRGB(nsurf->format, 0, 0, 255));
-      Uint32 colwht = SDL_MapRGB(nsurf->format, 255, 0, 0);
-      SDL_LockSurface(nsurf);
-      for(int x=0; x < FRAME_DIM; ++x) {
-	for(int y=0; y < FRAME_DIM; ++y) {
-	  if(rand()&32) {
-	    ((Uint32 *)(nsurf->pixels))[y*FRAME_DIM+x] = colwht;
+      done = true;
+      for(int frm=0; frm < 16; ++frm) {
+	SDL_Surface *nsurf = SDL_CreateRGBSurface(0, FRAME_DIM, FRAME_DIM, 32,
+		ST_SDL_RGBA_COLFIELDS);
+	SDL_FillRect(nsurf, NULL, SDL_MapRGB(nsurf->format, 0, 0, 255));
+	Uint32 colwht = SDL_MapRGB(nsurf->format, 255, 0, 0);
+	SDL_LockSurface(nsurf);
+	for(int x=0; x < FRAME_DIM; ++x) {
+	  for(int y=0; y < FRAME_DIM; ++y) {
+	    if(rand()&32) {
+	      ((Uint32 *)(nsurf->pixels))[y*FRAME_DIM+x] = colwht;
+	      }
 	    }
 	  }
+	SDL_UnlockSurface(nsurf);
+	anim->SetTexture(nsurf, frm);
 	}
-      SDL_UnlockSurface(nsurf);
-      anim->SetTexture(nsurf, 0);
-      anim->SetTexture(nsurf, 1);
-      anim->SetTexture(nsurf, 2);
-      anim->SetTexture(nsurf, 3);
-      anim->SetTexture(nsurf, 4);
-      anim->SetTexture(nsurf, 5);
-      anim->SetTexture(nsurf, 6);
-      anim->SetTexture(nsurf, 7);
-      anim->SetTexture(nsurf, 8);
-      anim->SetTexture(nsurf, 9);
-      anim->SetTexture(nsurf, 10);
-      anim->SetTexture(nsurf, 11);
-      anim->SetTexture(nsurf, 12);
-      anim->SetTexture(nsurf, 13);
-      anim->SetTexture(nsurf, 14);
-      anim->SetTexture(nsurf, 15);
       }
     }
 
