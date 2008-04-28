@@ -199,7 +199,7 @@ SimpleAudio::SimpleAudio(int bufsize) {
     fprintf(stderr, "Continuing without sound.\n");
     return;
     }
-  Mix_AllocateChannels(16);	//FIXME: Make this dynamic
+  Mix_AllocateChannels(256);	//FIXME: Make this dynamic
   audio_initialized = true;
   }
 
