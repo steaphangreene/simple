@@ -83,6 +83,7 @@ struct SimpleTexture::TextData {
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
   SDL_Surface *rendered_text;
   int text_xsize, text_ysize;
+  SDL_Rect cursor;
 
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
   string message;
@@ -118,6 +119,7 @@ void SimpleTexture::Init(const SimpleTextureType tp) {
   texturator = default_texturator;
   dirty = 0;	//Since it's not ready to be "cleaned" yet.
   all_textures.insert(this);	// So I can be invalidated!
+  show_cursor = false;
   }
 
 
@@ -387,6 +389,7 @@ void SimpleTexture::CopyFrom(const SimpleTexture &in) {
   filename = in.filename;
 
   if(in.text) AttachTextData(in.text);
+  show_cursor = in.show_cursor;
 
   if(trans_cache.count(src) > 0) {
     UpdateCache();			//Use cache to make it deep
@@ -666,6 +669,16 @@ void SimpleTexture::BuildTextTexture() {
 	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
 	SDL_BlitSurface(tmp_text, NULL, text->rendered_text, &drec);
 	SDL_FreeSurface(tmp_text);
+
+	text->cursor = drec;
+	text->cursor.x += tmp_text->w;
+	text->cursor.w = 2;
+	text->cursor.h = tmp_text->h;
+	}
+      else {
+	text->cursor = drec;
+	text->cursor.w = 2;
+	text->cursor.h = TTF_FontHeight(Font(text->font_size));
 	}
       drec.y += TTF_FontLineSkip(Font(text->font_size));
       }
@@ -712,6 +725,13 @@ void SimpleTexture::BuildTextTexture() {
       }
 
     SDL_BlitSurface(text->rendered_text, &srec, cur, &drec);
+
+    if(show_cursor) {
+      SDL_Rect cursor = text->cursor;
+      cursor.x += drec.x;
+      cursor.y += drec.y;
+      SDL_FillRect(cur, &cursor, SDL_MapRGB(cur->format, fg.r, fg.g, fg.b));
+      }
     }
   }
 
@@ -1233,6 +1253,14 @@ int SimpleTexture::ColorByName(const string &cname) {
       }
     }
   return NewColor((col>>16)/255.0, ((col>>8)&255)/255.0, (col&255)/255.0);
+  }
+
+void SimpleTexture::EnableCursor() {
+  show_cursor = true;
+  }
+
+void SimpleTexture::DisableCursor() {
+  show_cursor = false;
   }
 
 map<string, Uint32> SimpleTexture::color_name;
