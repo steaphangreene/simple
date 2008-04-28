@@ -36,7 +36,7 @@ WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/
 
 OBJS:=	$(ARCH)/sc.o $(ARCH)/sc_conn.o
 CXXFLAGS:=	$(FLAGS) -I../simplegui -I../simpletexture
-CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
+CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
 
 WOBJS:=	sc.win32_o sc_conn.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui
@@ -69,8 +69,7 @@ $(ARCH)/%.o:	tests/%.cpp | $(ARCH)
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
 deps.$(ARCH).mk:	*.cpp *.h
-#	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@
-	$(CXX) $(CXXFLAGS) -MM *.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@
+	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@
 
 clean:
 	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
@@ -79,14 +78,14 @@ clean:
 
 test:	test1
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleconnect.a
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o libsimpleconnect.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o audio.win32_o libsimpleconnect.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
