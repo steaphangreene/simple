@@ -820,7 +820,7 @@ void SimpleTexture::SetText(const string txt) {
 
   text->text_xsize = 0;
   int pos = 0, lpos = 0;
-  while(lpos < (int)(text->message.length())) {
+  while(lpos <= (int)(text->message.length())) {
     pos = text->message.find('\n', lpos);
     if(pos < lpos) pos = text->message.length();
     text->lines.push_back(text->message.substr(lpos, pos - lpos));
