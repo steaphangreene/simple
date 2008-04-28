@@ -27,10 +27,9 @@
 
 SG_Editable::SG_Editable(string mes, SimpleTexture c, 
 		SimpleTexture dc, SimpleTexture fc)
-	: SG_TextArea(mes, c) {
-  dc.LinkTextFrom(&texture[0]);
-  texture.push_back(dc);
+	: SG_TextArea(mes, c, dc) {
   fc.LinkTextFrom(&texture[0]);
+  fc.EnableCursor();
   texture.push_back(fc);
   }
 
