@@ -22,7 +22,7 @@
 #include "SDL.h"
 
 template <class Tp>
-static void ReadNBO(Tp &var, void *buf) {
+static void ReadNBO(Tp &var, const void *buf) {
   var = *((Tp*)(buf));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
@@ -35,7 +35,7 @@ static void ReadNBO(Tp &var, void *buf) {
   };
 
 template <class Tp>
-static void WriteNBO(Tp &var, void *buf) {
+static void WriteNBO(const Tp &var, void *buf) {
   *((Tp*)(buf)) = var;
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
