@@ -59,7 +59,10 @@ public:
 
   SS_Model AddModel(SimpleModel *mod);
   const SimpleModel *GetModel(SS_Model which) { return models[which].model; }
-  void SetModelAnim(SS_Model mod, int id, string an, int submodel = 0);
+  void SetModelAnim(SS_Model mod, int id, const string &an, int submodel = 0);
+  void SetModelIdleAnim(SS_Model mod, const string &an, int submodel = 0);
+  void SetModelMoveAnim(SS_Model mod, const string &an, int submodel = 0);
+  void SetModelTurnAnim(SS_Model mod, const string &an, int submodel = 0);
 
   SS_Object AddObject(
 	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);
@@ -126,6 +129,7 @@ protected:
       }
     };
 
+  void SetModelAnimInt(SS_Model mod, int id, const string &an, int submodel = 0);
   struct Model {
     SimpleModel *model;
     multimap<int, pair<int, int> > animmap;

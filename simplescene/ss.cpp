@@ -90,7 +90,27 @@ SS_Model SimpleScene::AddModel(SimpleModel *mod) {
   return (SS_Model)(models.size() - 1);
   }
 
-void SimpleScene::SetModelAnim(SS_Model mod, int id, string an, int submodel) {
+void SimpleScene::SetModelIdleAnim(SS_Model mod, const string &an, int submodel) {
+  SetModelAnimInt(mod, -1000, an, submodel);
+  }
+
+void SimpleScene::SetModelMoveAnim(SS_Model mod, const string &an, int submodel) {
+  SetModelAnimInt(mod, -1001, an, submodel);
+  }
+
+void SimpleScene::SetModelTurnAnim(SS_Model mod, const string &an, int submodel) {
+  SetModelAnimInt(mod, -1002, an, submodel);
+  }
+
+void SimpleScene::SetModelAnim(SS_Model mod, int id, const string &an, int submodel) {
+  if(id <= -1000) {
+    fprintf(stderr, "WARNING: Sorry, %d is an invalid id for SetModelAnim()\n", id);
+    return;
+    }
+  SetModelAnimInt(mod, id, an, submodel);
+  }
+
+void SimpleScene::SetModelAnimInt(SS_Model mod, int id, const string &an, int submodel) {
   if(models[mod].model) {
     int anim = models[mod].model->LookUpAnimation(an);
     if(anim < 0) {
@@ -300,8 +320,9 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     vector<int> anims;
     vector<Uint32> times;
 
-    anims.push_back(0);
-    anims.push_back(0);
+    int anim_sel = -1000;
+    anims.push_back(-1);
+    anims.push_back(-1);
     times.push_back(0);
     times.push_back(0);
 
@@ -330,12 +351,12 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	}
       }
 
-    anims[0] = models[model].model->LookUpAnimation("LEGS_IDLE");
+    if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("LEGS_IDLE");
     if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("STAND");
     if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Stand");
     if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Stand 1");
 
-    anims[1] = models[model].model->LookUpAnimation("TORSO_STAND");
+    if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("TORSO_STAND");
     if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("STAND");
     if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("Stand");
     if(anims[1] < 0) anims[1] = models[model].model->LookUpAnimation("Stand 1");
@@ -359,6 +380,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 	  ang = ang * (1.0 - tprog) + oang * tprog;
 	  anims[0] = models[model].model->LookUpAnimation("LEGS_TURN");
 	  if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("TURN");
+	  anim_sel = -1002;
 	  }
 	break;
 	}
@@ -372,6 +394,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       pos.z = (pos.z * (1.0 - prog[obj->second.obj]))
 	+ (toward[obj->second.obj].z * prog[obj->second.obj]);
 
+      anim_sel = -1001;
       anims[0] = models[model].model->LookUpAnimation("LEGS_WALK");
       if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("LEGS_RUN");
       if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("WALK");
@@ -477,13 +500,16 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       for(; act != objects[obj->second.obj].acts.rend(); ++act) {
 	if(offset + act->second.duration >= act->second.finish
 		&& models[model].animmap.count(act->first) > 0) {
-	  multimap<int, pair<int, int> >::const_iterator anim
-		= models[model].animmap.find(act->first);
-	  for(; anim != models[model].animmap.upper_bound(act->first); ++anim) {
-	    anims[anim->second.second] = anim->second.first;
-	    times[anim->second.second] = act->second.finish - act->second.duration;
-	    }
+	  anim_sel = act->first;
 	  break;
+	  }
+	}
+      if(models[model].animmap.count(anim_sel) > 0) {
+	multimap<int, pair<int, int> >::const_iterator anim
+		= models[model].animmap.find(anim_sel);
+	for(; anim != models[model].animmap.upper_bound(anim_sel); ++anim) {
+	  anims[anim->second.second] = anim->second.first;
+	  times[anim->second.second] = act->second.finish - act->second.duration;
 	  }
 	}
 
