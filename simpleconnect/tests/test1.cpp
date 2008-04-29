@@ -62,6 +62,16 @@ int main(int argc, char **argv) {
 
   SG_ScrollingArea *connscr = new SG_ScrollingArea(SG_AUTOSIZE, 12.0);
   SimpleConnect *connector = new SimpleConnect;
+  vector<SC_SlotType> slots;
+  vector<int> slot_cols;
+  slots.push_back(SC_SLOT_PLAYER);
+  slot_cols.push_back(1);
+  slots.push_back(SC_SLOT_PLAYER);
+  slot_cols.push_back(1);
+  connector->SetSlots(slots);
+  connector->SetSlotColors(slot_cols);
+  connector->SetSlotTeams(slot_cols);
+  connector->Config();
   connscr->AddWidget(connector);
   gui->MasterWidget()->AddWidget(connscr);
 

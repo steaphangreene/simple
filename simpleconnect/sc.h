@@ -96,6 +96,7 @@ struct SlotData {
   Uint8 team;
   Uint8 color;
   Sint8 playername[16];
+  Sint8 password[16];
   TCPsocket sock;
   };
 

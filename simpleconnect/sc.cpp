@@ -185,6 +185,7 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
       data.ptype = SC_PLAYER_NONE;
       sprintf((char*)(data.playername), "<Missing>%c", 0);
       }
+    strcpy((char*)(data.password), "PASSWORD4tw");
     conn.slots.push_back(data);
     }
   }
