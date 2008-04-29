@@ -61,6 +61,10 @@ SimpleConnect::Connection::Connection(TCPsocket sock, SimpleConnections sconn)
 	networking_thread = SDL_CreateThread(RunServer, (void*)&setup);
 }
 
+SimpleConnect::Connection::~Connection()
+{
+
+}
 
 void SimpleConnect::Connection::Add(const Uint8& ref)
 {
