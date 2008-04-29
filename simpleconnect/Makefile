@@ -76,10 +76,16 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1
+test:	test1 testC testS
 
 test1:	$(ARCH)/test1.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
+
+testC:	$(ARCH)/testC.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
+	$(CXX) $(CXXFLAGS) -o testC $(ARCH)/testC.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
+
+testS:	$(ARCH)/testS.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
+	$(CXX) $(CXXFLAGS) -o testS $(ARCH)/testS.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
@@ -93,7 +99,7 @@ tar:
 	cd .. ; tar chvf simpleconnect/simpleconnect.$(TSTR).tar \
 		simpleconnect/Makefile simpleconnect/TODO simpleconnect/COPYING \
 		simpleconnect/*.cpp simpleconnect/*.h
-#		simpleconnect/tests/*.cpp simpleconnect/tests/*.h \
+		simpleconnect/tests/*.cpp simpleconnect/tests/*.h \
 #		simpleconnect/scripts/*.* simpleconnect/deps.$(ARCH).mk \
 	gzip -9 simpleconnect.$(TSTR).tar
 

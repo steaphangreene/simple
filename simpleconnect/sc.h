@@ -112,16 +112,15 @@ public:
     public:
 	struct Conn
 	{
-		SlotData data;
+		SlotData* data;
 		unsigned int last_active;
-		char* password; // NOT STAYING HERE
 	};
 
 	struct Conn_Setup
 	{
 		TCPsocket tcp;	
-		queue<string> recv_buffer; // contains buffered data recieved over TCP
-		queue<void*> send_buffer; // contains buffered sending data.
+		vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
+		vector<Uint8> send_buffer; // contains buffered sending data.
 		SimpleConnections sc;
 	};
 
@@ -138,7 +137,7 @@ public:
 	void Add(const string&);
 
 	// sends send_buffer over tcp and clears it.
-	int Send();
+	void Send();
 
 	// these recieve data from the recv_buffer and take it off the queue.
 	void Recv(Uint8&);
@@ -153,9 +152,9 @@ public:
     private:
 	TCPsocket socket;
 	SimpleConnections sc;
-	static list<string> tokenize(char*);
-	queue<string> recv_buffer; // contains buffered data recieved over TCP
-	queue<void*> send_buffer; // contains buffered sending data.
+	static list<string> tokenize(const char*);
+	vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
+	vector<Uint8> send_buffer; // contains buffered sending data.
 	static int RunClient(void*); // client thread.
 	static int RunServer(void*); // server thread.
 	SDL_Thread* networking_thread;
