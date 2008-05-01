@@ -127,13 +127,27 @@ int main(int argc, char **argv)
 
 	vector<SlotData> slotsa;
 
-	Sint8 usr [] = {72, 69, 76, 76, 79, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Sint8 usr1 [16] = {66,85,76,76,79,88 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Sint8 pas1 [16] = {72, 69, 76, 76, 79, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Sint8 usr2 [16] = {72, 69, 76, 76, 79, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	Sint8 pas2 [16] = {66,85,76,76,79,88 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	list<Conn>::iterator i = socket_list.begin();
 	for (; i != socket_list.end(); ++i)
 	{
 		SlotData sl;
 		sl.sock = i->sock;
+		if (i == socket_list.begin())
+		{
+			memcpy(&sl.password, &usr1, 16);
+			memcpy(&sl.playername, &pas1, 16);
+		}
+		else
+		{
+			memcpy(&sl.password, &usr2, 16);
+			memcpy(&sl.playername, &pas2, 16);
+		}
+
  		if ((remoteIP = SDLNet_TCP_GetPeerAddress(sl.sock)))
  		{
  			// Print the address, converting in the host format

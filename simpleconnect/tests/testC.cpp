@@ -43,10 +43,13 @@ int main(int argc, char **argv)
 	}
 
 	sd = SDLNet_Connect(ip);
-/*	if (strcmp(argv[2],"1"))
-		SDLNet_TCP_Send(sd, (void*)"HELLO! HELLO!", 14);
-	else*/
-		SDLNet_TCP_Send(sd, (void*)"HELLO!", 7);
+	if (strcmp(argv[2],"1")) {
+		Sint8 key [] = {66, 85, 76, 76, 79, 88, 32, 72, 69, 76, 76, 79, 33, 0};
+
+		SDLNet_TCP_Send(sd, (void*)key, 14);
+	}
+	else
+		SDLNet_TCP_Send(sd, (void*)"HELLO!", 14);
 
 	SimpleConnect::Connection * conn = new SimpleConnect::Connection(sd);	
 
@@ -58,7 +61,7 @@ int main(int argc, char **argv)
 
 		string s(written_msg);
 		Uint8 tmp = (Uint8) atoi(written_msg);
-		conn->Add(tmp);
+		conn->Add(written_msg);
 		conn->Send();
 
 /*

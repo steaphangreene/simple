@@ -240,27 +240,30 @@ int SimpleConnect::Connection::RunClient(void* s)
 
 		while(connected)
 		{
-			//vector<Uint8> recvd;
-
 			if (!socket) { //Make sure there is a connection
 				fprintf(stderr, "SDLNet_TCP: %s\n", SDLNet_GetError());
 				connected = 0;
 				break;
 			}
-			result = SDLNet_TCP_Recv(socket, msg, MSG_SIZE);
 
+			result = SDLNet_TCP_Recv(socket, msg, MSG_SIZE);
 			if(result < 0)
 			{
 				fprintf(stderr, "SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
 				connected = 0;
 				break;
 			}
-			printf("HERE!!\n");
 
+			// for debugging code
+			printf("Recieved Bytes: ");
+			for (int c = 0; c < result; ++c)
+				printf("%d  ", msg[c]);//itoa(msg[i], debug_buffer, 10));
+			printf("\n");
 
 			char* cstr = (char*)msg;
 			if(strcmp(cstr, "QUIT") == 0)
 			{
+				fprintf(stderr, "recieved QUIT request.\n");
 				quit = 1;
 				break;
 			}
@@ -283,7 +286,8 @@ int SimpleConnect::Connection::RunClient(void* s)
 			}
 		}
 	}
-	
+
+	fprintf(stderr, "Closing connection.\n");
 	SDLNet_TCP_Close(socket);
 	return EXIT_SUCCESS;
 }
@@ -293,8 +297,6 @@ int SimpleConnect::Connection::RunServer(void* s)
 {
 	// runs the server thread which recieves information from a SocketSet of clients. This will
 	// add their messages to a queue of messages which are delimited by socket number.
-	fprintf(stderr, "Server Step 1\n");
-
 	Conn_Setup* setup = (Conn_Setup*)s;
 	vector<Uint8>* recv_buffer = &setup->recv_buffer;
 	vector<Uint8>* send_buffer = &setup->send_buffer;
@@ -317,7 +319,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 		socket_list.push_back(x);
 	}
 
-	list<SlotData> unconnected_list; // see below.
+	list<SlotData*> unconnected_list; // see below.
 		// list of all possible game players which are not connected (all start connected).
 		// when a socket looses its connection it is moved to here.
 
@@ -327,11 +329,11 @@ int SimpleConnect::Connection::RunServer(void* s)
 		// perhaps you need to restart the set and make it bigger...
 	}
 
-	fprintf(stderr, "Server Step 3\n");
-
 	while (true)
 	{
-		printf("Top of loop\n");
+		fprintf(stderr,"Top of loop\n");
+		fprintf(stderr, "uncon: %d\n", unconnected_list.size());
+
 		if ( (ready = SDLNet_CheckSockets(cnx_set, TIME_OUT)) == -1)
 			break;
 
@@ -357,8 +359,10 @@ int SimpleConnect::Connection::RunServer(void* s)
 					SDLNet_TCP_Send(csd, (void*)"PWRD", OP_SIZE);
 					printf("%d sockets in set (Server)\n", ready);
 					Conn x;
-					x.data = NULL;
+					x.data = new SlotData;
+					x.data->sock = csd;
 					x.last_active = time(NULL);
+					x.data->password[0] = 0x00;
 					socket_list.push_back(x);
 					fprintf(stderr, "Yay, socket added to socket_list!\n");
 					continue;
@@ -368,13 +372,13 @@ int SimpleConnect::Connection::RunServer(void* s)
 
 		// check if any connections have action.
 		list<Conn>::iterator i;
-		int bufflen = 0;
+		int bufflen;
+		Uint8 int8buff[MAXLEN];
 		char buffer[MAXLEN];
 		for(i=socket_list.begin(); i != socket_list.end(); ++i)
 		{
 			sock = i->data->sock;
 
-			fprintf(stderr, "inside loop\n");
 /*
 			if ((remoteIP = SDLNet_TCP_GetPeerAddress(sock)))
 			{
@@ -389,24 +393,20 @@ int SimpleConnect::Connection::RunServer(void* s)
 			// if not ready, check idleness.
 			if(!SDLNet_SocketReady(sock))
 			{
-				fprintf(stderr, "unrelated error\n");
 				if (time(NULL) - i->last_active > 60)
 				{
-					fprintf(stderr, "unrelated error 2\n");
 					SDLNet_TCP_Send(sock, (void*)"QUIT", OP_SIZE);
 					SDLNet_TCP_DelSocket(cnx_set,sock);
 					SDLNet_TCP_Close(sock);
-					unconnected_list.push_front(*(i->data));
+					unconnected_list.push_front(i->data);
 					socket_list.erase(i);
-					printf("kill socket due to timeout\n");
+					fprintf(stderr, "kill socket due to timeout\n");
 					break;
 				}
 				else if (time(NULL) - i->last_active > 30)
 				{
-					fprintf(stderr, "unrelated error 3\n");
 					SDLNet_TCP_Send(sock, (void*)"NOOP", OP_SIZE);
 				}
-				fprintf(stderr, "GR 2\n");
 				continue;
 			}
 
@@ -416,7 +416,8 @@ int SimpleConnect::Connection::RunServer(void* s)
 			i->last_active = time(NULL);
 			if ( (bufflen = SDLNet_TCP_Recv(sock, buffer, MAXLEN-1)) > 0)
 			{
-				buffer[bufflen] = 0x00;
+				printf("bufflen %d\n", bufflen);
+				buffer[bufflen+1] = 0x00;
 
 				// for debugging code
 				Uint8* mybuf = (Uint8*) buffer; 
@@ -433,43 +434,58 @@ int SimpleConnect::Connection::RunServer(void* s)
 					SDLNet_TCP_DelSocket(cnx_set,sock);
 					socket_list.erase(i);
 					SDLNet_TCP_Close(sock);
-					printf("kill socket\n");
+					printf("kill socket (requested)\n");
 					break;
 				}
-				else if (i->data == NULL)
+				else if (i->data->password[0] == 0x00)
 				// i.e. if it's not signed in.
 				{
 					fprintf(stderr, "** Not Signed In!\n");
 					list<string> tmp = tokenize(buffer);
+
 					if (tmp.size() == 2)
 					{
+						// collect the char* from the tokenized string.
 						const char* user_name_tmp = (char*) (tmp.front()).c_str();
 						tmp.pop_front();
 						const char* pwrd_tmp = (char*) (tmp.front()).c_str();
-	
-						list<SlotData>::iterator e;
+
+						list<SlotData*>::iterator e;
 						for(e=unconnected_list.begin(); e != unconnected_list.end(); ++e) 
 						{
-							char* pname = (char*) e->playername;
-							if (strcmp(user_name_tmp, pname) &&
-							    strcmp(pwrd_tmp, (char*) *(e->password)) == 0)
+							fprintf(stderr, "gag");
+							char* pwrd = (char*) (*e)->password;
+							char* pname = (char*) (*e)->playername;
+							fprintf(stderr, "pname made\n");
+							fprintf(stderr, "pname: %s\n", pname);
+							fprintf(stderr, "passw: %s\n", pwrd);
+							fprintf(stderr, "uname_tmp: %s\n", user_name_tmp);
+							fprintf(stderr, "pwrd_tmp: %s\n", pwrd_tmp);
+							if (strcmp(user_name_tmp, pname) == 0 &&
+							    strcmp(pwrd_tmp, pwrd) == 0)
 							{
-								i->data = (SlotData*) &e;
-								i->data->sock = sock;
+// 	 							fprintf(stderr, "drg_if\n");
 								unconnected_list.erase(e);
+ 								i->data = (SlotData*) *e;
+								i->data->sock = sock;
+								SDLNet_TCP_Send(sock, (void*)"OKOP", OP_SIZE);
 								break;
 							}
+ 							fprintf(stderr, "drg\n");
+
 						}
 					}
 
 					// if you couldn't find a username and password which fits that entry...
-					if (i->data == NULL)
+					if (i->data->password[0] == 0x00)
 					{
 						SDLNet_TCP_Send(sock, (void*)"QUIT", OP_SIZE);
 						SDLNet_TCP_DelSocket(cnx_set,sock);
 						socket_list.erase(i);
 						SDLNet_TCP_Close(sock);
-						printf("kill socket (Password Failure)\n");
+						--i;
+						fprintf(stderr, "kill socket (Password Failure)\n");
+						break;
 					}
 				} else
 					SDLNet_TCP_Send(sock, (void*)"OKOP", OP_SIZE);
@@ -480,11 +496,12 @@ int SimpleConnect::Connection::RunServer(void* s)
 				socket_list.erase(i);
 				SDLNet_TCP_Close(sock);
 				i->data->sock = NULL;
-				unconnected_list.push_back(*i->data);
+				unconnected_list.push_back(i->data);
 				printf("Terminate connection due to error.\n");
 				break;
 			}
 		}
+		fprintf(stderr, "BOTTOM OF LOOP\n");
 	}
 	//printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 	//most of the time this is a system error, where perror might help you.
@@ -505,11 +522,17 @@ list<string> SimpleConnect::Connection::tokenize(const char* packet)
 	list<string> tokns;
 	string pk(packet);
 	size_t start = 0;
-	for (size_t i = pk.find_first_of(' '); i != string::npos; i = pk.find_first_of(' ', i))
+	for (size_t i = pk.find_first_of(' '); i != string::npos; i = pk.find_first_of(' ', start))
 	{
-		tokns.push_back(pk.substr(start, i-1));
-		start = i;
+		tokns.push_back(pk.substr(start, i));
+		start = i+1;
 	}
 	tokns.push_back(pk.substr(start, string::npos));
+
+// 	list<string>::iterator i;
+// 	for(i=tokns.begin(); i != tokns.end(); ++i)
+// 	{
+// 		fprintf(stderr, "* tokenized: %s[]\n", (*i).c_str());
+// 	}
 	return tokns;
 }
