@@ -22,7 +22,9 @@
 #include <set>
 using namespace std;
 
+#include <stdio.h>
 #include <cassert>
+#include <stdlib.h>
 #include "sc.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,7 +113,16 @@ void SimpleConnect::Connection::Add(const string& ref)
 // orders the sending of Add()ed values.
 void SimpleConnect::Connection::Send()
 {
-	SDLNet_TCP_Send(socket, (void*) &send_buffer, send_buffer.size());
+	Uint8 tmp_buffer[send_buffer.size()];
+
+	// copies send_buffer to a Uint8 array of equal size for accurate sending.
+	vector<Uint8>::iterator i;
+	int count;
+	for (count = 0, i = send_buffer.begin(); i != send_buffer.end(); ++i, ++count)
+		tmp_buffer[count] = *i;
+
+	SDLNet_TCP_Send(socket, (void*) &tmp_buffer, send_buffer.size());
+	send_buffer.clear();
 }
 
 void SimpleConnect::Connection::Recv(Uint8& ref)
@@ -179,6 +190,11 @@ int SimpleConnect::Connection::is_connected()
 		return 0;
 }
 
+void SimpleConnect::Connection::ClearBuffer()
+{
+	send_buffer.clear();
+}
+
 int SimpleConnect::Connection::RunClient(void* s)
 {
 	// runs the client thread which recieves information from the server if they send something
@@ -203,17 +219,17 @@ int SimpleConnect::Connection::RunClient(void* s)
 	quit = 0;
 	int result;
 	Uint8* msg;
-	
 	connected = 1;
 
 
 	while (!quit)
 	{
 		failed = 0;
+
 /*
 		// Open a connection with the IP provided (listen on the host's port)
 		if(!connected) {
-			printf("Trying to connect \n");
+			printf("Trying to connect: %d\n", connected);
 			socket = SDLNet_TCP_Open(ip);
 			if(socket == NULL)
 				break;
@@ -224,7 +240,7 @@ int SimpleConnect::Connection::RunClient(void* s)
 
 		while(connected)
 		{
-			vector<Uint8> recvd;
+			//vector<Uint8> recvd;
 
 			if (!socket) { //Make sure there is a connection
 				fprintf(stderr, "SDLNet_TCP: %s\n", SDLNet_GetError());
@@ -233,7 +249,7 @@ int SimpleConnect::Connection::RunClient(void* s)
 			}
 			result = SDLNet_TCP_Recv(socket, msg, MSG_SIZE);
 
-			if(result <= 0)
+			if(result < 0)
 			{
 				fprintf(stderr, "SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
 				connected = 0;
@@ -319,7 +335,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 		if ( (ready = SDLNet_CheckSockets(cnx_set, TIME_OUT)) == -1)
 			break;
 
-		printf("%d sockets ready!\n", ready);
+		fprintf(stderr, "%d sockets ready!\n", ready);
 
 		// server gets a new connection?
 		if ( (SDLNet_SocketReady(sd)) )
@@ -339,9 +355,13 @@ int SimpleConnect::Connection::RunServer(void* s)
 				} else {
 					// query for password when first connected to server
 					SDLNet_TCP_Send(csd, (void*)"PWRD", OP_SIZE);
-					printf("%d sockets in set\n", ready);
-					Conn x = {NULL, time(NULL)};
+					printf("%d sockets in set (Server)\n", ready);
+					Conn x;
+					x.data = NULL;
+					x.last_active = time(NULL);
 					socket_list.push_back(x);
+					fprintf(stderr, "Yay, socket added to socket_list!\n");
+					continue;
 				}
 			}
 		}
@@ -353,6 +373,9 @@ int SimpleConnect::Connection::RunServer(void* s)
 		for(i=socket_list.begin(); i != socket_list.end(); ++i)
 		{
 			sock = i->data->sock;
+
+			fprintf(stderr, "inside loop\n");
+/*
 			if ((remoteIP = SDLNet_TCP_GetPeerAddress(sock)))
 			{
 				// Print the address, converting in the host format
@@ -362,12 +385,14 @@ int SimpleConnect::Connection::RunServer(void* s)
 			else {
 				fprintf(stderr, "SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
 			}
-
+*/
 			// if not ready, check idleness.
 			if(!SDLNet_SocketReady(sock))
 			{
+				fprintf(stderr, "unrelated error\n");
 				if (time(NULL) - i->last_active > 60)
 				{
+					fprintf(stderr, "unrelated error 2\n");
 					SDLNet_TCP_Send(sock, (void*)"QUIT", OP_SIZE);
 					SDLNet_TCP_DelSocket(cnx_set,sock);
 					SDLNet_TCP_Close(sock);
@@ -378,19 +403,28 @@ int SimpleConnect::Connection::RunServer(void* s)
 				}
 				else if (time(NULL) - i->last_active > 30)
 				{
+					fprintf(stderr, "unrelated error 3\n");
 					SDLNet_TCP_Send(sock, (void*)"NOOP", OP_SIZE);
 				}
+				fprintf(stderr, "GR 2\n");
 				continue;
 			}
 
 			// else if they are ready...
 
-			printf("** a connected socket is ready!\n");
+			fprintf(stderr, "** a connected socket is ready!\n");
 			i->last_active = time(NULL);
 			if ( (bufflen = SDLNet_TCP_Recv(sock, buffer, MAXLEN-1)) > 0)
 			{
 				buffer[bufflen] = 0x00;
-				fprintf(stderr, "Client said: %s\n", buffer);
+
+				// for debugging code
+				Uint8* mybuf = (Uint8*) buffer; 
+				printf("Recieved Bytes: ");
+				for (int c = 0; c < bufflen; ++c)
+					printf("%d  ", mybuf[c]);//itoa(msg[i], debug_buffer, 10));
+				printf("\n");
+//				fprintf(stderr, "Client said: %s\n", buffer);
 
 				if(strcmp(buffer, "QUIT") == 0)
 				// Quit the program
@@ -405,6 +439,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 				else if (i->data == NULL)
 				// i.e. if it's not signed in.
 				{
+					fprintf(stderr, "** Not Signed In!\n");
 					list<string> tmp = tokenize(buffer);
 					if (tmp.size() == 2)
 					{
@@ -444,6 +479,8 @@ int SimpleConnect::Connection::RunServer(void* s)
 				SDLNet_TCP_DelSocket(cnx_set, sock);
 				socket_list.erase(i);
 				SDLNet_TCP_Close(sock);
+				i->data->sock = NULL;
+				unconnected_list.push_back(*i->data);
 				printf("Terminate connection due to error.\n");
 				break;
 			}

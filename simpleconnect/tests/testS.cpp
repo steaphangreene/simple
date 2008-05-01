@@ -9,6 +9,7 @@
 #include "SDL_net.h"
 #include "SDL_thread.h"
 
+#define OP_SIZE 5
 #define MSG_SIZE 1024
 #define RETRY_COUNT 30000
 #define MAXSOCKETS 128
@@ -88,15 +89,18 @@ int main(int argc, char **argv)
 					printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
 					// perhaps you need to restart the set and make it bigger...
 
-					SDLNet_TCP_Send(csd, (void*)"quit", 5);
+					SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
 					printf("%d sockets in set (fail)\n", ready);
 					SDLNet_TCP_Close(csd);
-				} else {
+				} 
+				else {
 					SDLNet_TCP_Send(csd, (void*)"password", 10);
+					//SDLNet_TCP_Send(csd, (void*)"OKOP", OP_SIZE);
 					printf("%d sockets in set\n", ready);
 					Conn x = {csd, "", "", time(NULL)};
 					socket_list.push_back(x);
-					
+					fprintf(stderr, "Yay, socket added to socket_list!\n");
+
 					if ((remoteIP = SDLNet_TCP_GetPeerAddress(csd)))
 					{
 						// Print the address, converting in the host format
@@ -105,7 +109,7 @@ int main(int argc, char **argv)
 					}
 					else
 						fprintf(stderr, "SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
-					}
+				}
 			}
 		}
 
@@ -119,12 +123,11 @@ int main(int argc, char **argv)
 	}
 
 	fprintf(stderr, "Step 1\n");
-//	SDLNet_DelSocket(cnx_set, sd);
+	SDLNet_TCP_DelSocket(cnx_set, sd);
 
 	vector<SlotData> slotsa;
 
-
-	Sint8 usr [] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+	Sint8 usr [] = {72, 69, 76, 76, 79, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	list<Conn>::iterator i = socket_list.begin();
 	for (; i != socket_list.end(); ++i)
@@ -134,11 +137,11 @@ int main(int argc, char **argv)
  		if ((remoteIP = SDLNet_TCP_GetPeerAddress(sl.sock)))
  		{
  			// Print the address, converting in the host format
- 			printf("Host connected: %x %d\n",
+ 			printf("Again Host connected: %x %d\n",
  					SDLNet_Read32(&remoteIP->host), SDLNet_Read16(&remoteIP->port));
  		}
  		else {
- 			fprintf(stderr, "SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
+ 			fprintf(stderr, "Again SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
  		}
 		slotsa.push_back( sl );
 	}
