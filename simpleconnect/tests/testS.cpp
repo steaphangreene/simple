@@ -28,7 +28,8 @@ struct Conn {
 int main(int argc, char **argv)
 {
 	SDLNet_SocketSet cnx_set;
-	TCPsocket sd, sock; // sock descr & client sock descr
+	//TCPsocket sock; // sock descr & client sock descr
+	TCPsocket sd; // sock descr & client sock descr
 	IPaddress ip;
 	IPaddress* remoteIP;
 
@@ -168,7 +169,8 @@ int main(int argc, char **argv)
 	connections.slots = slotsa;
 	connections.tcpset = cnx_set;
 	connections.sock = sd;
-	SimpleConnect::Connection * conn = new SimpleConnect::Connection(sd, connections);
+	//SimpleConnect::Connection * conn =
+	new SimpleConnect::Connection(sd, connections);
 
 	fprintf(stderr, "Step 2\n");
 

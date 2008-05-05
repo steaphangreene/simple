@@ -61,11 +61,11 @@ int main(int argc, char **argv)
 	{
 		printf("USER> ");
 		scanf("%s", written_msg);
-		int len = strlen(written_msg)+1;
+		//int len = strlen(written_msg)+1;
 		Uint32 rec;
 
 		string s(written_msg);
-		Uint8 tmp = (Uint8) atoi(written_msg);
+		//Uint8 tmp = (Uint8) atoi(written_msg);
 		conn->Add(written_msg);
 		conn->Send();
 		fprintf(stderr,"here!\n");
