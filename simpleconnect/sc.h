@@ -119,8 +119,8 @@ public:
 	struct Conn_Setup
 	{
 		TCPsocket tcp;	
-		vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
-		vector<Uint8> send_buffer; // contains buffered sending data.
+		vector<Uint8>* recv_buffer; // contains buffered data recieved over TCP
+		vector<Uint8>* send_buffer; // contains buffered sending data.
 		SimpleConnections sc;
 	};
 

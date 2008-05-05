@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 					SDLNet_TCP_Close(csd);
 				} 
 				else {
-					SDLNet_TCP_Send(csd, (void*)"password", 10);
+					SDLNet_TCP_Send(csd, (void*)"password", 9);
 					//SDLNet_TCP_Send(csd, (void*)"OKOP", OP_SIZE);
 					printf("%d sockets in set\n", ready);
 					Conn x = {csd, "", "", time(NULL)};
@@ -118,7 +118,11 @@ int main(int argc, char **argv)
 		for (; i != socket_list.end(); ++i)
 		{
 			if (SDLNet_SocketReady(i->sock))
+			{
+				fprintf(stderr, "send OKOP\n");
 				SDLNet_TCP_Recv(i->sock, msg, 256);
+				SDLNet_TCP_Send(i->sock, (void*)"OKOP", 5);
+			}
 		}	
 	}
 

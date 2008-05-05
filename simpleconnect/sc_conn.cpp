@@ -43,11 +43,10 @@ using namespace std;
 // constructer for creating a client connection.
 SimpleConnect::Connection::Connection(TCPsocket sock)
 {
- 	socket = sock;
 	Conn_Setup* setup = new Conn_Setup;
-	setup->tcp = sock;
-	setup->recv_buffer = recv_buffer;
-	setup->send_buffer = send_buffer;
+	setup->recv_buffer = &recv_buffer;
+ 	setup->tcp = socket = sock;
+	setup->send_buffer = &send_buffer;
 	networking_thread = SDL_CreateThread(RunClient, (void*)setup);
 }
 
@@ -58,8 +57,8 @@ SimpleConnect::Connection::Connection(TCPsocket sock, SimpleConnections sconn)
 	sc = sconn;
 	Conn_Setup* setup = new Conn_Setup;
 	setup->tcp = sock;
-	setup->recv_buffer = recv_buffer;
-	setup->send_buffer = send_buffer;
+	setup->recv_buffer = &recv_buffer;
+	setup->send_buffer = &send_buffer;
 	setup->sc = sconn;
 	networking_thread = SDL_CreateThread(RunServer, (void*)setup);
 }
@@ -133,8 +132,12 @@ void SimpleConnect::Connection::Recv(Uint8& ref)
 
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer.begin();
-	for (i = start, current = 0; current < size; ++i, ++current)
+	for (i = start, current = 0; i != recv_buffer.end() && current < size; ++i, ++current)
+	{
+		fprintf(stderr, " %X  ", *i);
 		tmp[current] = *i;
+	}
+	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer.erase(start,i);
 }
@@ -147,8 +150,12 @@ void SimpleConnect::Connection::Recv(Uint16& ref)
 
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer.begin();
-	for (i = start, current = 0; current < size; ++i, ++current)
+	for (i = start, current = 0; i != recv_buffer.end() && current < size; ++i, ++current)
+	{
+		fprintf(stderr, " %X  ", *i);
 		tmp[current] = *i;
+	}
+	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer.erase(start,i);
 }
@@ -161,8 +168,12 @@ void SimpleConnect::Connection::Recv(Uint32& ref)
 
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer.begin();
-	for (i = start, current = 0; current < size; ++i, ++current)
+	for (i = start, current = 0; i != recv_buffer.end() && current < size; ++i, ++current)
+	{
+		fprintf(stderr, " %X  ", *i);
 		tmp[current] = *i;
+	}
+	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer.erase(start,i);
 }
@@ -170,14 +181,28 @@ void SimpleConnect::Connection::Recv(Uint32& ref)
 void SimpleConnect::Connection::Recv(string& ref)
 {
 	string s = "";
+	//fprintf(stderr, "size: %d\n", int(recv_buffer.size()));
 	vector<Uint8>::iterator i;
-	vector<Uint8>::iterator start = recv_buffer.begin();
-	for (i = start; *i != 0x00; ++i)
-		s.append((const char *) *i);
-	s.append((const char *) *i); 
+	//fprintf(stderr, "inside recv:string, *i:%d", *(recv_buffer.begin()));
+	for (i = recv_buffer.begin(); i != recv_buffer.end() && *i != 0x00; ++i)
+	{
+	//	fprintf(stderr, " %d ", *i);
+		s.append( 1, (char) *i);
+	}
+	fprintf(stderr, "\ninside recv:string, after loop, *i=%d\n", *i);
+	if (i != recv_buffer.end())
+	{
+	//	fprintf(stderr, " last: %d\n", *i);
+		s.append( 1, (char) *i); 
+	}
+	//fprintf(stderr, "inside recv:string, after last char\n");
 	ref = s;
-	++i;
-	recv_buffer.erase(start,i);
+	if (i != recv_buffer.end())
+		++i;
+	//fprintf(stderr, "inside recv:string, after incr i\n");
+	recv_buffer.erase(recv_buffer.begin(),i);
+	//fprintf(stderr, "size: %d\n", int(recv_buffer.size()));
+	//fprintf(stderr, "inside recv:string, after erase\n");
 }
 
 
@@ -201,53 +226,54 @@ int SimpleConnect::Connection::RunClient(void* s)
         // and adds the recieved values to a queue which can be taken from using recv().
 	Conn_Setup* setup = (Conn_Setup*)s;
 	
-	vector<Uint8>* recv_buffer = &setup->recv_buffer;
+	vector<Uint8>* recv_buffer = setup->recv_buffer;
 
-	int quit, connected, failed;
-	TCPsocket socket = setup->tcp;
+	int quit = 0, connected = 1;
+	TCPsocket csd = setup->tcp;
+	int result;
+	Uint8 msg [MSG_SIZE];
 
-
-	IPaddress* ip = SDLNet_TCP_GetPeerAddress(socket);    // Server address 
+	IPaddress* ip = SDLNet_TCP_GetPeerAddress(csd);    // Server address 
 	if(!ip)
 	{
 		printf("SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
 		return 0;
 	}
-
-
-	// Send and Recieve messages
-	quit = 0;
-	int result;
-	Uint8* msg;
-	connected = 1;
-
+/*
+	char* cmsg [1024];
+	int ret = SDLNet_TCP_Recv(csd, cmsg, 1024);
+	fprintf(stderr, "ret: %d, cmsg: %s\n", ret, cmsg);
+*/
 
 	while (!quit)
 	{
-		failed = 0;
-
-/*
 		// Open a connection with the IP provided (listen on the host's port)
 		if(!connected) {
+			if (!csd)
+				printf("not csd\n");
 			printf("Trying to connect: %d\n", connected);
-			socket = SDLNet_TCP_Open(ip);
-			if(socket == NULL)
+			csd = SDLNet_TCP_Open(ip);
+			if(!csd)
+			{
+				fprintf(stderr, "reconnection failed\n");
 				break;
+			}
 			connected = 1;
 		}
-*/
-		//fprintf(stderr, "HEREB!!\n");
+		fprintf(stderr, "HEREB!!\n");
 
 		while(connected)
 		{
-			if (!socket) { //Make sure there is a connection
+			if (!csd) { //Make sure there is a connection
 				fprintf(stderr, "SDLNet_TCP: %s\n", SDLNet_GetError());
 				connected = 0;
 				break;
 			}
 
-			result = SDLNet_TCP_Recv(socket, msg, MSG_SIZE);
-			if(result < 0)
+			fprintf(stderr, "recieving...\n");
+			result = SDLNet_TCP_Recv(csd, msg, MSG_SIZE);
+			fprintf(stderr, "ret: %d\n", result); //, cmsg: %s\n", ret, cmsg);
+			if(result <= 0)
 			{
 				fprintf(stderr, "SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
 				connected = 0;
@@ -255,12 +281,13 @@ int SimpleConnect::Connection::RunClient(void* s)
 			}
 
 			// for debugging code
-			printf("Recieved Bytes: ");
+			fprintf(stderr, "Recieved Bytes: ");
 			for (int c = 0; c < result; ++c)
-				printf("%d  ", msg[c]);//itoa(msg[i], debug_buffer, 10));
-			printf("\n");
+				fprintf(stderr,"%d  ", msg[c]);//itoa(msg[i], debug_buffer, 10));
+			fprintf(stderr, "\n");
 
 			char* cstr = (char*)msg;
+			printf("Received String: %s\n",msg);
 			if(strcmp(cstr, "QUIT") == 0)
 			{
 				fprintf(stderr, "recieved QUIT request.\n");
@@ -269,26 +296,28 @@ int SimpleConnect::Connection::RunClient(void* s)
 			}
 			else if (strcmp(cstr,"NOOP") == 0)
 			{
-				if (SDLNet_TCP_Send(socket, (void*)"OKOP", OP_SIZE) < OP_SIZE)
+				if (SDLNet_TCP_Send(csd, (void*)"OKOP", OP_SIZE) < OP_SIZE)
 				{
 					fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 					connected = 0;
 					break;
 				}
 			}
-			else //if (strcmp(msg,"NOOP") != 0) {
+			else if (strcmp(cstr,"OKOP") != 0) // do nothing if OKOP otherwise this.
 			{
 				printf("Received: %s\n",msg);
 				for (int i = 0; i < result; ++i)
 				{
+					fprintf(stderr, "  Added %c to recv_buffer\n", msg[i]);
 					recv_buffer->push_back(msg[i]);
 				}
+				fprintf(stderr,"\nend recvd\n");
 			}
 		}
 	}
 
 	fprintf(stderr, "Closing connection.\n");
-	SDLNet_TCP_Close(socket);
+	SDLNet_TCP_Close(csd);
 	return EXIT_SUCCESS;
 }
 
@@ -298,15 +327,15 @@ int SimpleConnect::Connection::RunServer(void* s)
 	// runs the server thread which recieves information from a SocketSet of clients. This will
 	// add their messages to a queue of messages which are delimited by socket number.
 	Conn_Setup* setup = (Conn_Setup*)s;
-	vector<Uint8>* recv_buffer = &setup->recv_buffer;
-	vector<Uint8>* send_buffer = &setup->send_buffer;
+	//vector<Uint8>* recv_buffer = setup->recv_buffer;
+	//vector<Uint8>* send_buffer = setup->send_buffer;
 	TCPsocket sd = setup->tcp;
 	SimpleConnections sc = setup->sc;
 
 	vector<SlotData> all_connections = sc.slots;
 	SDLNet_SocketSet cnx_set = sc.tcpset;
 	TCPsocket sock; // sock descr & client sock descr
-	IPaddress* remoteIP;
+	//IPaddress* remoteIP;
 	int ready = 0;
 	list<Conn> socket_list;
 
@@ -325,14 +354,14 @@ int SimpleConnect::Connection::RunServer(void* s)
 
 	if( (SDLNet_TCP_AddSocket(cnx_set, sd)) == -1)
 	{
-		printf("SDLNet_AddSocket: %s\n", SDLNet_GetError());
+		//fprintf(stderr, "SDLNet_AddSocket: %s\n", SDLNet_GetError());
 		// perhaps you need to restart the set and make it bigger...
 	}
 
 	while (true)
 	{
-		fprintf(stderr,"Top of loop\n");
-		fprintf(stderr, "uncon: %d\n", unconnected_list.size());
+		//fprintf(stderr,"Top of loop\n");
+		//fprintf(stderr, "uncon: %d\n", int(unconnected_list.size()));
 
 		if ( (ready = SDLNet_CheckSockets(cnx_set, TIME_OUT)) == -1)
 			break;
@@ -356,7 +385,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 					SDLNet_TCP_Close(csd);
 				} else {
 					// query for password when first connected to server
-					SDLNet_TCP_Send(csd, (void*)"PWRD", OP_SIZE);
+					// SDLNet_TCP_Send(csd, (void*)"PWRD", OP_SIZE);
 					printf("%d sockets in set (Server)\n", ready);
 					Conn x;
 					x.data = new SlotData;
@@ -373,7 +402,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 		// check if any connections have action.
 		list<Conn>::iterator i;
 		int bufflen;
-		Uint8 int8buff[MAXLEN];
+		//Uint8 int8buff[MAXLEN];
 		char buffer[MAXLEN];
 		for(i=socket_list.begin(); i != socket_list.end(); ++i)
 		{
@@ -425,7 +454,7 @@ int SimpleConnect::Connection::RunServer(void* s)
 				for (int c = 0; c < bufflen; ++c)
 					printf("%d  ", mybuf[c]);//itoa(msg[i], debug_buffer, 10));
 				printf("\n");
-//				fprintf(stderr, "Client said: %s\n", buffer);
+				fprintf(stderr, "Client said: %s\n", buffer);
 
 				if(strcmp(buffer, "QUIT") == 0)
 				// Quit the program
@@ -456,27 +485,22 @@ int SimpleConnect::Connection::RunServer(void* s)
 							fprintf(stderr, "gag");
 							char* pwrd = (char*) (*e)->password;
 							char* pname = (char*) (*e)->playername;
-							fprintf(stderr, "pname made\n");
-							fprintf(stderr, "pname: %s\n", pname);
-							fprintf(stderr, "passw: %s\n", pwrd);
-							fprintf(stderr, "uname_tmp: %s\n", user_name_tmp);
-							fprintf(stderr, "pwrd_tmp: %s\n", pwrd_tmp);
 							if (strcmp(user_name_tmp, pname) == 0 &&
 							    strcmp(pwrd_tmp, pwrd) == 0)
 							{
+								SDLNet_TCP_Send(sock, (void*)"OKOP", OP_SIZE);
 // 	 							fprintf(stderr, "drg_if\n");
 								unconnected_list.erase(e);
  								i->data = (SlotData*) *e;
 								i->data->sock = sock;
-								SDLNet_TCP_Send(sock, (void*)"OKOP", OP_SIZE);
 								break;
 							}
- 							fprintf(stderr, "drg\n");
-
+ 						//	fprintf(stderr, "drg\n");
 						}
 					}
 
 					// if you couldn't find a username and password which fits that entry...
+					fprintf(stderr, "pwd[0]: %d", i->data->password[0]);
 					if (i->data->password[0] == 0x00)
 					{
 						SDLNet_TCP_Send(sock, (void*)"QUIT", OP_SIZE);
@@ -487,8 +511,11 @@ int SimpleConnect::Connection::RunServer(void* s)
 						fprintf(stderr, "kill socket (Password Failure)\n");
 						break;
 					}
-				} else
+				}
+				else
+				{
 					SDLNet_TCP_Send(sock, (void*)"OKOP", OP_SIZE);
+				}
 			}
 			else
 			{
@@ -506,7 +533,6 @@ int SimpleConnect::Connection::RunServer(void* s)
 	//printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 	//most of the time this is a system error, where perror might help you.
 	perror("SDLNet_CheckSockets");
-
 
 	SDLNet_TCP_Close(sd);
 	SDLNet_Quit();

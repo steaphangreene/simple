@@ -5,7 +5,6 @@ using namespace std;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
 #include "SDL.h"
 #include "SDL_net.h"
 #include "SDL_thread.h"
@@ -42,7 +41,12 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	sd = SDLNet_Connect(ip);
+	if (!(sd = SDLNet_TCP_Open(&ip)))
+	{
+		fprintf(stderr, "TCP_OPEN");
+		exit(EXIT_FAILURE);
+	}
+
 	if (strcmp(argv[2],"1")) {
 		Sint8 key [] = {66, 85, 76, 76, 79, 88, 32, 72, 69, 76, 76, 79, 33, 0};
 
@@ -53,16 +57,24 @@ int main(int argc, char **argv)
 
 	SimpleConnect::Connection * conn = new SimpleConnect::Connection(sd);	
 
-	while (true)
+	while (conn->is_connected())
 	{
 		printf("USER> ");
 		scanf("%s", written_msg);
 		int len = strlen(written_msg)+1;
+		Uint32 rec;
 
 		string s(written_msg);
 		Uint8 tmp = (Uint8) atoi(written_msg);
 		conn->Add(written_msg);
 		conn->Send();
+		fprintf(stderr,"here!\n");
+		conn->Recv(rec);
+		fprintf(stderr,"there!\n");
+		if (s != "")
+			fprintf(stderr, "recvd: %X\n", rec);
+		fprintf(stderr,"everywhere!\n");
+
 
 /*
 		if ( SDLNet_TCP_Send(sd, (void*)written_msg, len) < len)
@@ -71,12 +83,12 @@ int main(int argc, char **argv)
 			break;
 		}
 */
-		if(strcmp(written_msg, "QUIT") == 0)
-		// Quit the program
-		{
-			printf("will close socket\n");
-			break;
-		}
+//		if(strcmp(written_msg, "QUIT") == 0)
+//		// Quit the program
+//		{
+//			printf("will close socket\n");
+//			break;
+//		}
 	}
 
 	SDLNet_TCP_Close(sd);
