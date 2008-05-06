@@ -75,8 +75,8 @@ public:
   void TargetObject(SS_Object obj, float xt, float yt, float zt,
 	Uint32 end = 0, Uint32 dur = 0);
   void UnTargetObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
-  void ShowObject(SS_Object obj, Uint32 fin);
-  void HideObject(SS_Object obj, Uint32 fin);
+  void ShowObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
+  void HideObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
   void ColorObject(SS_Object obj, float r, float g, float b, Uint32 tm = 0);
   void ActObject(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
@@ -143,7 +143,7 @@ protected:
     list<pair<SS_Model, ActionTime> > model;
     list<pair<SS_Skin, ActionTime> > skin;
     list<pair<float, ActionTime> > size;
-    list<Uint32> show;
+    list<pair<bool, ActionTime> > shown;
     list<pair<Color, Uint32> > col;
     list<pair<float, ActionTime> > turns;
     list<pair<Coord, ActionTime> > targets;

@@ -144,12 +144,14 @@ void SimpleScene::ActObject(SS_Object obj,
   objects[obj].acts.push_back(pair<SS_Action, ActionTime>(act, newact));
   }
 
-void SimpleScene::ShowObject(SS_Object obj, Uint32 tm) {
-  objects[obj].show.push_back(tm);
+void SimpleScene::ShowObject(SS_Object obj, Uint32 end, Uint32 dur) {
+  ActionTime act = { end, dur };
+  objects[obj].shown.push_back(make_pair(true, act));
   }
 
-void SimpleScene::HideObject(SS_Object obj, Uint32 tm) {
-  objects[obj].show.push_back(tm);
+void SimpleScene::HideObject(SS_Object obj, Uint32 end, Uint32 dur) {
+  ActionTime act = { end, dur };
+  objects[obj].shown.push_back(make_pair(false, act));
   }
 
 void SimpleScene::ColorObject(SS_Object obj,
@@ -316,6 +318,15 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
 
     done.insert(obj->second.obj);			// Mark as Drawn
 
+    list<pair<bool, ActionTime> >::const_iterator show;
+    show=objects[obj->second.obj].shown.begin();
+    if(!objects[obj->second.obj].shown.empty()) {
+      for(; show != objects[obj->second.obj].shown.end(); ++show) {
+	if(offset >= show->second.finish) break;
+	}
+      if(!(show->first)) continue;			// Not Shown
+      }
+
     Coord pos = obj->first;
     vector<int> anims;
     vector<Uint32> times;
@@ -401,15 +412,6 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
       if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("RUN");
       if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Walk");
       if(anims[0] < 0) anims[0] = models[model].model->LookUpAnimation("Walk 1");
-      }
-
-    list<Uint32>::const_iterator show;
-    show=objects[obj->second.obj].show.begin();
-    if(!objects[obj->second.obj].show.empty()) {
-      for(; show != objects[obj->second.obj].show.end(); ++show) {
-	if(offset >= (*show)) break;
-	}
-      if(show == objects[obj->second.obj].show.end()) continue;
       }
 
     float size = 1.0;
