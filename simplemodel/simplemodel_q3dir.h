@@ -34,7 +34,6 @@ public:
   virtual bool Load(const string &packfile, const string &filenm, const string &defskin = "default");
 
   virtual const vector<string> &GetSkinList();
-  virtual void AddSkin(const string &skinnm);
 
   void SetWeapon(SimpleModel_MD3 *weap);
 

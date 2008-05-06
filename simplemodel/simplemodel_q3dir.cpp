@@ -226,7 +226,3 @@ void SimpleModel_Q3Dir::SetWeapon(SimpleModel_MD3 *weap) {
 const vector<string> &SimpleModel_Q3Dir::GetSkinList() {
   return skins;
   }
-
-void SimpleModel_Q3Dir::AddSkin(const string &skinnm) {
-  skins.push_back(skinnm);
-  }
