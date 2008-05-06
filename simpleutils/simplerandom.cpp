@@ -87,9 +87,14 @@ int SimpleRandom::Rand(int min, int max)
   this->state[0] = this->state[1];
   this->state[1] = r;
   
-  return min + (r % (max - min));
-
-  
+  if(min == max)
+  {
+    return min;
+  }
+  else
+  {
+    return min + (r % (max - min));
+  }
 }
 
 int SimpleRandom::sequence = 0;
