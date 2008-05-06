@@ -65,8 +65,8 @@ SimpleModel *SimpleModel::LoadModel(
     return new SimpleModel_Q3Dir(filename, skin);
     }
   for(Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
-    cfg = SDL_RWFromZZIP((source_files[snum] + "/" + filename
-	+ "/animation.cfg").c_str(), "rb");
+    string filenm = source_files[snum] + "/" + filename + "/animation.cfg";
+    cfg = SDL_RWFromZZIP(filenm.c_str(), "rb");
     if(cfg) {
       SDL_RWclose(cfg);
       if(skin.length() <= 0) skin = "default";
