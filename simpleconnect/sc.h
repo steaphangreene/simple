@@ -108,58 +108,6 @@ struct SimpleConnections {
 
 class SimpleConnect : public SG_Compound {
 public:
-  class Connection {
-    public:
-	struct Conn
-	{
-		SlotData* data;
-		unsigned int last_active;
-	};
-
-	struct Conn_Setup
-	{
-		TCPsocket tcp;	
-		vector<Uint8>* recv_buffer; // contains buffered data recieved over TCP
-		vector<Uint8>* send_buffer; // contains buffered sending data.
-		SimpleConnections sc;
-	};
-
-	Connection() {};
-	Connection(TCPsocket sock); //connection for client
-	Connection(TCPsocket sock, SimpleConnections sconn); //connection for server
-
-	~Connection(); //cleanup
-
-	// add to send_buffer
-	void Add(const Uint8&);
-        void Add(const Uint16&);
-	void Add(const Uint32&);
-	void Add(const string&);
-
-	// sends send_buffer over tcp and clears it.
-	void Send();
-
-	// these recieve data from the recv_buffer and take it off the queue.
-	void Recv(Uint8&);
-	void Recv(Uint16&);
-	void Recv(Uint32&);
-        void Recv(string&);
-
-	// returns 1 if connection is active, 0 otherwise.
-	int is_connected();
-
-	void ClearBuffer();
-    private:
-	TCPsocket socket;
-	SimpleConnections sc;
-	static list<string> tokenize(const char*);
-	vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
-	vector<Uint8> send_buffer; // contains buffered sending data.
-	static int RunClient(void*); // client thread.
-	static int RunServer(void*); // server thread.
-	SDL_Thread* networking_thread;
-  };
-
   SimpleConnect();
   virtual ~SimpleConnect();
 
