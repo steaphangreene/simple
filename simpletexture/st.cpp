@@ -668,12 +668,13 @@ void SimpleTexture::BuildTextTexture() {
 
 	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
 	SDL_BlitSurface(tmp_text, NULL, text->rendered_text, &drec);
-	SDL_FreeSurface(tmp_text);
 
 	text->cursor = drec;
 	text->cursor.x += tmp_text->w;
 	text->cursor.w = 2;
 	text->cursor.h = tmp_text->h;
+
+	SDL_FreeSurface(tmp_text);
 	}
       else {
 	text->cursor = drec;
