@@ -25,7 +25,7 @@
 
 #ifndef assert
 #define assert( condition, string ) {\
-    if( !condition ) {\
+    if( !( condition) ) {\
       fprintf( stderr, "Error in %s.%d: %s!\n", __FILE__, __LINE__, string );\
       exit(1);\
     }\
