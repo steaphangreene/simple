@@ -23,8 +23,7 @@ using namespace std;
 		bool connected;
 	};
 
-	Connection() {};
-	Connection(const Uint16& port=4052);
+	Connection(Uint16 port = 4052);
 	~Connection(); //cleanup
 
 	// add to send_buffer

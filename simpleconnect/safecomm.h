@@ -19,6 +19,9 @@
 //  
 // *************************************************************************
 
+#ifndef SAFECOMM_H
+#define SAFECOMM_H
+
 #include "SDL.h"
 
 template <class Tp>
@@ -46,3 +49,5 @@ static void WriteNBO(const Tp &var, void *buf) {
     }
 #endif
   };
+
+#endif // SAFECOMM_H

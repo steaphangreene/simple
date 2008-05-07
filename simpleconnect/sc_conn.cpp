@@ -43,7 +43,7 @@ exit
 using namespace std;
 
 // constructer for creating a server connection.
-Connection::Connection(const Uint16& port)
+Connection::Connection(Uint16 port)
 {
 	this->port = port;
 	server_thread = NULL;
