@@ -36,78 +36,29 @@ exit
 #include "SDL_net.h"
 
 #define OP_SIZE 5
-#define TIME_OUT 50000
-#define MAXSOCKETS 17
+#define TIMEOUT 5000
+#define MAXSOCKETS 100
 #define MAXLEN 1024
 #define MSG_SIZE 1024
 using namespace std;
-
-// constructer for creating a client connection.
-/*Connection::Connection()
-{
-	TCPsocket sd;
-
-	recv_mutex = NULL;
-	Conn_Setup* setup = new Conn_Setup;
-	setup->recv_buffer = &recv_buffer;
-
-	// open stuff....
-	if (!(sd = SDLNet_TCP_Open(&ip)))
-	{
-		fprintf(stderr, "TCP_OPEN");
-		return;
-	}
-	
- 	setup->tcp = socket = sd;
-	setup->send_buffer = &send_buffer;
-
-
-	setup->mutex = recv_mutex;
-	networking_thread = SDL_CreateThread(RunClient, (void*)setup);
-}*/
 
 // constructer for creating a server connection.
 Connection::Connection(const Uint16& port)
 {
 	this->port = port;
-}
+	server_thread = NULL;
+	client_thread = NULL;
+	client_running = false;
+	server_running = false;
+	accept_running = false;
 
-/* // old connection stuff...
-	SDLNet_SocketSet cnx_set;
-	TCPsocket sd; // sock descr & client sock descr
-	IPaddress ip;
-
-	// allocate our socket set.
+	accept_amount = 0;
+	// allocate socketset.
 	if( (cnx_set = SDLNet_AllocSocketSet(MAXSOCKETS)) == NULL) {
 		printf("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 		exit(1); //most of the time this is a major error, but do what you want.
 	}
-
-	// Resolving the host using NULL make network interface to listen
-	if (SDLNet_ResolveHost(&ip, NULL, 2000) < 0)
-	{
-		fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-		exit(EXIT_FAILURE);
-	}
-
-	// Open a connection with the IP provided (listen on the host's port)
-	if (!(sd = SDLNet_TCP_Open(&ip)))
-	{
-		fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-		exit(EXIT_FAILURE);
-	}
-
-	sc = new SimpleConnections;
-	Conn_Setup* setup = new Conn_Setup;
-	setup->tcp = socket = sd;
-	setup->recv_buffer = &recv_buffer;
-	setup->send_buffer = &send_buffer;
-	setup->sc = *sc;
-
-	recv_mutex = NULL;
-	setup->mutex = recv_mutex;
-	networking_thread = SDL_CreateThread(RunServer, (void*)setup);
-}*/
+}
 
 Connection::~Connection()
 {
@@ -177,7 +128,7 @@ void Connection::Recv(int slot, Uint8& ref)
 	Uint8 tmp[size];
 	unsigned int current;
 	
-	SDL_mutexP(recv_mutex);
+	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
 	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
@@ -188,7 +139,7 @@ void Connection::Recv(int slot, Uint8& ref)
 	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer->erase(start,i);
-	SDL_mutexV(recv_mutex);
+	SDL_mutexV(data[slot].recv_mutex);
 }
 
 void Connection::Recv(int slot, Uint16& ref)
@@ -198,7 +149,7 @@ void Connection::Recv(int slot, Uint16& ref)
 	Uint8 tmp[size];
 	unsigned int current;
 
-	SDL_mutexP(recv_mutex);
+	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
 	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
@@ -210,7 +161,7 @@ void Connection::Recv(int slot, Uint16& ref)
 	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer->erase(start,i);
-	SDL_mutexV(recv_mutex);
+	SDL_mutexV(data[slot].recv_mutex);
 }
 
 void Connection::Recv(int slot, Uint32& ref)
@@ -220,7 +171,7 @@ void Connection::Recv(int slot, Uint32& ref)
 	Uint8 tmp[size];
 	unsigned int current;
 	
-	SDL_mutexP(recv_mutex);
+	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
 	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
@@ -231,7 +182,7 @@ void Connection::Recv(int slot, Uint32& ref)
 	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
 	recv_buffer->erase(start,i);
-	SDL_mutexV(recv_mutex);
+	SDL_mutexV(data[slot].recv_mutex);
 }
 
 void Connection::Recv(int slot, string& ref)
@@ -241,7 +192,7 @@ void Connection::Recv(int slot, string& ref)
 
 	vector<Uint8>::iterator i;
 
-	SDL_mutexP(recv_mutex);
+	SDL_mutexP(data[slot].recv_mutex);
 	for (i = recv_buffer->begin(); i != recv_buffer->end() && *i != 0x00; ++i)
 	{
 		s.append( 1, (char) *i);
@@ -256,7 +207,7 @@ void Connection::Recv(int slot, string& ref)
 		++i;
 
 	recv_buffer->erase(recv_buffer->begin(),i);
-	SDL_mutexV(recv_mutex);
+	SDL_mutexV(data[slot].recv_mutex);
 }
 
 
@@ -268,7 +219,10 @@ int Connection::IsConnected(int slot)
 
 int Connection::RecvBufferSize(int slot)
 {
-	return data[slot].recv_buffer.size();
+	SDL_mutexP(data[slot].recv_mutex);
+	int ret = data[slot].recv_buffer.size();
+	SDL_mutexV(data[slot].recv_mutex);
+	return ret;
 }
 
 int Connection::NumConnections()
@@ -277,7 +231,6 @@ int Connection::NumConnections()
 }
 
 // Disconnectes from the server by sending it the QUIT operator which will force the removal of the socket.
-// TODO: see if this works.
 void Connection::Disconnect(int slot)
 {
 	if (data[slot].connected)
@@ -307,126 +260,223 @@ string Connection::GetName(int slot)
 	return data[slot].playername;
 }
 
-// TODO
-int Connection::Connect(const IPaddress& ip, const string& name="", const string& password="")
+// returns the slot number on success, -1 on failure.
+int Connection::Connect(IPaddress& ip, const string& name, const string& password)
 {
-	return 0;
+	TCPsocket csd;
+	Data da;
+	da.playername = name;
+	da.password = password;
+
+	// open stuff....
+	if (!(csd = SDLNet_TCP_Open(&ip)))
+	{
+		fprintf(stderr, "TCP_OPEN");
+		return -1;
+	}
+	da.tcp = csd;
+	da.connected = true;
+	da.recv_mutex = SDL_CreateMutex();
+
+	int ret = data.size();
+	data.push_back(da);
+
+	// add this new connection to the connection set.
+
+	// make sure runclient is running for this connection.
+	if (!client_running)
+	{
+		client_thread = SDL_CreateThread(RunClient, (void*) this);
+		client_running = true;
+	}
+
+	return ret;
 }
 
 void Connection::StopAccepting()
 {
-
+	if (accept_running)
+	{
+		accept_amount = 0;
+		SDL_KillThread(accept_thread);
+		accept_running = false;
+	}
 }
 
-void Connection::StartAccepting(int slot)
+//if not already accepting, this starts a thread which accepts 'amount number of
+//new sockets.
+void Connection::StartAccepting(int amount)
 {
+	IPaddress ip;
+	// allocate our socket set iff server_ss hasn't already been allocated.
 
+	// Resolving the host using NULL make network interface to listen
+	if (SDLNet_ResolveHost(&ip, NULL, port) < 0)
+	{
+		fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	// Open a connection with the IP provided (listen on the host's port)
+	if (!accept_running)
+	{
+		if (!(sd = SDLNet_TCP_Open(&ip)))
+		{
+			fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+			exit(EXIT_FAILURE);
+		}
+
+		accept_amount = amount;
+		accept_thread = SDL_CreateThread(RunAccept, (void*) this);
+		accept_running = false;
+	}
+	else {	
+		accept_amount += amount;
+	}
+
+	// start up runserver if it isn't already running.
+	if (!server_running)
+	{
+		server_thread = SDL_CreateThread(RunServer, (void*) this);
+		server_running = true;
+	}
 }
 
+// accepts and adds new sockets to data which have been accepted into
+// the listened-to things.
+// s represents a pointer to a Connection class which has an open server
+// descripter.
+int Connection::RunAccept(void* s)
+{
+	Connection* conn = (Connection*) s;
+	TCPsocket csd;
+	int amt;
+	while (conn->accept_amount)
+	{
+		if ( (csd = SDLNet_TCP_Accept(conn->sd)) )
+		{
+			if( (amt = SDLNet_TCP_AddSocket(conn->cnx_set, csd)) == -1)
+			{
+				fprintf(stderr,"SDLNet_AddSocket: %s\n", SDLNet_GetError());
+				// perhaps restart the set and make it bigger...
+				SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
+				fprintf(stderr,"%d sockets in set (fail)\n", amt);
+				SDLNet_TCP_Close(csd);
+				conn->accept_amount = 0;
+				break;
+			} else {
+				fprintf(stderr, "%d sockets in set (Server)\n", amt);
+				--(conn->accept_amount);
+				Data d;
+				d.recv_mutex = SDL_CreateMutex();
+				d.password = "";
+				d.playername = "";
+				d.tcp = csd;
+				d.last_active = time(NULL);
+				d.connected = true;
+				conn->data.push_back(d);
+			}
+		}
+		
+	}
+
+	SDLNet_TCP_Close(conn->sd);
+	conn->accept_running = false;
+	return EXIT_SUCCESS;
+}
 
 // runs the client thread which recieves information from the server if they send something
 // and adds the recieved values to a queue which can be taken from using recv().
 int Connection::RunClient(void* s)
 {
-/*
-	Conn_Setup* setup = (Conn_Setup*)s;
-	SDL_mutex* recv_mutex = setup->mutex;
-	vector<Uint8>* recv_buffer = setup->recv_buffer;
-
-	int quit = 0, connected = 1;
-	TCPsocket csd = setup->tcp;
-	int result;
+	Connection* conn = (Connection*) s;
 	Uint8 msg [MSG_SIZE];
+	char* cstr; // for debugging purposes
+	int result;
 
-	IPaddress* ip = SDLNet_TCP_GetPeerAddress(csd);    // Server address 
-	if(!ip)
+	while (true)
 	{
-		printf("SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
-		return 0;
-	}
+// WE CURRENTLY DO NOT DO RECONNECTION HERE!
+//		// Open a connection with the IP provided (listen on the host's port)
+//		if(!connected) {
+//			if (!csd)
+//				printf("not csd\n");
+//			printf("Trying to connect: %d\n", connected);
+//			csd = SDLNet_TCP_Open(ip);
+//			if(!csd)
+//			{
+//				fprintf(stderr, "reconnection failed\n");
+//				break;
+//			}
+//			connected = 1;
+//		}
+//		fprintf(stderr, "HEREB!!\n");
 
-//	char* cmsg [1024];
-//	int ret = SDLNet_TCP_Recv(csd, cmsg, 1024);
-//	fprintf(stderr, "ret: %d, cmsg: %s\n", ret, cmsg);
-
-
-	while (!quit)
-	{
-		// Open a connection with the IP provided (listen on the host's port)
-		if(!connected) {
-			if (!csd)
-				printf("not csd\n");
-			printf("Trying to connect: %d\n", connected);
-			csd = SDLNet_TCP_Open(ip);
-			if(!csd)
-			{
-				fprintf(stderr, "reconnection failed\n");
-				break;
-			}
-			connected = 1;
-		}
-		fprintf(stderr, "HEREB!!\n");
-
-		while(connected)
+		if (SDLNet_CheckSockets(conn->cnx_set, TIMEOUT) < 0)
 		{
-			if (!csd) { //Make sure there is a connection
-				fprintf(stderr, "SDLNet_TCP: %s\n", SDLNet_GetError());
-				connected = 0;
-				break;
-			}
+			exit(EXIT_FAILURE);
+		}
 
-			fprintf(stderr, "recieving...\n");
-			result = SDLNet_TCP_Recv(csd, msg, MSG_SIZE);
-			fprintf(stderr, "ret: %d\n", result); //, cmsg: %s\n", ret, cmsg);
+		vector<Data>::iterator i = conn->data.begin();
+		for (; i != conn->data.end(); ++i)
+		{
+			if (!SDLNet_SocketReady((*i).tcp))
+				continue;
+
+			// get a pointer to the Data in the vector data.
+			Data* d = &(*i);
+
+			result = SDLNet_TCP_Recv(d->tcp, msg, MSG_SIZE);
 			if(result <= 0)
 			{
 				fprintf(stderr, "SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
-				connected = 0;
-				break;
+				d->connected = false;
+				continue;
 			}
 
-			// for debugging code
-			fprintf(stderr, "Recieved Bytes: ");
-			for (int c = 0; c < result; ++c)
-				fprintf(stderr,"%d  ", msg[c]);//itoa(msg[i], debug_buffer, 10));
-			fprintf(stderr, "\n");
+			// debugging code...
+				fprintf(stderr, "ret: %d\n", result);
 
-			char* cstr = (char*)msg;
-			printf("Received String: %s\n",msg);
+				// for debugging code
+				fprintf(stderr, "Recieved Bytes: ");
+				for (int c = 0; c < result; ++c)
+					fprintf(stderr,"%d  ", msg[c]);
+				fprintf(stderr, "\n");
+			// ... end debugging code
+
+			cstr = (char*)msg;
+
+			fprintf(stderr, "Received String: %s\n",msg);
+
 			if(strcmp(cstr, "QUIT") == 0)
 			{
 				fprintf(stderr, "recieved QUIT request.\n");
-				quit = 1;
-				break;
+				SDLNet_TCP_Close(d->tcp);
+				d->connected = false;
 			}
 			else if (strcmp(cstr,"NOOP") == 0)
 			{
-				if (SDLNet_TCP_Send(csd, (void*)"OKOP", OP_SIZE) < OP_SIZE)
+				if (SDLNet_TCP_Send(d->tcp, (void*)"OKOP", OP_SIZE) < OP_SIZE)
 				{
 					fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					connected = 0;
-					break;
+					d->connected = false;
 				}
 			}
 			else if (strcmp(cstr,"OKOP") != 0) // do nothing if OKOP otherwise this.
 			{
-				printf("Received: %s\n",msg);
-				SDL_mutexP(recv_mutex);
+				fprintf(stderr, "Added to recv_buffer\n");
+				SDL_mutexP(d->recv_mutex);
 				for (int i = 0; i < result; ++i)
 				{
-					fprintf(stderr, "  Added %c to recv_buffer\n", msg[i]);
-					recv_buffer->push_back(msg[i]);
+					d->recv_buffer.push_back(msg[i]);
 				}
-				fprintf(stderr,"\nend recvd\n");
-				SDL_mutexV(recv_mutex);
+				SDL_mutexV(d->recv_mutex);
 			}
 		}
 	}
 
-	fprintf(stderr, "Closing connection.\n");
-	SDLNet_TCP_Close(csd);
-	delete setup;
-*/
+	fprintf(stderr, "Ending RunClient.\n");
+	conn->client_running = false;
 	return EXIT_SUCCESS;
 }
 

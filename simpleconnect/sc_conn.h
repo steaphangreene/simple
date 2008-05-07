@@ -16,6 +16,7 @@ using namespace std;
 		string playername;
 		string password;
 		TCPsocket tcp;
+		SDL_mutex* recv_mutex;
 		vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
 		vector<Uint8> send_buffer; // contains buffered sending data.
 		unsigned int last_active;
@@ -37,7 +38,7 @@ using namespace std;
 
 	// returns conection id, adds new connection
 	// also for reconnection, with name and password.
-	int Connect(const IPaddress&, const string& name="", const string& password="");
+	int Connect(IPaddress&, const string& name="", const string& password="");
 
 	void StopAccepting();
 
@@ -77,14 +78,20 @@ using namespace std;
     private:
 	Uint16 port;
 	vector<Data> data;
-	//vector<Data> unconnected; ??
+	SDLNet_SocketSet cnx_set;
+	int accept_amount; // number of accepted sockets left for StartAccepting()
 	TCPsocket sd; // server tcp socket.
-	//static list<string> tokenize(const char*);
 	static int RunClient(void*); // client thread.
+	bool client_running;
 	static int RunServer(void*); // server thread.
+	bool server_running;
+	static int RunAccept(void*); // runs the accept routine.
+	bool accept_running;
     protected:
-	SDL_Thread* networking_thread;
-	SDL_mutex * recv_mutex;
+	SDL_Thread* accept_thread;
+	SDL_Thread* client_thread;
+	SDL_Thread* server_thread;
+	SDL_mutex * data_mutex;
   };
 
 #endif // SC_CONN_H
