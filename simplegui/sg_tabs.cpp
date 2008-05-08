@@ -59,7 +59,7 @@ void SG_Tabs::SetItems(const vector<string> &items) {
   if(cur_on < 0) cur_on = 0;
   for(int n=0; n < (int)(items.size()); ++n) {
     SG_StickyButton * sb = new SG_StickyButton(items[n]);
-    AddWidget(sb, n, 0);
+    AddWidget(sb);
     if(n == cur_on) sb->TurnOn();
     }
   }
