@@ -4,14 +4,21 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 #include "safecomm.h"
 
 #include "SDL_thread.h"
 #include "SDL_net.h"
 using namespace std;
 
-  class Connection {
+class Connection {
     public:
+    	enum {
+	  CONN_OK,
+	  CONN_NONE,
+	  CONN_RECON
+	};
+	
 	struct Data {
 		string playername;
 		string password;
@@ -19,8 +26,8 @@ using namespace std;
 		SDL_mutex* recv_mutex;
 		vector<Uint8> recv_buffer; // contains buffered data recieved over TCP
 		vector<Uint8> send_buffer; // contains buffered sending data.
-		unsigned int last_active;
-		bool connected;
+		Uint32 last_active;
+		Uint8 conn_status;
 	};
 
 	Connection(Uint16 port = 4052);
@@ -48,7 +55,10 @@ using namespace std;
 	// returns number of connections to the server.
 	int NumConnections();
 
-	// disconnects an individual client from the server.
+	void LockConnections();
+	void UnlockConnections();
+
+	// disconnects an individual client from the server given its slot.
 	void Disconnect(int);
 
 	// these recieve data from the recv_buffer and take it off the queue.
@@ -72,26 +82,28 @@ using namespace std;
 	// gets the playername of the given id.
 	string GetName(int);
 
-	// returns 1 if connection is active, 0 otherwise.
+	// returns the connection status of the player in given slot.
 	int IsConnected(int);
     private:
+	Uint8 curr_slot;
 	Uint16 port;
-	vector<Data> data;
+	map<Uint16, Data> data;
 	SDLNet_SocketSet cnx_set;
 	int accept_amount; // number of accepted sockets left for StartAccepting()
 	TCPsocket sd; // server tcp socket.
-	static int RunClient(void*); // client thread.
-	bool client_running;
-	static int RunServer(void*); // server thread.
-	bool server_running;
+	bool isserver;
+	bool connections_locked;
+	static int RunRecv(void*); // client thread.
+	bool recv_running;
 	static int RunAccept(void*); // runs the accept routine.
 	bool accept_running;
+	static int FindNull(const char*);
     protected:
 	SDL_Thread* accept_thread;
-	SDL_Thread* client_thread;
-	SDL_Thread* server_thread;
+	SDL_Thread* recv_thread;
+	SDL_mutex * amount_mutex;
 	SDL_mutex * data_mutex;
-  };
+};
 
 #endif // SC_CONN_H
 

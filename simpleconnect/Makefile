@@ -76,7 +76,7 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1 # testC testS
+test:	test1 ts tc # testC testS
 
 test1:	$(ARCH)/test1.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
@@ -86,6 +86,12 @@ testC:	$(ARCH)/testC.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 
 testS:	$(ARCH)/testS.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o testS $(ARCH)/testS.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
+	
+tc:	$(ARCH)/tc.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
+	$(CXX) $(CXXFLAGS) -o tc $(ARCH)/tc.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
+
+ts:	$(ARCH)/ts.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
+	$(CXX) $(CXXFLAGS) -o ts $(ARCH)/ts.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
