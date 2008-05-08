@@ -72,32 +72,32 @@ deps.$(ARCH).mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@
 
 clean:
-	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a ts tc test[0-9] *.exe ChangeLog
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1 ts tc # testC testS
+test:	test1 ts tc
 
 test1:	$(ARCH)/test1.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 
-testC:	$(ARCH)/testC.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
-	$(CXX) $(CXXFLAGS) -o testC $(ARCH)/testC.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
-
-testS:	$(ARCH)/testS.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
-	$(CXX) $(CXXFLAGS) -o testS $(ARCH)/testS.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
-	
 tc:	$(ARCH)/tc.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o tc $(ARCH)/tc.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 
 ts:	$(ARCH)/ts.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o ts $(ARCH)/ts.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 	
-win32_test:	test1.exe
+win32_test:	test1.exe ts.exe tc.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o audio.win32_o libsimpleconnect.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
+	
+ts.exe:	ts.win32_o audio.win32_o libsimpleconnect.win32_a
+	$(WCXX) $(WCXXFLAGS) -o ts.exe ts.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
+	
+tc.exe:	tc.win32_o audio.win32_o libsimpleconnect.win32_a
+	$(WCXX) $(WCXXFLAGS) -o tc.exe tc.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
