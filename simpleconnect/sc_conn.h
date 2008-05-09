@@ -97,7 +97,7 @@ class Connection {
 	bool recv_running;
 	static int RunAccept(void*); // runs the accept routine.
 	bool accept_running;
-	static int FindNull(const char*);
+	static int FindNull(const char*, int, int);
     protected:
 	SDL_Thread* accept_thread;
 	SDL_Thread* recv_thread;

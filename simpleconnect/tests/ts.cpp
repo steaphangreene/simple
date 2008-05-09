@@ -19,7 +19,10 @@ int main()
 	while (c.NumConnections() != 10)
 	{
 		if (accepted != c.NumConnections())
+		{
 			fprintf(stderr, "%d connections\n", accepted);
+			accepted = c.NumConnections();
+		}
 	}
 	fprintf(stderr, "%d connections\n", accepted);
 

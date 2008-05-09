@@ -13,14 +13,24 @@ int main()
 {
 	Connection c = Connection();
 	IPaddress ip;
-	SDLNet_ResolveHost(&ip, "class11", 4052);
+	char str[1024];
+	int msgs = 0;
+	SDLNet_ResolveHost(&ip, "bumblebee.cs.binghamton.edu", 4052);
 	int slotnum = c.Connect(ip, "Hello", "HI");
 
 	fprintf(stderr, "connected? %d\n", c.IsConnected(slotnum));
-	fprintf(stderr, "slotnum: %d\n", c.IsConnected(slotnum));
-//	c.Add(slotnum, "myname mypass");
-//	c.Send(slotnum);
+	fprintf(stderr, "slotnum: %d\n", slotnum);
+	c.Add(slotnum, "aword");
+	c.Add(slotnum, (Uint8)3);
+	c.Send(slotnum);
 
+	while (c.IsConnected(slotnum) == Connection::CONN_OK && msgs < 10)
+	{
+		scanf("%s", &str);
+		c.Add(slotnum, str);
+		c.Send(slotnum);
+		msgs++;
+	}
 //	c.Add(slotnum, (Uint16)23);
 //	c.Send(slotnum);
 	c.Disconnect(slotnum);
