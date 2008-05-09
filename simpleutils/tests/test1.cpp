@@ -24,7 +24,7 @@ int main()
 	c.Add(slotnum, (Uint8)3);
 	c.Send(slotnum);
 
-	while (c.IsConnected(slotnum) == SimpleNetwork::CONN_OK && msgs < 10)
+	while (c.IsConnected(slotnum) == SN_CONN_OK && msgs < 10)
 	{
 		scanf("%s", (char*)(str));
 		c.Add(slotnum, str);
