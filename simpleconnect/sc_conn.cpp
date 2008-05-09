@@ -515,7 +515,7 @@ int Connection::RunRecv(void* s)
 		}
 
 		SDL_mutexP(conn->data_mutex);
-		fprintf(stderr,"runnaccept %d, res: %d\n", conn->data.size(), result);
+		fprintf(stderr,"runnaccept %d, res: %d\n", (int)(conn->data.size()), result);
 		map<Uint16, Data>::iterator i = conn->data.begin();
 		for (; i != conn->data.end(); ++i)
 		{

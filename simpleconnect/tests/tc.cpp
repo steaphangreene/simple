@@ -26,7 +26,7 @@ int main()
 
 	while (c.IsConnected(slotnum) == Connection::CONN_OK && msgs < 10)
 	{
-		scanf("%s", &str);
+		scanf("%s", (char*)(str));
 		c.Add(slotnum, str);
 		c.Send(slotnum);
 		msgs++;
