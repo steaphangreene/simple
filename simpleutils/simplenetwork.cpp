@@ -1,9 +1,3 @@
-#if 0
-#!/bin/sh
-g++ -Wall `sdl-config --cflags` sc_conn.cpp  `sdl-config --libs` -lSDL_net
-
-exit
-#endif
 // *************************************************************************
 //  This file is part of the SimpleConnect Example Module by Steaphan Greene
 //
@@ -25,7 +19,7 @@ exit
 //  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // *************************************************************************
 
-#include "sc_conn.h"
+#include "simplenetwork.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,7 +37,7 @@ exit
 using namespace std;
 
 // constructer for creating a server connection.
-Connection::Connection(Uint16 port)
+SimpleNetwork::SimpleNetwork(Uint16 port)
 {
 	this->port = port;
 	recv_thread = NULL;
@@ -63,12 +57,12 @@ Connection::Connection(Uint16 port)
 	}
 }
 
-Connection::~Connection()
+SimpleNetwork::~SimpleNetwork()
 {
 	SDL_DestroyMutex(data_mutex);
 }
 
-void Connection::Add(int slot, const Uint8& ref)
+void SimpleNetwork::Add(int slot, const Uint8& ref)
 {
 	Uint8 buf[sizeof(ref)];
 	WriteNBO(ref, buf);
@@ -79,7 +73,7 @@ void Connection::Add(int slot, const Uint8& ref)
 	}
 }
 
-void Connection::Add(int slot,const Uint16& ref)
+void SimpleNetwork::Add(int slot,const Uint16& ref)
 {
 	Uint8 buf[sizeof(ref)];
 	WriteNBO(ref,buf);
@@ -90,7 +84,7 @@ void Connection::Add(int slot,const Uint16& ref)
 	}
 }
 
-void Connection::Add(int slot,const Uint32& ref)
+void SimpleNetwork::Add(int slot,const Uint32& ref)
 {
 	Uint8 buf[sizeof(ref)];
 	WriteNBO(ref,buf);
@@ -101,7 +95,7 @@ void Connection::Add(int slot,const Uint32& ref)
 	}
 }
 
-void Connection::Add(int slot, const string& ref)
+void SimpleNetwork::Add(int slot, const string& ref)
 {
 	for (unsigned int i = 0 ; i <= ref.length(); ++i)
 	{
@@ -110,7 +104,7 @@ void Connection::Add(int slot, const string& ref)
 }
 
 // orders the sending of Add()ed values.
-void Connection::Send(int slot)
+void SimpleNetwork::Send(int slot)
 {
 	vector<Uint8>* send_buffer = &data[slot].send_buffer;
 	Uint8 tmp_buffer[send_buffer->size()];
@@ -125,7 +119,7 @@ void Connection::Send(int slot)
 	send_buffer->clear();
 }
 
-void Connection::Recv(int slot, Uint8& ref)
+void SimpleNetwork::Recv(int slot, Uint8& ref)
 {
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 1;
@@ -146,7 +140,7 @@ void Connection::Recv(int slot, Uint8& ref)
 	SDL_mutexV(data[slot].recv_mutex);
 }
 
-void Connection::Recv(int slot, Uint16& ref)
+void SimpleNetwork::Recv(int slot, Uint16& ref)
 {
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 2;
@@ -168,7 +162,7 @@ void Connection::Recv(int slot, Uint16& ref)
 	SDL_mutexV(data[slot].recv_mutex);
 }
 
-void Connection::Recv(int slot, Uint32& ref)
+void SimpleNetwork::Recv(int slot, Uint32& ref)
 {
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 4;
@@ -189,7 +183,7 @@ void Connection::Recv(int slot, Uint32& ref)
 	SDL_mutexV(data[slot].recv_mutex);
 }
 
-void Connection::Recv(int slot, string& ref)
+void SimpleNetwork::Recv(int slot, string& ref)
 {
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	string s = "";
@@ -216,12 +210,12 @@ void Connection::Recv(int slot, string& ref)
 
 
 // returns 1 if it is connected, 0 otherwise.
-int Connection::IsConnected(int slot)
+int SimpleNetwork::IsConnected(int slot)
 {
 	return data[slot].conn_status;
 }
 
-int Connection::RecvBufferSize(int slot)
+int SimpleNetwork::RecvBufferSize(int slot)
 {
 	SDL_mutexP(data[slot].recv_mutex);
 	int ret = data[slot].recv_buffer.size();
@@ -229,13 +223,13 @@ int Connection::RecvBufferSize(int slot)
 	return ret;
 }
 
-int Connection::NumConnections()
+int SimpleNetwork::NumConnections()
 {
 	return data.size();
 }
 
 // Disconnectes from the server by sending it the QUIT operator which will force the removal of the socket.
-void Connection::Disconnect(int slot)
+void SimpleNetwork::Disconnect(int slot)
 {
 	if (data[slot].conn_status == CONN_OK)
 	{
@@ -253,28 +247,28 @@ void Connection::Disconnect(int slot)
 	}
 }
 
-void Connection::SetPort(Uint16 port)
+void SimpleNetwork::SetPort(Uint16 port)
 {
 	this->port = port;
 }
 
-void Connection::SetName(int slot, const string& str)
+void SimpleNetwork::SetName(int slot, const string& str)
 {
 	data[slot].playername = str;
 }
 
-void Connection::SetPassword(int slot, const string& str)
+void SimpleNetwork::SetPassword(int slot, const string& str)
 {
 	data[slot].password = str;
 }
 
-string Connection::GetName(int slot)
+string SimpleNetwork::GetName(int slot)
 {
 	return (data[slot].conn_status == CONN_NONE) ? "" : data[slot].playername;
 }
 
 // returns the slot number on success, -1 on failure.
-int Connection::Connect(IPaddress& ip, const string& name, const string& password)
+int SimpleNetwork::Connect(IPaddress& ip, const string& name, const string& password)
 {
 	data[curr_slot].playername = name;
 	data[curr_slot].password = password;
@@ -308,17 +302,17 @@ int Connection::Connect(IPaddress& ip, const string& name, const string& passwor
 	return curr_slot++;
 }
 
-void Connection::UnlockConnections()
+void SimpleNetwork::UnlockConnections()
 {
 	connections_locked = false;
 }
 
-void Connection::LockConnections()
+void SimpleNetwork::LockConnections()
 {
 	connections_locked = true;	
 }
 
-void Connection::StopAccepting()
+void SimpleNetwork::StopAccepting()
 {
 	if (accept_running)
 	{
@@ -330,7 +324,7 @@ void Connection::StopAccepting()
 
 //if not already accepting, this starts a thread which accepts 'amount number of
 //new sockets.
-void Connection::StartAccepting(int amount)
+void SimpleNetwork::StartAccepting(int amount)
 {
 	IPaddress ip;
 	isserver = true;
@@ -375,9 +369,9 @@ void Connection::StartAccepting(int amount)
 // the listened-to things.
 // s represents a pointer to a Connection class which has an open server
 // descripter.
-int Connection::RunAccept(void* s)
+int SimpleNetwork::RunAccept(void* s)
 {
-	Connection* conn = (Connection*) s;
+	SimpleNetwork* conn = (SimpleNetwork*) s;
 	TCPsocket csd;
 	int cnx_amt;
 	int amt = conn->accept_amount;
@@ -500,9 +494,9 @@ int Connection::RunAccept(void* s)
 
 // runs the client thread which recieves information from the server if they send something
 // and adds the recieved values to a queue which can be taken from using recv().
-int Connection::RunRecv(void* s)
+int SimpleNetwork::RunRecv(void* s)
 {
-	Connection* conn = (Connection*) s;
+	SimpleNetwork* conn = (SimpleNetwork*) s;
 	Uint8 msg [MSG_SIZE];
 	char* cstr; // for debugging purposes
 	int result;
@@ -606,7 +600,7 @@ int Connection::RunRecv(void* s)
 	return EXIT_SUCCESS;
 }
 
-int Connection::FindNull(const char* packet, int offset, int maxoffset)
+int SimpleNetwork::FindNull(const char* packet, int offset, int maxoffset)
 {
 	int i = 0+offset;
 	for (; i < maxoffset && packet[i] != 0x00; ++i)

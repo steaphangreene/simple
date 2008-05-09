@@ -11,7 +11,7 @@
 #include "SDL_net.h"
 using namespace std;
 
-class Connection {
+class SimpleNetwork {
     public:
     	enum {
 	  CONN_OK,
@@ -30,8 +30,8 @@ class Connection {
 		Uint8 conn_status;
 	};
 
-	Connection(Uint16 port = 4052);
-	~Connection(); //cleanup
+	SimpleNetwork(Uint16 port = 4052);
+	~SimpleNetwork(); //cleanup
 
 	// add to send_buffer
 	void Add(int, const Uint8&);

@@ -34,13 +34,13 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	$(ARCH)/sc.o $(ARCH)/sc_conn.o
-CXXFLAGS:=	$(FLAGS) -I../simplegui -I../simpletexture
-CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
+OBJS:=	$(ARCH)/sc.o
+CXXFLAGS:=	$(FLAGS) -I../simplegui -I../simpletexture -I../simpleutils
+CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a  ../simpleutils/$(ARCH)/libsimpleutils.a
 
-WOBJS:=	sc.win32_o sc_conn.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui
-WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
+WOBJS:=	sc.win32_o
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simpleutils
+WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simpleutils/$(ARCH)/libsimpleutils.a
 
 $(ARCH):
 	mkdir -p $(ARCH)
@@ -72,32 +72,20 @@ deps.$(ARCH).mk:	*.cpp *.h
 	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@
 
 clean:
-	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a ts tc test[0-9] *.exe ChangeLog
+	rm -f deps.$(ARCH).mk $(ARCH)/*.o $(ARCH)/*.a *.win32_o *.win32_a test[0-9] *.exe ChangeLog
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1 ts tc
+test:	test1
 
 test1:	$(ARCH)/test1.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
 
-tc:	$(ARCH)/tc.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
-	$(CXX) $(CXXFLAGS) -o tc $(ARCH)/tc.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
-
-ts:	$(ARCH)/ts.o $(ARCH)/libsimpleconnect.a $(ARCH)/audio.o
-	$(CXX) $(CXXFLAGS) -o ts $(ARCH)/ts.o $(ARCH)/audio.o $(ARCH)/libsimpleconnect.a $(CXXLIBS)
-	
-win32_test:	test1.exe ts.exe tc.exe
+win32_test:	test1.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o audio.win32_o libsimpleconnect.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
-	
-ts.exe:	ts.win32_o audio.win32_o libsimpleconnect.win32_a
-	$(WCXX) $(WCXXFLAGS) -o ts.exe ts.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
-	
-tc.exe:	tc.win32_o audio.win32_o libsimpleconnect.win32_a
-	$(WCXX) $(WCXXFLAGS) -o tc.exe tc.win32_o audio.win32_o libsimpleconnect.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

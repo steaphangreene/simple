@@ -5,17 +5,17 @@ g++ -Wall `sdl-config --cflags` sc_conn.cpp tests/tc.cpp -o client `sdl-config -
 exit
 #endif
 
-#include "../sc_conn.h"
+#include "../simplenetwork.h"
 
 using namespace std;
 
 int main()
 {
-	Connection c = Connection();
+	SimpleNetwork c = SimpleNetwork();
 	IPaddress ip;
 	char str[1024];
 	int msgs = 0;
-	SDLNet_ResolveHost(&ip, "bumblebee.cs.binghamton.edu", 4052);
+	SDLNet_ResolveHost(&ip, "127.0.0.1", 4052);
 	int slotnum = c.Connect(ip, "Hello", "HI");
 
 	fprintf(stderr, "connected? %d\n", c.IsConnected(slotnum));
@@ -24,7 +24,7 @@ int main()
 	c.Add(slotnum, (Uint8)3);
 	c.Send(slotnum);
 
-	while (c.IsConnected(slotnum) == Connection::CONN_OK && msgs < 10)
+	while (c.IsConnected(slotnum) == SimpleNetwork::CONN_OK && msgs < 10)
 	{
 		scanf("%s", (char*)(str));
 		c.Add(slotnum, str);

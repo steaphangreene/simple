@@ -22,5 +22,6 @@
 #define SIMPLEUTILS_H
 
 #include "simplerandom.h"
+#include "simplenetwork.h"
 
 #endif  //SIMPLEUTILS_H

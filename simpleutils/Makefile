@@ -34,13 +34,13 @@ WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
 
-OBJS:=	$(ARCH)/simplerandom.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplemodel -I../simplevideo
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+OBJS:=	$(ARCH)/simplerandom.o $(ARCH)/simplenetwork.o
+CXXFLAGS:=	$(FLAGS)
+CXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(LIBS)
 
-WOBJS:=	simplerandom.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplemodel -I../simplevideo
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+WOBJS:=	simplerandom.win32_o simplenetwork.win32_o
+WCXXFLAGS:=	$(WFLAGS)
+WCXXLIBS:=	-lSDL_net -lSDL_ttf -lSDL_image $(WLIBS)
 
 $(ARCH):
 	mkdir -p $(ARCH)
@@ -77,16 +77,22 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1
+test:	test1 test2
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleutils.a
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpleutils.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/libsimpleutils.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/libsimpleutils.a $(CXXLIBS)
 	
-win32_test:	test1.exe
+test2:	$(ARCH)/test2.o $(ARCH)/libsimpleutils.a
+	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/libsimpleutils.a $(CXXLIBS)
+	
+win32_test:	test1.exe test2.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o libsimpleutils.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpleutils.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o libsimpleutils.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o libsimpleutils.win32_a $(WCXXLIBS)
+	
+test2.exe:	test2.win32_o libsimpleutils.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o libsimpleutils.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
