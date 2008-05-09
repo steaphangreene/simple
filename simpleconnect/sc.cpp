@@ -30,6 +30,7 @@ using namespace std;
 #include "sg_button.h"
 #include "sg_dragable.h"
 #include "sg_editable.h"
+#include "safecomm.h"
 
 #define HEADER_SIZE	1
 #define WIDGET_WIDTH	12
