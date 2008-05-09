@@ -1,0 +1,7 @@
+SimpleNetwork:
+AddAll()
+SendAll()
+Connect(string)
+Add( var, COUNT)?
+Recv( var, COUNT)?
+

@@ -11,16 +11,16 @@
 #include "SDL_net.h"
 using namespace std;
 
+enum SN_Status {
+  SN_CONN_NONE = 0,
+  SN_CONN_OK = 1,
+  SN_CONN_RECON = 2
+};
+	
 class SimpleNetwork {
     public:
 	static SimpleNetwork *Current() { return current; };
 
-    	enum {
-	  CONN_OK,
-	  CONN_NONE,
-	  CONN_RECON
-	};
-	
 	struct Data {
 		string playername;
 		string password;
@@ -85,7 +85,7 @@ class SimpleNetwork {
 	string GetName(int);
 
 	// returns the connection status of the player in given slot.
-	int IsConnected(int);
+	SN_Status IsConnected(int);
     private:
 	Uint8 curr_slot;
 	Uint16 port;

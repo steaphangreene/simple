@@ -219,9 +219,9 @@ void SimpleNetwork::Recv(int slot, string& ref)
 
 
 // returns 1 if it is connected, 0 otherwise.
-int SimpleNetwork::IsConnected(int slot)
+SN_Status SimpleNetwork::IsConnected(int slot)
 {
-	return data[slot].conn_status;
+	return (SN_Status)(data[slot].conn_status);
 }
 
 int SimpleNetwork::RecvBufferSize(int slot)
@@ -240,9 +240,9 @@ int SimpleNetwork::NumConnections()
 // Disconnectes from the server by sending it the QUIT operator which will force the removal of the socket.
 void SimpleNetwork::Disconnect(int slot)
 {
-	if (data[slot].conn_status == CONN_OK)
+	if (data[slot].conn_status == SN_CONN_OK)
 	{
-		data[slot].conn_status = connections_locked ? CONN_RECON : CONN_NONE;
+		data[slot].conn_status = connections_locked ? SN_CONN_RECON : SN_CONN_NONE;
 	}
 
 	if (data[slot].tcp)
@@ -273,7 +273,7 @@ void SimpleNetwork::SetPassword(int slot, const string& str)
 
 string SimpleNetwork::GetName(int slot)
 {
-	return (data[slot].conn_status == CONN_NONE) ? "" : data[slot].playername;
+	return (data[slot].conn_status == SN_CONN_NONE) ? "" : data[slot].playername;
 }
 
 // returns the slot number on success, -1 on failure.
@@ -297,7 +297,7 @@ int SimpleNetwork::Connect(IPaddress& ip, const string& name, const string& pass
 	memcpy(bytes+name.length()+1, s2, password.length()+1);
 	SDLNet_TCP_Send(data[curr_slot].tcp, (void*) bytes, password.length() + name.length() + 2);
 
-	data[curr_slot].conn_status = CONN_OK;
+	data[curr_slot].conn_status = SN_CONN_OK;
 	data[curr_slot].recv_mutex = SDL_CreateMutex();
 
 	// add this new connection to the connection set.
@@ -433,7 +433,7 @@ int SimpleNetwork::RunAccept(void* s)
 					conn->data[conn->curr_slot].recv_mutex = SDL_CreateMutex();
 					conn->data[conn->curr_slot].tcp = csd;
 					conn->data[conn->curr_slot].last_active = time(NULL);
-					conn->data[conn->curr_slot].conn_status = CONN_OK;
+					conn->data[conn->curr_slot].conn_status = SN_CONN_OK;
 					conn->data[conn->curr_slot].password = msg;
 					conn->data[conn->curr_slot].playername = msg+nullch+1;
 
@@ -461,12 +461,12 @@ int SimpleNetwork::RunAccept(void* s)
 					for (i = conn->data.begin(); i != conn->data.end(); ++i)
 					{
 						Data * d = &((*i).second);
-						if (d->conn_status == CONN_RECON)
+						if (d->conn_status == SN_CONN_RECON)
 						{
 							if (strcmp(d->playername.c_str(), msg) &&
 							    strcmp(d->password.c_str(), msg+1+nullch))
 							{
-								d->conn_status = CONN_OK;
+								d->conn_status = SN_CONN_OK;
 								d->tcp = csd;
 								d->last_active = time(NULL);
 								--(conn->accept_amount);
@@ -525,7 +525,7 @@ int SimpleNetwork::RunRecv(void* s)
 			// get a pointer to the Data in the vector data.
 			Data* d = &((*i).second);
 
-			if (d->conn_status != CONN_OK)
+			if (d->conn_status != SN_CONN_OK)
 				continue;
 
 			// if its not ready we want to make sure its non-idle, assuming we are the server.
@@ -537,7 +537,7 @@ int SimpleNetwork::RunRecv(void* s)
 			{
 				fprintf(stderr, "Terminating socket due to error.\n");
 //				fprintf(stderr, "SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
-				d->conn_status = (conn->connections_locked) ? CONN_RECON : CONN_NONE;
+				d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
 				fprintf(stderr, "Terminating aft conn_status.\n");
 				SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
 				fprintf(stderr, "Terminating aft delsock.\n");
@@ -571,7 +571,7 @@ int SimpleNetwork::RunRecv(void* s)
 					fprintf(stderr, "recieved QUIT request.\n");
 					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? CONN_RECON : CONN_NONE;
+					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
 				}
 				else
 				{
@@ -579,7 +579,7 @@ int SimpleNetwork::RunRecv(void* s)
 					SDLNet_TCP_Send(d->tcp, (void*)"QUIT", OP_SIZE);
 					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? CONN_RECON : CONN_NONE;
+					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
 				}
 			}
 			else if (!(conn->isserver) && strcmp(cstr,"NOOP") == 0)
@@ -587,7 +587,7 @@ int SimpleNetwork::RunRecv(void* s)
 				if (SDLNet_TCP_Send(d->tcp, (void*)"OKOP", OP_SIZE) < OP_SIZE)
 				{
 					fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					d->conn_status = (conn->connections_locked) ? CONN_RECON : CONN_NONE;
+					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
 				}
 			}
 			else if (strcmp(cstr,"OKOP") != 0) // do nothing if OKOP otherwise this.
