@@ -13,6 +13,8 @@ using namespace std;
 
 class SimpleNetwork {
     public:
+	static SimpleNetwork *Current() { return current; };
+
     	enum {
 	  CONN_OK,
 	  CONN_NONE,
@@ -99,6 +101,8 @@ class SimpleNetwork {
 	bool accept_running;
 	static int FindNull(const char*, int, int);
     protected:
+	static SimpleNetwork *current;
+
 	SDL_Thread* accept_thread;
 	SDL_Thread* recv_thread;
 	SDL_mutex * amount_mutex;

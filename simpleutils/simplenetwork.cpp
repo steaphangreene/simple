@@ -36,9 +36,18 @@
 #define MSG_SIZE 1024
 using namespace std;
 
+SimpleNetwork *SimpleNetwork::current = NULL;
+
 // constructer for creating a server connection.
 SimpleNetwork::SimpleNetwork(Uint16 port)
 {
+	if(current)
+	{
+		fprintf(stderr, "ERROR: Created mulitple SimpleNetwork instances!\n");
+		exit(1);
+	}
+	current = this;
+
 	this->port = port;
 	recv_thread = NULL;
 	accept_thread = NULL;
@@ -124,15 +133,15 @@ void SimpleNetwork::Recv(int slot, Uint8& ref)
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 1;
 	Uint8 tmp[size];
-	unsigned int current;
+	unsigned int cur;
 	
 	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
-	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
+	for (i = start, cur = 0; i != recv_buffer->end() && cur < size; ++i, ++cur)
 	{
 		fprintf(stderr, " %X  ", *i);
-		tmp[current] = *i;
+		tmp[cur] = *i;
 	}
 	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
@@ -145,15 +154,15 @@ void SimpleNetwork::Recv(int slot, Uint16& ref)
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 2;
 	Uint8 tmp[size];
-	unsigned int current;
+	unsigned int cur;
 
 	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
-	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
+	for (i = start, cur = 0; i != recv_buffer->end() && cur < size; ++i, ++cur)
 	{
 		fprintf(stderr, " %X  ", *i);
-		tmp[current] = *i;
+		tmp[cur] = *i;
 	}
 	
 	fprintf(stderr, "\n");
@@ -167,15 +176,15 @@ void SimpleNetwork::Recv(int slot, Uint32& ref)
 	vector<Uint8>* recv_buffer = &data[slot].recv_buffer;
 	unsigned int size = 4;
 	Uint8 tmp[size];
-	unsigned int current;
+	unsigned int cur;
 	
 	SDL_mutexP(data[slot].recv_mutex);
 	vector<Uint8>::iterator i;
 	vector<Uint8>::iterator start = recv_buffer->begin();
-	for (i = start, current = 0; i != recv_buffer->end() && current < size; ++i, ++current)
+	for (i = start, cur = 0; i != recv_buffer->end() && cur < size; ++i, ++cur)
 	{
 		fprintf(stderr, " %X  ", *i);
-		tmp[current] = *i;
+		tmp[cur] = *i;
 	}
 	fprintf(stderr, "\n");
 	ReadNBO(ref,tmp);
