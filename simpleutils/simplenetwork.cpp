@@ -468,8 +468,8 @@ int SimpleNetwork::RunAccept()
 					data[curr_slot].tcp = csd;
 					data[curr_slot].last_active = time(NULL);
 					data[curr_slot].conn_status = SN_CONN_OK;
-					data[curr_slot].password = msg;
-					data[curr_slot].playername = msg+nullch+1;
+					data[curr_slot].playername = msg;
+					data[curr_slot].password = msg+nullch+1;
 
 					SDL_mutexP(data[curr_slot].recv_mutex);
 					for (int i = nullch2+1; i < result; ++i)
