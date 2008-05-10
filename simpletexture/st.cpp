@@ -491,10 +491,12 @@ bool SimpleTexture::CheckCache() {
 void SimpleTexture::BuildTexture() {
   if((!text) || text->message.length() <= 0) {
     BuildBlankTexture();
+    if(text) text->dirty = 0;
     }
   else if(Font() == NULL) {
     fprintf(stderr, "WARNING: No Font Loaded!\n");
     BuildBlankTexture();
+    if(text) text->dirty = 0;
     }
   else {
     BuildTextTexture();
