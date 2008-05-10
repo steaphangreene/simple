@@ -611,6 +611,7 @@ int SimpleConnect::HandleHostThread() {
 
   conn.net->StartAccepting(16);
 
+  slots_handled = 0;
   while(!exiting) {
     while(SDLNet_UDP_Recv(udpsock, inpacket) > 0) {
       if(!strcmp((char*)indata->tag, nettag.c_str())) {
