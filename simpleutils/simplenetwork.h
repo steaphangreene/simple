@@ -5,7 +5,7 @@
 #include <vector>
 #include <list>
 #include <map>
-#include "../simpleutils/safecomm.h"
+#include "safecomm.h"
 
 #include "SDL_thread.h"
 #include "SDL_net.h"
