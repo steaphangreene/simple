@@ -38,6 +38,7 @@ using namespace std;
 #include "SDL_thread.h"
 #include "SDL_net.h"
 
+#include "simplenetwork.h"
 #include "sg_compound.h"
 
 class SG_Button;
@@ -93,15 +94,14 @@ struct SlotData {
   Uint8 ptype;
   Uint8 team;
   Uint8 color;
-  Sint8 playername[16];
-  Sint8 password[16];
-  TCPsocket sock;
+  string playername;
+  string password;
+  Sint8 sock;	//Socket Number within SimpleNetwork
   };
 
 struct SimpleConnections {
-  SDLNet_SocketSet tcpset;
   vector<SlotData> slots;
-  TCPsocket sock;
+  SimpleNetwork *net;
   };
 
 class SimpleConnect : public SG_Compound {
@@ -149,6 +149,7 @@ protected:
   SG_Button *startb;
 
   SimpleConnections conn;
+  int slots_handled;
   bool slots_dirty;
   bool slots_send;
 
