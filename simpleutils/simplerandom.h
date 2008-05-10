@@ -20,8 +20,8 @@
 
 #ifndef _RANDOM_H
 #define _RANDOM_H
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+#include "SDL.h"
+#include "SDL_thread.h"
 #include <time.h>
 
 /*

@@ -19,8 +19,8 @@
 // *************************************************************************
 
 #include "simplerandom.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+#include "SDL.h"
+#include "SDL_thread.h"
 #include <time.h>
 
 #ifndef assert

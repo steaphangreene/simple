@@ -33,7 +33,7 @@ exit
 #include <list>
 #include <vector>
 #include <time.h>
-#include <SDL/SDL_thread.h>
+#include "SDL_thread.h"
 #include "SDL_net.h"
 
 #define OP_SIZE 5
