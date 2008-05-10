@@ -50,9 +50,16 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
   text->SetAlignment(SG_ALIGN_RIGHT);
   text->SetVisibleSize(SG_KEEPASPECT, 1);
   AddWidget(text, 0, 0, binvpro-1, 2);
+ 
+  SetFixedDisplayPrecision(false); 
   }
 
 SG_Spinner::~SG_Spinner() {
+  }
+
+void SG_Spinner::SetFixedDisplayPrecision(bool f) {
+  fixed=f;
+  RangerChanged();
   }
 
 static SG_Event_DataType event_data;
@@ -120,14 +127,21 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
 
 void SG_Spinner::RangerChanged() {
   char buf[64];
-  if(value == (int)(value) && min == (int)(min)) {
-    sprintf(buf, "%.0f%c", Value(), 0);
-    }
-  else if(value*10.0 == (int)(value*10.0) && min*10.0 == (int)(min*10.0)) {
-    sprintf(buf, "%.1f%c", Value(), 0);
-    }
-  else {	//FIXME: More cases.
-    sprintf(buf, "%.2f%c", Value(), 0);
-    }
+  char format[64];
+ 
+  snprintf(format, 64,"%%.%df%%c%c",getSignificantDigits( (fixed ? inc : Value()) ) ,0);
+  snprintf(buf, 64, format, Value(), 0);
+
   text->SetText(buf);
+  }
+
+int SG_Spinner::getSignificantDigits(float f) {
+  float fB=f-((int) f);
+  int p=0;
+  while(fB != 0) {
+    fB *= 10;
+    fB = fB - ((int) fB); 		
+    p++;
+    }
+  return p;
   }

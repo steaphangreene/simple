@@ -219,8 +219,8 @@ int main(int argc, char **argv) {
   tab[1]->AddWidget(text, 0, 9, 2, 1);
 
   spin = new SG_Spinner(true);
-  spin->SetLimits(16.0, 256.0);
-  spin->SetIncrement(16.0);
+  spin->SetLimits(-5.0, 5.0);
+  spin->SetIncrement(0.125);
   tab[1]->AddWidget(spin, 0, 10, 2, 1);
 
   name[spin] = "Spinner";
@@ -489,6 +489,7 @@ int main(int argc, char **argv) {
 	anim->SetTexture(nsurf, frm);
 	}
       }
+    SDL_Delay(10);
     }
 
   gui->UnsetPopupWidget(); 

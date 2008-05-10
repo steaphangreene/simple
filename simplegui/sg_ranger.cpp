@@ -101,6 +101,7 @@ float SG_Ranger::Span() {
 
 void SG_Ranger::SetIncrement(float i) {
   inc = i;
+  RangerChanged();
   }
 
 void SG_Ranger::Increment() {
@@ -148,6 +149,7 @@ void SG_Ranger::LinkTo(SG_Ranger *other) {
       (*mitr)->span = span;
       (*mitr)->min = min;
       (*mitr)->max = max;
+      (*mitr)->inc = inc;
       (*mitr)->RangerChanged();
       }
     }
@@ -179,6 +181,7 @@ void SG_Ranger::LinkFrom(SG_Ranger *other) {
   span = other->span;
   min = other->min;
   max = other->max;
+  inc = other->inc;
   RangerChanged();
   }
 
