@@ -60,7 +60,6 @@ SimpleNetwork::SimpleNetwork(Uint16 port)
 	recv_running = false;
 	accept_running = false;
 	accept_mutex = NULL;
-	data_mutex = SDL_CreateMutex();
 	curr_slot = 0;
 	connections_locked = false;
 	isserver = false;
@@ -76,7 +75,6 @@ SimpleNetwork::SimpleNetwork(Uint16 port)
 
 SimpleNetwork::~SimpleNetwork()
 {
-	SDL_DestroyMutex(data_mutex);
 }
 
 void SimpleNetwork::Add(int slot, const Uint8& ref)
@@ -123,8 +121,7 @@ void SimpleNetwork::Add(int slot, const string& ref)
 // orders the sending of Add()ed values.
 void SimpleNetwork::Send(int slot)
 {
-	SDL_mutexP(data_mutex);
-	if (data[slot].conn_status == SN_CONN_OK)
+	if (data.count(slot) > 0 && data[slot].conn_status == SN_CONN_OK)
 	{
 		vector<Uint8>* send_buffer = &data[slot].send_buffer;
 		Uint8 tmp_buffer[send_buffer->size()];
@@ -138,7 +135,6 @@ void SimpleNetwork::Send(int slot)
 		SDLNet_TCP_Send(data[slot].tcp, (void*) &tmp_buffer, send_buffer->size());
 		send_buffer->clear();
 	}
-	SDL_mutexV(data_mutex);
 }
 
 void SimpleNetwork::Recv(int slot, Uint8& ref)
@@ -239,9 +235,13 @@ SN_Status SimpleNetwork::IsConnected(int slot)
 
 int SimpleNetwork::RecvBufferSize(int slot)
 {
-	SDL_mutexP(data[slot].recv_mutex);
-	int ret = data[slot].recv_buffer.size();
-	SDL_mutexV(data[slot].recv_mutex);
+	int ret = 0;
+	if(data.count(slot) > 0)
+	{
+		SDL_mutexP(data[slot].recv_mutex);
+		ret = data[slot].recv_buffer.size();
+		SDL_mutexV(data[slot].recv_mutex);
+	}
 	return ret;
 }
 
@@ -468,7 +468,6 @@ int SimpleNetwork::RunAccept()
 				if (connections_locked == false)
 				{
 					fprintf(stderr, "ADDING NEW CONNECTION\n");
-					SDL_mutexP(data_mutex);
 					data[curr_slot].recv_mutex = SDL_CreateMutex();
 					data[curr_slot].tcp = csd;
 					data[curr_slot].last_active = time(NULL);
@@ -488,7 +487,6 @@ int SimpleNetwork::RunAccept()
 					
 					++(curr_slot);
 					--(accept_amount);
-					SDL_mutexV(data_mutex);
 				}
 				else // we are reconnecting
 				{
@@ -496,7 +494,6 @@ int SimpleNetwork::RunAccept()
 					map<Uint16, Data>::iterator i;
 					bool found = false;
 
-					SDL_mutexP(data_mutex);
 					for (i = data.begin(); i != data.end(); ++i)
 					{
 						Data * d = &((*i).second);
@@ -524,7 +521,6 @@ int SimpleNetwork::RunAccept()
 						SDLNet_TCP_DelSocket(cnx_set, csd);
 						SDLNet_TCP_Close(csd);
 					}
-					SDL_mutexV(data_mutex);
 				}
 			}
 
@@ -564,7 +560,6 @@ int SimpleNetwork::RunRecv()
 		//	exit(EXIT_FAILURE);
 		}
 
-		SDL_mutexP(data_mutex);
 		fprintf(stderr,"runrecv %d, res: %d\n", (int)(data.size()), result);
 		map<Uint16, Data>::iterator i = data.begin();
 		for (; i != data.end(); ++i)
@@ -684,7 +679,6 @@ int SimpleNetwork::RunRecv()
 				SDL_mutexV(d->recv_mutex);
 			}
 		}
-		SDL_mutexV(data_mutex);
 		SDL_Delay(10);
 	}
 

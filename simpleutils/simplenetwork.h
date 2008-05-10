@@ -111,7 +111,6 @@ class SimpleNetwork {
 	SDL_Thread* accept_thread;
 	SDL_Thread* recv_thread;
 	SDL_mutex * accept_mutex;
-	SDL_mutex * data_mutex;
 };
 
 #endif // SC_CONN_H
