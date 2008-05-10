@@ -5,7 +5,7 @@
 #include <vector>
 #include <list>
 #include <map>
-#include "safecomm.h"
+#include "../simpleutils/safecomm.h"
 
 #include "SDL_thread.h"
 #include "SDL_net.h"
@@ -16,11 +16,11 @@ enum SN_Status {
   SN_CONN_OK = 1,
   SN_CONN_RECON = 2
 };
-	
+
 class SimpleNetwork {
     public:
 	static SimpleNetwork *Current() { return current; };
-
+	
 	struct Data {
 		string playername;
 		string password;
@@ -105,7 +105,7 @@ class SimpleNetwork {
 
 	SDL_Thread* accept_thread;
 	SDL_Thread* recv_thread;
-	SDL_mutex * amount_mutex;
+	SDL_mutex * accept_mutex;
 	SDL_mutex * data_mutex;
 };
 
