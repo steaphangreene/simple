@@ -1,9 +1,3 @@
-#if 0
-#!/bin/sh
-g++ -Wall `sdl-config --cflags` sc_conn.cpp  `sdl-config --libs` -lSDL_net
-
-exit
-#endif
 // *************************************************************************
 //  This file is part of the SimpleConnect Example Module by Steaphan Greene
 //
