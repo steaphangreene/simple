@@ -7,10 +7,7 @@ int main()
 	SDL_Init(0);
 	SimpleNetwork c = SimpleNetwork();
 	IPaddress ip;
-	char str[1024];
-	int msgs = 0;
 	SDLNet_ResolveHost(&ip, "127.0.0.1", 4052);
-	int curslot = -1;
 	int slotnum = c.Connect(ip, "Hello", "HI");
 	SDLNet_ResolveHost(&ip, "127.0.0.1", 4052);
 	int slotnum2 = c.Connect(ip, "Funk", "ADELiC");
