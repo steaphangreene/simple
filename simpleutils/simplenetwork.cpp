@@ -250,7 +250,6 @@ SN_Status SimpleNetwork::IsConnected(int slot)
 int SimpleNetwork::RecvBufferSize(int slot)
 {
 	int ret = 0;
-	fprintf(stderr, "Checking %d!\n", slot);
 	if(data.count(slot) > 0)
 	{
 		SDL_mutexP(data[slot].recv_mutex);
