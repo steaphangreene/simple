@@ -80,6 +80,9 @@ public:
   void ColorObject(SS_Object obj, float r, float g, float b, Uint32 tm = 0);
   void ActObject(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
+  void GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos);
+  void GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos, float &zpos);
+
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
   void SetPTypeColor0(SS_PType type, float cr, float cg, float cb, float ca);

@@ -295,6 +295,42 @@ void SimpleScene::Clear() {
   next_obj = 1;
   }
 
+void SimpleScene::GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos) {
+  float tmp;
+  GetObjectPos(obj, offset, xpos, ypos, tmp);
+  }
+
+void SimpleScene::GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos, float &zpos) {
+  float prog = 0.0;
+  Coord toward = {0, 0, 0};
+
+  list<pair<Coord, ActionData> >::const_iterator move = moves.begin();
+  for(; move != moves.end(); ++move) {
+    if(move->second.obj != obj) continue;
+
+    if(offset < move->second.finish) {
+      if(offset + move->second.duration < move->second.finish) continue;
+      toward = move->first;
+      prog = (float)(offset + move->second.duration - move->second.finish)
+		/ (float)(move->second.duration);
+      continue;
+      }
+
+    Coord pos = move->first;
+
+    if(prog > 0.0) {		// Moving
+      pos.x = (pos.x * (1.0 - prog)) + (toward.x * prog);
+      pos.y = (pos.y * (1.0 - prog)) + (toward.y * prog);
+      pos.z = (pos.z * (1.0 - prog)) + (toward.z * prog);
+      }
+    xpos = pos.x;
+    ypos = pos.y;
+    zpos = pos.z;
+
+    break;
+    }
+  }
+
 bool SimpleScene::DrawObjects(Uint32 offset) {
   float xp = 0.0, yp = 0.0, zp = 0.0;
 
