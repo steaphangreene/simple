@@ -95,10 +95,15 @@ class SimpleNetwork {
 	TCPsocket sd; // server tcp socket.
 	bool isserver;
 	bool connections_locked;
-	static int RunRecv(void*); // client thread.
+
+	static int recv_handler(void*); // client thread.
+	int RunRecv(); // client thread.
 	bool recv_running;
-	static int RunAccept(void*); // runs the accept routine.
+
+	static int accept_handler(void*); // runs the accept routine.
+	int RunAccept(); // runs the accept routine.
 	bool accept_running;
+
 	static int FindNull(const char*, int, int);
     protected:
 	static SimpleNetwork *current;

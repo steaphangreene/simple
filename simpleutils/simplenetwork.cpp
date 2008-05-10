@@ -328,7 +328,7 @@ int SimpleNetwork::Connect(IPaddress& ip, const string& name, const string& pass
 	// make sure runclient is running for this connection.
 	if (!recv_running)
 	{
-		recv_thread = SDL_CreateThread(RunRecv, (void*) this);
+		recv_thread = SDL_CreateThread(recv_handler, (void*) this);
 		recv_running = true;
 	}
 	return curr_slot++;
@@ -390,7 +390,7 @@ void SimpleNetwork::StartAccepting(int amount)
 //		}
 	
 		accept_amount = amount;
-		accept_thread = SDL_CreateThread(RunAccept, (void*) this);
+		accept_thread = SDL_CreateThread(accept_handler, (void*) this);
 		accept_running = true;
 	}
 	else {	
@@ -401,7 +401,7 @@ void SimpleNetwork::StartAccepting(int amount)
 	// start up runserver if it isn't already running.
 	if (!recv_running)
 	{
-		recv_thread = SDL_CreateThread(RunRecv, (void*) this);
+		recv_thread = SDL_CreateThread(recv_handler, (void*) this);
 		recv_running = true;
 	}
 }
@@ -410,29 +410,33 @@ void SimpleNetwork::StartAccepting(int amount)
 // the listened-to things.
 // s represents a pointer to a SimpleNetwork class which has an open server
 // descripter.
-int SimpleNetwork::RunAccept(void* s)
+int SimpleNetwork::accept_handler(void* s)
+{
+	((SimpleNetwork*)(s))->RunAccept();
+}
+
+int SimpleNetwork::RunAccept()
 {
 	fprintf(stderr, "RUNACCEPT()\n");
-	SimpleNetwork* conn = (SimpleNetwork*) s;
 	TCPsocket csd;
 	int cnx_amt;
-	int amt = conn->accept_amount;
+	int amt = accept_amount;
 	char msg[MSG_SIZE];
 	int nullch, nullch2;
 
 	while (amt)
 	{
-		if ( (csd = SDLNet_TCP_Accept(conn->sd)) )
+		if ( (csd = SDLNet_TCP_Accept(sd)) )
 		{
 			fprintf(stderr, "New Connection!\n");
-			if( (cnx_amt = SDLNet_TCP_AddSocket(conn->cnx_set, csd)) == -1)
+			if( (cnx_amt = SDLNet_TCP_AddSocket(cnx_set, csd)) == -1)
 			{
 				fprintf(stderr,"SDLNet_AddSocket: %s\n", SDLNet_GetError());
 				// perhaps restart the set and make it bigger...
 				SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
 				fprintf(stderr,"%d sockets in set (fail)\n", cnx_amt);
 				SDLNet_TCP_Close(csd);
-				conn->accept_amount = 0;
+				accept_amount = 0;
 			} else {
 				fprintf(stderr, "%d sockets in set (Server)\n", cnx_amt);
 			
@@ -456,35 +460,35 @@ int SimpleNetwork::RunAccept(void* s)
 				{
 					fprintf(stderr, "Invalid login message.\n");
 					SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
-					SDLNet_TCP_DelSocket(conn->cnx_set, csd);
+					SDLNet_TCP_DelSocket(cnx_set, csd);
 					SDLNet_TCP_Close(csd);
 					continue;
 				}
 
-				if (conn->connections_locked == false)
+				if (connections_locked == false)
 				{
 					fprintf(stderr, "ADDING NEW CONNECTION\n");
-					SDL_mutexP(conn->data_mutex);
-					conn->data[conn->curr_slot].recv_mutex = SDL_CreateMutex();
-					conn->data[conn->curr_slot].tcp = csd;
-					conn->data[conn->curr_slot].last_active = time(NULL);
-					conn->data[conn->curr_slot].conn_status = SN_CONN_OK;
-					conn->data[conn->curr_slot].password = msg;
-					conn->data[conn->curr_slot].playername = msg+nullch+1;
+					SDL_mutexP(data_mutex);
+					data[curr_slot].recv_mutex = SDL_CreateMutex();
+					data[curr_slot].tcp = csd;
+					data[curr_slot].last_active = time(NULL);
+					data[curr_slot].conn_status = SN_CONN_OK;
+					data[curr_slot].password = msg;
+					data[curr_slot].playername = msg+nullch+1;
 
-					SDL_mutexP(conn->data[conn->curr_slot].recv_mutex);
+					SDL_mutexP(data[curr_slot].recv_mutex);
 					for (int i = nullch2+1; i < result; ++i)
 					{
 						if (i == nullch2+1) fprintf(stderr, "Adding to recv_buffer: ");
 						fprintf(stderr,"%X  ", msg[i]);
-						conn->data[conn->curr_slot].recv_buffer.push_back(msg[i]);
+						data[curr_slot].recv_buffer.push_back(msg[i]);
 					}
 					fprintf(stderr,"\n");
-					SDL_mutexV(conn->data[conn->curr_slot].recv_mutex);
+					SDL_mutexV(data[curr_slot].recv_mutex);
 					
-					++(conn->curr_slot);
-					--(conn->accept_amount);
-					SDL_mutexV(conn->data_mutex);
+					++(curr_slot);
+					--(accept_amount);
+					SDL_mutexV(data_mutex);
 				}
 				else // we are reconnecting
 				{
@@ -492,8 +496,8 @@ int SimpleNetwork::RunAccept(void* s)
 					map<Uint16, Data>::iterator i;
 					bool found = false;
 
-					SDL_mutexP(conn->data_mutex);
-					for (i = conn->data.begin(); i != conn->data.end(); ++i)
+					SDL_mutexP(data_mutex);
+					for (i = data.begin(); i != data.end(); ++i)
 					{
 						Data * d = &((*i).second);
 						if (d->conn_status == SN_CONN_RECON)
@@ -506,7 +510,7 @@ int SimpleNetwork::RunAccept(void* s)
 								d->conn_status = SN_CONN_OK;
 								d->tcp = csd;
 								d->last_active = time(NULL);
-								--(conn->accept_amount);
+								--(accept_amount);
 								found = true;
 								break;
 							}
@@ -517,20 +521,20 @@ int SimpleNetwork::RunAccept(void* s)
 					{
 						fprintf(stderr, "Invalid playername and password.\n");
 						SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
-						SDLNet_TCP_DelSocket(conn->cnx_set, csd);
+						SDLNet_TCP_DelSocket(cnx_set, csd);
 						SDLNet_TCP_Close(csd);
 					}
-					SDL_mutexV(conn->data_mutex);
+					SDL_mutexV(data_mutex);
 				}
 			}
 
-			SDL_mutexP(conn->accept_mutex);
-			amt = conn->accept_amount;
+			SDL_mutexP(accept_mutex);
+			amt = accept_amount;
 			if (!amt) {
-				conn->accept_running = false;
-				SDLNet_TCP_Close(conn->sd);
+				accept_running = false;
+				SDLNet_TCP_Close(sd);
 			}
-			SDL_mutexV(conn->accept_mutex);
+			SDL_mutexV(accept_mutex);
 		}
 		
 	}
@@ -540,26 +544,30 @@ int SimpleNetwork::RunAccept(void* s)
 
 // runs the client thread which recieves information from the server if they send something
 // and adds the recieved values to a queue which can be taken from using recv().
-int SimpleNetwork::RunRecv(void* s)
+int SimpleNetwork::recv_handler(void* s)
 {
-	SimpleNetwork* conn = (SimpleNetwork*) s;
+	((SimpleNetwork*)(s))->RunRecv();
+}
+
+int SimpleNetwork::RunRecv()
+{
 	Uint8 msg [MSG_SIZE];
 	char* cstr; // for debugging purposes
 	int result;
 
 	while (true)
 	{
-		if ((result = SDLNet_CheckSockets(conn->cnx_set, TIMEOUT)) < 0)
+		if ((result = SDLNet_CheckSockets(cnx_set, TIMEOUT)) < 0)
 		{
 			fprintf(stderr, "CheckSockets() error %s\n", SDLNet_GetError());
 			perror("empty set?\n");
 		//	exit(EXIT_FAILURE);
 		}
 
-		SDL_mutexP(conn->data_mutex);
-		fprintf(stderr,"runrecv %d, res: %d\n", (int)(conn->data.size()), result);
-		map<Uint16, Data>::iterator i = conn->data.begin();
-		for (; i != conn->data.end(); ++i)
+		SDL_mutexP(data_mutex);
+		fprintf(stderr,"runrecv %d, res: %d\n", (int)(data.size()), result);
+		map<Uint16, Data>::iterator i = data.begin();
+		for (; i != data.end(); ++i)
 		{
 			// get a pointer to the Data in the vector data.
 			Data* d = &((*i).second);
@@ -574,13 +582,13 @@ int SimpleNetwork::RunRecv(void* s)
 				{
 					fprintf(stderr, "Deleting connection.\n");
 					SDLNet_TCP_Send(d->tcp, (void*)"QUIT", OP_SIZE);
-					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
+					SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
-					if (conn->isserver && conn->connections_locked)
+					d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
+					if (isserver && connections_locked)
 					{
 						fprintf(stderr,"will recon\n");
-						conn->StartAccepting(1);
+						StartAccepting(1);
 					}
 				}
 				else if (time(NULL) - d->last_active >= 5)
@@ -595,13 +603,13 @@ int SimpleNetwork::RunRecv(void* s)
 			if(result <= 0)
 			{
 				fprintf(stderr, "Terminating socket due to error.\n");
-				d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
-				SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
+				d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
+				SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 				SDLNet_TCP_Close(d->tcp);
-				if (conn->isserver && conn->connections_locked)
+				if (isserver && connections_locked)
 				{
 					fprintf(stderr,"will recon\n");
-					conn->StartAccepting(1);
+					StartAccepting(1);
 				}
 				continue;
 			}
@@ -615,7 +623,7 @@ int SimpleNetwork::RunRecv(void* s)
 				for (int c = 0; c < result; ++c)
 					fprintf(stderr,"%d  ", msg[c]);
 				fprintf(stderr, "\n");
-				if(conn->isserver)
+				if(isserver)
 					fprintf(stderr, "SERVER\n");
 			// ... end debugging code
 
@@ -625,24 +633,24 @@ int SimpleNetwork::RunRecv(void* s)
 
 			if(strcmp(cstr, "QUIT") == 0)
 			{
-				if (!conn->isserver)
+				if (!isserver)
 				{
 					fprintf(stderr, "recieved QUIT request.\n");
-					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
+					SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
+					d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
 				}
 				else
 				{
 					fprintf(stderr, "client quitting\n");
 					SDLNet_TCP_Send(d->tcp, (void*)"QUIT", OP_SIZE);
-					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
+					SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
-					if (conn->connections_locked)
+					d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
+					if (connections_locked)
 					{
 						fprintf(stderr,"will recon\n");
-						conn->StartAccepting(1);
+						StartAccepting(1);
 					}
 				}
 			}
@@ -655,13 +663,13 @@ int SimpleNetwork::RunRecv(void* s)
 				if (SDLNet_TCP_Send(d->tcp, (void*)"OKOP", OP_SIZE) < OP_SIZE)
 				{
 					fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					SDLNet_TCP_DelSocket(conn->cnx_set, d->tcp);
+					SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 					SDLNet_TCP_Close(d->tcp);
-					d->conn_status = (conn->connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
-					if (conn->isserver && conn->connections_locked)
+					d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;
+					if (isserver && connections_locked)
 					{
 						fprintf(stderr,"will recon\n");
-						conn->StartAccepting(1);
+						StartAccepting(1);
 					}
 				}
 			}
@@ -676,11 +684,11 @@ int SimpleNetwork::RunRecv(void* s)
 				SDL_mutexV(d->recv_mutex);
 			}
 		}
-		SDL_mutexV(conn->data_mutex);
+		SDL_mutexV(data_mutex);
 	}
 
 	fprintf(stderr, "Ending RunRecv.\n");
-	conn->recv_running = false;
+	recv_running = false;
 	return EXIT_SUCCESS;
 }
 
