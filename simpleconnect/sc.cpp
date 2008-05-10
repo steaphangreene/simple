@@ -172,6 +172,7 @@ void SimpleConnect::SetSlots(const vector<SC_SlotType> &slts) {
   for(; slot != slts.end(); ++slot) {
     data.type = (*slot);
     data.color = cur_col++;
+    data.sock = -1;
     if(cur_col >= (int)(colors.size())) cur_col = 1;
     if((!placed_local) && (data.type < SC_SLOT_AIONLY)) {
       data.ptype = SC_PLAYER_LOCAL;
