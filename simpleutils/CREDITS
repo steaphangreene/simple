@@ -19,6 +19,12 @@
 #  
 # *************************************************************************
 
-Primary Authors:
-	Onur Can CAKMAK <onur.cakmak@gmail.com>
+Primary Maintainer:
 	Steaphan Greene <stea@cs.binghamton.edu>
+
+Original SimpleNetwork Authors:
+	Joe Danieli <jdanieli@binghamton.edu>
+	Houtan Fanisalek <hfanisa1@binghamton.edu>
+
+Original SimpleRandom Author:
+	Onur C Cakmak <ocakmak1@binghamton.edu>
