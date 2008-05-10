@@ -412,7 +412,7 @@ void SimpleNetwork::StartAccepting(int amount)
 // descripter.
 int SimpleNetwork::accept_handler(void* s)
 {
-	((SimpleNetwork*)(s))->RunAccept();
+	return ((SimpleNetwork*)(s))->RunAccept();
 }
 
 int SimpleNetwork::RunAccept()
@@ -536,7 +536,7 @@ int SimpleNetwork::RunAccept()
 			}
 			SDL_mutexV(accept_mutex);
 		}
-		
+		SDL_Delay(10);
 	}
 
 	return EXIT_SUCCESS;
@@ -546,7 +546,7 @@ int SimpleNetwork::RunAccept()
 // and adds the recieved values to a queue which can be taken from using recv().
 int SimpleNetwork::recv_handler(void* s)
 {
-	((SimpleNetwork*)(s))->RunRecv();
+	return ((SimpleNetwork*)(s))->RunRecv();
 }
 
 int SimpleNetwork::RunRecv()
@@ -685,6 +685,7 @@ int SimpleNetwork::RunRecv()
 			}
 		}
 		SDL_mutexV(data_mutex);
+		SDL_Delay(10);
 	}
 
 	fprintf(stderr, "Ending RunRecv.\n");
