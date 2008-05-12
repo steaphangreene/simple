@@ -146,12 +146,12 @@ void SimpleScene::ActObject(SS_Object obj,
 
 void SimpleScene::ShowObject(SS_Object obj, Uint32 end, Uint32 dur) {
   ActionTime act = { end, dur };
-  objects[obj].shown.push_back(make_pair(true, act));
+  objects[obj].shown.push_front(make_pair(true, act));
   }
 
 void SimpleScene::HideObject(SS_Object obj, Uint32 end, Uint32 dur) {
   ActionTime act = { end, dur };
-  objects[obj].shown.push_back(make_pair(false, act));
+  objects[obj].shown.push_front(make_pair(false, act));
   }
 
 void SimpleScene::ColorObject(SS_Object obj,
