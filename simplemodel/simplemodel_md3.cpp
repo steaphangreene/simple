@@ -211,7 +211,7 @@ bool SimpleModel_MD3::Load(const string &filenm,
 	// Seek to the start of the triangle information, then read it in.
     SDL_RWseek(model, offset + vertex_offset, SEEK_SET);
     for(unsigned int vert=0; vert < meshes[meshnum].triangles.size(); ++vert) {
-      Sint16 tmp;
+      Sint16 tmp = 0;
       freadLE(tmp, model);
       meshes[meshnum].triangles[vert].vertex[0] = float(tmp) / 64.0F;
       freadLE(tmp, model);

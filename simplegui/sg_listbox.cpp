@@ -19,6 +19,8 @@
 //  
 // *************************************************************************
 
+#include <algorithm>
+
 #include "SDL_opengl.h"
 
 #include "sg_listbox.h"
@@ -235,7 +237,7 @@ bool SG_ListBox::Deselect(bool override, int ind) {
     } else if( ind == -1 ) return false;
   
   if( ind >= 0 || ind < (signed)listsize ) {
-    selhistory.erase(remove( selhistory.begin(), selhistory.end(), ind));
+    selhistory.erase(remove(selhistory.begin(), selhistory.end(), ind));
     stickies[ind]->TurnOff();
     return true;
     }

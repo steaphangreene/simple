@@ -31,7 +31,7 @@ public:
   virtual ~SimpleModel_MD2();
 
   virtual bool Load(const string &filenm,
-	const string &filenm, const string &defskin = "default");
+	const string &modelnm, const string &defskin = "default");
 
   virtual bool MoveToTag(Uint32 tag, Uint32 cur_time,
         const vector<int> &anim = vector<int>(),
