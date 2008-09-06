@@ -58,8 +58,8 @@ for i in "$@" ; do
     --prefix)   output="$output $prefix" ;;
     --package)  output="$output $package" ;;
     --version)  output="$output $version" ;;
-    --cflags)   output="$output `${cross_prefix}sdl-config --cflags` `${cross_prefix}zzip-config --cflags` -I$includedir" ;;
-    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplescene -lsimplegui -lsimplemodel -lsimpletexture -lsimpleutils `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}zzip-config --libs` ${extra_libs} ${gl_libs}"
+    --cflags)   output="$output `${cross_prefix}sdl-config --cflags` `${cross_prefix}pkg-config zziplib --cflags` -I$includedir" ;;
+    --libs) output="$output -L$libdir -lsimpleconnect -lsimpleconfig -lsimpleaudio -lsimplevideo -lsimplescene -lsimplegui -lsimplemodel -lsimpletexture -lsimpleutils `${cross_prefix}sdl-config --libs` ${base_libs} `${cross_prefix}pkg-config zziplib --libs` ${extra_libs} ${gl_libs}"
         ;;
     *) output="$output $i" ;;
     esac
