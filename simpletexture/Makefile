@@ -27,11 +27,11 @@ win32:	libsimpletexture.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `pkg-config zziplib --cflags`
+LIBS=	`sdl-config --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
+WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \

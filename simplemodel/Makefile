@@ -27,11 +27,11 @@ win32:	libsimplemodel.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `zzip-config --cflags`
-LIBS=	`sdl-config --libs` `zzip-config --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `sdl-config --cflags` `pkg-config zziplib --cflags`
+LIBS=	`sdl-config --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/sdl-config --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/zzip-config --libs` -lopengl32 -lglu32
+WLIBS=	`/opt/i586-mingw32msvc/bin/sdl-config --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
