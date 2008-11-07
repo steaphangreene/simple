@@ -85,8 +85,8 @@ static void SetAnim(int which, string anim_name = "") {
 
 int main(int argc, char **argv) {
   int xs=800, ys=600;
-  char *modname = "";
-  char *weapname = "";
+  const char *modname = "";
+  const char *weapname = "";
   Uint32 bgcolor = 0x000000;	// Default Background Color is Black
 
   int barg = 1;
