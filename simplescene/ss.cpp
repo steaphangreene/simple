@@ -509,7 +509,9 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(!objects[obj->second.obj].col.empty()) {
       list<pair<Color, Uint32> >::const_reverse_iterator icol
 		= objects[obj->second.obj].col.rbegin();
-      for(; icol != objects[obj->second.obj].col.rend(); ++icol) {
+      list<pair<Color, Uint32> >::const_reverse_iterator icol_end
+		= objects[obj->second.obj].col.rend();
+      for(; icol != icol_end; ++icol) {
 	if(offset >= icol->second) {
 	  col = icol->first;
 	  break;
@@ -535,7 +537,9 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(model != SS_UNDEFINED_MODEL) {
       list<pair<SS_Action, ActionTime> >::const_reverse_iterator act
 		= objects[obj->second.obj].acts.rbegin();
-      for(; act != objects[obj->second.obj].acts.rend(); ++act) {
+      list<pair<SS_Action, ActionTime> >::const_reverse_iterator act_end
+		= objects[obj->second.obj].acts.rend();
+      for(; act != act_end; ++act) {
 	if(offset + act->second.duration >= act->second.finish
 		&& models[model].animmap.count(act->first) > 0) {
 	  anim_sel = act->first;
