@@ -23,7 +23,7 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char **argv)
 {
 	SDL_Init(0);
 	int accepted= 0;
