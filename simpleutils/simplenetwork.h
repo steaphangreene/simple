@@ -109,7 +109,7 @@ class SimpleNetwork {
     private:
 	Uint8 curr_slot;
 	Uint16 port;
-	map<Uint16, Data> data;
+	//map<Uint16, Data> data; //DISABLED!
 	SDLNet_SocketSet cnx_set;
 	int accept_amount; // number of accepted sockets left for StartAccepting()
 	TCPsocket sd; // server tcp socket.
