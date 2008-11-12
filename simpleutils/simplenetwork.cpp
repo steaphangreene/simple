@@ -303,11 +303,11 @@ void SimpleNetwork::SetPassword(int slot, const string& str)
 //	data[slot].password = str;
 }
 
-string SimpleNetwork::GetName(int slot)
-{
-	return (string)(""); //STUB!
-//	return (data[slot].conn_status == SN_CONN_NONE) ? "" : data[slot].playername;
-}
+//string SimpleNetwork::GetName(int slot)
+//{
+//	return (string)(""); //STUB!
+////	return (data[slot].conn_status == SN_CONN_NONE) ? "" : data[slot].playername;
+//}
 
 // returns the slot number on success, -1 on failure.
 int SimpleNetwork::Connect(IPaddress& ip, const string& name, const string& password)

@@ -101,8 +101,8 @@ class SimpleNetwork {
 	// set the password of the given id.
 	void SetPassword(int, const string&);
 
-	// gets the playername of the given id.
-	string GetName(int);
+//	// gets the playername of the given id.
+//	string GetName(int);
 
 	// returns the connection status of the player in given slot.
 	SN_Status IsConnected(int);
