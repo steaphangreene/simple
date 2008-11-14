@@ -645,8 +645,7 @@ int SimpleConnect::HandleHostThread() {
 		) {
 	  slot->sock = slots_handled;
 	  slot->ptype = SC_PLAYER_REMOTE;
-	  //slot->playername = conn.net->GetName(slot->sock); //DISABLED
-	  slot->playername = string("Joe");
+	  slot->playername = conn.net->GetName(slot->sock);
 	  slots_dirty = true;
 	  break;
 	  }
