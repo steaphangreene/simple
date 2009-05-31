@@ -61,6 +61,14 @@ bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event,
   
 //  static GL_MODEL SG_AspectTable::Default_Mouse_Cursor = NULL;
 
+bool SG_AspectTable::AddWidget(SG_Widget *wid, int grav) {
+  if(!SG_Table::AddWidget(wid)) {
+    return false;
+    }
+  wgrav.push_back(grav);
+  return true;
+  }
+
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1, int grav) {
   return AddWidget(wid, x1, y1, 1, 1, grav);
   }
@@ -70,7 +78,6 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
   if(!SG_Table::AddWidget(wid, x1, y1, xs, ys)) {
     return false;
     }
-
   wgrav.push_back(grav);
 
   //= geom;
