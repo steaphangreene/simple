@@ -51,8 +51,8 @@ OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_dndboxes.o $(ARCH)/sg_tabs.o \
 	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o \
 	$(ARCH)/sg_spinner.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
@@ -64,8 +64,8 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o sg_spinner.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a
 
 $(ARCH):
 	mkdir -p $(ARCH)
@@ -102,7 +102,7 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1 test2 test3 test4
+test:	test1 test2 test3 test4 test5
 
 test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
@@ -116,7 +116,10 @@ test3:  $(ARCH)/test3.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.
 test4:  $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
 	$(CXX) $(CXXFLAGS) -o test4 $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-win32_test:	test1.exe test2.exe test3.exe test4.exe
+test5:  $(ARCH)/test5.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test5 $(ARCH)/test5.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+	
+win32_test:	test1.exe test2.exe test3.exe test4.exe test5.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
@@ -130,6 +133,9 @@ test3.exe:	test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
 	
 test4.exe:	test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+	
+test5.exe:	test5.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test5.exe test5.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
