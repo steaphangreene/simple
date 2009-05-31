@@ -65,13 +65,13 @@ int main(int argc, char **argv) {
 
   video = new SimpleVideo(1235, 650, 0.0);
 
-  gui = new SimpleGUI(ASPECT_DYNAMIC, 16.0/10.0);
+  gui = new SimpleGUI(ASPECT_DYNAMIC, 19.0/10.0);
 
   if(fontfn) gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(1.0, 1.0, 1.0);
 
-  SG_AspectTable *main = new SG_AspectTable(1235.0, 650.0, 0.0, 0.0);
+  SG_AspectTable *main = new SG_AspectTable(19.0/10.0, 1235.0, 650.0, 0.0, 0.0);
   gui->MasterWidget()->AddWidget(main);
 
   { SG_Panel *pan = NULL;

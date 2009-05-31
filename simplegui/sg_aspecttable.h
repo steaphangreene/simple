@@ -36,7 +36,7 @@
 
 class SG_AspectTable : public SG_Table {
 public:
-  SG_AspectTable(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
+  SG_AspectTable(float aspect, int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_AspectTable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
@@ -49,6 +49,7 @@ public:
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   vector<SG_TableGeometry> wgrav;
+  float fixed_aspect;
   };
 
 #endif // SG_ASPECTTABLE_H

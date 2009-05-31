@@ -24,8 +24,10 @@
 #include "sg_events.h"
 #include "sg_aspecttable.h"
 
-SG_AspectTable::SG_AspectTable(int xsz, int ysz, float xbor, float ybor)
+SG_AspectTable::SG_AspectTable(float asp, int xsz, int ysz,
+		float xbor, float ybor)
 	: SG_Table(xsz, ysz, xbor, ybor) {
+  fixed_aspect = asp;
   }
 
 SG_AspectTable::~SG_AspectTable() {
