@@ -91,7 +91,7 @@ struct SimpleTexture::TextData {
   float xmargin, ymargin;
   float visible_xlines, visible_ylines;
   float visible_xoffset, visible_yoffset;
-  double aspect_ratio;
+  float aspect_ratio;
   int font_size;
   int alignment;
   int dirty;
@@ -552,16 +552,16 @@ void SimpleTexture::BuildBlankTexture() {
 void SimpleTexture::BuildTextTexture() {
   int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
-  double ylines = text->visible_ylines;
-  double xlines = text->visible_xlines;
-  double fsz = (double)(TTF_FontLineSkip(Font(text->font_size)));
+  float ylines = text->visible_ylines;
+  float xlines = text->visible_xlines;
+  float fsz = (float)(TTF_FontLineSkip(Font(text->font_size)));
 
   if(ylines <= 0.0) ylines = text->lines.size();
   if(xlines == 0.0 && text->aspect_ratio != 0.0) {
     xlines = ylines * text->aspect_ratio;
     }
   else if(xlines <= 0.0) {
-    xlines = double(text->text_xsize) / fsz;
+    xlines = float(text->text_xsize) / fsz;
     }
 
   if(type == SIMPLETEXTURE_DEFINED) {
@@ -572,8 +572,8 @@ void SimpleTexture::BuildTextTexture() {
     xsize = int((float)(bxsize) * (1.0f - text->xmargin * 2.0f) + 0.5f);
     ysize = int((float)(bysize) * (1.0f - text->ymargin * 2.0f) + 0.5f);
 
-    if(text->font_size != (int)((double)(ysize) / ylines + 0.5)) {
-      SetTextFontSize((int)((double)(ysize) / ylines + 0.5));
+    if(text->font_size != (int)((float)(ysize) / ylines + 0.5)) {
+      SetTextFontSize((int)((float)(ysize) / ylines + 0.5));
       }
 
     if(text->text_xsize < xsize) {
@@ -870,7 +870,7 @@ void SimpleTexture::SetTextVisibleSize(const float ylines, const float xlines) {
   text->dirty = 1;
   }
 
-void SimpleTexture::SetTextAspectRatio(const double asp) {
+void SimpleTexture::SetTextAspectRatio(const float asp) {
   if(!text) AttachTextData();
   text->aspect_ratio = asp;
 

@@ -88,9 +88,9 @@ int init_renderer(int xs, int ys, Uint32 bgcolor) {
   SDL_WM_SetCaption("Example Renderer", "Example Renderer");
 
   // Set the clear color to black
-  double red   = ((bgcolor >> 16) & 0xff) / 255.0;
-  double green = ((bgcolor >>  8) & 0xff) / 255.0;
-  double blue  = ((bgcolor >>  0) & 0xff) / 255.0;
+  float red   = ((bgcolor >> 16) & 0xff) / 255.0;
+  float green = ((bgcolor >>  8) & 0xff) / 255.0;
+  float blue  = ((bgcolor >>  0) & 0xff) / 255.0;
   glClearColor( red, green, blue, 0.0);
   glClearDepth(1.0);
 

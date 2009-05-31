@@ -55,7 +55,7 @@ SDL_Color STT_Button::dark_col(const SDL_Color &c) {
   }
 
 Uint8 STT_Button::base_col(const Uint8 c) {
-  double col = (double)c;
+  float col = (float)c;
   col -= 127.5;
   col *= COL_SCALOR;
   col += 127.5 + 0.5;
@@ -63,7 +63,7 @@ Uint8 STT_Button::base_col(const Uint8 c) {
   }
 
 Uint8 STT_Button::light_col(const Uint8 c) {
-  double col = (double)c;
+  float col = (float)c;
   col -= 255.0;
   col *= COL_SCALOR;
   col += 255.0 + 0.5;
@@ -71,7 +71,7 @@ Uint8 STT_Button::light_col(const Uint8 c) {
   }
 
 Uint8 STT_Button::dark_col(const Uint8 c) {
-  double col = (double)c;
+  float col = (float)c;
   col *= COL_SCALOR;
   col += 0.5;
   return Uint8(col);

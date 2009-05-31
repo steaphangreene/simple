@@ -56,9 +56,9 @@ enum SimpleTextureType {
    };
 
 struct TextGeometry {	//FIXME: Only needed temporarily!
-  double visible_xlines;
-  double visible_ylines;
-  double aspect_ratio;
+  float visible_xlines;
+  float visible_ylines;
+  float aspect_ratio;
   int text_xsize;
   };
 
@@ -86,7 +86,7 @@ public:
   TextGeometry *GetTextGeometry();
 
   void SetText(const string txt);
-  void SetTextAspectRatio(const double asp);
+  void SetTextAspectRatio(const float asp);
   void SetTextVisibleSize(const float ylines=-1.0, const float xlines=-1.0);
   void SetTextPosition(const float yoff=0.0, const float xoff=0.0);
   void SetTextMargins(const float xmar, const float ymar);
