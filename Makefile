@@ -88,12 +88,13 @@ install:	all
 	$(INSTALL) -m 755 simple-config $(BINDIR)
 	cat simple-config | sed 's|^arch=.*|arch=$(ARCH)|g' > $(ARCH)-simple-config
 	$(INSTALL) -m 755 $(ARCH)-simple-config $(BINDIR)
+	rm -f $(ARCH)-simple-config
 
 .PHONY: uninstall
 uninstall:
 	rm -f $(LIBDIR)/libsimple*.a
 	rm -f $(INCDIR)/s*.h
-	rm -vf $(BINDIR)/simple-config
+	rm -f $(BINDIR)/simple-config
 
 .PHONY: win32
 win32:
