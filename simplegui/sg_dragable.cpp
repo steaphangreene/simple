@@ -197,7 +197,7 @@ void SG_Dragable::SetLabel(SG_Widget *lab) {
   label = lab;
   }
 
-void SG_Dragable::SetAspectRatio(double asp) {
+void SG_Dragable::SetAspectRatio(float asp) {
   SG_Panel::SetAspectRatio(asp);
   if(label) label->SetAspectRatio(asp);
   }

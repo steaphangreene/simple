@@ -290,10 +290,10 @@ int main(int argc, char **argv) {
 	  if(event.user.data1 == (void*)button[4])
 	    text->SetText("Or is it?");
 	  else if(event.user.data1 == (void*)button[3]) {
-	    double r = rand(), g = rand(), b = rand();
-	    r /= (double)(RAND_MAX);
-	    g /= (double)(RAND_MAX);
-	    b /= (double)(RAND_MAX);
+	    float r = rand(), g = rand(), b = rand();
+	    r /= (float)(RAND_MAX);
+	    g /= (float)(RAND_MAX);
+	    b /= (float)(RAND_MAX);
 	    text->SetTexture(gui->NewColor(r, g, b));
 	    }
 	  else if(event.user.data1 == (void*)button[5])
@@ -363,7 +363,7 @@ int main(int argc, char **argv) {
 		((float*)(event.user.data2))[3],
 		((float*)(event.user.data2))[0],
 		((float*)(event.user.data2))[1]);
-	  double xoff = rand(), yoff = rand();
+	  float xoff = rand(), yoff = rand();
 	  scroll->SetValues(xoff/RAND_MAX, yoff/RAND_MAX);
 	  audio_play(bong, 8, 8);
 	  }

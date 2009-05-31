@@ -44,11 +44,11 @@ static int hgap=0, vgap=0;
 int fullscreen_mode = 0;
 
 typedef struct _viewport {
-  double xoff, yoff;
-  double xtarg, ytarg;
+  float xoff, yoff;
+  float xtarg, ytarg;
   int movet, move;
   long long data;
-  double spread;
+  float spread;
   } viewport;
 
 viewport cview = {0.0, 0.0, 0.0, 0.0, 0, 0, 0, 1.0};
@@ -172,7 +172,7 @@ int start_scene() {
   //This is the actual perspective setup
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(-0.5, -0.5+((GLdouble)xsize)/((GLdouble)ysize), -0.5, 0.5, 1.5, 6.0);
+  glFrustum(-0.5, -0.5+((GLfloat)xsize)/((GLfloat)ysize), -0.5, 0.5, 1.5, 6.0);
 //  glFrustum(-0.8, 0.8, 0.6, -0.6, 5.0, 20.0);
   glMatrixMode(GL_MODELVIEW);
 
@@ -251,17 +251,17 @@ void toggle_fullscreen(void) {
   }
 
 //This doesn't work like you might think.
-void pixels_to_location(double *x, double *y) {
-  (*x) -= (double)hgap;
-  (*y) -= (double)vgap;
+void pixels_to_location(float *x, float *y) {
+  (*x) -= (float)hgap;
+  (*y) -= (float)vgap;
 
   if((*x) < 0.0) (*x)=-10.0, (*y)=-10.0;
   else if((*y) < 0.0) (*x)=-10.0, (*y)=-10.0;
-  else if((*x) >= (double)xsize) (*x)=-10.0, (*y)=-10.0;
-  else if((*y) >= (double)ysize) (*x)=-10.0, (*y)=-10.0;
+  else if((*x) >= (float)xsize) (*x)=-10.0, (*y)=-10.0;
+  else if((*y) >= (float)ysize) (*x)=-10.0, (*y)=-10.0;
   else {
-    (*x) /= (double)ysize;  // INTENTIONAL - Divide by YSIZE, not XSIZE!
-    (*y) /= (double)ysize;
+    (*x) /= (float)ysize;  // INTENTIONAL - Divide by YSIZE, not XSIZE!
+    (*y) /= (float)ysize;
     (*x) *= 2.0;  (*x) -= 1.0;
     (*y) *= 2.0;  (*y) -= 1.0;
     }

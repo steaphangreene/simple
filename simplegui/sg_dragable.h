@@ -38,7 +38,7 @@ public:
 
   void SetLabel(SG_Widget *lab);
 
-  virtual void SetAspectRatio(double asp);
+  virtual void SetAspectRatio(float asp);
 
 	//Internal Use Only!  For self-reconfiguring widgets.
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);

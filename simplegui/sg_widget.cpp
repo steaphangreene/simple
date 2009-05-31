@@ -95,7 +95,7 @@ void SG_Widget::TurnOff() {
 void SG_Widget::AdjustGeometry(SG_AlignmentGeometry *geom) {
   }
 
-void SG_Widget::SetAspectRatio(double asp) {
+void SG_Widget::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   }
 

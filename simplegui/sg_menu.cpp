@@ -47,7 +47,7 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
 
   if(event->type == SDL_MOUSEBUTTONDOWN) {
     y -= 1.0;
-    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
+    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(float)(items.size()) * 2.0) {
       current_sg->UnsetCurrentWidget();
       }
     event->type = SDL_SG_EVENT;
@@ -59,7 +59,7 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
   if(event->type == SDL_MOUSEBUTTONUP) {
     y -= 1.0;
     event->type = SDL_SG_EVENT;
-    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(double)(items.size()) * 2.0) {
+    if(x < -1.0 || x > 1.0 || y > 0.0 || y < -(float)(items.size()) * 2.0) {
       current_sg->SetCurrentWidget(this);
       event->user.code = SG_EVENT_NEEDTORENDER;
       event->user.data1 = NULL;

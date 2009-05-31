@@ -50,7 +50,7 @@ public:
   void SetState(int st) { state = st; };
   int State() { return state; };
 
-  virtual void SetAspectRatio(double asp);
+  virtual void SetAspectRatio(float asp);
 
 protected:
   virtual bool RenderSelf(unsigned long cur_time);

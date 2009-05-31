@@ -34,7 +34,7 @@ using namespace std;
 
 SimpleGUI *current_sg = NULL;
 
-SimpleGUI::SimpleGUI(int aspmeth, const double asp) {
+SimpleGUI::SimpleGUI(int aspmeth, const float asp) {
   if(current_sg) {
     fprintf(stderr, "ERROR: Attempted to create multiple SimpleGUI instances.\n");
     exit(1);

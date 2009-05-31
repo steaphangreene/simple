@@ -50,7 +50,7 @@ public:
   virtual void RemoveWidget(SG_Widget *wid);
   void SetBackground(SG_Widget *wid);
   void UnsetBackground();
-  virtual void SetAspectRatio(double asp);
+  virtual void SetAspectRatio(float asp);
   virtual void SetAlignment(int align);
 
   void EnableEdgeEvents();

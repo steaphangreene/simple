@@ -33,7 +33,7 @@ public:
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual void SetAspectRatio(double asp);
+  virtual void SetAspectRatio(float asp);
 
   void SetBehavior(int lact, int mact, int ract);
   void SetMenu(int but, const vector<string> itms);

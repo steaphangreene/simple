@@ -45,7 +45,7 @@ public:
 		float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
 
-  virtual void SetAspectRatio(double asp);
+  virtual void SetAspectRatio(float asp);
   virtual void SetAlignment(int align);
 
   bool Render(unsigned long cur_time, bool final = false);
@@ -76,7 +76,7 @@ protected:
 //  GL_MODEL Mouse_Cursor;
 //  static GL_MODEL Default_Mouse_Cursor;
   unsigned long flags;
-  double aspect_ratio;
+  float aspect_ratio;
   };
 
 #endif // SG_WIDGET_H

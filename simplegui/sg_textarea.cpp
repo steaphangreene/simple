@@ -88,7 +88,7 @@ void SG_TextArea::Enable() {
   state = 0;
   }
 
-void SG_TextArea::SetVisibleSize(double xs, double ys) {
+void SG_TextArea::SetVisibleSize(float xs, float ys) {
   texture[state].SetTextVisibleSize(ys, xs);
   UpdateRange();
   }
@@ -99,25 +99,25 @@ void SG_TextArea::SetVisibleLines(int numlns) {	//Depricated!
   }
 
 void SG_TextArea::UpdateRange() {
-  double font_height = TTF_FontHeight(texture[state].CurrentFont());
+  float font_height = TTF_FontHeight(texture[state].CurrentFont());
   const TextGeometry *tgeom = texture[state].GetTextGeometry();
 
   if(tgeom->visible_xlines > 0) {
-    SetXLimits(0.0, (double)(tgeom->text_xsize) / font_height);
-    SetXSpan((double)(tgeom->visible_xlines));
+    SetXLimits(0.0, (float)(tgeom->text_xsize) / font_height);
+    SetXSpan((float)(tgeom->visible_xlines));
     }
   else {
-    SetXLimits(0.0, (double)(tgeom->text_xsize) / font_height);
-    SetXSpan((double)(tgeom->text_xsize) / font_height);
+    SetXLimits(0.0, (float)(tgeom->text_xsize) / font_height);
+    SetXSpan((float)(tgeom->text_xsize) / font_height);
     }
 
   if(tgeom->visible_ylines > 0) {	//Allows scrolling before/after text vertically
-    SetYLimits(-(double)(tgeom->visible_ylines), (double)(NumLines()) + (double)(tgeom->visible_ylines));
-    SetYSpan((double)(tgeom->visible_ylines));
+    SetYLimits(-(float)(tgeom->visible_ylines), (float)(NumLines()) + (float)(tgeom->visible_ylines));
+    SetYSpan((float)(tgeom->visible_ylines));
     }
   else {
-    SetYLimits(-(double)(NumLines()), (double)(NumLines()) * 2.0);
-    SetYSpan((double)(NumLines()));
+    SetYLimits(-(float)(NumLines()), (float)(NumLines()) * 2.0);
+    SetYSpan((float)(NumLines()));
     }
   }
 

@@ -405,7 +405,7 @@ void SG_Table::SetActive(float xst, float yst, float xen, float yen) {
   ranger.SetActive(xst, yst, xen, yen);
   }
 
-void SG_Table::SetAspectRatio(double asp) {
+void SG_Table::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
 

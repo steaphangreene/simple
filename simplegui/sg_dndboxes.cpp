@@ -62,7 +62,7 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
       if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
 	int xrun = 1;
-	double bor_col = 1.0;
+	float bor_col = 1.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
 	  while((x+xrun) < xsize && present[y*xsize+x+xrun]
@@ -81,7 +81,7 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
       if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
 	int yrun = 1;
-	double bor_col = 1.0;
+	float bor_col = 1.0;
 	if(num_cells > 1) {	// Is between two active cells
 	  bor_col = 0.5;
 	  while((y+yrun) < ysize && present[(y+yrun)*xsize+x]
@@ -273,8 +273,8 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
 
     SG_Dragable *drag = (SG_Dragable*)(*itrw);
 
-    double offx = ((float*)(event->user.data2))[0] * itrg->xsize;
-    double offy = ((float*)(event->user.data2))[1] * itrg->ysize;
+    float offx = ((float*)(event->user.data2))[0] * itrg->xsize;
+    float offy = ((float*)(event->user.data2))[1] * itrg->ysize;
     int targx = (int)(offx + itrg->xpos + 0.5);
     int targy = (int)(offy + itrg->ypos + 0.5);
 

@@ -163,7 +163,7 @@ void SG_Positional::CalcGeometry(
   cur_geom = *geom;
   }
 
-void SG_Positional::SetAspectRatio(double asp) {
+void SG_Positional::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
 

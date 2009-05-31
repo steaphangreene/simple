@@ -245,13 +245,13 @@ void SG_Alignment::CalcGeometry() {
   cur_geom.ys = 1.0 - yborder;
   }
 
-void SG_Alignment::SetAspectRatio(double asp) {
+void SG_Alignment::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
     CalcGeometry();
     widgets[0]->AdjustGeometry(&cur_geom);
-    double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    float newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
     widgets[0]->SetAspectRatio(newaspect);
     }
   }

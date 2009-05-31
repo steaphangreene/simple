@@ -39,12 +39,12 @@ SG_AutoScroll::~SG_AutoScroll() {
 
 bool SG_AutoScroll::RenderSelf(unsigned long cur_time) {
   if(xstart != xend && xduration > 0.0) {
-    double part = (double)(SDL_GetTicks() - xstart_time) / (xduration * 1000.0);
+    float part = (float)(SDL_GetTicks() - xstart_time) / (xduration * 1000.0);
     while(part >= 1.0) part -= 1.0;
     SetXValue(xstart * (1.0 - part) + xend * part);
     }
   if(ystart != yend && yduration > 0.0) {
-    double part = (double)(SDL_GetTicks() - ystart_time) / (yduration * 1000.0);
+    float part = (float)(SDL_GetTicks() - ystart_time) / (yduration * 1000.0);
     while(part >= 1.0) part -= 1.0;
     SetYValue(ystart * (1.0 - part) + yend * part);
     }

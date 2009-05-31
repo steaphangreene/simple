@@ -44,7 +44,7 @@ public:
 
   virtual void RemoveWidget(SG_Widget *wid);
 
-  virtual void SetAspectRatio(const double asp);
+  virtual void SetAspectRatio(const float asp);
 
 protected:
   virtual bool RenderSelf(unsigned long cur_time);

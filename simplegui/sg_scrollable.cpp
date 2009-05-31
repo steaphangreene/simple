@@ -196,10 +196,10 @@ bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
 //  static GL_MODEL SG_Scrollable::Default_Mouse_Cursor = NULL;
 
 void SG_Scrollable::CalcGeometry() {
-  double xfac = 1.0, yfac = 1.0;
-  double xbas = 0.0, ybas = 0.0;
-  double xoff = 0.0, yoff = 0.0;
-  double xrat = 0.0, yrat = 0.0;
+  float xfac = 1.0, yfac = 1.0;
+  float xbas = 0.0, ybas = 0.0;
+  float xoff = 0.0, yoff = 0.0;
+  float xrat = 0.0, yrat = 0.0;
 
   if(XSpan() > 0.0 && XMax() != XMin()) {
     xfac = fabs(XMax() - XMin()) / XSpan();
@@ -249,13 +249,13 @@ bool SG_Scrollable::AddWidget(SG_TextArea *text) {
   return ret;
   }
 
-void SG_Scrollable::SetAspectRatio(double asp) {
+void SG_Scrollable::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
     CalcGeometry();
     widgets[0]->AdjustGeometry(&cur_geom);
-    double newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    float newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
     if(subwidget_handles) widgets[0]->SetAspectRatio(aspect_ratio);
     else widgets[0]->SetAspectRatio(newaspect);
     }

@@ -52,7 +52,7 @@ public:
   virtual void Disable();
   virtual void Enable();
 
-  void SetVisibleSize(double xs, double ys);
+  void SetVisibleSize(float xs, float ys);
   void SetVisibleLines(int numlns);	//Depricated!
 
   virtual void SetAlignment(int align);
