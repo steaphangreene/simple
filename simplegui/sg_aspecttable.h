@@ -45,6 +45,8 @@ public:
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys,
 	int grav=SG_UP_LEFT);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+
+  virtual void SetAspectRatio(float asp);
   virtual bool RenderSelf(unsigned long cur_time);
   
 protected:

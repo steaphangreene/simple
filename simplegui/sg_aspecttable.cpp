@@ -127,4 +127,15 @@ bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
   return true;
   }
 
+void SG_AspectTable::SetAspectRatio(float asp) {
+  aspect_ratio = asp;
+  if(background) background->SetAspectRatio(aspect_ratio);	//BG Unchanged
 
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    CalcGeometry(itrg);
+    (*itrw)->AdjustGeometry(&cur_geom);
+    (*itrw)->SetAspectRatio(fixed_aspect * cur_geom.xs / cur_geom.ys);
+    }
+  }
