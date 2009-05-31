@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
-  SG_Table *main = new SG_Table(1235.0, 650.0, 0.0, 0.0);
+  SG_AspectTable *main = new SG_AspectTable(1235.0, 650.0, 0.0, 0.0);
   gui->MasterWidget()->AddWidget(main);
 
   { SG_Panel *pan = NULL;

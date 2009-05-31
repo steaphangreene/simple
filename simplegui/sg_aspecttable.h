@@ -19,45 +19,37 @@
 //  
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+#ifndef SG_ASPECTTABLE_H
+#define SG_ASPECTTABLE_H
 
-#include "sg_ranger.h"
-#include "sg_ranger2d.h"
-#include "sg_text.h"
-#include "sg_multitext.h"
-
-#include "sg.h"
-#include "sg_events.h"
-#include "sg_widget.h"
-#include "sg_alignment.h"
 #include "sg_table.h"
-#include "sg_aspecttable.h"
-#include "sg_scrollable.h"
-#include "sg_autoscroll.h"
-#include "sg_button.h"
-#include "sg_dragable.h"
-#include "sg_stickybutton.h"
-#include "sg_menu.h"
-#include "sg_panel.h"
-#include "sg_animatedpanel.h"
-#include "sg_progressbar.h"
-#include "sg_passthrough.h"
-#include "sg_textarea.h"
-#include "sg_translabel.h"
-#include "sg_compound.h"
-#include "sg_filebrowser.h"
-#include "sg_combobox.h"
-#include "sg_spinner.h"
-#include "sg_dndboxes.h"
-#include "sg_tabs.h"
-#include "sg_editable.h"
-#include "sg_listbox.h"
-#include "sg_multitab.h"
-#include "sg_pulldown.h"
-#include "sg_radiobuttons.h"
-#include "sg_scrollingarea.h"
-#include "sg_sliderbar.h"
 
-#endif	//SIMPLEGUI_H
+#define SG_CENTER	0x00
+#define SG_LEFT		0x01
+#define SG_RIGHT	0x02
+#define SG_UP		0x10
+#define SG_UP_LEFT	0x11
+#define SG_UP_RIGHT	0x12
+#define SG_DOWN		0x20
+#define SG_DOWN_LEFT	0x21
+#define SG_DOWN_RIGHT	0x22
+
+class SG_AspectTable : public SG_Table {
+public:
+  SG_AspectTable(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
+  virtual ~SG_AspectTable();
+  virtual int HandleEvent(SDL_Event *event, float x, float y);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
+		float x, float y);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int grav=SG_UP_LEFT);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys,
+	int grav=SG_UP_LEFT);
+//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  
+protected:
+//  static GL_MODEL Default_Mouse_Cursor;
+  vector<SG_TableGeometry> wgrav;
+  };
+
+#endif // SG_ASPECTTABLE_H
 

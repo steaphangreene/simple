@@ -37,7 +37,7 @@ WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpn
 
 OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_ranger2d.o $(ARCH)/sg_alignment.o \
-	$(ARCH)/sg_positional.o $(ARCH)/sg_table.o \
+	$(ARCH)/sg_positional.o $(ARCH)/sg_table.o $(ARCH)/sg_aspecttable.o \
 	$(ARCH)/sg_scrollable.o $(ARCH)/sg_autoscroll.o \
 	$(ARCH)/sg_panel.o $(ARCH)/sg_animatedpanel.o \
 	$(ARCH)/sg_textarea.o $(ARCH)/sg_progressbar.o \
@@ -56,7 +56,7 @@ CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletextur
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
-	sg_scrollable.win32_o sg_autoscroll.win32_o \
+	sg_aspecttable.win32_o sg_scrollable.win32_o sg_autoscroll.win32_o \
 	sg_panel.win32_o sg_animatedpanel.win32_o \
 	sg_textarea.win32_o sg_progressbar.win32_o sg_editable.win32_o \
 	sg_button.win32_o sg_stickybutton.win32_o sg_menu.win32_o sg_dragable.win32_o\
