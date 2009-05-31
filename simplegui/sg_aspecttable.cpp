@@ -74,3 +74,42 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
   //= geom;
   return true;
   }
+
+bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
+//  fprintf(stderr, "Rendering AspectTable %p!\n", this);
+
+  if(xsize <= 0 || ysize <= 0) return true;
+
+  glPushMatrix();
+
+  if(background) background->Render(cur_time);  //Same "layer" as parent
+  glTranslatef(0.0, 0.0, 0.0625);               //Advance to next "layer"
+
+  vector<SG_Widget *>::iterator itrw = widgets.begin();
+  vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
+  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+    if(*itrw) {
+      glPushMatrix();
+      if(aspect_ratio > fixed_aspect) {
+	glScalef(fixed_aspect/aspect_ratio, 1.0, 1.0);
+	}
+      else if(aspect_ratio < fixed_aspect) {
+	glScalef(1.0, aspect_ratio/fixed_aspect, 1.0);
+	}
+      CalcGeometry(itrg);
+      (*itrw)->AdjustGeometry(&cur_geom);
+      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
+      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
+      (*itrw)->Render(cur_time);
+      glPopMatrix();
+      }
+    }
+
+  glPopMatrix();
+
+//  fprintf(stderr, "  Done.\n\n");
+
+  return true;
+  }
+
+
