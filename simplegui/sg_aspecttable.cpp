@@ -71,6 +71,8 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
     return false;
     }
 
+  wgrav.push_back(grav);
+
   //= geom;
   return true;
   }
@@ -85,16 +87,29 @@ bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
   if(background) background->Render(cur_time);  //Same "layer" as parent
   glTranslatef(0.0, 0.0, 0.0625);               //Advance to next "layer"
 
+  vector<int>::iterator itrgr = wgrav.begin();
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg) {
+  for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
     if(*itrw) {
       glPushMatrix();
       if(aspect_ratio > fixed_aspect) {
 	glScalef(fixed_aspect/aspect_ratio, 1.0, 1.0);
+	if((*itrgr) & SG_LEFT) {
+	  glTranslatef(1.0 - (aspect_ratio/fixed_aspect), 0.0, 0.0);
+	  }
+	else if((*itrgr) & SG_RIGHT) {
+	  glTranslatef((aspect_ratio/fixed_aspect) - 1.0, 0.0, 0.0);
+	  }
 	}
       else if(aspect_ratio < fixed_aspect) {
 	glScalef(1.0, aspect_ratio/fixed_aspect, 1.0);
+	if((*itrgr) & SG_UP) {
+	  glTranslatef(0.0, (fixed_aspect/aspect_ratio) - 1.0, 0.0);
+	  }
+	else if((*itrgr) & SG_DOWN) {
+	  glTranslatef(0.0, 1.0 - (fixed_aspect/aspect_ratio), 0.0);
+	  }
 	}
       CalcGeometry(itrg);
       (*itrw)->AdjustGeometry(&cur_geom);

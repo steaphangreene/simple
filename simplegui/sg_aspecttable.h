@@ -49,9 +49,8 @@ public:
   
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
-  vector<SG_TableGeometry> wgrav;
   float fixed_aspect;
+  vector<int> wgrav;
   };
 
 #endif // SG_ASPECTTABLE_H
-
