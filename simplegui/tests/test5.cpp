@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     break;
     }
 
-  video = new SimpleVideo(1024, 640, 16.0/10.0);
+  video = new SimpleVideo(1235, 650, 19.0/10.0);
 
   audio_init(2048);
 
@@ -86,32 +86,38 @@ int main(int argc, char **argv) {
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
-  SG_Table *main = new SG_Table(16.0, 10.0, 0.0, 0.0);
+  SG_Table *main = new SG_Table(1235.0, 650.0, 0.0, 0.0);
   gui->MasterWidget()->AddWidget(main);
 
   { SG_Panel *pan = NULL;
     pan = new SG_Panel(SimpleTexture("blue"));
-    main->AddWidget(pan, 0, 0, 6, 4);
+    main->AddWidget(pan, 0, 0, 741, 350);
     pan = new SG_Panel(SimpleTexture("red"));
-    main->AddWidget(pan, 6, 0, 10, 1);
+    main->AddWidget(pan, 494, 0, 741, 50);
     pan = new SG_Panel(SimpleTexture("white"));
-    main->AddWidget(pan, 6, 1, 10, 1);
+    main->AddWidget(pan, 494, 50, 741, 50);
     pan = new SG_Panel(SimpleTexture("red"));
-    main->AddWidget(pan, 6, 2, 10, 1);
+    main->AddWidget(pan, 494, 100, 741, 50);
     pan = new SG_Panel(SimpleTexture("white"));
-    main->AddWidget(pan, 6, 3, 10, 1);
+    main->AddWidget(pan, 494, 150, 741, 50);
     pan = new SG_Panel(SimpleTexture("red"));
-    main->AddWidget(pan, 0, 4, 16, 1);
+    main->AddWidget(pan, 494, 200, 741, 50);
     pan = new SG_Panel(SimpleTexture("white"));
-    main->AddWidget(pan, 0, 5, 16, 1);
+    main->AddWidget(pan, 494, 250, 741, 50);
     pan = new SG_Panel(SimpleTexture("red"));
-    main->AddWidget(pan, 0, 6, 16, 1);
+    main->AddWidget(pan, 494, 300, 741, 50);
     pan = new SG_Panel(SimpleTexture("white"));
-    main->AddWidget(pan, 0, 7, 16, 1);
+    main->AddWidget(pan, 0, 350, 1235, 50);
     pan = new SG_Panel(SimpleTexture("red"));
-    main->AddWidget(pan, 0, 8, 16, 1);
+    main->AddWidget(pan, 0, 400, 1235, 50);
     pan = new SG_Panel(SimpleTexture("white"));
-    main->AddWidget(pan, 0, 9, 16, 1);
+    main->AddWidget(pan, 0, 450, 1235, 50);
+    pan = new SG_Panel(SimpleTexture("red"));
+    main->AddWidget(pan, 0, 500, 1235, 50);
+    pan = new SG_Panel(SimpleTexture("white"));
+    main->AddWidget(pan, 0, 550, 1235, 50);
+    pan = new SG_Panel(SimpleTexture("red"));
+    main->AddWidget(pan, 0, 600, 1235, 50);
     }
 
   SDL_Event event;
