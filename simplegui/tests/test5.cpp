@@ -33,20 +33,9 @@ using namespace std;
 
 #include "../simplegui.h"
 #include "simplevideo.h"
-#include "audio.h"
-
-#include "click.h"
 
 static SimpleVideo *video;
 static SimpleGUI *gui;
-
-static SG_PullDown *newmenu(const vector<string> &itms) {
-  static int num = 0;
-
-  char buf[32] = {0};
-  sprintf(buf, "Menu %d", ++num);
-  return new SG_PullDown(buf, itms);
-  }
 
 int main(int argc, char **argv) {
   char *fontfn = NULL;
@@ -74,23 +63,19 @@ int main(int argc, char **argv) {
     break;
     }
 
-  video = new SimpleVideo(1235, 650, 19.0/10.0);
+  video = new SimpleVideo(1235, 650, 0.0);
 
-  audio_init(2048);
-
-  int click = audio_buildsound(click_data, sizeof(click_data));
-
-  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 16.0/10.0);
+  gui = new SimpleGUI(ASPECT_DYNAMIC, 16.0/10.0);
 
   if(fontfn) gui->LoadFont(fontfn);
 
-  gui->SetDefaultTextColor(0.0, 0.0, 0.0);
+  gui->SetDefaultTextColor(1.0, 1.0, 1.0);
 
   SG_AspectTable *main = new SG_AspectTable(1235.0, 650.0, 0.0, 0.0);
   gui->MasterWidget()->AddWidget(main);
 
   { SG_Panel *pan = NULL;
-    pan = new SG_Panel(SimpleTexture("blue"));
+    pan = new SG_TextArea("USA", SimpleTexture("blue"));
     main->AddWidget(pan, 0, 0, 741, 350);
     pan = new SG_Panel(SimpleTexture("red"));
     main->AddWidget(pan, 494, 0, 741, 50);

@@ -112,6 +112,9 @@ bool SimpleGUI::RenderStart(unsigned long cur_time, bool ts) {
     yunused = newyunused;
     xsize = newxsize;
     ysize = newysize;
+    if((aspect_method & ASPECT_DYNAMIC) && aspect_actual != newaspect_actual) {
+      if(mWid) mWid->SetAspectRatio(newaspect_actual);
+      }
     aspect_actual = newaspect_actual;
     }
   if(ts) SDL_mutexV(Mutex());

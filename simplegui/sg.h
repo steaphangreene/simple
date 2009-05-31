@@ -35,6 +35,7 @@ using namespace std;
 #define ASPECT_EXPANDING_Y	2
 #define ASPECT_FIXED_X		4
 #define ASPECT_FIXED_Y		8
+#define ASPECT_DYNAMIC		16
 
 //Flags
 #define SIMPLEGUI_NOMOUSE	1
