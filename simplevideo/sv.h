@@ -36,12 +36,12 @@ struct SimpleVideo_Mode {
 
 class SimpleVideo {
 public:
-  SimpleVideo(int xs, int ys, double asp, bool fullscr = false);
+  SimpleVideo(int xs, int ys, float asp, bool fullscr = false);
   ~SimpleVideo();
 
   void SetOrtho();
-  void SetPerspective(double vert_fov);
-  void SetSubscreen(double xs, double ys, double xe, double ye);
+  void SetPerspective(float vert_fov);
+  void SetSubscreen(float xs, float ys, float xe, float ye);
   void ResetSubscreen();
 
   bool StartScene();
@@ -49,17 +49,17 @@ public:
 
   bool ToggleFullscreen();
 
-  void SetMove(double dx, double dy);
-  void SetPosition(double x, double y, Uint32 delay);
-  void SetZPosition(double z, Uint32 delay);
-  void SetZoom(double zm, Uint32 delay);
-  void SetAngle(double ang, Uint32 delay);
-  void SetDown(double dn, Uint32 delay);
+  void SetMove(float dx, float dy);
+  void SetPosition(float x, float y, Uint32 delay);
+  void SetZPosition(float z, Uint32 delay);
+  void SetZoom(float zm, Uint32 delay);
+  void SetAngle(float ang, Uint32 delay);
+  void SetDown(float dn, Uint32 delay);
 
-  void SetZExtents(double mnz, double mxz);
+  void SetZExtents(float mnz, float mxz);
 
-  void ScreenToMap(double &x, double &y, const double &z = 0.0);
-  void MapToScreen(double &x, double &y, const double &z = 0.0);
+  void ScreenToMap(float &x, float &y, const float &z = 0.0);
+  void MapToScreen(float &x, float &y, const float &z = 0.0);
 
   const vector<SimpleVideo_Mode> GetFullScreenModes() const;
   void SetFullScreenMode(int xs, int ys);
@@ -74,11 +74,11 @@ public:
 protected:
   bool ResizeGL(int, int);
 
-  void CalcMove(double &xoff, double &yoff, Uint32 cur_time);
-  void CalcZoom(double &zm, Uint32 cur_time);
-  void CalcPos(double &x, double &y, Uint32 cur_time);
-  void CalcZPos(double &z, Uint32 cur_time);
-  void CalcAng(double &ang, Uint32 cur_time);
+  void CalcMove(float &xoff, float &yoff, Uint32 cur_time);
+  void CalcZoom(float &zm, Uint32 cur_time);
+  void CalcPos(float &x, float &y, Uint32 cur_time);
+  void CalcZPos(float &z, Uint32 cur_time);
+  void CalcAng(float &ang, Uint32 cur_time);
   static SimpleVideo *current;
 
   SDL_Surface *surface;
@@ -90,30 +90,30 @@ protected:
   bool fullscreen_mode;
   unsigned int flags;
 
-  double aspect;
-  double yfov; //Used only by perspective
+  float aspect;
+  float yfov; //Used only by perspective
 
-  double minz, maxz;
+  float minz, maxz;
 
-  double xp, yp, targ_xp, targ_yp;
+  float xp, yp, targ_xp, targ_yp;
   Uint32 pos_start, pos_delay;
-  double zp, targ_zp;
+  float zp, targ_zp;
   Uint32 zpos_start, zpos_delay;
-  double dxp, dyp;
+  float dxp, dyp;
   Uint32 move_start;
 
-  double angle, targ_angle;
+  float angle, targ_angle;
   Uint32 angle_start, angle_delay;
 
-  double zoom, targ_zoom;
+  float zoom, targ_zoom;
   Uint32 zoom_start, zoom_delay;
 
-  double down, targ_down;
+  float down, targ_down;
   Uint32 down_start, down_delay;
 
   GLdouble projv[16], modelv[16];
 
-  double xstart, xend, ystart, yend;
+  float xstart, xend, ystart, yend;
   };
 
 #endif // SV_H

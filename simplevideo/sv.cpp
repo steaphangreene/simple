@@ -42,7 +42,7 @@ using namespace std;
 
 SimpleVideo *SimpleVideo::current = NULL;
 
-SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
+SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   if(current) {
     fprintf(stderr, "ERROR: Created mulitple SimpleVideo instances!\n");
     exit(1);
@@ -60,8 +60,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, double asp, bool fullscr) {
   fullscreen_mode = fullscr;
   
   const SDL_VideoInfo *videoInfo;
-//  GLfloat light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
-//  GLfloat light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
+//  GLdouble light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
+//  GLdouble light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
 
   xsize = xs;   ysize = ys;
 
@@ -179,7 +179,7 @@ void SimpleVideo::SetOrtho() {
   flags = SV_ORTHO;
   }
 
-void SimpleVideo::SetPerspective(double vert_fov) {
+void SimpleVideo::SetPerspective(float vert_fov) {
   if(vert_fov > 90.0) vert_fov = 90.0;
   else if(vert_fov < 0.0) vert_fov = 0.0;
 
@@ -204,7 +204,7 @@ bool SimpleVideo::StartScene() {
     SimpleTexture::ReacquireContext();
     }
 
-  double x = 0.0, y = 0.0, z = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
+  float x = 0.0, y = 0.0, z = 0.0, ang = 0.0, xoff = 0.0, yoff = 0.0, zm = 0.0;
   CalcMove(xoff, yoff, real_time);
   CalcZoom(zm, real_time);
   CalcPos(x, y, real_time);
@@ -244,20 +244,20 @@ bool SimpleVideo::StartScene() {
   glTranslatef((xend+xstart)/2.0, (yend+ystart)/2.0, 0.0);
   glScalef((xend-xstart)/2.0, (yend-ystart)/2.0, (yend-ystart)/2.0);
 
-  double vdist = 32.0;
+  float vdist = 32.0;
   if(!(flags & SV_ORTHO)) vdist = zm;
 
-  double xvp, yvp, zvp;
+  float xvp, yvp, zvp;
   zvp = vdist * sin(DEG2RAD(down));
   xvp = vdist * cos(DEG2RAD(down)) * sin(DEG2RAD(ang));
   yvp = vdist * cos(DEG2RAD(down)) * -cos(DEG2RAD(ang));
 
-  double upx = sin(DEG2RAD(down)) * -sin(DEG2RAD(ang));
-  double upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
-  double upz = cos(DEG2RAD(down));
+  float upx = sin(DEG2RAD(down)) * -sin(DEG2RAD(ang));
+  float upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
+  float upz = cos(DEG2RAD(down));
 
   if(flags & SV_ORTHO) {
-    double zmin_clip, zmax_clip, A, B, C, theta;
+    float zmin_clip, zmax_clip, A, B, C, theta;
     theta = DEG2RAD(90.0-down);
     A = (zm/2.0) * tan(theta);
     B = (z-minz) / cos(theta);
@@ -360,11 +360,11 @@ bool SimpleVideo::ToggleFullscreen(void) {
   return true;
   }
 
-void SimpleVideo::SetPosition(double x, double y, Uint32 delay) {
+void SimpleVideo::SetPosition(float x, float y, Uint32 delay) {
   Uint32 event_time = SDL_GetTicks();
 
   //Start from where we are right now
-  double tmpx = 0.0, tmpy = 0.0;
+  float tmpx = 0.0, tmpy = 0.0;
   CalcPos(tmpx, tmpy, event_time);
   xp = tmpx;
   yp = tmpy;
@@ -375,7 +375,7 @@ void SimpleVideo::SetPosition(double x, double y, Uint32 delay) {
   pos_delay = delay;
   }
 
-void SimpleVideo::CalcPos(double &x, double &y, Uint32 cur_time) {
+void SimpleVideo::CalcPos(float &x, float &y, Uint32 cur_time) {
   x = xp;
   y = yp;
 
@@ -392,20 +392,20 @@ void SimpleVideo::CalcPos(double &x, double &y, Uint32 cur_time) {
       //y = (yp*ipart + targ_yp*part) / pos_delay;
 
       //This is smoother
-      double frac = (double)(cur_time - pos_start) / (double)(pos_delay);
-      double part = sin(frac * M_PI/2.0);
+      float frac = (float)(cur_time - pos_start) / (float)(pos_delay);
+      float part = sin(frac * M_PI/2.0);
       part = part;
-      double ipart = 1.0 - part;
+      float ipart = 1.0 - part;
       x = (xp*ipart + targ_xp*part);
       y = (yp*ipart + targ_yp*part);
       }
     }
   }
 
-void SimpleVideo::SetMove(double dx, double dy) {
+void SimpleVideo::SetMove(float dx, float dy) {
   Uint32 cur_time = SDL_GetTicks();
 
-  double xoff, yoff;
+  float xoff, yoff;
   CalcMove(xoff, yoff, cur_time);
 
   xp += xoff;
@@ -418,8 +418,8 @@ void SimpleVideo::SetMove(double dx, double dy) {
   move_start = cur_time;
   }
 
-void SimpleVideo::CalcMove(double &xoff, double &yoff, Uint32 cur_time) {
-  double elapsed = cur_time - move_start;
+void SimpleVideo::CalcMove(float &xoff, float &yoff, Uint32 cur_time) {
+  float elapsed = cur_time - move_start;
 
   xoff = (dxp * 2.0 * elapsed / 1000.0) * cos(DEG2RAD(targ_angle));
   xoff += (dyp * 2.0 * elapsed / 1000.0) * -sin(DEG2RAD(targ_angle));
@@ -428,11 +428,11 @@ void SimpleVideo::CalcMove(double &xoff, double &yoff, Uint32 cur_time) {
   yoff += (dyp * 2.0 * elapsed / 1000.0) * cos(DEG2RAD(targ_angle));
   }
 
-void SimpleVideo::SetZPosition(double z, Uint32 delay) {
+void SimpleVideo::SetZPosition(float z, Uint32 delay) {
   Uint32 event_time = SDL_GetTicks();
 
   //Start from where we are right now
-  double tmpz = 0.0;
+  float tmpz = 0.0;
   CalcZPos(tmpz, event_time);
   zp = tmpz;
 
@@ -441,7 +441,7 @@ void SimpleVideo::SetZPosition(double z, Uint32 delay) {
   zpos_delay = delay;
   }
 
-void SimpleVideo::CalcZPos(double &z, Uint32 cur_time) {
+void SimpleVideo::CalcZPos(float &z, Uint32 cur_time) {
   z = zp;
 
   if(targ_zp != zp) {
@@ -449,20 +449,20 @@ void SimpleVideo::CalcZPos(double &z, Uint32 cur_time) {
       z = targ_zp;
       }
     else if(cur_time > zpos_start) {
-      double frac = (double)(cur_time - zpos_start) / (double)(zpos_delay);
-      double part = sin(frac * M_PI/2.0);
+      float frac = (float)(cur_time - zpos_start) / (float)(zpos_delay);
+      float part = sin(frac * M_PI/2.0);
       part = part;
-      double ipart = 1.0 - part;
+      float ipart = 1.0 - part;
       z = (zp*ipart + targ_zp*part);
       }
     }
   }
 
-void SimpleVideo::SetZoom(double zm, Uint32 delay) {
+void SimpleVideo::SetZoom(float zm, Uint32 delay) {
   Uint32 event_time = SDL_GetTicks();
 
   //Start from where we are right now
-  double tmpzm = 0.0;
+  float tmpzm = 0.0;
   CalcZoom(tmpzm, event_time);
   zoom = tmpzm;
 
@@ -471,7 +471,7 @@ void SimpleVideo::SetZoom(double zm, Uint32 delay) {
   zoom_delay = delay;
   }
 
-void SimpleVideo::CalcZoom(double &zm, Uint32 cur_time) {
+void SimpleVideo::CalcZoom(float &zm, Uint32 cur_time) {
   zm = zoom;
 
   if(targ_zoom != zoom) {
@@ -479,22 +479,22 @@ void SimpleVideo::CalcZoom(double &zm, Uint32 cur_time) {
       zm = targ_zoom;
       }
     else if(cur_time > zoom_start) {
-      double frac = (double)(cur_time - zoom_start) / (double)(zoom_delay);
-      double part = sin(frac * M_PI/2.0);
+      float frac = (float)(cur_time - zoom_start) / (float)(zoom_delay);
+      float part = sin(frac * M_PI/2.0);
       part = part;
-      double ipart = 1.0 - part;
+      float ipart = 1.0 - part;
       zm = (zoom*ipart + targ_zoom*part);
       }
     }
   }
 
-void SimpleVideo::SetAngle(double ang, Uint32 delay) {
+void SimpleVideo::SetAngle(float ang, Uint32 delay) {
   SetMove(dxp, dyp); //This will currentize the movement
 
   Uint32 event_time = SDL_GetTicks();
 
   //Start from where we are right now
-  double tmpang = 0.0;
+  float tmpang = 0.0;
   CalcAng(tmpang, event_time);
   angle = tmpang;
 
@@ -503,7 +503,7 @@ void SimpleVideo::SetAngle(double ang, Uint32 delay) {
   angle_delay = delay;
   }
 
-void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
+void SimpleVideo::CalcAng(float &ang, Uint32 cur_time) {
   ang = angle;
 
   if(targ_angle != angle) {
@@ -511,16 +511,16 @@ void SimpleVideo::CalcAng(double &ang, Uint32 cur_time) {
       ang = targ_angle;
       }
     else if(cur_time > angle_start) {
-      double frac = (double)(cur_time - angle_start) / (double)(angle_delay);
-      double part = sin(frac * M_PI/2.0);
+      float frac = (float)(cur_time - angle_start) / (float)(angle_delay);
+      float part = sin(frac * M_PI/2.0);
       part = part;
-      double ipart = 1.0 - part;
+      float ipart = 1.0 - part;
       ang = (angle*ipart + targ_angle*part);
       }
     }
   }
 
-void SimpleVideo::SetDown(double dn, Uint32 delay) {
+void SimpleVideo::SetDown(float dn, Uint32 delay) {
   //FIXME: Smooth Interpolation!
   if(dn > 90.0) dn = 90.0;
   else if(dn < MIN_DOWN) dn = MIN_DOWN;
@@ -532,12 +532,12 @@ void SimpleVideo::SetDown(double dn, Uint32 delay) {
   if(!(flags & SV_ORTHO)) SetPerspective(yfov);
   }
 
-void SimpleVideo::SetZExtents(double mnz, double mxz) {
+void SimpleVideo::SetZExtents(float mnz, float mxz) {
   minz = mnz;
   maxz = mxz;
   }
 
-void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
+void SimpleVideo::ScreenToMap(float &x, float &y, const float &z) {
   GLint fake_viewport[4] = { 0, 0, 2, 2 };
 
   x = x + 1.0;
@@ -571,7 +571,7 @@ void SimpleVideo::ScreenToMap(double &x, double &y, const double &z) {
   y = y0 + y1*fact;
   }
 
-void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
+void SimpleVideo::MapToScreen(float &x, float &y, const float &z) {
   GLint fake_viewport[4] = { 0, 0, 2, 2 };
 
   GLdouble sx, sy, sz;
@@ -587,7 +587,7 @@ void SimpleVideo::MapToScreen(double &x, double &y, const double &z) {
   y -= 1.0;
   }
 
-void SimpleVideo::SetSubscreen(double xs, double ys, double xe, double ye) {
+void SimpleVideo::SetSubscreen(float xs, float ys, float xe, float ye) {
   if(xs >= xe || ys >= ye || xs < -1.0 || ys < -1.0 || xe > 1.0 || ye > 1.0) {
     fprintf(stderr, "ERROR: Bad SubScreen values passed to SimpleVideo\n");
     fprintf(stderr, "ERROR: Values (%f,%f) - (%f,%f)\n", xs, ys, xe, ye);
@@ -638,7 +638,7 @@ void SimpleVideo::GetViewLimits(
   z0 = minz;
   z1 = maxz;
 
-  double x = -1.0, y = -1.0;
+  float x = -1.0, y = -1.0;
   SimpleVideo::ScreenToMap(x, y, z0);
   x0 = x;
   x1 = x;
