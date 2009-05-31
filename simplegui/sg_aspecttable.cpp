@@ -61,6 +61,10 @@ bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event,
   
 //  static GL_MODEL SG_AspectTable::Default_Mouse_Cursor = NULL;
 
+bool SG_AspectTable::AddWidget(SG_Widget *wid) {
+  return AddWidget(wid, SG_CENTER);
+  }
+
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int grav) {
   if(!SG_Table::AddWidget(wid)) {
     return false;
@@ -69,8 +73,17 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int grav) {
   return true;
   }
 
+bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1) {
+  return AddWidget(wid, x1, y1, 1, 1, SG_CENTER);
+  }
+
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1, int grav) {
   return AddWidget(wid, x1, y1, 1, 1, grav);
+  }
+
+bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
+	int xs, int ys) {
+  return AddWidget(wid, x1, y1, xs, ys, SG_CENTER);
   }
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
@@ -79,8 +92,6 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
     return false;
     }
   wgrav.push_back(grav);
-
-  //= geom;
   return true;
   }
 

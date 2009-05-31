@@ -41,10 +41,13 @@ public:
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
 		float x, float y);
-  virtual bool AddWidget(SG_Widget *wid, int grav=SG_CENTER);
-  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int grav=SG_CENTER);
+  virtual bool AddWidget(SG_Widget *wid);
+  virtual bool AddWidget(SG_Widget *wid, int grav);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int grav);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys);
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys,
-	int grav=SG_UP_LEFT);
+	int grav);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   virtual void SetAspectRatio(float asp);
