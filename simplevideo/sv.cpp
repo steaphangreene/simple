@@ -256,6 +256,8 @@ bool SimpleVideo::StartScene() {
   float upy = sin(DEG2RAD(down)) * cos(DEG2RAD(ang));
   float upz = cos(DEG2RAD(down));
 
+  float asp = (float(xsize)/float(ysize));
+
   if(flags & SV_ORTHO) {
     float zmin_clip, zmax_clip, A, B, C, theta;
     theta = DEG2RAD(90.0-down);
@@ -264,12 +266,12 @@ bool SimpleVideo::StartScene() {
     C = (maxz-z) / cos(theta);
     zmax_clip = vdist + (A + B);
     zmin_clip = vdist - (A + C);
-    glOrtho(-aspect*zm/2.0, aspect*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0,
+    glOrtho(-asp*zm/2.0, asp*zm/2.0, -1.0*zm/2.0, 1.0*zm/2.0,
 	zmin_clip, zmax_clip);
     }
   else {
     //FIXME: Do a real clip/view-range calculation
-    gluPerspective(yfov, aspect, 0.5, 16.0);
+    gluPerspective(yfov, asp, 0.5, 16.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
