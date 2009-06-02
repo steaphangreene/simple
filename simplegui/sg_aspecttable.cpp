@@ -218,9 +218,6 @@ void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
   geom.xs = xcs * float((*wgeom).xsize) / 2.0 - xborder/float(xsize);
   geom.ys = ycs * float((*wgeom).ysize) / 2.0 - yborder/float(ysize);
 
-//  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
-//	geom.xp, geom.yp, geom.xs, geom.ys);
-
   if(fixed_aspect < aspect_ratio) {
     geom.xp *= fixed_aspect/aspect_ratio;
     if((*wgrav) & SG_LEFT) {

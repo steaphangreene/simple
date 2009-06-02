@@ -215,9 +215,6 @@ void SG_Table::CalcGeometry(SG_AlignmentGeometry &geom,
   geom.yp = 1.0 - ycs * ycp;
   geom.xs = xcs * float((*wgeom).xsize) / 2.0 - xborder/float(xsize);
   geom.ys = ycs * float((*wgeom).ysize) / 2.0 - yborder/float(ysize);
-
-//  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
-//	geom.xp, geom.yp, geom.xs, geom.ys);
   }
 
 void SG_Table::Resize(int xsz, int ysz) {
