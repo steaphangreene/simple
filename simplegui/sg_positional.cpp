@@ -162,6 +162,7 @@ const SG_AlignmentGeometry SG_Positional::CalcGeometry(
 	) {
   SG_AlignmentGeometry geom;
   geom = *wgeom;
+  return geom;
   }
 
 void SG_Positional::SetAspectRatio(float asp) {
