@@ -50,7 +50,9 @@ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   vector<SG_AlignmentGeometry> wgeom;
-  void CalcGeometry(const vector<SG_AlignmentGeometry>::iterator &geom);
+  const SG_AlignmentGeometry CalcGeometry(
+	const vector<SG_AlignmentGeometry>::iterator &geom
+	);
 
   SG_Ranger2D ranger;
 

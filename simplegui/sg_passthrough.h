@@ -49,7 +49,7 @@ protected:
   float act_x, act_y;
   float cur_x, cur_y;
 
-  void CalcGeometry();
+  const SG_AlignmentGeometry CalcGeometry();
 
 //  static GL_MODEL Default_Mouse_Cursor;
   };

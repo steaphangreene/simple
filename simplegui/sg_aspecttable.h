@@ -39,8 +39,7 @@ public:
   SG_AspectTable(float aspect, int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_AspectTable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
   virtual bool AddWidget(SG_Widget *wid);
   virtual bool AddWidget(SG_Widget *wid, int grav);
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1);
@@ -54,6 +53,11 @@ public:
   virtual bool RenderSelf(unsigned long cur_time);
   
 protected:
+  const SG_AlignmentGeometry CalcGeometry(
+	const vector<SG_TableGeometry>::iterator &wgeom,
+	const vector<int>::iterator &wgrav
+	);
+
 //  static GL_MODEL Default_Mouse_Cursor;
   float fixed_aspect;
   vector<int> wgrav;

@@ -58,11 +58,11 @@ bool SG_PassThrough::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
-      CalcGeometry();
-      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      SG_AlignmentGeometry geom = CalcGeometry();
+      x -= geom.xp; //Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
       ret = widgets[0]->HandEventTo(targ, event, x, y);
       }
     }
@@ -92,17 +92,17 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
   int ret = 1;
 
   if(widgets.size() >= 1 && widgets[0]) {
-    CalcGeometry();
-    SG_AlignmentGeometry adj_geom = cur_geom;
+    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry adj_geom = geom;
     widgets[0]->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
         && y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
 
-      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      x -= geom.xp; //Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
 
       ret = widgets[0]->HandleEvent(event, x, y);
       if(ret != -1) return ret;
@@ -229,10 +229,10 @@ bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw) {
     if(*itrw) {
       glPushMatrix();
-      CalcGeometry();
-      widgets[0]->AdjustGeometry(&cur_geom);
-      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
-      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
+      SG_AlignmentGeometry geom = CalcGeometry();
+      widgets[0]->AdjustGeometry(&geom);
+      glTranslatef(geom.xp, geom.yp, 0.0);
+      glScalef(geom.xs, geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
       }
@@ -257,19 +257,21 @@ bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
   
 //  static GL_MODEL SG_PassThrough::Default_Mouse_Cursor = NULL;
 
-void SG_PassThrough::CalcGeometry() {
+const SG_AlignmentGeometry SG_PassThrough::CalcGeometry() {
+  SG_AlignmentGeometry geom;
   if(cur_action == SG_PT_MENU) {
-    cur_geom.xp = act_x;
-    cur_geom.yp = act_y;
-    cur_geom.xs = 0.125 - xborder;	//Hardcoded for now
-    cur_geom.ys = 0.03125 - yborder;
+    geom.xp = act_x;
+    geom.yp = act_y;
+    geom.xs = 0.125 - xborder;	//Hardcoded for now
+    geom.ys = 0.03125 - yborder;
     }
   else {
-    cur_geom.xp = 0.0; // Not used by SG_PassThrough widget
-    cur_geom.yp = 0.0; // Not used by SG_PassThrough widget
-    cur_geom.xs = 1.0 - xborder;
-    cur_geom.ys = 1.0 - yborder;
+    geom.xp = 0.0; // Not used by SG_PassThrough widget
+    geom.yp = 0.0; // Not used by SG_PassThrough widget
+    geom.xs = 1.0 - xborder;
+    geom.ys = 1.0 - yborder;
     }
+  return geom;
   }
 
 void SG_PassThrough::SetMenu(int but, const vector<string> itms) {
@@ -290,9 +292,9 @@ void SG_PassThrough::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
-    CalcGeometry();
-    widgets[0]->AdjustGeometry(&cur_geom);
-    float newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    SG_AlignmentGeometry geom = CalcGeometry();
+    widgets[0]->AdjustGeometry(&geom);
+    float newaspect = aspect_ratio * geom.xs / geom.ys;
     widgets[0]->SetAspectRatio(newaspect);
     }
   }

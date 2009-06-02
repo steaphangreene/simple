@@ -48,17 +48,17 @@ int SG_Positional::HandleEvent(SDL_Event *event, float x, float y) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_AlignmentGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    CalcGeometry(itrg);
-    SG_AlignmentGeometry adj_geom = cur_geom;
+    SG_AlignmentGeometry geom = CalcGeometry(itrg);
+    SG_AlignmentGeometry adj_geom = geom;
     (*itrw)->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
 	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
 
-      x -= cur_geom.xp;	//Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      x -= geom.xp;	//Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
       ret = (*itrw)->HandleEvent(event, x, y);
       if(ret != -1) return ret;
 
@@ -88,11 +88,11 @@ bool SG_Positional::HandEventTo(SG_Widget *targ, SDL_Event *event,
   vector<SG_AlignmentGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     if((*itrw)->HasWidget(targ)) {
-      CalcGeometry(itrg);
-      x -= cur_geom.xp;	//Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      SG_AlignmentGeometry geom = CalcGeometry(itrg);
+      x -= geom.xp;	//Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
       return (*itrw)->HandEventTo(targ, event, x, y);
       }
     }
@@ -114,10 +114,10 @@ bool SG_Positional::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     if(*itrw) {
       glPushMatrix();
-      CalcGeometry(itrg);
-      (*itrw)->AdjustGeometry(&cur_geom);
-      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
-      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
+      SG_AlignmentGeometry geom = CalcGeometry(itrg);
+      (*itrw)->AdjustGeometry(&geom);
+      glTranslatef(geom.xp, geom.yp, 0.0);
+      glScalef(geom.xs, geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
       }
@@ -157,10 +157,11 @@ void SG_Positional::RemoveWidget(SG_Widget *wid) {
   
 //  static GL_MODEL SG_Positional::Default_Mouse_Cursor = NULL;
 
-void SG_Positional::CalcGeometry(
-	const vector<SG_AlignmentGeometry>::iterator &geom
+const SG_AlignmentGeometry SG_Positional::CalcGeometry(
+	const vector<SG_AlignmentGeometry>::iterator &wgeom
 	) {
-  cur_geom = *geom;
+  SG_AlignmentGeometry geom;
+  geom = *wgeom;
   }
 
 void SG_Positional::SetAspectRatio(float asp) {
@@ -170,8 +171,8 @@ void SG_Positional::SetAspectRatio(float asp) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_AlignmentGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    CalcGeometry(itrg);
-    (*itrw)->AdjustGeometry(&cur_geom);
-    (*itrw)->SetAspectRatio(aspect_ratio * cur_geom.xs / cur_geom.ys);
+    SG_AlignmentGeometry geom = CalcGeometry(itrg);
+    (*itrw)->AdjustGeometry(&geom);
+    (*itrw)->SetAspectRatio(aspect_ratio * geom.xs / geom.ys);
     }
   }

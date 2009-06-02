@@ -72,7 +72,9 @@ public:
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-  void CalcGeometry(const vector<SG_TableGeometry>::iterator &geom);
+  const SG_AlignmentGeometry CalcGeometry(
+	const vector<SG_TableGeometry>::iterator &wgeom
+	);
 
 //  static GL_MODEL Default_Mouse_Cursor;
   int xsize, ysize;	//Geometry of Table

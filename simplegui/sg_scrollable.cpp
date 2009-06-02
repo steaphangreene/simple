@@ -56,17 +56,17 @@ int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
   if(ret) return ret;
 
   if(widgets.size() >= 1 && widgets[0]) {
-    CalcGeometry();
-    SG_AlignmentGeometry adj_geom = cur_geom;
+    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry adj_geom = geom;
     widgets[0]->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
 	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
       float back_x = x, back_y = y;
 
-      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      x -= geom.xp; //Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
       ret = widgets[0]->HandleEvent(event, x, y);
       if(ret != -1) return ret;
 
@@ -108,12 +108,12 @@ bool SG_Scrollable::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
-      CalcGeometry();
-	//FIXME: Do I need widgets[0]->AdjustGeometry(&cur_geom) here?
-      x -= cur_geom.xp; //Scale the coordinates to widget's relative coords
-      y -= cur_geom.yp;
-      x /= cur_geom.xs;
-      y /= cur_geom.ys;
+      SG_AlignmentGeometry geom = CalcGeometry();
+	//FIXME: Do I need widgets[0]->AdjustGeometry(&geom) here?
+      x -= geom.xp; //Scale the coordinates to widget's relative coords
+      y -= geom.yp;
+      x /= geom.xs;
+      y /= geom.ys;
       return widgets[0]->HandEventTo(targ, event, x, y);
       }
     }
@@ -167,10 +167,10 @@ bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw) {
     if(*itrw) {
       glPushMatrix();
-      CalcGeometry();
-      widgets[0]->AdjustGeometry(&cur_geom); //FIXME: Should be itrw?
-      glTranslatef(cur_geom.xp, cur_geom.yp, 0.0);
-      glScalef(cur_geom.xs, cur_geom.ys, 1.0);
+      SG_AlignmentGeometry geom = CalcGeometry();
+      widgets[0]->AdjustGeometry(&geom); //FIXME: Should be itrw?
+      glTranslatef(geom.xp, geom.yp, 0.0);
+      glScalef(geom.xs, geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
       }
@@ -195,7 +195,9 @@ bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
   
 //  static GL_MODEL SG_Scrollable::Default_Mouse_Cursor = NULL;
 
-void SG_Scrollable::CalcGeometry() {
+const SG_AlignmentGeometry SG_Scrollable::CalcGeometry() {
+  SG_AlignmentGeometry geom;
+
   float xfac = 1.0, yfac = 1.0;
   float xbas = 0.0, ybas = 0.0;
   float xoff = 0.0, yoff = 0.0;
@@ -218,16 +220,18 @@ void SG_Scrollable::CalcGeometry() {
 
 //  fprintf(stderr, "yrat = %f, ybas = %f, yoff = %f\n", yrat, ybas, yoff);
 
-//  cur_geom.xp = 0.0;
-//  cur_geom.yp = 0.0;
-//  cur_geom.xp = (-(xfac - 1.0) / 2.0) - xoff;
-//  cur_geom.yp = (-(yfac - 1.0) / 2.0) + yoff;
-//  cur_geom.xp = -xoff;
-//  cur_geom.yp = yoff;
-  cur_geom.xp = (xbas - xoff);
-  cur_geom.yp = -(ybas - yoff);
-  cur_geom.xs = xfac - xborder;
-  cur_geom.ys = yfac - yborder;
+//  geom.xp = 0.0;
+//  geom.yp = 0.0;
+//  geom.xp = (-(xfac - 1.0) / 2.0) - xoff;
+//  geom.yp = (-(yfac - 1.0) / 2.0) + yoff;
+//  geom.xp = -xoff;
+//  geom.yp = yoff;
+  geom.xp = (xbas - xoff);
+  geom.yp = -(ybas - yoff);
+  geom.xs = xfac - xborder;
+  geom.ys = yfac - yborder;
+
+  return geom;
   }
 
 bool SG_Scrollable::AddWidget(SG_Widget *wid) {
@@ -253,9 +257,9 @@ void SG_Scrollable::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
-    CalcGeometry();
-    widgets[0]->AdjustGeometry(&cur_geom);
-    float newaspect = aspect_ratio * cur_geom.xs / cur_geom.ys;
+    SG_AlignmentGeometry geom = CalcGeometry();
+    widgets[0]->AdjustGeometry(&geom);
+    float newaspect = aspect_ratio * geom.xs / geom.ys;
     if(subwidget_handles) widgets[0]->SetAspectRatio(aspect_ratio);
     else widgets[0]->SetAspectRatio(newaspect);
     }
