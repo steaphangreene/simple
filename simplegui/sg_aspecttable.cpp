@@ -121,10 +121,11 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid) {
   }
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int grav) {
+  wgrav.push_back(grav);
   if(!SG_Table::AddWidget(wid)) {
+    wgrav.pop_back();
     return false;
     }
-  wgrav.push_back(grav);
   return true;
   }
 
@@ -143,10 +144,11 @@ bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
 	int xs, int ys, int grav) {
+  wgrav.push_back(grav);
   if(!SG_Table::AddWidget(wid, x1, y1, xs, ys)) {
+    wgrav.pop_back();
     return false;
     }
-  wgrav.push_back(grav);
   return true;
   }
 
@@ -166,24 +168,6 @@ bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
     if(*itrw) {
       glPushMatrix();
-      if(aspect_ratio > fixed_aspect) {
-	glScalef(fixed_aspect/aspect_ratio, 1.0, 1.0);
-	if((*itrgr) & SG_LEFT) {
-	  glTranslatef(1.0 - (aspect_ratio/fixed_aspect), 0.0, 0.0);
-	  }
-	else if((*itrgr) & SG_RIGHT) {
-	  glTranslatef((aspect_ratio/fixed_aspect) - 1.0, 0.0, 0.0);
-	  }
-	}
-      else if(aspect_ratio < fixed_aspect) {
-	glScalef(1.0, aspect_ratio/fixed_aspect, 1.0);
-	if((*itrgr) & SG_UP) {
-	  glTranslatef(0.0, (fixed_aspect/aspect_ratio) - 1.0, 0.0);
-	  }
-	else if((*itrgr) & SG_DOWN) {
-	  glTranslatef(0.0, 1.0 - (fixed_aspect/aspect_ratio), 0.0);
-	  }
-	}
       SG_AlignmentGeometry geom;
       CalcGeometry(geom, itrg, itrgr);
       (*itrw)->AdjustGeometry(&geom);
@@ -212,13 +196,13 @@ void SG_AspectTable::SetAspectRatio(float asp) {
     SG_AlignmentGeometry geom;
     CalcGeometry(geom, itrg, itrgr);
     (*itrw)->AdjustGeometry(&geom);
-    (*itrw)->SetAspectRatio(fixed_aspect * geom.xs / geom.ys);
+    (*itrw)->SetAspectRatio(aspect_ratio * geom.xs / geom.ys);
     }
   }
 
 void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
 	const vector<SG_TableGeometry>::iterator &wgeom,
-	const vector<int>::iterator &grav
+	const vector<int>::iterator &wgrav
 	) {
   float xcs, ycs; //Relative Cell Sizes.
   float xcp, ycp; //Center Cell Poisiton.
@@ -236,4 +220,25 @@ void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
 
 //  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
 //	geom.xp, geom.yp, geom.xs, geom.ys);
+
+  if(fixed_aspect < aspect_ratio) {
+    geom.xp *= fixed_aspect/aspect_ratio;
+    if((*wgrav) & SG_LEFT) {
+      geom.xp -= (1.0 - fixed_aspect/aspect_ratio);
+      }
+    else if((*wgrav) & SG_RIGHT) {
+      geom.xp += (1.0 - fixed_aspect/aspect_ratio);
+      }
+    geom.xs *= fixed_aspect/aspect_ratio;
+    }
+  else if(aspect_ratio < fixed_aspect) {
+    geom.yp *= aspect_ratio/fixed_aspect;
+    if((*wgrav) & SG_DOWN) {
+      geom.yp -= (1.0 - aspect_ratio/fixed_aspect);
+      }
+    else if((*wgrav) & SG_UP) {
+      geom.yp += (1.0 - aspect_ratio/fixed_aspect);
+      }
+    geom.ys *= aspect_ratio/fixed_aspect;
+    }
   }
