@@ -57,7 +57,7 @@ public:
   void DisableEdgeEvents();
   
 protected:
-  const SG_AlignmentGeometry CalcGeometry();
+  void CalcGeometry(SG_AlignmentGeometry &geom);
   int HandleEdgeEvent(SDL_Event *event, float x, float y);
   virtual bool RenderSelf(unsigned long cur_time);
 

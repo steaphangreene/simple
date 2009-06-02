@@ -53,7 +53,7 @@ public:
   virtual bool RenderSelf(unsigned long cur_time);
   
 protected:
-  const SG_AlignmentGeometry CalcGeometry(
+  void CalcGeometry(SG_AlignmentGeometry &geom,
 	const vector<SG_TableGeometry>::iterator &wgeom,
 	const vector<int>::iterator &wgrav
 	);

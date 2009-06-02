@@ -79,7 +79,8 @@ int SG_Alignment::HandleEvent(SDL_Event *event, float x, float y) {
   if(ret) return ret;
 
   if(widgets.size() >= 1 && widgets[0]) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     SG_AlignmentGeometry adj_geom = geom;
     widgets[0]->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
@@ -120,7 +121,8 @@ bool SG_Alignment::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
       x -= geom.xp; //Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
@@ -164,7 +166,8 @@ bool SG_Alignment::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw) {
     if(*itrw) {
       glPushMatrix();
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
       widgets[0]->AdjustGeometry(&geom);
       glTranslatef(geom.xp, geom.yp, 0.0);
       glScalef(geom.xs, geom.ys, 1.0);
@@ -238,20 +241,19 @@ void SG_Alignment::RemoveWidget(SG_Widget *wid) {
   
 //  static GL_MODEL SG_Alignment::Default_Mouse_Cursor = NULL;
 
-const SG_AlignmentGeometry SG_Alignment::CalcGeometry() {
-  SG_AlignmentGeometry geom;
+void SG_Alignment::CalcGeometry(SG_AlignmentGeometry &geom) {
   geom.xp = 0.0;
   geom.yp = 0.0;
   geom.xs = 1.0 - xborder;
   geom.ys = 1.0 - yborder;
-  return geom;
   }
 
 void SG_Alignment::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     widgets[0]->AdjustGeometry(&geom);
     float newaspect = aspect_ratio * geom.xs / geom.ys;
     widgets[0]->SetAspectRatio(newaspect);

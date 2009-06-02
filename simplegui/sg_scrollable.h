@@ -52,7 +52,7 @@ public:
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-  const SG_AlignmentGeometry CalcGeometry();
+  void CalcGeometry(SG_AlignmentGeometry &geom);
   bool subwidget_handles;
 
 //  static GL_MODEL Default_Mouse_Cursor;

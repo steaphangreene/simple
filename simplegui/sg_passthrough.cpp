@@ -58,7 +58,8 @@ bool SG_PassThrough::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
       x -= geom.xp; //Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
@@ -92,7 +93,8 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
   int ret = 1;
 
   if(widgets.size() >= 1 && widgets[0]) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     SG_AlignmentGeometry adj_geom = geom;
     widgets[0]->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
@@ -229,7 +231,8 @@ bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw) {
     if(*itrw) {
       glPushMatrix();
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
       widgets[0]->AdjustGeometry(&geom);
       glTranslatef(geom.xp, geom.yp, 0.0);
       glScalef(geom.xs, geom.ys, 1.0);
@@ -257,8 +260,7 @@ bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
   
 //  static GL_MODEL SG_PassThrough::Default_Mouse_Cursor = NULL;
 
-const SG_AlignmentGeometry SG_PassThrough::CalcGeometry() {
-  SG_AlignmentGeometry geom;
+void SG_PassThrough::CalcGeometry(SG_AlignmentGeometry &geom) {
   if(cur_action == SG_PT_MENU) {
     geom.xp = act_x;
     geom.yp = act_y;
@@ -271,7 +273,6 @@ const SG_AlignmentGeometry SG_PassThrough::CalcGeometry() {
     geom.xs = 1.0 - xborder;
     geom.ys = 1.0 - yborder;
     }
-  return geom;
   }
 
 void SG_PassThrough::SetMenu(int but, const vector<string> itms) {
@@ -292,7 +293,8 @@ void SG_PassThrough::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     widgets[0]->AdjustGeometry(&geom);
     float newaspect = aspect_ratio * geom.xs / geom.ys;
     widgets[0]->SetAspectRatio(newaspect);

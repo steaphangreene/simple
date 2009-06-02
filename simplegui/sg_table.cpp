@@ -61,7 +61,8 @@ int SG_Table::HandleEvent(SDL_Event *event, float x, float y) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    SG_AlignmentGeometry geom = CalcGeometry(itrg);
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom, itrg);
     SG_AlignmentGeometry adj_geom = geom;
     (*itrw)->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
@@ -106,7 +107,8 @@ bool SG_Table::HandEventTo(SG_Widget *targ, SDL_Event *event,
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     if((*itrw)->HasWidget(targ)) {
-      SG_AlignmentGeometry geom = CalcGeometry(itrg);
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom, itrg);
       x -= geom.xp;	//Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
@@ -136,7 +138,8 @@ bool SG_Table::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
     if(*itrw) {
       glPushMatrix();
-      SG_AlignmentGeometry geom = CalcGeometry(itrg);
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom, itrg);
       (*itrw)->AdjustGeometry(&geom);
       glTranslatef(geom.xp, geom.yp, 0.0);
       glScalef(geom.xs, geom.ys, 1.0);
@@ -197,10 +200,8 @@ void SG_Table::RemoveWidget(SG_Widget *wid) {
   
 //  static GL_MODEL SG_Table::Default_Mouse_Cursor = NULL;
 
-const SG_AlignmentGeometry SG_Table::CalcGeometry(
+void SG_Table::CalcGeometry(SG_AlignmentGeometry &geom,
 	const vector<SG_TableGeometry>::iterator &wgeom) {
-  SG_AlignmentGeometry geom;
-
   float xcs, ycs; //Relative Cell Sizes.
   float xcp, ycp; //Center Cell Poisiton.
 
@@ -217,8 +218,6 @@ const SG_AlignmentGeometry SG_Table::CalcGeometry(
 
 //  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
 //	geom.xp, geom.yp, geom.xs, geom.ys);
-
-  return geom;
   }
 
 void SG_Table::Resize(int xsz, int ysz) {
@@ -417,7 +416,8 @@ void SG_Table::SetAspectRatio(float asp) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    SG_AlignmentGeometry geom = CalcGeometry(itrg);
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom, itrg);
     (*itrw)->AdjustGeometry(&geom);
     (*itrw)->SetAspectRatio(aspect_ratio * geom.xs / geom.ys);
     }

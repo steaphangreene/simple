@@ -49,7 +49,8 @@ int SG_AspectTable::HandleEvent(SDL_Event *event, float x, float y) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
-    SG_AlignmentGeometry geom = CalcGeometry(itrg, itrgr);
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom, itrg, itrgr);
     SG_AlignmentGeometry adj_geom = geom;
     (*itrw)->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
@@ -95,7 +96,8 @@ bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event,
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
     if((*itrw)->HasWidget(targ)) {
-      SG_AlignmentGeometry geom = CalcGeometry(itrg, itrgr);
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom, itrg, itrgr);
       x -= geom.xp;	//Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
@@ -182,7 +184,8 @@ bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
 	  glTranslatef(0.0, 1.0 - (fixed_aspect/aspect_ratio), 0.0);
 	  }
 	}
-      SG_AlignmentGeometry geom = CalcGeometry(itrg, itrgr);
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom, itrg, itrgr);
       (*itrw)->AdjustGeometry(&geom);
       glTranslatef(geom.xp, geom.yp, 0.0);
       glScalef(geom.xs, geom.ys, 1.0);
@@ -206,17 +209,17 @@ void SG_AspectTable::SetAspectRatio(float asp) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
   for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
-    SG_AlignmentGeometry geom = CalcGeometry(itrg, itrgr);
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom, itrg, itrgr);
     (*itrw)->AdjustGeometry(&geom);
     (*itrw)->SetAspectRatio(fixed_aspect * geom.xs / geom.ys);
     }
   }
 
-const SG_AlignmentGeometry SG_AspectTable::CalcGeometry(
+void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
 	const vector<SG_TableGeometry>::iterator &wgeom,
 	const vector<int>::iterator &grav
 	) {
-  SG_AlignmentGeometry geom;
   float xcs, ycs; //Relative Cell Sizes.
   float xcp, ycp; //Center Cell Poisiton.
 
@@ -233,5 +236,4 @@ const SG_AlignmentGeometry SG_AspectTable::CalcGeometry(
 
 //  fprintf(stderr, "Calced: (%f,%f) %fx%f\n",
 //	geom.xp, geom.yp, geom.xs, geom.ys);
-  return geom;
   }

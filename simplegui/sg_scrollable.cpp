@@ -56,7 +56,8 @@ int SG_Scrollable::HandleEvent(SDL_Event *event, float x, float y) {
   if(ret) return ret;
 
   if(widgets.size() >= 1 && widgets[0]) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     SG_AlignmentGeometry adj_geom = geom;
     widgets[0]->AdjustGeometry(&adj_geom);
     if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
@@ -108,7 +109,8 @@ bool SG_Scrollable::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
   if(widgets.size() >= 1 && widgets[0]) {
     if(widgets[0]->HasWidget(targ)) {
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
 	//FIXME: Do I need widgets[0]->AdjustGeometry(&geom) here?
       x -= geom.xp; //Scale the coordinates to widget's relative coords
       y -= geom.yp;
@@ -167,7 +169,8 @@ bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
   for(; itrw != widgets.end(); ++itrw) {
     if(*itrw) {
       glPushMatrix();
-      SG_AlignmentGeometry geom = CalcGeometry();
+      SG_AlignmentGeometry geom;
+      CalcGeometry(geom);
       widgets[0]->AdjustGeometry(&geom); //FIXME: Should be itrw?
       glTranslatef(geom.xp, geom.yp, 0.0);
       glScalef(geom.xs, geom.ys, 1.0);
@@ -195,9 +198,7 @@ bool SG_Scrollable::RenderSelf(unsigned long cur_time) {
   
 //  static GL_MODEL SG_Scrollable::Default_Mouse_Cursor = NULL;
 
-const SG_AlignmentGeometry SG_Scrollable::CalcGeometry() {
-  SG_AlignmentGeometry geom;
-
+void SG_Scrollable::CalcGeometry(SG_AlignmentGeometry &geom) {
   float xfac = 1.0, yfac = 1.0;
   float xbas = 0.0, ybas = 0.0;
   float xoff = 0.0, yoff = 0.0;
@@ -230,8 +231,6 @@ const SG_AlignmentGeometry SG_Scrollable::CalcGeometry() {
   geom.yp = -(ybas - yoff);
   geom.xs = xfac - xborder;
   geom.ys = yfac - yborder;
-
-  return geom;
   }
 
 bool SG_Scrollable::AddWidget(SG_Widget *wid) {
@@ -257,7 +256,8 @@ void SG_Scrollable::SetAspectRatio(float asp) {
   aspect_ratio = asp;
   if(background) background->SetAspectRatio(aspect_ratio);
   if(widgets.size() > 0) {
-    SG_AlignmentGeometry geom = CalcGeometry();
+    SG_AlignmentGeometry geom;
+    CalcGeometry(geom);
     widgets[0]->AdjustGeometry(&geom);
     float newaspect = aspect_ratio * geom.xs / geom.ys;
     if(subwidget_handles) widgets[0]->SetAspectRatio(aspect_ratio);
