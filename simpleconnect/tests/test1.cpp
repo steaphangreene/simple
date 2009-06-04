@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
     gui->RenderStart(SDL_GetTicks());
     gui->RenderFinish(SDL_GetTicks());
     video->FinishScene();
+    SDL_Delay(10);
     }
   delete gui;    //Will delete all children
 
