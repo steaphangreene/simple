@@ -44,11 +44,11 @@ static SimpleVideo *video;
 
 int main(int argc, char **argv) {
   char *fontfn = NULL;
-  int xs=1024, ys=768;
+  int xs=768, ys=480;
 
-  video = new SimpleVideo(xs, ys, 4.0/3.0);
+  video = new SimpleVideo(xs, ys, 16.0/10.0);
 
-  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
+  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 16.0/9.0);
 
   audio_init(2048);
 
