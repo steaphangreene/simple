@@ -19,9 +19,6 @@
 //  
 // *************************************************************************
 
-int NUM_FRAMES = 32;	//Not #defines so they can be capped later.
-int FRAME_DIM = 128;
-
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
@@ -45,6 +42,39 @@ static SimpleVideo *video;
 int main(int argc, char **argv) {
   char *fontfn = NULL;
   int xs=768, ys=480;
+
+  int mode = 0;
+  int cur_arg = 1;
+
+  while(1) {		//Don't ever code anything like this
+    if(argc > cur_arg) {
+      if(!strcasecmp(argv[cur_arg], "join")) {
+	mode = 1;
+	++cur_arg;
+	continue;
+	}       
+      else if(!strcasecmp(argv[cur_arg], "host")) {
+	mode = 2;
+	++cur_arg;
+	continue;
+	}       
+      else if(!strcasecmp(argv[cur_arg]+strlen(argv[cur_arg])-4, ".ttf")) {
+	fontfn = argv[cur_arg];
+	++cur_arg;
+	continue;
+	}       
+      }
+    if(argc > cur_arg) {
+      if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
+	xs=1024; ys=768;
+	}
+      else {
+	++cur_arg;
+	continue;
+	}
+      }
+    break;
+    }
 
   video = new SimpleVideo(xs, ys, 16.0/10.0);
 
@@ -71,7 +101,17 @@ int main(int argc, char **argv) {
   connector->SetSlots(slots);
   connector->SetSlotColors(slot_cols);
   connector->SetSlotTeams(slot_cols);
-  connector->Config();
+  if(mode == 0) {		// Non-Networked
+    connector->Config();
+    }
+  else if(mode == 1) {		// Join
+    connector->SetTag("Test1");
+    connector->Search();
+    }
+  else /* mode == 2 */ {	// Host
+    connector->SetTag("Test1");
+    connector->Host();
+    }
   connscr->AddWidget(connector);
   gui->MasterWidget()->AddWidget(connscr);
 
