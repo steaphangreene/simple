@@ -268,7 +268,10 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       }
     newaspect_actual = asp / aspect;
     SimpleTexture::NeedToReacquireContext(event->resize.w, event->resize.h);
-    if(mWid) mWid->SetAspectRatio(asp);
+    if((aspect_method & (ASPECT_FIXED_Y|ASPECT_FIXED_X))
+	!= (ASPECT_FIXED_Y|ASPECT_FIXED_X)) {
+      if(mWid) mWid->SetAspectRatio(asp);
+      }
     return 0; //Event Handled
     }
 
