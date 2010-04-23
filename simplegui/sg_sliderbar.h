@@ -50,6 +50,8 @@ public:
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
+  static ST_Texturator *stt_slider;
+
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_Dragable *handle;
   SG_Button *incb, *decb;

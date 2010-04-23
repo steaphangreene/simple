@@ -39,6 +39,8 @@ SG_SliderBar::SG_SliderBar(bool vert,
   SetBackground(new SG_Panel(bgtex));
   handle = new SG_Dragable(handtex);
 
+  if(!stt_slider) stt_slider = new STT_ButtonUp;
+
   if(vertical) {
     Resize(1, 11);
     incb = new SG_Button("", b1tex, b1tex_dis, b1tex_click);
@@ -52,6 +54,7 @@ SG_SliderBar::SG_SliderBar(bool vert,
     AddWidget(handle, 0, 1);	//Hardcoded initial placement (for now)
     handle->SetYDisplayLimits(0.0, 16.0);
     handle->LinkYFrom(this);
+    handle->SetTexturator(stt_slider, 0);
     }
   else {
     Resize(11, 1);
@@ -66,6 +69,7 @@ SG_SliderBar::SG_SliderBar(bool vert,
     AddWidget(handle, 1, 0);	//Hardcoded initial placement (for now)
     handle->SetXDisplayLimits(0.0, 16.0);
     handle->LinkXFrom(this);
+    handle->SetTexturator(stt_slider, 0);
     }
   }
 
@@ -130,3 +134,5 @@ bool SG_SliderBar::ChildEvent(SDL_Event *event) {
 bool SG_SliderBar::RenderSelf(unsigned long cur_time) {
   return SG_Compound::RenderSelf(cur_time);
   }
+
+ST_Texturator *SG_SliderBar::stt_slider = NULL;
