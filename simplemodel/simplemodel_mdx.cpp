@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -93,23 +93,23 @@ bool SimpleModel_MDX::Load(const string &filenm,
     if(token == "VERS") {
       if(HandleVersion(model) == false)
         return false;
-      } 
+      }
     else if(token == "MODL") {
       if(HandleModel(model) == false)
         return false;
-      } 
+      }
     else if(token == "SEQS") {
       if(HandleSequences(model) == false)
         return false;
-      } 
+      }
     else if(token == "GLBS") {
       if(HandleGlobalSequences(model) == false)
         return false;
-      } 
+      }
     else if(token == "TEXS") {
       if(HandleTextures(filenm, model) == false)
         return false;
-      } 
+      }
     else if(token == "GEOS") {
       if(HandleGeosets(model) == false)
         return false;
@@ -135,7 +135,7 @@ bool SimpleModel_MDX::Load(const string &filenm,
         return false;
       }
     else if(token == "SKIP")
-      SkipChunk(model); 
+      SkipChunk(model);
     else {
       fprintf(stderr, "WARNING: Unknown token '%s' in MDX file!\n", token.c_str());
       return false;
@@ -179,7 +179,7 @@ bool SimpleModel_MDX::HandleMagicWord(SDL_RWops * model) {
   if(strncmp((char *)magic, "MDLX", 4)) {
     fprintf(stderr, "WARNING: File '%s' is not an MDX file!\n", filename.c_str());
     return false;
-    }  
+    }
 
   return true;
   }
@@ -212,10 +212,10 @@ bool SimpleModel_MDX::HandleModel(SDL_RWops * model) {
 
   freadLE(model_info.max_extents[0], model);
   freadLE(model_info.max_extents[1], model);
-  freadLE(model_info.max_extents[2], model);  
+  freadLE(model_info.max_extents[2], model);
 
   freadLE(model_info.blend_time, model);
-  
+
   return true;
   }
 
@@ -233,10 +233,10 @@ bool SimpleModel_MDX::HandleSequences(SDL_RWops * model) {
     freadLE(it->start, model);
     freadLE(it->end, model);
     freadLE(it->speed, model);
-   
+
     freadLE(loop, model);
     it->loop = (loop == 0 ? true : false);
-    
+
     freadLE(it->rarity, model);
     freadLE(it->unknown, model);
     freadLE(it->bound_radius, model);
@@ -274,10 +274,10 @@ bool SimpleModel_MDX::HandleGlobalSequences(SDL_RWops * model) {
 
 bool SimpleModel_MDX::HandleTextures(const string &filenm, SDL_RWops * model) {
   Uint32 num_bytes = 0;
-  
+
   freadLE(num_bytes, model);
   textures.resize(num_bytes / sizeof(MDXTexture));
-  
+
   for(vector<MDXTexture>::iterator it = textures.begin(); it != textures.end(); ++it) {
     freadLE(it->replacable_id, model);
     SDL_RWread(model, &(it->path), 1, 0x100);
@@ -414,7 +414,10 @@ bool SimpleModel_MDX::HandleMaterial(SDL_RWops * model) {
   Uint8 tag_name[4];
   SDL_RWread(model, &tag_name, 1, sizeof(tag_name));
   if(strncmp((char*)tag_name, "LAYS", 4)) {
-    fprintf(stderr, "ERROR: Layer didn't start with 'LAYS' tag %.8X!\n", *((Uint32*)(tag_name)));
+    fprintf(stderr,
+	"ERROR: Layer didn't start with 'LAYS' tag %.2X%.2X%.2X%.2X!\n",
+	tag_name[0], tag_name[1], tag_name[2], tag_name[3]
+	);
     return false;
     }
 
@@ -501,7 +504,9 @@ bool SimpleModel_MDX::HandleGeosetAnim(SDL_RWops * model) {
       //FIXME: Really handle this!
       }
     else {
-      fprintf(stderr, "ERROR: Invalid tag in GEOA %.8X!\n", *((Uint32*)(tag_name)));
+      fprintf(stderr, "ERROR: Invalid tag in GEOA %.2X%.2X%.2X%.2X!\n",
+	tag_name[0], tag_name[1], tag_name[2], tag_name[3]
+	);
       exit(0);
       }
     bytes_read = SDL_RWtell(model) - file_offset;
@@ -747,7 +752,7 @@ bool SimpleModel_MDX::HandleBones(SDL_RWops * model) {
 
 //  fprintf(stderr, "Number of bones %d.\n", bones.size());
 
-  return true;  
+  return true;
   }
 
 bool SimpleModel_MDX::HandleObject(SDL_RWops * model, MDXObject & object) {
@@ -756,26 +761,26 @@ bool SimpleModel_MDX::HandleObject(SDL_RWops * model, MDXObject & object) {
   freadLE(object.object_id, model);
   freadLE(object.parent, model);
   freadLE(object.type, model);
-  
+
   if(NextTokenIs(model, "KGTR")) {
     if(HandleKGTR(model, object.translation_info) == false)
       return false;
-    }    
+    }
 
   if(NextTokenIs(model, "KGRT")) {
     if(HandleKGRT(model, object.rotation_info) == false)
       return false;
-    }    
+    }
 
   if(NextTokenIs(model, "KGSC")) {
     if(HandleKGSC(model, object.scaling_info) == false)
       return false;
-    }    
+    }
 
   if(NextTokenIs(model, "KATV")) {
     if(HandleKATV(model, object.visibility_info) == false)
       return false;
-    }    
+    }
 
   return true;
   }
@@ -807,7 +812,7 @@ bool SimpleModel_MDX::HandleKGTR(SDL_RWops * model, MDXTranslationInfo_KGTR & tr
       }
     }
   return true;
-  };  
+  };
 
 bool SimpleModel_MDX::HandleKGRT(SDL_RWops * model, MDXRotationInfo_KGRT & rot) {
   Uint32 nunks = 0;
@@ -840,7 +845,7 @@ bool SimpleModel_MDX::HandleKGRT(SDL_RWops * model, MDXRotationInfo_KGRT & rot) 
       }
     }
   return true;
-  };  
+  };
 
 bool SimpleModel_MDX::HandleKGSC(SDL_RWops * model, MDXScalingInfo_KGSC & scale) {
   Uint32 nunks = 0;
@@ -906,7 +911,7 @@ bool SimpleModel_MDX::HandlePivots(SDL_RWops * model) {
     // fprintf(stderr, "%f, %f, %f\n", pivots.at(i).x, pivots.at(i).y, pivots.at(i).z);
     }
 
-  return true;    
+  return true;
   };
 
 bool SimpleModel_MDX::HandleHelpers(SDL_RWops * model) {
@@ -933,7 +938,7 @@ bool SimpleModel_MDX::HandleHelpers(SDL_RWops * model) {
     bytes_read = SDL_RWtell(model) - file_offset;
     }
 
-  return true;  
+  return true;
   };
 
 string SimpleModel_MDX::GetNextToken(SDL_RWops * model) {
@@ -955,7 +960,7 @@ string SimpleModel_MDX::GetNextToken(SDL_RWops * model) {
 //      fprintf(stderr, "WARNING: Unhandled token '%s' in MDX file!\n", buffer.c_str());
       return "SKIP";
       }
-    } 
+    }
   else {
 //    fprintf(stderr, "Returning EOB.\n");
     return "EOB";

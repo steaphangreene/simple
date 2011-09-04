@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // This file was created from (or actually IS) a basic compound widget
@@ -50,8 +50,8 @@ SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
   text->SetAlignment(SG_ALIGN_RIGHT);
   text->SetVisibleSize(SG_KEEPASPECT, 1);
   AddWidget(text, 0, 0, binvpro-1, 2);
- 
-  SetFixedDisplayPrecision(false); 
+
+  SetFixedDisplayPrecision(false);
   }
 
 SG_Spinner::~SG_Spinner() {
@@ -122,13 +122,13 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
   }
 
 //  bool SG_Spinner::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Spinner::Default_Mouse_Cursor = NULL;
 
 void SG_Spinner::RangerChanged() {
   char buf[64];
   char format[64];
- 
+
   snprintf(format, 64,"%%.%df%%c%c",getSignificantDigits( (fixed ? inc : Value()) ) ,0);
   snprintf(buf, 64, format, Value(), 0);
 

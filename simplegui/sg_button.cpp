@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -76,13 +76,13 @@ int SG_Button::HandleEvent(SDL_Event *event, float x, float y) {
     if(x >= -1.0 && y >= -1.0 && x <= 1.0 && y <= 1.0)
       event->user.code = SG_EVENT_BUTTONCLICK;
     return 1;
-    }  
+    }
 
   return 1;
   }
 
 //  bool SG_Button::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Button::Default_Mouse_Cursor = NULL;
 
 ST_Texturator *SG_Button::stt_butt_up = NULL;

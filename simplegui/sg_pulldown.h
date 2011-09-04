@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_PULLDOWN_H
@@ -45,7 +45,7 @@ public:
 
   void SetID(int id);
   int ID();
-  
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   SG_StickyButton *but;

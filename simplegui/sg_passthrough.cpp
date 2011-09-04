@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -186,7 +186,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
     else if(cur_action == SG_PT_CLICK) {
       return 0; // Eat these events in this case
       }
-    }  
+    }
   else if(event->type == SDL_MOUSEMOTION) {
     if(cur_action == SG_PT_BLOCK) {
       return 0;
@@ -215,7 +215,7 @@ int SG_PassThrough::HandleEvent(SDL_Event *event, float x, float y) {
 	return 1;
 	}
       }
-    }  
+    }
   return 1;
   }
 
@@ -257,7 +257,7 @@ bool SG_PassThrough::RenderSelf(unsigned long cur_time) {
   }
 
 //  bool SG_PassThrough::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_PassThrough::Default_Mouse_Cursor = NULL;
 
 void SG_PassThrough::CalcGeometry(SG_AlignmentGeometry &geom) {

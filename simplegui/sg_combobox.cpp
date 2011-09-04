@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // This file was created from (or actually IS) a basic compound widget
@@ -96,7 +96,7 @@ bool SG_ComboBox::ChildEvent(SDL_Event *event) {
   }
 
 //  bool SG_ComboBox::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_ComboBox::Default_Mouse_Cursor = NULL;
 
 const string &SG_ComboBox::Text() {

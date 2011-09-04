@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // This file was created from (or actually IS) a basic compound widget
@@ -62,7 +62,7 @@ public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
   void Left(bool wrap = false);
   void Up(bool wrap = false);
   void Down(bool wrap = false);
-  
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   int cur_on; //Which widget is currently on

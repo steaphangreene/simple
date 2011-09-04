@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleConnect (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SC_H
@@ -133,7 +133,7 @@ public:
   const string &MapName() { return mapname; };
 
   const SimpleConnections &ClaimConnections();
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 

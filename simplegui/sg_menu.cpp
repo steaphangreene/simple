@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -36,7 +36,7 @@ SG_Menu::~SG_Menu() {
   }
 
 //  bool SG_Menu::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Menu::Default_Mouse_Cursor = NULL;
 
 int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
@@ -74,7 +74,7 @@ int SG_Menu::HandleEvent(SDL_Event *event, float x, float y) {
       event->user.data2 = (void*)&event_data;
       return 1;
       }
-    }  
+    }
   return 1;
   }
 

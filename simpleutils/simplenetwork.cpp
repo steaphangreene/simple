@@ -110,7 +110,7 @@ void SimpleNetwork::Recv(int slot, string& ref) {
     }
 
   if(i != recv_buffer->end()) {
-    s.append( 1, (char) *i); 
+    s.append( 1, (char) *i);
     }
   ref = s;
   if(i != recv_buffer->end()) ++i;

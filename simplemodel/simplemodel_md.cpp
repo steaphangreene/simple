@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -49,7 +49,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 	const vector<Uint32> & start_time, Uint32 anim_offset) const {
   TransformInfo cur_transforms;
   AnimationInfo anim_info;
-  float factor;  
+  float factor;
 
   glPushMatrix();
   glScalef(1.0/32.0, 1.0/32.0, 1.0/32.0);
@@ -62,10 +62,10 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
   cur_transforms.bone_transforms.resize(bones.size());
 
   CalcTransforms(cur_transforms, identity4x4, -1, anim_info);
- 
+
   glEnable(GL_BLEND);
   glEnable(GL_TEXTURE_2D);
-    
+
   MDXVertex vert;
   for(vector<MDXGeoset>::const_iterator geo_it = geosets.begin(); geo_it != geosets.end(); ++geo_it) {
     float alpha = 1.0;
@@ -84,11 +84,11 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
       Uint32 v1 = *indx_it;
       Uint32 v2 = *(indx_it + 1);
       Uint32 v3 = *(indx_it + 2);
-    
+
       MDXVertex vec1 = geo_it->vertices.at(v1);
       MDXVertex vec2 = geo_it->vertices.at(v2);
       MDXVertex vec3 = geo_it->vertices.at(v3);
-    
+
       vector<MDXLayer>::const_iterator
 		layer = materials[geo_it->material_id].layers.begin(),
 		end = materials[geo_it->material_id].layers.end();
@@ -128,7 +128,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 	}
       glBegin(GL_TRIANGLES);
 	Uint32 mindex = geo_it->vertex_groups.at(v1);
-	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);  
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec1);
 	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v1).coord[0],
 		geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
 	if(layer != end)
@@ -136,9 +136,9 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 		geo_it->texture_coords_uvas.at(0).at(v1).coord[0],
 		geo_it->texture_coords_uvas.at(0).at(v1).coord[1]);
 	glVertex3f(vert.x, vert.y, vert.z);
-    
+
 	mindex = geo_it->vertex_groups.at(v2);
-	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);  
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec2);
 	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v2).coord[0],
 		geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
 	if(layer != end)
@@ -146,9 +146,9 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 		geo_it->texture_coords_uvas.at(0).at(v2).coord[0],
 		geo_it->texture_coords_uvas.at(0).at(v2).coord[1]);
 	glVertex3f(vert.x, vert.y, vert.z);
-    
+
 	mindex = geo_it->vertex_groups.at(v3);
-	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);  
+	MatVecMult(vert, cur_transforms.geoset_matrices.at(mindex), vec3);
 	glTexCoord2f(geo_it->texture_coords_uvas.at(0).at(v3).coord[0],
 		geo_it->texture_coords_uvas.at(0).at(v3).coord[1]);
 	if(layer != end)
@@ -176,7 +176,7 @@ bool SimpleModel_MD::RenderSelf(Uint32 cur_time, const vector<int> & anim,
 */
 void SimpleModel_MD::MDXGeoset::CalculateGroupMatrices(TransformInfo & current_transforms) const {
   Uint32 index = 0;
-    
+
   current_transforms.geoset_matrices.resize(group_counts.size());
   for(Uint32 i = 0; i < group_counts.size(); ++i) {
       AccumulateBoneTransforms(current_transforms, i, group_counts.at(i), index);
@@ -192,7 +192,7 @@ void SimpleModel_MD::MDXGeoset::AccumulateBoneTransforms(TransformInfo & cur_tra
 
     for(Uint32 i = 0; i < m_count; ++i)
       Add(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), cur_trans.bone_transforms.at(matrices.at(m_start + i)));
-    
+
     float scale = 1.0 / m_count;
     Multiply(cur_trans.geoset_matrices.at(m_id), cur_trans.geoset_matrices.at(m_id), scale);
 }
@@ -223,14 +223,14 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
     //res = pmat;
     return;
     }
-  
+
   if(object.translation_info.key_frames.size() > 0)
     has_translation = CalcBoneTranslation(translation, anim_info);
 
   if(object.rotation_info.key_frames.size() > 0)
     has_rotation = CalcBoneRotation(rotation, anim_info);
 
-  
+
   Matrix4x4 pivot_mat = identity4x4;
   pivot_mat.data[12] = center.x;
   pivot_mat.data[13] = center.y;
@@ -269,7 +269,7 @@ void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex
 bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const AnimationInfo & anim_info) const {
   vector<MDXKeyFrameTS>::const_iterator start_frame;
   vector<MDXKeyFrameTS>::const_iterator end_frame;
-  
+
   // If we're at the last frame of animation, set res to be the point at that frame
   if(anim_info.cur_seq->start == (object.translation_info.key_frames.end() - 1)->frame) {
     res = (object.translation_info.key_frames.end() - 1)->point;
@@ -304,7 +304,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const Animati
 	}
       else
 	res = start_frame->point;
-      
+
       return true;
       }
     };
@@ -318,7 +318,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneTranslation(MDXVertex & res, const Animati
 bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const AnimationInfo & anim_info) const {
   vector<MDXKeyFrameR>::const_iterator start_frame;
   vector<MDXKeyFrameR>::const_iterator end_frame;
-  
+
   if(anim_info.cur_seq->start == (object.rotation_info.key_frames.end() - 1)->frame) {
     res = (object.rotation_info.key_frames.end() - 1)->quat;
     return true;
@@ -347,7 +347,7 @@ bool SimpleModel_MD::MDXBone::CalcBoneRotation(Quaternion & res, const Animation
 	}
       else
 	res = start_frame->quat;
-      
+
       return true;
       }
     }
@@ -390,11 +390,11 @@ int SimpleModel_MD::NormalizeFrame(const vector<int> &anim, int frame) const {
       frame -= start;
       frame %= (end - start);
       frame += start;
-      } 
+      }
     else if(frame >= end) {
       frame = end - 1;
       }
-    } 
+    }
   else {
     frame = 0;
     }

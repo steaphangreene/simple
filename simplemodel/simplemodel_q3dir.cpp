@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -185,7 +185,7 @@ bool SimpleModel_Q3Dir::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   legtime[0] = start_time[0];
 
   //Do some auto-correction for not-quite valid inputs
-  if(legtime[1] >= legtime[0] && leganim[1] < BOTH_MAX) { 
+  if(legtime[1] >= legtime[0] && leganim[1] < BOTH_MAX) {
     leganim[0] = leganim[1];
     legtime[0] = legtime[1];
     }
@@ -193,7 +193,7 @@ bool SimpleModel_Q3Dir::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     leganim[1] = leganim[0];
     legtime[1] = legtime[0];
     }
-  else if(leganim[1] < BOTH_MAX) { 
+  else if(leganim[1] < BOTH_MAX) {
     leganim[1] = TORSO_STAND;
     legtime[1] = legtime[0];
     }

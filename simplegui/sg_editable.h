@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_EDITABLE_H
@@ -26,12 +26,12 @@
 
 class SG_Editable : public SG_TextArea {
 public:
-  SG_Editable(const string mes = "", SimpleTexture c = SG_COL_LOW, 
+  SG_Editable(const string mes = "", SimpleTexture c = SG_COL_LOW,
 	SimpleTexture dc = SG_COL_BG, SimpleTexture fc = SG_COL_HIGH);
   virtual ~SG_Editable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 

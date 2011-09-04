@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_ASPECTTABLE_H
@@ -51,7 +51,7 @@ public:
 
   virtual void SetAspectRatio(float asp);
   virtual bool RenderSelf(unsigned long cur_time);
-  
+
 protected:
   void CalcGeometry(SG_AlignmentGeometry &geom,
 	const vector<SG_TableGeometry>::iterator &wgeom,

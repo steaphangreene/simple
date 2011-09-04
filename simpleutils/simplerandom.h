@@ -36,13 +36,13 @@ class SimpleRandom
   void InitSeed();
   static int sequence;
   static SDL_mutex* mutex;
-  
+
   public:
   static void Initialize();
   void ChangeSeed(int seed);
   int GetSeed();
   int Rand(int min, int max);
-  
+
   SimpleRandom();
   SimpleRandom(int seed);
 };

@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_ALIGNMENT_H
@@ -55,7 +55,7 @@ public:
 
   void EnableEdgeEvents();
   void DisableEdgeEvents();
-  
+
 protected:
   void CalcGeometry(SG_AlignmentGeometry &geom);
   int HandleEdgeEvent(SDL_Event *event, float x, float y);

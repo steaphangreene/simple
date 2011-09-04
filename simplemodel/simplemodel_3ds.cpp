@@ -4,7 +4,7 @@
 //  Copyright 2005-2008 Steaphan Greene <stea@cs.binghamton.edu>
 //
 //  3DS support written by Noah Schwartz with chunk parsing code
-//  based on Damiano Vitulli's 3DS loading tutorial at 
+//  based on Damiano Vitulli's 3DS loading tutorial at
 //  http://spacesimulator.net/tut4_3dsloader.html
 //
 //  SimpleModel is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -55,14 +55,14 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
   MAXMesh current_mesh;
   current_mesh.has_texture = false;
   bool first_mesh = true;
-  
+
   if(model == NULL) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
 	filenm.c_str());
     perror("WARNING");
     return false;
     }
-  
+
   SDL_RWseek(model, 0, SEEK_END);
   filelen = SDL_RWtell(model);
   SDL_RWseek(model, 0, SEEK_SET);
@@ -73,7 +73,7 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
 	switch(chunk_id) {
 	  case 0x4d4d:
 	    break;
-	  
+	
 	  case 0x3d3d:
 	    break;
 		
@@ -131,7 +131,7 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
 		  freadLE(current_mesh.tex_coord[index].v, model);
 		  }
 		break;
-	  
+	
 	  default:
 	    SDL_RWseek(model, chunk_length - 6, SEEK_CUR);		
 	  }
@@ -139,10 +139,10 @@ bool SimpleModel_3DS::Load(const string &filenm, const string &texnm) {
   SDL_RWclose(model);
   // Push on the last mesh
   mesh.push_back(current_mesh);
-  
+
   //mesh.texture = new SimpleTexture(texnm);
   //mesh.texture->Update();
-  
+
   Uint32 mesh_index = 0;
   // Create the display list	
   display_list = glGenLists(1);

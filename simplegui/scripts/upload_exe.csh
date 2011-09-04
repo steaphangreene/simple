@@ -18,7 +18,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with SimpleGUI (see the file named "COPYING");
 #  If not, see <http://www.gnu.org/licenses/>.
-#  
+#
 # *************************************************************************
 
 scp test1.exe opal:public_html/simplegui/win32/

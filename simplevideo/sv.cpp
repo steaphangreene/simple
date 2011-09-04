@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleVideo (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SDL_DEBUG		// Just define SDL_DEBUG to add debug
@@ -58,7 +58,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   xsize=0; ysize=0;
   hgap=0; vgap=0;
   fullscreen_mode = fullscr;
-  
+
   const SDL_VideoInfo *videoInfo;
 //  GLdouble light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
 //  GLdouble light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };

@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_TRANSLABEL_H
@@ -34,7 +34,7 @@ public:
 	float mx = 0.125, float my = 0.125);
   virtual ~SG_TransLabel();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   };

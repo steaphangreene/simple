@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -230,7 +230,7 @@ bool SG_Alignment::AddWidget(SG_Widget *wid) {
 void SG_Alignment::RemoveWidget(SG_Widget *wid) {
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   for(; itrw != widgets.end(); ++itrw) {
-    if((*itrw) == wid) { 
+    if((*itrw) == wid) {
       itrw = widgets.erase(itrw);
       --itrw;  // Undo ++itrw from for() loop.
       }
@@ -238,7 +238,7 @@ void SG_Alignment::RemoveWidget(SG_Widget *wid) {
   }
 
 //  bool SG_Alignment::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Alignment::Default_Mouse_Cursor = NULL;
 
 void SG_Alignment::CalcGeometry(SG_AlignmentGeometry &geom) {

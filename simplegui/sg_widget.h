@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_WIDGET_H
@@ -69,7 +69,7 @@ public:
 
 	//Internal Use Only!  For self-reconfiguring widgets.
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 

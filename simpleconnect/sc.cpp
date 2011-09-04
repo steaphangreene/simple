@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleConnect (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include <set>
@@ -530,7 +530,7 @@ bool SimpleConnect::ChildEvent(SDL_Event *event) {
   }
 
 //  bool SimpleConnect::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SimpleConnect::Default_Mouse_Cursor = NULL;
 
 int SimpleConnect::HandleSearchThread() {
@@ -670,7 +670,7 @@ int SimpleConnect::HandleHostThread() {
 	data[slot*20 + 0] = conn.slots[slot].type;
 	if(conn.slots[slot].ptype == SC_PLAYER_LOCAL)
 	  data[slot*20 + 1] = SC_PLAYER_REMOTE;
-	else 
+	else
 	  data[slot*20 + 1] = conn.slots[slot].ptype;
 	data[slot*20 + 2] = conn.slots[slot].team;
 	data[slot*20 + 3] = conn.slots[slot].color;

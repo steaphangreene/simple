@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
 
   SG_Panel *btab_bg = new SG_Panel;
   tabs->SetBackground(btab_bg);
-  
+
   SDL_Thread *ev_t, *game_t;
 
   ev_t = SDL_CreateThread(event_thread_handler, NULL);

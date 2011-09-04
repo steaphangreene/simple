@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include <cmath>
@@ -113,13 +113,13 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data1 = (void*)(SG_Ranger2D*)this;
     event->user.data2 = (void*)&event_data;
     return 1;
-    }  
+    }
 
   return 1;
   }
 
 //  bool SG_Dragable::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Dragable::Default_Mouse_Cursor = NULL;
 
 bool SG_Dragable::RenderSelf(unsigned long cur_time) {

@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // This file was created from (or actually IS) a basic compound widget
@@ -57,8 +57,8 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
       int num_cells;
 
       num_cells = 0;
-      if(x < xsize && y < ysize && present[y*xsize+x]) ++num_cells; 
-      if(x < xsize && y > 0 && present[(y-1)*xsize+x]) ++num_cells; 
+      if(x < xsize && y < ysize && present[y*xsize+x]) ++num_cells;
+      if(x < xsize && y > 0 && present[(y-1)*xsize+x]) ++num_cells;
       if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
 	int xrun = 1;
@@ -69,15 +69,15 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
 		&& (!basecell[y*xsize+x+xrun])) ++xrun;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
-	glVertex3f(-1.0 + (2.0*((float)(x+xrun))/((float)(xsize))), 
+	glVertex3f(-1.0 + (2.0*((float)(x+xrun))/((float)(xsize))),
 		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
+	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
 		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
 	}
 
       num_cells = 0;
-      if(y < ysize && x < xsize && present[y*xsize+x]) ++num_cells; 
-      if(y < ysize && x > 0 && present[y*xsize+x-1]) ++num_cells; 
+      if(y < ysize && x < xsize && present[y*xsize+x]) ++num_cells;
+      if(y < ysize && x > 0 && present[y*xsize+x-1]) ++num_cells;
       if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
       if(num_cells > 0) {
 	int yrun = 1;
@@ -88,9 +88,9 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
 		&& (!basecell[(y+yrun)*xsize+x])) ++yrun;
 	  }
 	glColor3f(bor_col, bor_col, bor_col);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
+	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
 		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))), 
+	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
 		1.0 - (2.0*((float)(y+yrun))/((float)(ysize))), 0.0);
 	}
       }
@@ -326,19 +326,19 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
   }
 
 //  bool SG_DNDBoxes::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_DNDBoxes::Default_Mouse_Cursor = NULL;
 
 bool SG_DNDBoxes::AddWidget(SG_Widget *wid) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
   return 0;
   }
-                                                                                
+
 bool SG_DNDBoxes::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
   return 0;
   }
-                                                                                
+
 void SG_DNDBoxes::RemoveWidget(SG_Widget *wid) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
   }

@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_PROGRESSBAR_H
@@ -30,7 +30,7 @@ public:
 	SimpleTexture dc = SG_COL_HIGH);
   virtual ~SG_ProgressBar();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
   };

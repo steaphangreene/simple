@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_ANIMATEDPANEL_H
@@ -33,7 +33,7 @@ public:
   SG_AnimatedPanel(const vector<SimpleTexture> &txtrs, float mspf);
   virtual ~SG_AnimatedPanel();
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 //  static GL_MODEL Default_Mouse_Cursor;

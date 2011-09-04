@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -327,7 +327,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
       ScreenToRelative(mousex, mousey);
 
       SG_Widget *cur = current_widget;
-      current_widget = NULL; 
+      current_widget = NULL;
       int ret = 0;
       ret = mWid->HandEventTo(cur, event, mousex, mousey);
       if(ret && event->type != SDL_SG_EVENT) {
@@ -431,14 +431,14 @@ void SimpleGUI::SetPopupWidget(SG_Alignment *wid, float px, float py,
 //    mWid->SetBorder(1.0 - px, 1.0 - py);
 //    }
   }
-  
+
 void SimpleGUI::SetModalPopupWidget(SG_Alignment *wid, float px, float py,
 	float posx, float posy) {
   SetPopupWidget(wid, px, py, posx, posy);
   pop_modal = true;
   mainWid->Ignore();
   }
-  
+
 void SimpleGUI::SetMouseCursor(SDL_Surface *cur, float xsc, float ysc) {
   if(mouse_cursor) delete mouse_cursor;
   mouse_cursor = new SimpleTexture(cur);

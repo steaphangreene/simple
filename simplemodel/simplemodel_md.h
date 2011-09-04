@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SIMPLEMODEL_MD_H
@@ -73,7 +73,7 @@ protected:
   struct MDXTranslationInfo_KGTR {
     Uint32 nunks;
     Uint32 line_type;       // dont = 0, linear = 1, hermite = 2, bezier = 3
-    Sint32 global_seq_id;   // -1 if none 
+    Sint32 global_seq_id;   // -1 if none
     vector<MDXKeyFrameTS> key_frames;
     };
 
@@ -83,11 +83,11 @@ protected:
     Sint32 global_seq_id;
     vector<MDXKeyFrameR> key_frames;
     };
-  
+
   struct MDXScalingInfo_KGSC {
     Uint32 nunks;
     Uint32 line_type;       // dont = 0, linear = 1, hermite = 2, bezier = 3
-    Sint32 global_seq_id;   // -1 if none 
+    Sint32 global_seq_id;   // -1 if none
     vector<MDXKeyFrameTS> key_frames;
     };
 
@@ -95,7 +95,7 @@ protected:
     Uint32 nunks;
     Uint32 line_type;
     Sint32 global_seq_id;
-    vector<MDXKeyFrameV> key_frames;    
+    vector<MDXKeyFrameV> key_frames;
     };
 
   struct MDXObject {
@@ -203,11 +203,11 @@ protected:
 
   struct MDXGeoset {
     void CalculateGroupMatrices(TransformInfo &) const;
-    void AccumulateBoneTransforms(TransformInfo &, const Uint32, const Uint32, const Uint32) const;  
+    void AccumulateBoneTransforms(TransformInfo &, const Uint32, const Uint32, const Uint32) const;
 
     vector<MDXVertex> vertices;
     vector<MDXNormal> normals;
-    vector<Uint32> prim_types;       
+    vector<Uint32> prim_types;
     vector<Uint32> prim_counts;
     vector<Uint16> indices;
     vector<Uint8> vertex_groups;
@@ -220,12 +220,12 @@ protected:
     float min_extents[3];
     float max_extents[3];
     vector<MDXFrameInfo> animations;
-    vector<vector<MDXTextureCoord> > texture_coords_uvas;                
-    vector<MDXTextureCoord> texture_coords_uvbs;                
+    vector<vector<MDXTextureCoord> > texture_coords_uvas;
+    vector<MDXTextureCoord> texture_coords_uvbs;
     };
 
   struct MDXGlobalSequence {
-    vector<Uint32> durations;    
+    vector<Uint32> durations;
     };
 
   struct MDXTexture {

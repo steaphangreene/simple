@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 int NUM_FRAMES = 32;	//Not #defines so they can be capped later.
@@ -297,7 +297,7 @@ int main(int argc, char **argv) {
 	    text->SetTexture(gui->NewColor(r, g, b));
 	    }
 	  else if(event.user.data1 == (void*)button[5])
-	    gui->SetPopupWidget(popup, 0.3, 0.3, -0.25, 0.0); 
+	    gui->SetPopupWidget(popup, 0.3, 0.3, -0.25, 0.0);
 	  }
 	else if(event.user.code == SG_EVENT_STICKYOFF) {
 	  printf("Received SG_EVENT_STICKYOFF from %s button.\n",
@@ -306,7 +306,7 @@ int main(int argc, char **argv) {
 	  if(event.user.data1 == (void*)button[4])
 	    text->SetText("Text Area Is Here");
 	  else if(event.user.data1 == (void*)button[5])
-	    gui->UnsetPopupWidget(); 
+	    gui->UnsetPopupWidget();
 	  }
 	else if(event.user.code == SG_EVENT_BUTTONRELEASE) {
 	  printf("Received SG_EVENT_BUTTONRELEASE from %s button.\n",
@@ -492,7 +492,7 @@ int main(int argc, char **argv) {
     SDL_Delay(10);
     }
 
-  gui->UnsetPopupWidget(); 
+  gui->UnsetPopupWidget();
   delete popup;  //Will delete all children
   delete gui;    //Will delete all children
 

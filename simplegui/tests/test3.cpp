@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 //Test 3 is a copy of Test 1 modified to test SG_ListBox
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
   SG_ListBox *listb;
   SG_ListBox *hlistb;
   SG_Editable *vaddind, *vaddval, *vremind, *haddind, *haddval, *hremind;
-  
+
   tab = new SG_Table(10, 10);
 
   gui->MasterWidget()->AddWidget(tab);
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
 
   items.push_back(new SG_TransLabel("Item 1",col));
   items.push_back(new SG_TransLabel("Item 2",col));
-  items.push_back(new SG_TransLabel("Item 3",col));		  
+  items.push_back(new SG_TransLabel("Item 3",col));		
   listb = new SG_ListBox(items,white,dkblue,blue,black,1,2);
 
   tab->AddWidget(listb,0,0,4,4);
@@ -120,12 +120,12 @@ int main(int argc, char **argv) {
   tab->AddWidget(b,5,1,2,1);
   name[b=new SG_Button("Remove At")]="vrem";
   tab->AddWidget(b,5,2,2,1);
-  
+
   tab->AddWidget(vaddind=new SG_Editable("0"),7,0,1,1);
   tab->AddWidget(vaddval=new SG_Editable("Val"),8,0,2,1);
   tab->AddWidget(vremind=new SG_Editable("0"),7,2,1,1);
- 
-  
+
+
   vector<SG_Widget*> horzitems;
 
   horzitems.push_back(new SG_TransLabel("H1",col));
@@ -144,11 +144,11 @@ int main(int argc, char **argv) {
   name[b=new SG_Button("Remove At")]="hrem";
   tab->AddWidget(b,7,8,2,1);
   tab->AddWidget(hremind=new SG_Editable("0"),9,8,1,1);
-  
+
   hlistb = new SG_ListBox(horzitems,dkgray,red,gray,black,2,4,false);
 
   tab->AddWidget(hlistb,0,6,10,2);
-  
+
   SDL_Event event;
   int user_quit = 0;
   while(!user_quit) {
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
 	    l=hlistb;
 	    }
 	  if( s == "vaddat" ) {
-	    listb->AddItem(new SG_TransLabel(vaddval->Text(),col), atoi( vaddind->Text().c_str() ) ); 
+	    listb->AddItem(new SG_TransLabel(vaddval->Text(),col), atoi( vaddind->Text().c_str() ) );
 	    }
 	  if( s == "haddat" ) {
  	    hlistb->AddItem(new SG_TransLabel(haddval->Text(),col), atoi(haddind->Text().c_str() ) );
@@ -329,7 +329,7 @@ int main(int argc, char **argv) {
     finish_scene();
     }
 
-  gui->UnsetPopupWidget(); 
+  gui->UnsetPopupWidget();
   delete gui;    //Will delete all children
 
   return 0;

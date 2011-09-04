@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_COMPOUND_H
@@ -34,7 +34,7 @@ public:
 		float x, float y);
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
-  
+
 protected:
 //  static GL_MODEL Default_Mouse_Cursor;
 

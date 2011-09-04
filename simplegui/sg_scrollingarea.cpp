@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -91,7 +91,7 @@ bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
   }
 
 //  bool SG_ScrollingArea::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_ScrollingArea::Default_Mouse_Cursor = NULL;
 
 bool SG_ScrollingArea::AddWidget(SG_Widget *wid) {

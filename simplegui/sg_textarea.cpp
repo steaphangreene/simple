@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -56,7 +56,7 @@ int SG_TextArea::HandleEvent(SDL_Event *event, float x, float y) {
   }
 
 //  bool SG_TextArea::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_TextArea::Default_Mouse_Cursor = NULL;
 
 void SG_TextArea::SetMargins(float xmar, float ymar) {
@@ -82,7 +82,7 @@ void SG_TextArea::Disable() {
   flags |= SG_WIDGET_FLAGS_DISABLED;
   state = 1;
   }
- 
+
 void SG_TextArea::Enable() {
   flags &= (~SG_WIDGET_FLAGS_DISABLED);
   state = 0;

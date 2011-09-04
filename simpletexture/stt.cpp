@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleTexture (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "stt.h"
@@ -40,7 +40,7 @@ SDL_Surface *ST_Texturator::BuildTexture(SDL_Surface *surf,
   return NULL;
   }
 
-Uint8 st_col_u32b1[4] = { 0xFF, 0x00, 0x00, 0x00 };
-Uint8 st_col_u32b2[4] = { 0x00, 0xFF, 0x00, 0x00 };
-Uint8 st_col_u32b3[4] = { 0x00, 0x00, 0xFF, 0x00 };
-Uint8 st_col_u32b4[4] = { 0x00, 0x00, 0x00, 0xFF };
+Uint8_32 st_col_u32b1 = {{ 0xFF, 0x00, 0x00, 0x00 }};
+Uint8_32 st_col_u32b2 = {{ 0x00, 0xFF, 0x00, 0x00 }};
+Uint8_32 st_col_u32b3 = {{ 0x00, 0x00, 0xFF, 0x00 }};
+Uint8_32 st_col_u32b4 = {{ 0x00, 0x00, 0x00, 0xFF }};

@@ -18,7 +18,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Simple* (see the file named "COPYING");
 #  If not, see <http://www.gnu.org/licenses/>.
-#  
+#
 # *************************************************************************
 
 svn log -r HEAD:1 | sed 's-(no author)-Unknown-g' | sed 's-^r[0-9]* | \([A-Za-z0-9]*\) | \([0-9-]* [0-9]*:[0-9]*\):.*$-|\2  \1|-g' | grep -v '^$' | grep -v -- ------------------------------------------------------------------------ | sed 's-^\([^|]\)-\t* \1-g' | tr '|' '\n'

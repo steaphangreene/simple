@@ -81,12 +81,12 @@ int SimpleRandom::Rand(int min, int max)
   assert (max - min <= 32767, "[SimpleUtils] Max - Min > 32767!\n")
 
   r = ((this->state[0] + this->state[1]) % 32767);
-  if (r < 0) 
+  if (r < 0)
     r = -r;
 
   this->state[0] = this->state[1];
   this->state[1] = r;
-  
+
   if(min == max)
   {
     return min;

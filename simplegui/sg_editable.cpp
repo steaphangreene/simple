@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -25,7 +25,7 @@
 #include "sg_globals.h"
 #include "sg_events.h"
 
-SG_Editable::SG_Editable(string mes, SimpleTexture c, 
+SG_Editable::SG_Editable(string mes, SimpleTexture c,
 		SimpleTexture dc, SimpleTexture fc)
 	: SG_TextArea(mes, c, dc) {
   fc.LinkTextFrom(&texture[0]);
@@ -128,5 +128,5 @@ bool SG_Editable::RenderSelf(unsigned long cur_time) {
   }
 
 //  bool SG_Editable::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_Editable::Default_Mouse_Cursor = NULL;

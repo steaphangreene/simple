@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include <algorithm>
@@ -31,7 +31,7 @@
 SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
 			SimpleTexture sel, SimpleTexture click, SimpleTexture dis, unsigned int min, unsigned int max, bool vert,
 			float border)
-	: SG_Compound( (!vert?(items.size()==0?1:items.size()):1), (vert?(items.size()==0?1:items.size()):1), 0, 0), 
+	: SG_Compound( (!vert?(items.size()==0?1:items.size()):1), (vert?(items.size()==0?1:items.size()):1), 0, 0),
 	  texdesel(desel), texsel(sel), texclick(click), texdisable(dis) {
   /* Copy the passed data into our class data */
   minsel = min;
@@ -39,7 +39,7 @@ SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
   vertical = vert;
   listsize=items.size();
   alignborder=border;
- 	 
+ 	
   /* Sanity Check */
   if( min > max ) {
     fprintf(stderr,"SG_ListBox Constructor: Invalid min %d because it is greater than max %d\n",min,max);
@@ -50,21 +50,21 @@ SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
   SG_Alignment* align;
   for(unsigned int i=0; i<listsize; i++) {
     stickies.push_back( new SG_StickyButton("",desel,dis,click,sel) );
-    
+
     align = new SG_Alignment(border,border);
     align->Enable(); //Listen for mouse clicks
 
     align->SetBackground(stickies[i]);
-    
+
     //Add it to the vector of SG_Alignments
     aligns.push_back(align);	
-    if( i < minsel ) {	  
+    if( i < minsel ) {	
       Select(i);
       }
-    
+
     align->AddWidget(items[i]);
     ptr2pos[stickies[i]]=i;
-    AddWidget(align); 
+    AddWidget(align);
     }
   }
 
@@ -80,7 +80,7 @@ bool SG_ListBox::ChildEvent(SDL_Event *event) {
 	//Unselection failed to abide by the rules, reselect it
 	((SG_StickyButton*)(event->user.data1))->TurnOn();
 	return 0;
-        } 
+        }
       else {
 	event->user.code = SG_EVENT_UNSELECT_ITEM;
 	event->user.data1= (void*)(SG_StickyButton*)this;
@@ -89,7 +89,7 @@ bool SG_ListBox::ChildEvent(SDL_Event *event) {
         }		
       }
     }
-  
+
   if(event->user.code == SG_EVENT_STICKYON) {
     if( ptr2pos.count((SG_StickyButton*)(event->user.data1)) == 1 ) {
       int ind = ptr2pos[ (SG_StickyButton*)(event->user.data1) ];
@@ -110,22 +110,22 @@ bool SG_ListBox::SetSelection(const set<int>& toselect) {
 
   //unselect everything
   while ( Deselect(true) );
-  
+
   //select the items in the set
   set<int>::iterator iter = toselect.begin();
   for(;iter!=toselect.end(); ++iter) {
     Select( (*iter) );
     }
-  
+
   return true;
   }
 
 void SG_ListBox::AddItem( SG_Widget* w, int at ) {
   if( at != -1 && at < 0 ) return; //Invalid argument
-  
+
   unsigned int selcnt;
   int selected_items[ selcnt=selhistory.size() ];
-  
+
   SG_Alignment* a = new SG_Alignment(alignborder,alignborder);
   a->Enable();
   SG_StickyButton* sb = new SG_StickyButton("",texdesel,texdisable,texclick,texsel);
@@ -138,7 +138,7 @@ void SG_ListBox::AddItem( SG_Widget* w, int at ) {
     if( vertical ) AddRow(listsize); else AddCol(listsize);
     listsize++;
     ptr2pos[ stickies[listsize-1] ] = listsize-1;
-    if( vertical ) AddWidget(a, 0, listsize-1); else AddWidget(a, listsize-1,0); 
+    if( vertical ) AddWidget(a, 0, listsize-1); else AddWidget(a, listsize-1,0);
     } else {
     // Dump selection history into local array
     deque<int>::iterator itr = selhistory.begin();
@@ -148,7 +148,7 @@ void SG_ListBox::AddItem( SG_Widget* w, int at ) {
       }
     //Clear selections
     while(Deselect(true));
-	    
+	
     //Otherwise... insert in middle
     aligns.insert(aligns.begin()+at,a);
     stickies.insert(stickies.begin()+at,sb);
@@ -162,16 +162,16 @@ void SG_ListBox::AddItem( SG_Widget* w, int at ) {
       AddCol(at);
       AddWidget(a,at,0);
       }
-    
+
     //Replace selection
     for(unsigned int i=0; i<selcnt; i++) {
       Select(selected_items[i]);
       }
     }
-  
+
   }
 
-  
+
 bool SG_ListBox::RemoveItem( unsigned int item ) {
   unsigned int i;
 	
@@ -188,13 +188,13 @@ bool SG_ListBox::RemoveItem( unsigned int item ) {
   if( vertical ) {
     RemoveRow(item);
     } else {
-    RemoveCol(item);	  
+    RemoveCol(item);	
     }
 	
   stickies.erase(stickies.begin()+item);
   aligns.erase(aligns.begin()+item);
   for(i=item; i<listsize; i++) {
-    ptr2pos[ stickies[i] ] = i; 
+    ptr2pos[ stickies[i] ] = i;
     }
   listsize--;
 
@@ -227,7 +227,7 @@ void SG_ListBox::Select(int ind) {
 bool SG_ListBox::Deselect(bool override, int ind) {
   //Check to make sure there is room to remove one
   if( !override && selhistory.size() == minsel ) return false;
-  
+
   if( ind == -1 && selhistory.size() > 0 ) {
     //Remove the oldest selected item
     ind=selhistory.front();
@@ -235,7 +235,7 @@ bool SG_ListBox::Deselect(bool override, int ind) {
     stickies[ind]->TurnOff();
     return true;
     } else if( ind == -1 ) return false;
-  
+
   if( ind >= 0 || ind < (signed)listsize ) {
     selhistory.erase(remove(selhistory.begin(), selhistory.end(), ind));
     stickies[ind]->TurnOff();

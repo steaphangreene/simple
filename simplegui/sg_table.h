@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SG_TABLE_H
@@ -68,7 +68,7 @@ public:
   void SetActive(float xst, float yst, float xen, float yen);
 
   virtual void RangerChanged();
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 

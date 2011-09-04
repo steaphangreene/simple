@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleScene (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef SDL_DEBUG		// Just define SDL_DEBUG to add debug
@@ -567,7 +567,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
     if(col.r != 1.0 || col.g != 1.0 || col.b != 1.0) {
       glColor4f(1.0, 1.0, 1.0, 1.0);
       }
-    }  
+    }
   glPopMatrix();
   return true;
   }

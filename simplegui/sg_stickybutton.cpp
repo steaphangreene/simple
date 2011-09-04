@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL_opengl.h"
@@ -71,7 +71,7 @@ int SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data1 = (void*)(SG_Widget*)this;
     event->user.data2 = NULL;
     return 1;
-    }  
+    }
 
   return 1;
   }
@@ -87,6 +87,6 @@ void SG_StickyButton::TurnOff() {
   }
 
 //  bool SG_StickyButton::SetDefaultCursor(GL_MODEL *cur);
-  
+
 //  static GL_MODEL SG_StickyButton::Default_Mouse_Cursor = NULL;
 

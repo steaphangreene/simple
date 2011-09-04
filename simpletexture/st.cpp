@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleTexture (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -290,7 +290,7 @@ SimpleTexture::SimpleTexture(const string &filenm) {
 	  for(Uint32 pix=0; pix < xs*ys; ++pix) {
 	    pt.x = pix%xs;
 	    pt.y = pix/xs;
-	    SDL_FillRect(src, &pt, SDL_MapRGBA(src->format, 
+	    SDL_FillRect(src, &pt, SDL_MapRGBA(src->format,
 		pal[index[pix]].r, pal[index[pix]].g, pal[index[pix]].b,
 		alpha[pix]));
 	    }

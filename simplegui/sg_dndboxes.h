@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // This file was created from (or actually IS) a basic compound widget
@@ -49,7 +49,7 @@ public:
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
-  
+
 protected:
   virtual bool RenderSelf(unsigned long cur_time);
 

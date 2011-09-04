@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 // Rob W. Brooks (rob@atomicpenguin.net) is to be blamed for any problems
@@ -40,8 +40,8 @@ class SG_TextArea;
 
 class SG_ListBox : public SG_Compound {
 public:
-  SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel, 
-		  SimpleTexture sel, SimpleTexture click, SimpleTexture disable, 
+  SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
+		  SimpleTexture sel, SimpleTexture click, SimpleTexture disable,
 		  unsigned int min=1, unsigned int max=1,
 		  bool vert=true, float border=0.1);
   virtual ~SG_ListBox();
@@ -55,19 +55,19 @@ public:
   //	 accomodate the passed index, it will expand the list item count by ONE)
   //If at >= 0 && a < number of items it will be inserted at that the passed position
   //	and will push the former occupier and all the follow one position forward
-  
+
   bool RemoveItem( unsigned int item );
   //Removes item number from list
   //Will succeed only if with this item the minimum selection count can still be satisified
-  //If selected and at minimum selection the minimum will be satisified starting with the 
+  //If selected and at minimum selection the minimum will be satisified starting with the
   //first item and proceeding down the list until the minimum is reached
-  
+
 //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
   deque<int> Which() { return selhistory; }
-  
- 
+
+
 protected:
   void Select(int ind);
   bool Deselect(bool override=false, int ind=-1);
@@ -77,11 +77,11 @@ protected:
   unsigned int listsize;
   unsigned int minsel,maxsel;
   float alignborder;
-  SimpleTexture texdesel, texsel, texclick, texdisable; 
+  SimpleTexture texdesel, texsel, texclick, texdisable;
   deque<int> selhistory;
   vector<SG_StickyButton*> stickies;
   vector<SG_Alignment*> aligns;
-  map<SG_StickyButton*, int> ptr2pos; 
+  map<SG_StickyButton*, int> ptr2pos;
   };
 
 #endif // SG_LISTBOX_H

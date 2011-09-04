@@ -20,7 +20,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleModel (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #ifndef	SIMPLEMODEL_3DS_H
@@ -49,8 +49,8 @@ struct MAXTexCoord {
 
 struct MAXMesh{
 	char name[20];
-    
-    vector<MAXVertex> vertex; 
+
+    vector<MAXVertex> vertex;
     vector<MAXPolygon> polygon;
     vector<MAXTexCoord> tex_coord;
 	bool has_texture;

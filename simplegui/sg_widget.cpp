@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "sg_alignment.h"
@@ -89,7 +89,7 @@ void SG_Widget::TurnOff() {
 //  bool SG_Widget::SetDefaultCursor(GL_MODEL *cur);
 //  bool SG_Widget::SetCursor(GL_MODEL *cur)
 //  bool SG_Widget::UnsetCursor()
-  
+
 //  static GL_MODEL SG_Widget::Default_Mouse_Cursor = NULL;
 
 void SG_Widget::AdjustGeometry(SG_AlignmentGeometry *geom) {

@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with SimpleGUI (see the file named "COPYING");
 //  If not, see <http://www.gnu.org/licenses/>.
-//  
+//
 // *************************************************************************
 
 #include "SDL.h"
@@ -52,17 +52,17 @@ int main(int argc, char **argv) {
 	mode = 1;
 	++cur_arg;
 	continue;
-	}       
+	}
       else if(!strcasecmp(argv[cur_arg], "host")) {
 	mode = 2;
 	++cur_arg;
 	continue;
-	}       
+	}
       else if(!strcasecmp(argv[cur_arg]+strlen(argv[cur_arg])-4, ".ttf")) {
 	fontfn = argv[cur_arg];
 	++cur_arg;
 	continue;
-	}       
+	}
       }
     if(argc > cur_arg) {
       if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
