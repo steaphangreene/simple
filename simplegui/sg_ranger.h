@@ -30,7 +30,7 @@ class SG_Ranger2D;
 class SG_Ranger {
 public:
   SG_Ranger(float spn = 0.0, float val = 0.0, float mn = 0.0, float mx = 1.0,
-	SG_Ranger2D *par = NULL);
+	SG_Ranger2D *par = 0);
   virtual ~SG_Ranger();
 
   void SetValue(float val);
