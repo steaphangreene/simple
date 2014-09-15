@@ -21,11 +21,13 @@
 #ifndef SAFECOMM_H
 #define SAFECOMM_H
 
+#include <cstring>
+
 #include "SDL.h"
 
 template <class Tp>
 static void ReadNBO(Tp &var, const void *buf) {
-  var = *((Tp*)(buf));
+  std::memcpy(&var, buf, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
   int i1=0, i2=sizeof(Tp)-1;
@@ -38,7 +40,7 @@ static void ReadNBO(Tp &var, const void *buf) {
 
 template <class Tp>
 static void WriteNBO(const Tp &var, void *buf) {
-  *((Tp*)(buf)) = var;
+  std::memcpy(buf, &var, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
   union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
   int i1=0, i2=sizeof(Tp)-1;
