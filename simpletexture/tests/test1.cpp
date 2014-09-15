@@ -76,11 +76,9 @@ int main(int argc, char **argv) {
     start_scene();
 
     glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
     glLoadIdentity();
 
 
@@ -120,6 +118,7 @@ int main(int argc, char **argv) {
     glDisable(GL_BLEND);
 
     finish_scene();
+
     SDL_Delay(10);	// Let the OS breathe
     }
 

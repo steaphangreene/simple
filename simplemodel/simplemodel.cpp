@@ -32,6 +32,7 @@ using namespace std;
 #include "simplemodel_q3dir.h"
 #include "simplemodel_md2.h"
 #include "simplemodel_md3.h"
+#include "simplemodel_pmx.h"
 #include "simplemodel_mdx.h"
 #include "simplemodel_3ds.h"
 #include "simplemodel_obj.h"
@@ -88,6 +89,11 @@ SimpleModel *SimpleModel::LoadModel(
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "3ds"))) {
     return new SimpleModel_3DS(filename);
+    }
+
+  if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "pmx"))) {
+    return new SimpleModel_PMX(filename);
     }
 
   if(filename.length() >= 3
