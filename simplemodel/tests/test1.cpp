@@ -34,7 +34,8 @@ using namespace std;
 static vector<int> anims;
 static vector<Uint32> times;
 
-static SimpleModel *mod = NULL;
+static vector<SimpleModel *> mod;
+static Uint32 modnum = 0;
 static SimpleModel *weap = NULL;
 
 static SimpleTexture *banner = NULL;
@@ -48,7 +49,7 @@ static void SetAnim(int which, string anim_name = "") {
   if(which == -1) ++anim;
   else if(which == -2) --anim;
 
-  map<string, int> anim_map = mod->GetAnimations();
+  map<string, int> anim_map = mod[modnum]->GetAnimations();
   if(which < 0) {
     map<string, int>::const_iterator itr = anim_map.begin();
     for(; itr != anim_map.end(); ++itr) {
@@ -60,7 +61,7 @@ static void SetAnim(int which, string anim_name = "") {
       }
     }
   else if(anim_map.count(anim_name)) {
-    anim = mod->LookUpAnimation(anim_name);
+    anim = mod[modnum]->LookUpAnimation(anim_name);
     }
   else {
     return;
@@ -84,22 +85,22 @@ static void SetAnim(int which, string anim_name = "") {
   }
 
 int main(int argc, char **argv) {
-  int xs=800, ys=600;
-  const char *modname = "";
+  int xs=1024, ys=1024;
+  vector<string> modname;
   const char *weapname = "";
   Uint32 bgcolor = 0x000000;	// Default Background Color is Black
 
   int barg = 1;
-  while(argc > barg && (strcmp(argv[barg], "-s") == 0
+  while(argc > barg && (strcmp(argv[barg], "-p") == 0
 		|| strcmp(argv[barg], "-v") == 0
 		|| strcmp(argv[barg], "-c") == 0
 		|| strcmp(argv[barg], "-w") == 0
 	)) {
     if(argc <= barg+1) {
-      fprintf(stderr, "ERROR: -s/-w/-c requires file argument\n");
+      fprintf(stderr, "ERROR: -p/-w/-c requires file argument\n");
       exit(1);
       }
-    if(strcmp(argv[barg], "-s") == 0) {
+    if(strcmp(argv[barg], "-p") == 0) {
       SimpleModel::AddSourceFile(argv[barg+1]);
       }
     else if(strcmp(argv[barg], "-w") == 0) {
@@ -122,11 +123,9 @@ int main(int argc, char **argv) {
     }
 
   if((argc-barg) < 1) {
-    fprintf(stderr, "USAGE: %s [-s <search_prefix> [...]] <model_file>|<model_dir> [ skin ... ]\n", argv[0]);
+    fprintf(stderr, "USAGE: %s [-p <search_prefix> [...]] [-s <skin>] <model_file>|<model_dir> ...\n", argv[0]);
     exit(1);
     }
-
-  modname = argv[barg];
 
   if(!init_renderer(xs, ys, bgcolor)) {
     fprintf(stderr, "Warning!  Graphics failed to init!\n");
@@ -141,30 +140,33 @@ int main(int argc, char **argv) {
   banner->SetTextAspectRatio(16.0);
 
   vector<string> skinname;
-  barg += 1;
   while(argc-barg >= 1) {
-    skinname.push_back(argv[barg]);
-    ++barg;
-    }
-
-  mod = SM_LoadModel(modname, skinname);
-  if(!mod) {
-    fprintf(stderr, "ERROR: Model load failed\n");
-    exit(1);
-    }
-  if(strlen(weapname) > 0) {
-    weap = SM_LoadModel(weapname);	//FIXME: Weapon Skin?
-    if(weap) {
-      mod->AttachSubmodel("tag_weapon", weap);
+    if(argc-barg >= 2 && strcmp(argv[barg], "-s") == 0) {
+      skinname.push_back(argv[barg + 1]);
+      barg += 2;
       }
-    }
-
-  if(verbose) {
-    map<string, int> anim_map = mod->GetAnimations();
-    map<string, int>::const_iterator anim = anim_map.begin();
-    printf("Model has these animations:\n");
-    for(; anim != anim_map.end(); ++anim) {
-      printf("\t%s\n", anim->first.c_str());
+    else {
+      fprintf(stderr, "Loading: '%s'\n", argv[barg]);
+      mod.push_back(SM_LoadModel(argv[barg], skinname));
+      if(!(mod.back())) {
+        fprintf(stderr, "ERROR: Model load failed\n");
+        exit(1);
+        }
+      if(strlen(weapname) > 0) {
+        weap = SM_LoadModel(weapname);	//FIXME: Weapon Skin?
+        if(weap) {
+          mod.back()->AttachSubmodel("tag_weapon", weap);
+          }
+        }
+      if(verbose) {
+        map<string, int> anim_map = mod.back()->GetAnimations();
+        map<string, int>::const_iterator anim = anim_map.begin();
+        printf("Model has these animations:\n");
+        for(; anim != anim_map.end(); ++anim) {
+          printf("\t%s\n", anim->first.c_str());
+          }
+        }
+      ++barg;
       }
     }
 
@@ -173,7 +175,7 @@ int main(int argc, char **argv) {
   times.push_back(SDL_GetTicks());
   times.push_back(SDL_GetTicks());
 
-  { map<string, int> anim_map = mod->GetAnimations();
+  { map<string, int> anim_map = mod.back()->GetAnimations();
     map<string, int>::const_iterator itr = anim_map.begin();
     for(; itr != anim_map.end(); ++itr) {
       if(0 == itr->second) banner->SetText(itr->first);
@@ -227,6 +229,13 @@ int main(int argc, char **argv) {
 	else if(event.key.keysym.sym == SDLK_UP)   pitch += 5.0;
 	else if(event.key.keysym.sym == SDLK_DOWN) pitch -= 5.0;
 
+	else if(event.key.keysym.sym == SDLK_HOME) posy += 0.5;
+	else if(event.key.keysym.sym == SDLK_END) posy -= 0.5;
+	else if(event.key.keysym.sym == SDLK_PAGEDOWN) posz += 0.5;
+	else if(event.key.keysym.sym == SDLK_PAGEUP) posz -= 0.5;
+	else if(event.key.keysym.sym == SDLK_EQUALS)  posx += 0.5;
+	else if(event.key.keysym.sym == SDLK_MINUS) posx -= 0.5;
+
 	else if(event.key.keysym.sym == SDLK_KP6) posy += 0.5;
 	else if(event.key.keysym.sym == SDLK_KP4) posy -= 0.5;
 	else if(event.key.keysym.sym == SDLK_KP8) posz += 0.5;
@@ -234,6 +243,12 @@ int main(int argc, char **argv) {
 	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += 0.5;
 	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= 0.5;
 
+	else if(event.key.keysym.sym == SDLK_SPACE) {
+          if(modnum < mod.size() - 1) ++modnum;
+          }
+	else if(event.key.keysym.sym == SDLK_BACKSPACE) {
+          if(modnum > 0) --modnum;
+          }
 	else {
 	  }
 	}
@@ -243,7 +258,7 @@ int main(int argc, char **argv) {
     glRotatef(yaw, 0.0, 0.0, 1.0);
     glRotatef(pitch, 0.0, 1.0, 0.0);
     glTranslatef(0.0, 0.0, -2.0);
-    mod->Render(SDL_GetTicks(), anims, times);
+    mod[modnum]->Render(SDL_GetTicks(), anims, times);
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
