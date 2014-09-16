@@ -64,6 +64,10 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
       exit(1);
       }
     }
+
+  // Found some with an extra space in this field - detect and fix that
+  if(ret[ret.length()-1] == ' ') ret = ret.substr(0, ret.length()-1);
+
 //  fprintf(stderr, "[%u] '%s'\n", len, ret.c_str());
   return ret;
   }
@@ -183,45 +187,9 @@ bool SimpleModel_PMX::Load(const string &filenm,
       SDL_RWseek(model, 4, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
       }
-    else if(weight_type == 4) {
+    else if(weight_type == 3) {
       SDL_RWseek(model, bone_index_size, SEEK_CUR);
       SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
 
       SDL_RWseek(model, 4, SEEK_CUR);
@@ -236,12 +204,20 @@ bool SimpleModel_PMX::Load(const string &filenm,
       SDL_RWseek(model, 4, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
       }
+    else {
+      fprintf(stderr, "ERROR: Unknown weight_type: %u\n", weight_type);
+      exit(1);
+      }
 
     SDL_RWseek(model, 4, SEEK_CUR);
     }
 
   Uint32 num_triangles;
   freadLE(num_triangles, model);
+  if(num_triangles % 3 != 0) {
+    fprintf(stderr, "ERROR: num_triangle verts (%u) % 3 != 0\n", num_triangles);
+    exit(1);
+    }
   num_triangles /= 3;
   triangles.resize(num_triangles);
   for(Uint32 tri = 0; tri < num_triangles; ++tri) {
@@ -278,6 +254,10 @@ bool SimpleModel_PMX::Load(const string &filenm,
     SimpleTexture *tmptex = new SimpleTexture(texfile.c_str());
     if(tmptex->type != SIMPLETEXTURE_NONE) {
       texture[tex] = tmptex;
+      }
+    else {
+      fprintf(stderr, "WARNING: Failed to load tex '%s'\n", texfile.c_str());
+      texture[tex] = new SimpleTexture(0);
       }
     }
 
@@ -349,7 +329,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         to_next_mat = tri + material[mat].num_tris;
         } while(tri >= to_next_mat);
       if(tri > 0) glEnd();
-      glBindTexture(GL_TEXTURE_2D, texture[material[mat].texidx]->GLTexture());
+      Uint32 tex = material[mat].texidx;
+      if(tex != 255) {
+        glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
+        }
       if(material[mat].mode & 0x01) {
         glDisable(GL_CULL_FACE);
         }
