@@ -215,7 +215,7 @@ bool SimpleModel_PMX::Load(const string &filenm,
   Uint32 num_triangles;
   freadLE(num_triangles, model);
   if(num_triangles % 3 != 0) {
-    fprintf(stderr, "ERROR: num_triangle verts (%u) % 3 != 0\n", num_triangles);
+    fprintf(stderr, "ERROR: num_triangles (%u) %% 3 != 0\n", num_triangles);
     exit(1);
     }
   num_triangles /= 3;
@@ -257,7 +257,7 @@ bool SimpleModel_PMX::Load(const string &filenm,
       }
     else {
       fprintf(stderr, "WARNING: Failed to load tex '%s'\n", texfile.c_str());
-      texture[tex] = new SimpleTexture(0);
+      texture[tex] = NULL;
       }
     }
 
@@ -268,11 +268,23 @@ bool SimpleModel_PMX::Load(const string &filenm,
     ReadString(model); // Name (Japanese)
     ReadString(model); // Name (English)
 
-    SDL_RWseek(model, 16, SEEK_CUR); // Difuse Color
-    SDL_RWseek(model, 12, SEEK_CUR); // Specular Color
-    SDL_RWseek(model, 4, SEEK_CUR); // Specularity
-    SDL_RWseek(model, 12, SEEK_CUR); // Ambient Color
+    freadLE(material[mat].diffuse[0], model);
+    freadLE(material[mat].diffuse[1], model);
+    freadLE(material[mat].diffuse[2], model);
+    freadLE(material[mat].diffuse[3], model);
+
+    freadLE(material[mat].specular[0], model);
+    freadLE(material[mat].specular[1], model);
+    freadLE(material[mat].specular[2], model);
+
+    freadLE(material[mat].specularity, model);
+
+    freadLE(material[mat].ambient[0], model);
+    freadLE(material[mat].ambient[1], model);
+    freadLE(material[mat].ambient[2], model);
+
     freadLE(material[mat].mode, model); // Drawing Mode
+
     SDL_RWseek(model, 16, SEEK_CUR); // Edge Color
     SDL_RWseek(model, 4, SEEK_CUR); // Edge Size
 
@@ -322,6 +334,21 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
 
+  double angle = cur_time / 360.0;
+  GLfloat light_position[] = { GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0 };
+  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 0.0};
+  GLfloat light_diffuse[] = {0.3, 0.3, 0.3, 0.0};
+  GLfloat light_specular[] = {1.0, 1.0, 1.0, 0.0};
+  glClearColor (0.0, 0.0, 0.0, 0.0);
+  glShadeModel (GL_SMOOTH);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glEnable(GL_DEPTH_TEST);
+
   for(Uint32 tri = 0; tri < triangles.size(); tri++) {
     if(tri >= to_next_mat) {
       do {
@@ -330,7 +357,11 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         } while(tri >= to_next_mat);
       if(tri > 0) glEnd();
       Uint32 tex = material[mat].texidx;
-      if(tex != 255) {
+      if(tex == 255 || !texture[tex]) {
+        glDisable(GL_TEXTURE);
+        }
+      else {
+        glEnable(GL_TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
         }
       if(material[mat].mode & 0x01) {
@@ -339,6 +370,12 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       else {
         glEnable(GL_CULL_FACE);
         }
+
+      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material[mat].diffuse);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material[mat].specular);
+      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material[mat].specularity);
+
       glBegin(GL_TRIANGLES);
       }
     for(Uint32 vert = 0; vert < 3; ++vert) {

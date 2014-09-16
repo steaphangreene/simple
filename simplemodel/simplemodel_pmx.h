@@ -59,6 +59,10 @@ protected:
     Uint8 mode;
     Uint32 texidx;
     Uint32 num_tris;
+    float ambient[3];
+    float diffuse[4];
+    float specular[3];
+    float specularity;
     };
 
   Uint32 num_tags;	// Number of tags PER FRAME
