@@ -334,21 +334,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
 
-  double angle = cur_time / 360.0;
-  GLfloat light_position[] = { GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0 };
-  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 0.0};
-  GLfloat light_diffuse[] = {0.3, 0.3, 0.3, 0.0};
-  GLfloat light_specular[] = {1.0, 1.0, 1.0, 0.0};
-  glClearColor (0.0, 0.0, 0.0, 0.0);
-  glShadeModel (GL_SMOOTH);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-  glEnable(GL_DEPTH_TEST);
-
   for(Uint32 tri = 0; tri < triangles.size(); tri++) {
     if(tri >= to_next_mat) {
       do {

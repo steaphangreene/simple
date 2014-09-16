@@ -23,6 +23,7 @@
 #include "SDL_opengl.h"
 #include "SDL_keysym.h"
 
+#include <cmath>
 #include <cstdio>
 #include <string>
 
@@ -41,6 +42,8 @@ static SimpleModel *weap = NULL;
 static SimpleTexture *banner = NULL;
 
 static bool verbose = false;
+
+static Uint32 cur_time;
 
 static void SetAnim(int which, string anim_name = "") {
   static int anim = 0;
@@ -70,16 +73,16 @@ static void SetAnim(int which, string anim_name = "") {
   if(which == 0) {
     anims[0] = anim;
     anims[1] = anim;
-    times[0] = SDL_GetTicks();
-    times[1] = SDL_GetTicks();
+    times[0] = cur_time;
+    times[1] = cur_time;
     }
   else if(which == 1) {
     anims[1] = anim;
-    times[1] = SDL_GetTicks();
+    times[1] = cur_time;
     }
   else {
     anims[0] = anim;
-    times[0] = SDL_GetTicks();
+    times[0] = cur_time;
     }
   if(anim_name.length() > 0) banner->SetText(anim_name);
   }
@@ -170,10 +173,12 @@ int main(int argc, char **argv) {
       }
     }
 
+  cur_time = SDL_GetTicks();
+
   anims.push_back(0);
   anims.push_back(0);
-  times.push_back(SDL_GetTicks());
-  times.push_back(SDL_GetTicks());
+  times.push_back(cur_time);
+  times.push_back(cur_time);
 
   { map<string, int> anim_map = mod.back()->GetAnimations();
     map<string, int>::const_iterator itr = anim_map.begin();
@@ -254,6 +259,24 @@ int main(int argc, char **argv) {
 	}
       }
     start_scene();
+
+    cur_time = SDL_GetTicks();
+
+    double angle = cur_time / 360.0;
+    GLfloat light_position[] = { GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0 };
+    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 0.0 };
+    GLfloat light_diffuse[] = { 0.3, 0.3, 0.3, 0.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 0.0 };
+    glClearColor (0.0, 0.0, 0.0, 0.0);
+    glShadeModel (GL_SMOOTH);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glEnable(GL_DEPTH_TEST);
+
     glTranslatef(posx, posy, posz);
     glRotatef(yaw, 0.0, 0.0, 1.0);
     glRotatef(pitch, 0.0, 1.0, 0.0);
@@ -268,8 +291,6 @@ int main(int argc, char **argv) {
     glPushMatrix();
     glLoadIdentity();
 
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
 
