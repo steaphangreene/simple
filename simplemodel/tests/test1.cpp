@@ -197,37 +197,53 @@ int main(int argc, char **argv) {
     quit = 1;
     }
       else if(event.type == SDL_KEYDOWN) {
-	if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+        int toggle = -1;
+	if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
 	else if(event.key.keysym.sym == SDLK_RIGHTBRACKET) SetAnim(-1);
 	else if(event.key.keysym.sym == SDLK_LEFTBRACKET) SetAnim(-2);
 
-	else if(event.key.keysym.sym == SDLK_1) SetAnim(0, "BOTH_DEATH1");
-	else if(event.key.keysym.sym == SDLK_2) SetAnim(0, "BOTH_DEAD1");
-	else if(event.key.keysym.sym == SDLK_3) SetAnim(0, "BOTH_DEATH2");
-	else if(event.key.keysym.sym == SDLK_4) SetAnim(0, "BOTH_DEAD2");
-	else if(event.key.keysym.sym == SDLK_5) SetAnim(0, "BOTH_DEATH3");
-	else if(event.key.keysym.sym == SDLK_6) SetAnim(0, "BOTH_DEAD3");
+        if (event.key.keysym.mod & KMOD_SHIFT) {
+          if(event.key.keysym.sym == SDLK_F1) SetAnim(1, "TORSO_GESTURE");
+          else if(event.key.keysym.sym == SDLK_F2) SetAnim(1, "TORSO_ATTACK");
+          else if(event.key.keysym.sym == SDLK_F3) SetAnim(1, "TORSO_ATTACK2");
+          else if(event.key.keysym.sym == SDLK_F4) SetAnim(1, "TORSO_DROP");
+          else if(event.key.keysym.sym == SDLK_F5) SetAnim(1, "TORSO_RAISE");
+          else if(event.key.keysym.sym == SDLK_F6) SetAnim(1, "TORSO_STAND");
+          else if(event.key.keysym.sym == SDLK_F7) SetAnim(1, "TORSO_STAND2");
+          }
+        else if (event.key.keysym.mod & KMOD_CTRL) {
+          if(event.key.keysym.sym == SDLK_F1) SetAnim(2, "LEGS_WALKCR");
+          else if(event.key.keysym.sym == SDLK_F2) SetAnim(2, "LEGS_WALK");
+          else if(event.key.keysym.sym == SDLK_F3) SetAnim(2, "LEGS_RUN");
+          else if(event.key.keysym.sym == SDLK_F4) SetAnim(2, "LEGS_BACK");
+          else if(event.key.keysym.sym == SDLK_F5) SetAnim(2, "LEGS_SWIM");
+          else if(event.key.keysym.sym == SDLK_F6) SetAnim(2, "LEGS_JUMP");
+          else if(event.key.keysym.sym == SDLK_F7) SetAnim(2, "LEGS_LAND");
+          else if(event.key.keysym.sym == SDLK_F8) SetAnim(2, "LEGS_JUMPB");
+          else if(event.key.keysym.sym == SDLK_F9) SetAnim(2, "LEGS_LANDB");
+          else if(event.key.keysym.sym == SDLK_F10) SetAnim(2, "LEGS_IDLE");
+          else if(event.key.keysym.sym == SDLK_F11) SetAnim(2, "LEGS_IDLECR");
+          else if(event.key.keysym.sym == SDLK_F12) SetAnim(2, "LEGS_TURN");
+          }
+        else {
+          if(event.key.keysym.sym == SDLK_F1) SetAnim(0, "BOTH_DEATH1");
+          else if(event.key.keysym.sym == SDLK_F2) SetAnim(0, "BOTH_DEAD1");
+          else if(event.key.keysym.sym == SDLK_F3) SetAnim(0, "BOTH_DEATH2");
+          else if(event.key.keysym.sym == SDLK_F4) SetAnim(0, "BOTH_DEAD2");
+          else if(event.key.keysym.sym == SDLK_F5) SetAnim(0, "BOTH_DEATH3");
+          else if(event.key.keysym.sym == SDLK_F6) SetAnim(0, "BOTH_DEAD3");
+          }
 
-	else if(event.key.keysym.sym == SDLK_q) SetAnim(1, "TORSO_GESTURE");
-	else if(event.key.keysym.sym == SDLK_w) SetAnim(1, "TORSO_ATTACK");
-	else if(event.key.keysym.sym == SDLK_e) SetAnim(1, "TORSO_ATTACK2");
-	else if(event.key.keysym.sym == SDLK_r) SetAnim(1, "TORSO_DROP");
-	else if(event.key.keysym.sym == SDLK_t) SetAnim(1, "TORSO_RAISE");
-	else if(event.key.keysym.sym == SDLK_y) SetAnim(1, "TORSO_STAND");
-	else if(event.key.keysym.sym == SDLK_u) SetAnim(1, "TORSO_STAND2");
-
-	else if(event.key.keysym.sym == SDLK_a) SetAnim(2, "LEGS_WALKCR");
-	else if(event.key.keysym.sym == SDLK_s) SetAnim(2, "LEGS_WALK");
-	else if(event.key.keysym.sym == SDLK_d) SetAnim(2, "LEGS_RUN");
-	else if(event.key.keysym.sym == SDLK_f) SetAnim(2, "LEGS_BACK");
-	else if(event.key.keysym.sym == SDLK_g) SetAnim(2, "LEGS_SWIM");
-	else if(event.key.keysym.sym == SDLK_h) SetAnim(2, "LEGS_JUMP");
-	else if(event.key.keysym.sym == SDLK_j) SetAnim(2, "LEGS_LAND");
-	else if(event.key.keysym.sym == SDLK_k) SetAnim(2, "LEGS_JUMPB");
-	else if(event.key.keysym.sym == SDLK_l) SetAnim(2, "LEGS_LANDB");
-	else if(event.key.keysym.sym == SDLK_SEMICOLON) SetAnim(2, "LEGS_IDLE");
-	else if(event.key.keysym.sym == SDLK_QUOTE) SetAnim(2, "LEGS_IDLECR");
-	else if(event.key.keysym.sym == SDLK_RETURN) SetAnim(2, "LEGS_TURN");
+	if(event.key.keysym.sym == SDLK_0) toggle = 0;
+	else if(event.key.keysym.sym == SDLK_1) toggle = 1;
+	else if(event.key.keysym.sym == SDLK_2) toggle = 2;
+	else if(event.key.keysym.sym == SDLK_3) toggle = 3;
+	else if(event.key.keysym.sym == SDLK_4) toggle = 4;
+	else if(event.key.keysym.sym == SDLK_5) toggle = 5;
+	else if(event.key.keysym.sym == SDLK_6) toggle = 6;
+	else if(event.key.keysym.sym == SDLK_7) toggle = 7;
+	else if(event.key.keysym.sym == SDLK_8) toggle = 8;
+	else if(event.key.keysym.sym == SDLK_9) toggle = 9;
 
 	else if(event.key.keysym.sym == SDLK_RIGHT) yaw += 5.0;
 	else if(event.key.keysym.sym == SDLK_LEFT)  yaw -= 5.0;
@@ -256,6 +272,14 @@ int main(int argc, char **argv) {
           }
 	else {
 	  }
+        if(toggle >= 0) {
+          if (event.key.keysym.mod & KMOD_SHIFT) toggle += 10;
+          if (event.key.keysym.mod & KMOD_CTRL) toggle += 20;
+          if (event.key.keysym.mod & KMOD_ALT) toggle += 40;
+
+          fprintf(stderr, "Toggling material %u\n", toggle);
+          mod[modnum]->ToggleMaterial(toggle);
+          }
 	}
       }
     start_scene();

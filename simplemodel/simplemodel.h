@@ -71,6 +71,26 @@ public:
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm) {};
 
+  void DisableMaterial(int matnum) {
+    disabled_materials.insert(matnum);
+    };
+  void EnableMaterial(int matnum) {
+    disabled_materials.erase(matnum);
+    };
+  void ToggleMaterial(int matnum) {
+    if(MaterialDisabled(matnum)) {
+      EnableMaterial(matnum);
+      }
+    else {
+      DisableMaterial(matnum);
+      }
+    };
+  bool MaterialDisabled(int matnum) const {
+    return (disabled_materials.count(matnum) > 0);
+    };
+
+  set<int> disabled_materials;
+
   //Configuration Functions
   static void AddSourceFile(const string &in);
   static void ClearSourceFiles();

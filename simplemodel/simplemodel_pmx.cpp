@@ -61,7 +61,8 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
       freadLE(ch[1], model);
       char *utf8 = (char*)malloc(32);
       memset(utf8, 0, 32);
-//      if (iconv_string("UTF-8", "Shift_JIS",
+
+//    The docs seem to be wrong, these are in UTF-16, not Shift_JIS.  :/
       if (iconv_string("UTF-8", "UTF-16LE",
                        ch, ch+2,
                        &utf8, NULL) < 0)
@@ -350,6 +351,9 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         to_next_mat = tri + material[mat].num_tris;
         } while(tri >= to_next_mat);
       if(tri > 0) glEnd();
+
+      if(MaterialDisabled(mat)) continue;
+
       Uint32 tex = material[mat].texidx;
       if(tex == 255 || !texture[tex]) {
         glDisable(GL_TEXTURE);
