@@ -31,6 +31,7 @@ using namespace std;
 
 #include "simplemodel_pmx.h"
 #include "saferead.h"
+#include "iconv_string.h"
 
 SimpleModel_PMX::SimpleModel_PMX(const string &filenm,
 	const string &defskin) {
@@ -55,9 +56,17 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
       }
     else if(text_encoding == 0) {
       ++i;
-      Uint16 ch;
-      freadLE(ch, model);
-      ret += char(ch);
+      char ch[2];
+      freadLE(ch[0], model);
+      freadLE(ch[1], model);
+      char *utf8 = (char*)malloc(32);
+      memset(utf8, 0, 32);
+//      if (iconv_string("UTF-8", "Shift_JIS",
+      if (iconv_string("UTF-8", "UTF-16LE",
+                       ch, ch+2,
+                       &utf8, NULL) < 0)
+        perror("iconv_string");
+      ret += utf8;
       }
     else {
       fprintf(stderr, "ERROR: Bad text encoding [%u]!\n", text_encoding);
