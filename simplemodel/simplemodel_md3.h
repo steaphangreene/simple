@@ -87,7 +87,7 @@ protected:
 
   struct MD3Triangle {
     float vertex[3];
-    Uint8 normal[2];	// FIXME: Don't know how these work yet.
+    float normal[3];
     };
 
   struct MD3Mesh {

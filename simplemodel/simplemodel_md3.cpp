@@ -219,7 +219,14 @@ bool SimpleModel_MD3::Load(const string &filenm,
       freadLE(tmp, model);
       meshes[meshnum].triangles[vert].vertex[2] = float(tmp) / 64.0F;
 
-      SDL_RWread(model, meshes[meshnum].triangles[vert].normal, 1, 2); // FIXME: What are these for?
+      Uint8 norm[2];
+      SDL_RWread(model, norm, 1, 2);
+
+      float lat = norm[0] * (2.0 * M_PI) / 255.0;
+      float lng = norm[1] * (2.0 * M_PI) / 255.0;
+      meshes[meshnum].triangles[vert].normal[0] = cos(lng) * sin(lat);
+      meshes[meshnum].triangles[vert].normal[1] = sin(lng) * sin(lat);
+      meshes[meshnum].triangles[vert].normal[2] = cos(lat);
       }
 
     // Point offset to the next mesh location in the file
@@ -330,8 +337,17 @@ bool SimpleModel_MD3::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	  float y2 = meshes[obj].triangles[vertindex2 + index].vertex[1];
 	  float z2 = meshes[obj].triangles[vertindex2 + index].vertex[2];
 
+	  float nx1 = meshes[obj].triangles[vertindex + index].normal[0];
+	  float ny1 = meshes[obj].triangles[vertindex + index].normal[1];
+	  float nz1 = meshes[obj].triangles[vertindex + index].normal[2];
+
+	  float nx2 = meshes[obj].triangles[vertindex2 + index].normal[0];
+	  float ny2 = meshes[obj].triangles[vertindex2 + index].normal[1];
+	  float nz2 = meshes[obj].triangles[vertindex2 + index].normal[2];
+
 	  float s1 = (1.0f - s2);
 
+	  glNormal3f(s1*nx1 + s2*nx2, s1*ny1 + s2*ny2, s1*nz1 + s2*nz2);
 	  glVertex3f(s1*x1 + s2*x2, s1*y1 + s2*y2, s1*z1 + s2*z2);
 	  }
         }
