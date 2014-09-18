@@ -102,14 +102,14 @@ bool SimpleModel_PMX::Load(const string &filenm,
   //Read parts of the header of the PMX file
   SDL_RWread(model, &magic, 1, sizeof(magic));
   if(strncmp((char *)magic, "PMX ", 4)) {
-    fprintf(stderr, "WARNING: File '%s' is not an PMX file!\n",
+    fprintf(stderr, "WARNING: File '%s' is not a PMX file!\n",
 	filename.c_str());
     SDL_RWclose(model);
     return false;
     }
   freadLE(filever, model);
   if(filever != 2.0) {
-    fprintf(stderr, "WARNING: File '%s' is not an v2.0 PMX file!\n",
+    fprintf(stderr, "WARNING: File '%s' is not a v2.0 PMX file!\n",
 	filename.c_str());
     SDL_RWclose(model);
     return false;

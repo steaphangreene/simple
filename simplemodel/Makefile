@@ -35,7 +35,8 @@ WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpn
 
 OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
-	$(ARCH)/simplemodel_pmx.o $(ARCH)/iconv_string.o \
+	$(ARCH)/simplemodel_pmx.o $(ARCH)/simplemodel_pmd.o \
+	$(ARCH)/iconv_string.o \
 	$(ARCH)/simplemodel_md.o $(ARCH)/simplemodel_mdx.o \
 	$(ARCH)/simplemodel_sphere.o $(ARCH)/simplemodel_wedge.o \
 	$(ARCH)/simplemodel_cone.o $(ARCH)/simplemodel_cube.o \
@@ -47,7 +48,8 @@ CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletextur
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
-	simplemodel_pmx.win32_o iconv_string.win32_o \
+	simplemodel_pmx.win32_o simplemodel_pmd.win32_o \
+	iconv_string.win32_o \
 	simplemodel_md.win32_o simplemodel_mdx.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
 	simplemodel_cone.win32_o simplemodel_cube.win32_o \

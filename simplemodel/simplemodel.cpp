@@ -33,6 +33,7 @@ using namespace std;
 #include "simplemodel_md2.h"
 #include "simplemodel_md3.h"
 #include "simplemodel_pmx.h"
+#include "simplemodel_pmd.h"
 #include "simplemodel_mdx.h"
 #include "simplemodel_3ds.h"
 #include "simplemodel_obj.h"
@@ -94,6 +95,11 @@ SimpleModel *SimpleModel::LoadModel(
   if(filename.length() >= 3
 	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "pmx"))) {
     return new SimpleModel_PMX(filename);
+    }
+
+  if(filename.length() >= 3
+	&& (!strcasecmp(filename.c_str() + filename.length() - 3, "pmd"))) {
+    return new SimpleModel_PMD(filename);
     }
 
   if(filename.length() >= 3
