@@ -194,14 +194,11 @@ int main(int argc, char **argv) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
       if(event.type == SDL_QUIT) {
-    quit = 1;
-    }
+        quit = 1;
+        }
       else if(event.type == SDL_KEYDOWN) {
         int toggle = -1;
-	if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-	else if(event.key.keysym.sym == SDLK_RIGHTBRACKET) SetAnim(-1);
-	else if(event.key.keysym.sym == SDLK_LEFTBRACKET) SetAnim(-2);
-
+        float dist = 1.0;
         if (event.key.keysym.mod & KMOD_SHIFT) {
           if(event.key.keysym.sym == SDLK_F1) SetAnim(1, "TORSO_GESTURE");
           else if(event.key.keysym.sym == SDLK_F2) SetAnim(1, "TORSO_ATTACK");
@@ -234,7 +231,11 @@ int main(int argc, char **argv) {
           else if(event.key.keysym.sym == SDLK_F6) SetAnim(0, "BOTH_DEAD3");
           }
 
-	if(event.key.keysym.sym == SDLK_0) toggle = 0;
+	if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+	else if(event.key.keysym.sym == SDLK_RIGHTBRACKET) SetAnim(-1);
+	else if(event.key.keysym.sym == SDLK_LEFTBRACKET) SetAnim(-2);
+
+	else if(event.key.keysym.sym == SDLK_0) toggle = 0;
 	else if(event.key.keysym.sym == SDLK_1) toggle = 1;
 	else if(event.key.keysym.sym == SDLK_2) toggle = 2;
 	else if(event.key.keysym.sym == SDLK_3) toggle = 3;
@@ -245,24 +246,34 @@ int main(int argc, char **argv) {
 	else if(event.key.keysym.sym == SDLK_8) toggle = 8;
 	else if(event.key.keysym.sym == SDLK_9) toggle = 9;
 
-	else if(event.key.keysym.sym == SDLK_RIGHT) yaw += 5.0;
-	else if(event.key.keysym.sym == SDLK_LEFT)  yaw -= 5.0;
-	else if(event.key.keysym.sym == SDLK_UP)   pitch += 5.0;
-	else if(event.key.keysym.sym == SDLK_DOWN) pitch -= 5.0;
+        if (event.key.keysym.mod & KMOD_SHIFT) {
+          dist /= 4.0;
+          }
+        if (event.key.keysym.mod & KMOD_CTRL) {
+          dist /= 16.0;
+          }
+        if (event.key.keysym.mod & KMOD_ALT) {
+          dist /= 64.0;
+          }
 
-	else if(event.key.keysym.sym == SDLK_HOME) posy += 0.5;
-	else if(event.key.keysym.sym == SDLK_END) posy -= 0.5;
-	else if(event.key.keysym.sym == SDLK_PAGEDOWN) posz += 0.5;
-	else if(event.key.keysym.sym == SDLK_PAGEUP) posz -= 0.5;
-	else if(event.key.keysym.sym == SDLK_EQUALS)  posx += 0.5;
-	else if(event.key.keysym.sym == SDLK_MINUS) posx -= 0.5;
+	if(event.key.keysym.sym == SDLK_RIGHT) yaw += 8.0 * dist;
+	else if(event.key.keysym.sym == SDLK_LEFT)  yaw -= 8.0 * dist;
+	else if(event.key.keysym.sym == SDLK_UP)   pitch += 8.0 * dist;
+	else if(event.key.keysym.sym == SDLK_DOWN) pitch -= 8.0 * dist;
 
-	else if(event.key.keysym.sym == SDLK_KP6) posy += 0.5;
-	else if(event.key.keysym.sym == SDLK_KP4) posy -= 0.5;
-	else if(event.key.keysym.sym == SDLK_KP8) posz += 0.5;
-	else if(event.key.keysym.sym == SDLK_KP2) posz -= 0.5;
-	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += 0.5;
-	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= 0.5;
+	else if(event.key.keysym.sym == SDLK_HOME) posy += dist;
+	else if(event.key.keysym.sym == SDLK_END) posy -= dist;
+	else if(event.key.keysym.sym == SDLK_PAGEDOWN) posz += dist;
+	else if(event.key.keysym.sym == SDLK_PAGEUP) posz -= dist;
+	else if(event.key.keysym.sym == SDLK_EQUALS)  posx += dist;
+	else if(event.key.keysym.sym == SDLK_MINUS) posx -= dist;
+
+	else if(event.key.keysym.sym == SDLK_KP6) posy += dist;
+	else if(event.key.keysym.sym == SDLK_KP4) posy -= dist;
+	else if(event.key.keysym.sym == SDLK_KP8) posz += dist;
+	else if(event.key.keysym.sym == SDLK_KP2) posz -= dist;
+	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += dist;
+	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= dist;
 
 	else if(event.key.keysym.sym == SDLK_SPACE) {
           if(modnum < mod.size() - 1) ++modnum;
