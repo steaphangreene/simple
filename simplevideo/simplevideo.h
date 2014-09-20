@@ -81,6 +81,7 @@ public:
 
   void SBSOn() { sbs = true; ResizeGL(xsize, ysize); }
   void SBSOff() { sbs = false; ResizeGL(xsize, ysize); }
+  void ToggleSBS() { sbs = !sbs; ResizeGL(xsize, ysize); }
 
   void SetScene(SimpleScene *scene);
   void SetGUI(SimpleGUI *gui);

@@ -147,7 +147,6 @@ int main(int argc, char **argv) {
 
   video->EnableLighting();
   video->SetPerspective(90.0);
-  video->SBSOn();
   video->SetScene(scene);
   video->SetGUI(gui);
 
@@ -298,6 +297,9 @@ int main(int argc, char **argv) {
 	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += dist;
 	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= dist;
 
+	else if(event.key.keysym.sym == SDLK_TAB) {
+          video->ToggleSBS();
+          }
 	else if(event.key.keysym.sym == SDLK_SPACE) {
           if(modnum < mod.size() - 1) ++modnum;
           }

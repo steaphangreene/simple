@@ -92,7 +92,6 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
     video_flags |= SDL_FULLSCREEN;
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-//  SDL_GL_SetAttribute(SDL_GL_STEREO, 1);
 
   ResizeGL(xsize, ysize);
 
@@ -308,10 +307,24 @@ bool SimpleVideo::FinishScene() {
   }
 
 bool SimpleVideo::Render(Uint32 cur_time) {
+  if(sbs) {
+    glViewport(0, 0, (GLint)xsize/2, (GLint)ysize);
+    }
   if(!StartScene()) return false;
   if(gui && !gui->RenderStart(cur_time, true)) return false;
   if(scene && !scene->Render(cur_time)) return false;
   if(gui && !gui->RenderFinish(cur_time, true)) return false;
+  //FinishScene();
+
+  if(sbs) {
+    glViewport((GLint)xsize/2, 0, (GLint)xsize/2, (GLint)ysize);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glTranslatef(-0.2, 0.0, 0.0);
+    if(gui && !gui->RenderStart(cur_time, true)) return false;
+    if(scene && !scene->Render(cur_time)) return false;
+    if(gui && !gui->RenderFinish(cur_time, true)) return false;
+    }
   return FinishScene();
   }
 
