@@ -51,8 +51,8 @@ OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_dndboxes.o $(ARCH)/sg_tabs.o \
 	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o \
 	$(ARCH)/sg_spinner.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplemodel
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
@@ -64,8 +64,8 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_radiobuttons.win32_o sg_combobox.win32_o sg_pulldown.win32_o sg_sliderbar.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o sg_spinner.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplemodel
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 
 $(ARCH):
 	mkdir -p $(ARCH)

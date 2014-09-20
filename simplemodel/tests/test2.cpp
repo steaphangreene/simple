@@ -23,6 +23,10 @@
 #include "SDL_opengl.h"
 #include "SDL_keysym.h"
 
+#include "simplevideo.h"
+#include "simplescene.h"
+#include "simplegui.h"
+
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -30,8 +34,6 @@
 using namespace std;
 
 #include "../simplemodel.h"
-#include "../../simplevideo/simplevideo.h"
-#include "../../simplescene/simplescene.h"
 
 static vector<int> anims;
 static vector<Uint32> times;
@@ -132,9 +134,22 @@ int main(int argc, char **argv) {
 
   SimpleVideo *video = new SimpleVideo(1920, 1080, 0.0);
   SimpleScene *scene = new SimpleScene();
+  SimpleGUI *gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 16.0/9.0);
+
+  gui->SetDefaultTextColor(1.0, 1.0, 1.0);
+
+  SG_Table *grid = new SG_Table(16, 9);
+  gui->MasterWidget()->AddWidget(grid);
+
+  SG_TextArea *lab = new SG_TextArea("Default Animation");
+  grid->AddWidget(lab, 4, 0, 8, 1);
+
 
   video->EnableLighting();
   video->SetPerspective(90.0);
+  video->SBSOn();
+  video->SetScene(scene);
+  video->SetGUI(gui);
 
   SimpleTexture::SetColor(0, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
   banner = new SimpleTexture(0);
@@ -189,6 +204,10 @@ int main(int argc, char **argv) {
     for(; itr != anim_map.end(); ++itr) {
       if(0 == itr->second) banner->SetText(itr->first);
       }
+    }
+
+  for(int m = 0; m < sobj.size(); ++m) {
+    scene->MoveObject(sobj[m], 0.0, m * 2.0, 0.0);
     }
 
   int quit = 0;
@@ -301,63 +320,10 @@ int main(int argc, char **argv) {
     video->SetZPosition(posz, 100);
     video->SetAngle(yaw, 100);
     video->SetDown(pitch, 100);
-    video->StartScene();
 
     cur_time = SDL_GetTicks();
 
-    double angle = cur_time / 360.0;
-    GLfloat light_position[] = { GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0 };
-    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 0.0 };
-    GLfloat light_diffuse[] = { 0.3, 0.3, 0.3, 0.0 };
-    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 0.0 };
-    glClearColor (0.0, 0.0, 0.0, 0.0);
-    glShadeModel (GL_SMOOTH);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glEnable(GL_DEPTH_TEST);
-
-    for(int m = 0; m < sobj.size(); ++m) {
-      scene->MoveObject(sobj[m], 0.0, m * 2.0, 0.0);
-      }
-    scene->Render(cur_time);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-0.5, 0.75, 0.0);
-    glScalef(1.0, 0.25, 1.0);
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glDisable(GL_LIGHTING);
-
-    glBindTexture(GL_TEXTURE_2D, banner->GLTexture());
-
-    glBegin(GL_QUADS);
-      glTexCoord2f(banner->ScaleX(0.0), banner->ScaleY(1.0));
-      glVertex3f(0.0, 0.0, 0.0);
-      glTexCoord2f(banner->ScaleX(1.0), banner->ScaleY(1.0));
-      glVertex3f(1.0, 0.0, 0.0);
-      glTexCoord2f(banner->ScaleX(1.0), banner->ScaleY(0.0));
-      glVertex3f(1.0, 1.0, 0.0);
-      glTexCoord2f(banner->ScaleX(0.0), banner->ScaleY(0.0));
-      glVertex3f(0.0, 1.0, 0.0);
-    glEnd();
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glEnable(GL_DEPTH_TEST);
-
-    glEnable(GL_LIGHTING);
-
-    video->FinishScene();
+    video->Render(cur_time);
     }
-
   return 0;
   }

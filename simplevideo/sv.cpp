@@ -40,6 +40,9 @@ using namespace std;
 #include "sv.h"
 #include "st.h"
 
+#include "simplescene.h"
+#include "simplegui.h"
+
 SimpleVideo *SimpleVideo::current = NULL;
 
 SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
@@ -52,6 +55,10 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   aspect = asp;
   flags = 0;
   yfov = 45.0;
+  sbs = false;
+
+  scene = NULL;
+  gui = NULL;
 
   surface = NULL;
   video_flags = 0;
@@ -85,6 +92,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
     video_flags |= SDL_FULLSCREEN;
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+//  SDL_GL_SetAttribute(SDL_GL_STEREO, 1);
 
   ResizeGL(xsize, ysize);
 
@@ -299,6 +307,22 @@ bool SimpleVideo::FinishScene() {
   return true;
   }
 
+bool SimpleVideo::Render(Uint32 cur_time) {
+  if(!StartScene()) return false;
+  if(gui && !gui->RenderStart(cur_time, true)) return false;
+  if(scene && !scene->Render(cur_time)) return false;
+  if(gui && !gui->RenderFinish(cur_time, true)) return false;
+  return FinishScene();
+  }
+
+void SimpleVideo::SetScene(SimpleScene *s) {
+  scene = s;
+  }
+
+void SimpleVideo::SetGUI(SimpleGUI *g) {
+  gui = g;
+  }
+
 bool SimpleVideo::ResizeGL(int xs, int ys) {
   surface = SDL_SetVideoMode(xs, ys, 0, video_flags);
   xsize = xs;   ysize = ys;
@@ -308,10 +332,20 @@ bool SimpleVideo::ResizeGL(int xs, int ys) {
     if(ysize > int(xsize/aspect+0.5)) ysize = int(xsize/aspect+0.5);
 
     hgap = (xs-xsize)/2;  vgap = (ys-ysize)/2;
-    glViewport(hgap, vgap, (GLint)xsize, (GLint)ysize);
+    if(sbs) {
+      glViewport(hgap, vgap, (GLint)xsize/4, (GLint)ysize/2);
+      }
+    else {
+      glViewport(hgap, vgap, (GLint)xsize/2, (GLint)ysize);
+      }
     }
   else {
-    glViewport(0, 0, (GLint)xsize, (GLint)ysize);
+    if(sbs) {
+      glViewport(0, 0, (GLint)xsize/2, (GLint)ysize);
+      }
+    else {
+      glViewport(0, 0, (GLint)xsize, (GLint)ysize);
+      }
     }
 
   return true;

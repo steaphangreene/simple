@@ -35,12 +35,12 @@ WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/simpleconfig.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplegui -I../simplevideo
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplegui -I../simplevideo -I../simplescene -I../simplemodel
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 
 WOBJS:=	simpleconfig.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simplevideo
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simplevideo/$(ARCH)/libsimplevideo.a ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simplevideo -I../simplescene -I../simplemodel
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 
 $(ARCH):
 	mkdir -p $(ARCH)

@@ -29,8 +29,8 @@
 
 using namespace std;
 
-#include "../../simplegui/simplegui.h"
-#include "../../simplevideo/simplevideo.h"
+#include "simplegui.h"
+#include "simplevideo.h"
 #include "../simpleconnect.h"
 #include "audio.h"
 

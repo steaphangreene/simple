@@ -43,8 +43,8 @@ OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_xyplane.o $(ARCH)/simplemodel_xzplane.o \
 	$(ARCH)/simplemodel_yzplane.o $(ARCH)/simplemodel_3ds.o \
 	$(ARCH)/simplemodel_obj.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
@@ -56,8 +56,8 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_xyplane.win32_o simplemodel_xzplane.win32_o \
 	simplemodel_yzplane.win32_o \
 	simplemodel_3ds.win32_o simplemodel_obj.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
 $(ARCH):
 	mkdir -p $(ARCH)

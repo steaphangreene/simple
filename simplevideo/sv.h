@@ -25,6 +25,9 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 
+class SimpleScene;
+class SimpleGUI;
+
 #define SV_ORTHO	1	// If not present, it's perspective mode
 
 #include <vector>
@@ -46,6 +49,8 @@ public:
 
   void EnableLighting();
   void DisableLighting();
+
+  bool Render(Uint32 cur_time);
 
   bool StartScene();
   bool FinishScene();
@@ -74,8 +79,17 @@ public:
   static SimpleVideo *Current() { return current; };
   static SimpleVideo *CurrentVideo() { return Current(); };	// Depricated
 
+  void SBSOn() { sbs = true; ResizeGL(xsize, ysize); }
+  void SBSOff() { sbs = false; ResizeGL(xsize, ysize); }
+
+  void SetScene(SimpleScene *scene);
+  void SetGUI(SimpleGUI *gui);
+
 protected:
   bool ResizeGL(int, int);
+
+  SimpleScene *scene;
+  SimpleGUI *gui;
 
   void CalcMove(float &xoff, float &yoff, Uint32 cur_time);
   void CalcZoom(float &zm, Uint32 cur_time);
@@ -95,6 +109,7 @@ protected:
 
   float aspect;
   float yfov; //Used only by perspective
+  bool sbs; // Side-by-Side 3D
 
   float minz, maxz;
 

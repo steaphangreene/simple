@@ -35,12 +35,12 @@ WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/sv.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplescene -I../simplegui
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplescene/$(ARCH)/libsimplescene.a ../simplescene/$(ARCH)/libsimplegui.a
 
 WOBJS:=	sv.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplescene -I../simplegui
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplescene/$(ARCH)/libsimplescene.a ../simplescene/$(ARCH)/libsimplegui.a
 
 $(ARCH):
 	mkdir -p $(ARCH)
