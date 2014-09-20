@@ -34,12 +34,21 @@ using namespace std;
 
 SimpleGUI *current_sg = NULL;
 
+Uint32 SDL_SG_EVENT = Uint32(-1);
+
 SimpleGUI::SimpleGUI(int aspmeth, const float asp) {
   if(current_sg) {
     fprintf(stderr, "ERROR: Attempted to create multiple SimpleGUI instances.\n");
     exit(1);
     }
   current_sg = this;
+
+  SDL_SG_EVENT = SDL_RegisterEvents(1);
+  if (SDL_SG_EVENT == ((Uint32)-1)) {
+    fprintf(stderr, "ERROR: Failed to allocate SDL event.\n");
+    exit(1);
+    }
+
   current_widget = NULL;
   focus_widget = NULL;
   mutex = NULL;
@@ -71,7 +80,6 @@ SimpleGUI::SimpleGUI(int aspmeth, const float asp) {
   newyunused = yunused;
 
   SDL_ShowCursor(0);
-  SDL_EnableUNICODE(1);
 
   mb_state = 0;
 
@@ -214,7 +222,7 @@ bool SimpleGUI::RenderFinish(unsigned long cur_time, bool ts) {
 
 bool SimpleGUI::PollEvent(SDL_Event *event, bool ts) {
   if(!ts) SDL_PumpEvents();	//Only pump once!
-  while(SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0) {
+  while(SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) > 0) {
     if(event == NULL) return true;
     else {
       if(ts) SDL_mutexP(Mutex());
@@ -230,7 +238,7 @@ bool SimpleGUI::PollEvent(SDL_Event *event, bool ts) {
 
 bool SimpleGUI::WaitEvent(SDL_Event *event, bool ts) {
   if(!ts) SDL_PumpEvents();	//Pump once before everything...
-  int res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS);
+  int res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
   while(res >= 0) {
     if(res > 0) {	//If there IS an event here or ready
       if(event == NULL) return true;
@@ -243,7 +251,7 @@ bool SimpleGUI::WaitEvent(SDL_Event *event, bool ts) {
       }
     SDL_Delay(10);
     if(!ts) SDL_PumpEvents();	//...and pump after each wait.
-    res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_ALLEVENTS);
+    res = SDL_PeepEvents(event, 1, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
     }
   return false;
   }
@@ -251,23 +259,23 @@ bool SimpleGUI::WaitEvent(SDL_Event *event, bool ts) {
 bool SimpleGUI::ProcessEvent(SDL_Event *event) {
   if(!event) return 0;
 
-  if(event->type == SDL_VIDEORESIZE) {
+  if(event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
     newxunused = 0;
     newyunused = 0;
-    newxsize = event->resize.w;
-    newysize = event->resize.h;
+    newxsize = event->window.data1;
+    newysize = event->window.data2;
 
     float asp = (float)(newxsize) / (float)(newysize);
     if((aspect_method & ASPECT_FIXED_X) && asp > aspect) {
       newxsize = int((float)(newysize)*aspect+0.5);
-      newxunused = (event->resize.w - newxsize);
+      newxunused = (event->window.data1 - newxsize);
       }
     else if((aspect_method & ASPECT_FIXED_Y) && asp < aspect) {
       newysize = int((float)(newxsize)/aspect+0.5);
-      newyunused = (event->resize.h - newysize);
+      newyunused = (event->window.data2 - newysize);
       }
     newaspect_actual = asp / aspect;
-    SimpleTexture::NeedToReacquireContext(event->resize.w, event->resize.h);
+    SimpleTexture::NeedToReacquireContext(event->window.data1, event->window.data2);
     if((aspect_method & (ASPECT_FIXED_Y|ASPECT_FIXED_X))
 	!= (ASPECT_FIXED_Y|ASPECT_FIXED_X)) {
       if(mWid) mWid->SetAspectRatio(asp);
@@ -275,16 +283,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
     return 0; //Event Handled
     }
 
-  else if(event->type == SDL_KEYDOWN) {
-    if(focus_widget) {
-      if(mWid->HasWidget(focus_widget)) {
-	return mWid->HandEventTo(focus_widget, event, mousex, mousey);
-	}
-      focus_widget->HandEventTo(focus_widget, event, 0.0, 0.0);
-      }
-    }
-
-  else if(event->type == SDL_KEYUP) {
+  else if(event->type == SDL_TEXTINPUT) {
     if(focus_widget) {
       if(mWid->HasWidget(focus_widget)) {
 	return mWid->HandEventTo(focus_widget, event, mousex, mousey);

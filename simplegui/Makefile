@@ -29,11 +29,11 @@ win32:	libsimplegui.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl2 --cflags`
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_ranger2d.o $(ARCH)/sg_alignment.o \
@@ -51,8 +51,9 @@ OBJS:=	$(ARCH)/sg.o $(ARCH)/sg_widget.o $(ARCH)/sg_ranger.o \
 	$(ARCH)/sg_dndboxes.o $(ARCH)/sg_tabs.o \
 	$(ARCH)/sg_passthrough.o $(ARCH)/sg_translabel.o \
 	$(ARCH)/sg_spinner.o
+DEPS:=	../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplemodel
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
+CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS) $(DEPS)
 
 WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_alignment.win32_o sg_positional.win32_o sg_table.win32_o \
@@ -65,7 +66,7 @@ WOBJS:=	sg.win32_o sg_widget.win32_o sg_ranger.win32_o sg_ranger2d.win32_o \
 	sg_scrollingarea.win32_o sg_dndboxes.win32_o sg_tabs.win32_o \
 	sg_passthrough.win32_o sg_translabel.win32_o sg_spinner.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplemodel
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
+WCXXLIBS:=	-lSDL2_ttf -lSDL2_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
 
 $(ARCH):
 	mkdir -p $(ARCH)
@@ -104,19 +105,19 @@ clean:
 
 test:	test1 test2 test3 test4 test5
 
-test1:	$(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+test1:	$(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(DEPS)
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test2:	$(ARCH)/test2.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+test2:	$(ARCH)/test2.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(DEPS)
 	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test3:  $(ARCH)/test3.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+test3:  $(ARCH)/test3.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(DEPS)
 	$(CXX) $(CXXFLAGS) -o test3 $(ARCH)/test3.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test4:  $(ARCH)/test4.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+test4:  $(ARCH)/test4.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(DEPS)
 	$(CXX) $(CXXFLAGS) -o test4 $(ARCH)/test4.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test5:  $(ARCH)/test5.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+test5:  $(ARCH)/test5.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(DEPS)
 	$(CXX) $(CXXFLAGS) -o test5 $(ARCH)/test5.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe test3.exe test4.exe test5.exe

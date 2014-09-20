@@ -41,7 +41,7 @@ enum SN_Status {
 class SimpleNetwork {
 public:
   static SimpleNetwork *Current() { return current; };
-	
+
   struct Data {
     string playername;
     string password;

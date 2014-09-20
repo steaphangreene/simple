@@ -61,8 +61,8 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->UnsetCurrentWidget();
     return 0;
     }
-  else if(event->type == SDL_KEYDOWN) {
-    if(event->key.keysym.sym == SDLK_ESCAPE) {	// Revert?
+  else if(event->type == SDL_TEXTINPUT) {
+    if(event->text.text[0] == '\e') {	// Revert?
       current_sg->UnsetFocusWidget();
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_EDITABORT;
@@ -70,7 +70,7 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
       event->user.data2 = NULL;
       return 1;
       }
-    else if(event->key.keysym.sym == SDLK_BACKSPACE) {
+    else if(event->text.text[0] == '\b') {
       if(message.length() > 0) {
 	string newmes = message.substr(0, message.length() - 1);
 	SetText(newmes);
@@ -82,8 +82,8 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	}
       return 0;
       }
-    else if(event->key.keysym.sym == SDLK_RETURN
-	|| event->key.keysym.sym == SDLK_KP_ENTER) {
+    else if(event->text.text[0] == '\n'
+	|| event->text.text[0] == '\r') {
       if(texture[0].GetTextGeometry()->visible_ylines == 1.0) {
 	current_sg->UnsetFocusWidget();
 	event->type = SDL_SG_EVENT;
@@ -102,9 +102,9 @@ int SG_Editable::HandleEvent(SDL_Event *event, float x, float y) {
 	return 1;
 	}
       }
-    else if(event->key.keysym.unicode < 0x80) {
-      if(isgraph(event->key.keysym.unicode) || (event->key.keysym.unicode == 0x20)) {
-	string newmes = message.append(1, (char)(event->key.keysym.unicode));
+    else if(event->text.text[0] < 0x80) {
+      if(isgraph(event->text.text[0]) || (event->text.text[0] == 0x20)) {
+	string newmes = message.append(1, (char)(event->text.text[0]));
 	SetText(newmes);
 	event->type = SDL_SG_EVENT;
 	event->user.code = SG_EVENT_EDIT;

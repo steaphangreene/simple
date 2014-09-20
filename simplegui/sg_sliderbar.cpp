@@ -82,8 +82,7 @@ int SG_SliderBar::HandleEvent(SDL_Event *event, float x, float y) {
   if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
   if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
 
-  if(event->type == SDL_MOUSEBUTTONDOWN &&
-	event->button.button == SDL_BUTTON_WHEELDOWN) {
+  if(event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
     Decrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
@@ -91,8 +90,7 @@ int SG_SliderBar::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data2 = NULL;
     return 1;
     }
-  else if(event->type == SDL_MOUSEBUTTONDOWN &&
-	event->button.button == SDL_BUTTON_WHEELUP) {
+  else if(event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
     Increment();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;

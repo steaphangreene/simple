@@ -36,34 +36,34 @@ all:	build
 
 #PRODUCTION OPTIONS (STANDARD)
 CXX=	$(ARCH)-g++
-FLAGS=	-g -Wall `pkg-config sdl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lGL -lGLU
 
 #DEGUGGING OPTIONS (NO EFENCE)
 debug:
-	$(MAKE) FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU'
+	$(MAKE) FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU'
 
 #DEGUGGING OPTIONS (WITH EFENCE)
 efence:
-	$(MAKE) FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lefence -lGL -lGLU'
+	$(MAKE) FLAGS='-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lefence -lGL -lGLU'
 
 #PROFILING OPTIONS
 prof:
-	$(MAKE) FLAGS='-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU'
+	$(MAKE) FLAGS='-pg -g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU'
 
 #PRODUCTION OPTIONS (WORKAROUND FOR MacOS-X)
 macos:
-	$(MAKE) FLAGS='-s -O2 -Wall `pkg-config sdl --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -framework OpenGL'
+	$(MAKE) FLAGS='-s -O2 -Wall `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -framework OpenGL'
 
 #PRODUCTION OPTIONS (WORKAROUND FOR CYGWIN)
 cygwin:
-	$(MAKE) FLAGS='-s -O2 -Wall `pkg-config sdl --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -L/usr/X11R6/bin -lopengl32 -lglu32'
+	$(MAKE) FLAGS='-s -O2 -Wall `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`' LIBS='`pkg-config sdl --libs` `pkg-config zziplib --libs` -L/usr/X11R6/bin -lopengl32 -lglu32'
 
 #PRODUCTION OPTIONS (CROSS-COMPILED FOR WINDOWS)
 WARCH=	i586-mingw32msvc
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags` `/opt/i586-mingw32msvc/bin/pkg-config zziplib --cflags` -I/opt/i586-mingw32msvc/include
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl2 --cflags` `/opt/i586-mingw32msvc/bin/pkg-config zziplib --cflags` -I/opt/i586-mingw32msvc/include
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 .PHONY: build
 build:

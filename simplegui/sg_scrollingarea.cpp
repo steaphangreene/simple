@@ -52,8 +52,7 @@ int SG_ScrollingArea::HandleEvent(SDL_Event *event, float x, float y) {
   int ret = SG_Compound::HandleEvent(event, x, y);
   if(ret != -1) return ret;
 
-  if(event->type == SDL_MOUSEBUTTONDOWN &&
-	event->button.button == SDL_BUTTON_WHEELDOWN) {
+  if(event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
     YDecrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
@@ -61,8 +60,7 @@ int SG_ScrollingArea::HandleEvent(SDL_Event *event, float x, float y) {
     event->user.data2 = NULL;
     return 1;
     }
-  else if(event->type == SDL_MOUSEBUTTONDOWN &&
-	event->button.button == SDL_BUTTON_WHEELUP) {
+  else if(event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
     YIncrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;

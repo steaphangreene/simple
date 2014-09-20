@@ -22,7 +22,6 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_ttf.h"
-#include "SDL_keysym.h"
 #include <cstring>
 #include <cstdio>
 #include <string>
@@ -60,7 +59,7 @@ int main(int argc, char **argv) {
 	fontfn = argv[cur_arg];
 	++cur_arg;
 	continue;
-	}	
+	}
       }
     if(argc > cur_arg) {
       if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {

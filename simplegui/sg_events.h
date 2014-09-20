@@ -19,7 +19,9 @@
 //
 // *************************************************************************
 
-#define	SDL_SG_EVENT		(SDL_NUMEVENTS-1)
+#include "SDL.h"
+
+extern Uint32 SDL_SG_EVENT;
 
 //System Events
 #define	SG_EVENT_NEEDTORENDER	1	//Something changed but no action

@@ -547,7 +547,7 @@ int SimpleConnect::HandleSearchThread() {
   UDPsocket udpsock = NULL;
   udpsock = SDLNet_UDP_Open(0);
   if(!udpsock) {
-    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
+    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDL_GetError());
     exiting = true;
     return 1;
     }
@@ -563,7 +563,7 @@ int SimpleConnect::HandleSearchThread() {
     if(rescan) {
       rescan = false;
       if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-	fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+	fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDL_GetError());
 	exiting = true;
 	return 1;
 	}
@@ -605,7 +605,7 @@ int SimpleConnect::HandleHostThread() {
   UDPsocket udpsock = NULL;
   udpsock = SDLNet_UDP_Open(port);
   if(!udpsock) {
-    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDLNet_GetError());
+    fprintf(stderr, "ERROR: SDLNet_UDP_Open Failed: %s\n", SDL_GetError());
     exiting = true;
     return 1;
     }
@@ -622,7 +622,7 @@ int SimpleConnect::HandleHostThread() {
 	  strncpy((char*)outdata->mapname, mapname.c_str(), 31);
 	  outdata->mapname[31] = 0;
 	  if(SDLNet_UDP_Send(udpsock, -1, outpacket) < 1) {
-	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDLNet_GetError());
+	    fprintf(stderr, "ERROR: SDLNet_UDP_Send Failed: %s\n", SDL_GetError());
 	    exiting = true;
 	    return 1;
 	    }
@@ -905,11 +905,11 @@ void SimpleConnect::StartNet() {
   rescan = false;
   net_mutex = SDL_CreateMutex();
   if(mode == SC_MODE_SEARCH)
-    net_thread = SDL_CreateThread(search_thread_handler, (void*)(this));
+    net_thread = SDL_CreateThread(search_thread_handler, "search", (void*)(this));
   else if(mode == SC_MODE_HOST)
-    net_thread = SDL_CreateThread(host_thread_handler, (void*)(this));
+    net_thread = SDL_CreateThread(host_thread_handler, "host", (void*)(this));
   else if(mode == SC_MODE_SLAVE)
-    net_thread = SDL_CreateThread(slave_thread_handler, (void*)(this));
+    net_thread = SDL_CreateThread(slave_thread_handler, "slave", (void*)(this));
   }
 
 int SimpleConnect::NextFreeColor(int oldcolor) {

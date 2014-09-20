@@ -57,13 +57,13 @@ SimpleNetwork::SimpleNetwork(Uint16 prt) {
   accept_amount = 0;
   // allocate socketset.
   if((cnx_set = SDLNet_AllocSocketSet(MAXSOCKETS)) == NULL) {
-    printf("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+    printf("SDLNet_AllocSocketSet: %s\n", SDL_GetError());
     exit(1); //most of the time this is a major error, but do what you want.
     }
 
   if(!recv_thread) {
     recv_thread = (SDL_Thread *)(1);	//So loop won't exit in new thread
-    recv_thread = SDL_CreateThread(recv_handler, (void*) this);
+    recv_thread = SDL_CreateThread(recv_handler, "receive", (void*) this);
     }
   }
 
@@ -184,7 +184,7 @@ int SimpleNetwork::Connect(IPaddress& ip, const string& name, const string& pass
     }
 
   if((cnx_amt = SDLNet_TCP_AddSocket(cnx_set, data[curr_slot].tcp)) == -1) {
-    //fprintf(stderr,"SDLNet_AddSocket: %s\n", SDLNet_GetError());
+    //fprintf(stderr,"SDLNet_AddSocket: %s\n", SDL_GetError());
     // perhaps restart the set and make it bigger...
     SDLNet_TCP_Send(data[curr_slot].tcp, (void*)"QUIT", OP_SIZE);
     //fprintf(stderr,"%d sockets in set (fail)::Connect()\n", cnx_amt);
@@ -245,7 +245,7 @@ void SimpleNetwork::StartAccepting(int amount) {
 
   // Resolving the host using NULL make network interface to listen
   if(SDLNet_ResolveHost(&ip, NULL, port) < 0) {
-    fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+    fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
     }
 
@@ -256,13 +256,13 @@ void SimpleNetwork::StartAccepting(int amount) {
       //fprintf(stderr, "Open server");
     isserver = true;
     if(!(sd = SDLNet_TCP_Open(&ip))) {
-      //fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+      //fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDL_GetError());
       exit(EXIT_FAILURE);
       }
 //    }
     accept_amount = amount;
     accept_thread = (SDL_Thread *)(1);	//So loop won't exit in new thread
-    accept_thread = SDL_CreateThread(accept_handler, (void*) this);
+    accept_thread = SDL_CreateThread(accept_handler, "accept", (void*) this);
     }
   else {	
     accept_amount += amount;
@@ -290,7 +290,7 @@ int SimpleNetwork::RunAccept() {
     if((csd = SDLNet_TCP_Accept(sd))) {
       //fprintf(stderr, "New Connection!\n");
       if((cnx_amt = SDLNet_TCP_AddSocket(cnx_set, csd)) == -1) {
-	//fprintf(stderr,"SDLNet_AddSocket: %s\n", SDLNet_GetError());
+	//fprintf(stderr,"SDLNet_AddSocket: %s\n", SDL_GetError());
 	// perhaps restart the set and make it bigger...
 	SDLNet_TCP_Send(csd, (void*)"QUIT", OP_SIZE);
 	//fprintf(stderr,"%d sockets in set (fail)\n", cnx_amt);
@@ -397,7 +397,7 @@ int SimpleNetwork::RunRecv() {
 
   while (recv_thread) {
     if((result = SDLNet_CheckSockets(cnx_set, TIMEOUT)) < 0) {
-      fprintf(stderr, "CheckSockets() error %s\n", SDLNet_GetError());
+      fprintf(stderr, "CheckSockets() error %s\n", SDL_GetError());
       perror("empty set?\n");
       //exit(EXIT_FAILURE);
       }
@@ -483,7 +483,7 @@ int SimpleNetwork::RunRecv() {
 	// A NOOP can be requested by either side of the connection.
 	//fprintf(stderr, "Sending OKOP\n");
 	if(SDLNet_TCP_Send(d->tcp, (void*)"OKOP", OP_SIZE) < OP_SIZE) {
-	  //fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+	  //fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDL_GetError());
 	  SDLNet_TCP_DelSocket(cnx_set, d->tcp);
 	  SDLNet_TCP_Close(d->tcp);
 	  d->conn_status = (connections_locked) ? SN_CONN_RECON : SN_CONN_NONE;

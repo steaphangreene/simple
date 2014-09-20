@@ -114,7 +114,7 @@ bool SimpleConfig::ChildEvent(SDL_Event *event) {
 	  rescue_thread = NULL;
 	  }
 	confirm = false;
-	rescue_thread = SDL_CreateThread(rescue_thread_handler, (void*)(this));
+	rescue_thread = SDL_CreateThread(rescue_thread_handler, "rescue", (void*)(this));
 	}break;
       case(SG_EVENT_BUTTONCLICK): {
 	if((SG_Widget*)(event->user.data1) == (SG_Widget*)confirmbut) {

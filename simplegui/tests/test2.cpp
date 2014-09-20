@@ -22,7 +22,6 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "SDL_ttf.h"
-#include "SDL_keysym.h"
 #include <cstdio>
 #include <cstring>
 #include <map>
@@ -42,8 +41,6 @@ static SimpleGUI *gui;
 
 static bool go_left = false, go_right = false, go_up = false, go_down = false;
 static SG_Tabs *tabs = NULL;
-
-SimpleVideo *video;
 
 int event_thread_handler(void *arg) {
   int click = audio_buildsound(click_data, sizeof(click_data));
@@ -88,6 +85,7 @@ int event_thread_handler(void *arg) {
   }
 
 int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
+  SimpleVideo *video = (SimpleVideo *)arg;
   while(!user_quit) {
     unsigned long cur_time = SDL_GetTicks();
 
@@ -127,7 +125,7 @@ int main(int argc, char **argv) {
 	fontfn = argv[cur_arg];
 	++cur_arg;
 	continue;
-	}	
+	}
       }
     if(argc > cur_arg) {
       if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
@@ -142,6 +140,7 @@ int main(int argc, char **argv) {
     }
 
   // Set up SimpleVideo, aligned just like old renderer was
+  fprintf(stderr, "Yah, set this shit up.\n");
   SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
   video->SetDown(0.0, 0);
   video->SetAngle(90.0, 0);
@@ -178,9 +177,9 @@ int main(int argc, char **argv) {
 
   SDL_Thread *ev_t, *game_t;
 
-  ev_t = SDL_CreateThread(event_thread_handler, NULL);
-  game_t = SDL_CreateThread(game_thread_handler, NULL);
-  video_thread_handler(NULL); //THIS thread MUST be the video thread
+  ev_t = SDL_CreateThread(event_thread_handler, "event", NULL);
+  game_t = SDL_CreateThread(game_thread_handler, "game", NULL);
+  video_thread_handler((void *)(video)); //THIS thread MUST be the video thread
 
   SDL_WaitThread(ev_t, NULL);
   SDL_WaitThread(game_t, NULL);

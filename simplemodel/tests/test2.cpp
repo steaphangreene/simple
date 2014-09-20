@@ -21,7 +21,6 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "SDL_keysym.h"
 
 #include "simplevideo.h"
 #include "simplescene.h"
@@ -290,12 +289,12 @@ int main(int argc, char **argv) {
 	else if(event.key.keysym.sym == SDLK_EQUALS)  posx += dist;
 	else if(event.key.keysym.sym == SDLK_MINUS) posx -= dist;
 
-	else if(event.key.keysym.sym == SDLK_KP6) posy += dist;
-	else if(event.key.keysym.sym == SDLK_KP4) posy -= dist;
-	else if(event.key.keysym.sym == SDLK_KP8) posz += dist;
-	else if(event.key.keysym.sym == SDLK_KP2) posz -= dist;
-	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += dist;
-	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= dist;
+//	else if(event.key.keysym.sym == SDLK_KP6) posy += dist;
+//	else if(event.key.keysym.sym == SDLK_KP4) posy -= dist;
+//	else if(event.key.keysym.sym == SDLK_KP8) posz += dist;
+//	else if(event.key.keysym.sym == SDLK_KP2) posz -= dist;
+//	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += dist;
+//	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= dist;
 
 	else if(event.key.keysym.sym == SDLK_TAB) {
           video->ToggleSBS();

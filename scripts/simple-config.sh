@@ -29,7 +29,7 @@ includedir="${prefix}/include/simple"
 cross_prefix=""
 arch="`gcc -v 2>&1 | grep Target | cut -f2 -d' '`"
 libdir="${exec_prefix}/lib/simple/${arch}"
-base_libs="-lSDL_net -lSDL_ttf -lSDL_image -lSDL_mixer"
+base_libs="-lSDL2_net -lSDL2_ttf -lSDL2_image -lSDL2_mixer"
 extra_libs=""
 gl_libs="-lGL -lGLU"
 

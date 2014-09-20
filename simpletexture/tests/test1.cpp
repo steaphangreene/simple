@@ -21,7 +21,6 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "SDL_keysym.h"
 
 #include <cmath>
 #include <cstdio>

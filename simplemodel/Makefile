@@ -27,11 +27,11 @@ win32:	libsimplemodel.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl gl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 gl --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl2 gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl gl --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl2 gl --cflags`
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
@@ -44,7 +44,7 @@ OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_yzplane.o $(ARCH)/simplemodel_3ds.o \
 	$(ARCH)/simplemodel_obj.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
+CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
@@ -57,7 +57,7 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_yzplane.win32_o \
 	simplemodel_3ds.win32_o simplemodel_obj.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
+WCXXLIBS:=	-lSDL2_ttf -lSDL2_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
 $(ARCH):
 	mkdir -p $(ARCH)

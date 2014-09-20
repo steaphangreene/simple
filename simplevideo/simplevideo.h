@@ -99,8 +99,9 @@ protected:
   void CalcAng(float &ang, Uint32 cur_time);
   static SimpleVideo *current;
 
-  SDL_Surface *surface;
-  int video_flags;
+  SDL_Window *window;
+  int window_flags;
+  SDL_GLContext glcontext;
 
   int xsize, ysize;
   int hgap, vgap;

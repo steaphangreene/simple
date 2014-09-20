@@ -27,11 +27,11 @@ win32:	libsimpletexture.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl gl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 gl --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl2 gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl gl --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl2 gl --cflags`
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \
@@ -41,12 +41,12 @@ OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_rightbuttonup.o $(ARCH)/stt_leftbuttondown.o \
 	$(ARCH)/stt_leftbuttonup.o $(ARCH)/stt_rightbuttondown.o
 CXXFLAGS:=	$(FLAGS)
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS)
+CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS)
 
 WOBJS:= st.win32_o stt.win32_o stt_default.win32_o stt_invisible.win32_o \
 	stt_button.win32_o stt_buttonup.win32_o stt_buttondown.win32_o
 WCXXFLAGS:=	$(WFLAGS)
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS)
+WCXXLIBS:=	-lSDL2_ttf -lSDL2_image $(WLIBS)
 
 $(ARCH):
 	mkdir -p $(ARCH)

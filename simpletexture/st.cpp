@@ -20,8 +20,10 @@
 // *************************************************************************
 
 #include "SDL.h"
+#include "SDL_opengl.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "GL/glu.h"
 
 #include "st.h"
 #include "stt_default.h"
@@ -33,11 +35,11 @@
 
 #define	ST_NUM_SYSTEM_COLORS	32
 
-static int nextpoweroftwo(int x) {
+static size_t nextpoweroftwo(size_t x) {
   if(x <= 2) return 2;
 
   --x;		//Hitch it down in case it's exactly a power of 2
-  int p = 1;
+  size_t p = 1;
   for(; x != 1; ++p, x>>=1);
   x <<= p;
   return x;
@@ -82,7 +84,7 @@ struct SimpleTexture::TextData {
 
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
   SDL_Surface *rendered_text;
-  int text_xsize, text_ysize;
+  size_t text_xsize, text_ysize;
   SDL_Rect cursor;
 
   //FIXME: This is the font stuff ported from SimpleGUI - needs cleanup!
@@ -532,7 +534,7 @@ void SimpleTexture::BuildBlankTexture() {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
     memset(cur->pixels, 0, xsize*ysize*4);
-    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+    //SDL_SetSurfaceAlphaMod(src, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(src, NULL, cur, NULL);
     xfact = (float)(src->w) / (float)(xsize);
     yfact = (float)(src->h) / (float)(ysize);
@@ -542,7 +544,7 @@ void SimpleTexture::BuildBlankTexture() {
     ysize = nextpoweroftwo(src->h);
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
-    SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
+    //SDL_SetSurfaceAlphaMod(src, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(src, NULL, cur, NULL);
     xfact = (float)(src->w) / (float)(xsize);
     yfact = (float)(src->h) / (float)(ysize);
@@ -633,13 +635,13 @@ void SimpleTexture::BuildTextTexture() {
   else if(type == SIMPLETEXTURE_DEFINED) {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
-    SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+    //SDL_SetSurfaceAlphaMod(src, SDL_ALPHA_OPAQUE);
     SDL_BlitSurface(src, NULL, cur, NULL);
     }
   else if(type == SIMPLETEXTURE_TRANS) {
     cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
-    SDL_SetAlpha(src, 0, SDL_ALPHA_TRANSPARENT);
+    //SDL_SetSurfaceAlphaMod(src, SDL_ALPHA_TRANSPARENT);
     SDL_BlitSurface(src, NULL, cur, NULL);
     }
 
@@ -668,7 +670,7 @@ void SimpleTexture::BuildTextTexture() {
 	  drec.x = (text->text_xsize - xs)/2;
 	  }
 
-	SDL_SetAlpha(tmp_text, 0, SDL_ALPHA_TRANSPARENT);
+	//SDL_SetSurfaceAlphaMod(tmp_text, SDL_ALPHA_TRANSPARENT);
 	SDL_BlitSurface(tmp_text, NULL, text->rendered_text, &drec);
 
 	text->cursor = drec;
@@ -707,7 +709,7 @@ void SimpleTexture::BuildTextTexture() {
 
     if(type == SIMPLETEXTURE_TRANS
 		|| type == SIMPLETEXTURE_TRANSCOLOR) {
-      SDL_SetAlpha(text->rendered_text, 0, SDL_ALPHA_TRANSPARENT);
+      //SDL_SetSurfaceAlphaMod(text->rendered_text, SDL_ALPHA_TRANSPARENT);
       }
 
     if(srec.w < text->text_xsize) {
@@ -748,7 +750,7 @@ void SimpleTexture::Update() {
       cur = SDL_CreateRGBSurface(SDL_SWSURFACE,
 	xsize, ysize, 32, ST_SDL_RGBA_COLFIELDS);
       memset(cur->pixels, 0, xsize*ysize*4);
-      SDL_SetAlpha(src, 0, SDL_ALPHA_OPAQUE);
+      //SDL_SetSurfaceAlphaMod(src, SDL_ALPHA_OPAQUE);
       SDL_BlitSurface(src, NULL, cur, NULL);
       }
     else {
@@ -1417,15 +1419,15 @@ void SimpleTexture::init_colors() {
 
 #include "zzip/zzip.h"
 
-static int _zzip_seek(SDL_RWops *context, int offset, int whence) {
+static long _zzip_seek(SDL_RWops *context, long offset, int whence) {
   return zzip_seek((ZZIP_FILE*)(context->hidden.unknown.data1), offset, whence);
   }
 
-static int _zzip_read(SDL_RWops *context, void *ptr, int size, int maxnum) {
+static size_t _zzip_read(SDL_RWops *context, void *ptr, size_t size, size_t maxnum) {
   return (zzip_read((ZZIP_FILE*)(context->hidden.unknown.data1), (char*)ptr, size*maxnum) / size);
   }
 
-static int _zzip_write(SDL_RWops *context, const void *ptr, int size, int num) {
+static size_t _zzip_write(SDL_RWops *context, const void *ptr, size_t size, size_t num) {
   return 0; /* ignored */
   }
 
@@ -1466,4 +1468,3 @@ SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode) {
   rwops->close = _zzip_close;
   return rwops;
   }
-

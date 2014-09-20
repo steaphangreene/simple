@@ -43,6 +43,8 @@ using namespace std;
 #include "simplescene.h"
 #include "simplegui.h"
 
+#include "GL/glu.h"
+
 SimpleVideo *SimpleVideo::current = NULL;
 
 SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
@@ -60,13 +62,11 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   scene = NULL;
   gui = NULL;
 
-  surface = NULL;
-  video_flags = 0;
+  window = NULL;
   xsize=0; ysize=0;
   hgap=0; vgap=0;
   fullscreen_mode = fullscr;
 
-  const SDL_VideoInfo *videoInfo;
 //  GLdouble light1_pos[] = { 10.0, -10.0, 10.0, 0.0 };
 //  GLdouble light2_pos[] = { 2.75, 1.5, -3.0, 0.0 };
 
@@ -83,20 +83,18 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
     }
   atexit(SDL_Quit);
 
-  videoInfo = SDL_GetVideoInfo();
-
-  video_flags = SDL_OPENGL;
-  video_flags |= SDL_GL_DOUBLEBUFFER;
-  video_flags |= SDL_RESIZABLE;
+  window_flags = SDL_WINDOW_OPENGL;
+  window_flags |= SDL_WINDOW_RESIZABLE;
   if(fullscreen_mode)
-    video_flags |= SDL_FULLSCREEN;
+    window_flags |= SDL_WINDOW_FULLSCREEN;
 
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+//  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+  window = SDL_CreateWindow("SimpleVideo Renderer",
+                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                             xs, ys, window_flags);
+  glcontext = SDL_GL_CreateContext(window);
   ResizeGL(xsize, ysize);
-
-  // Set a window title.
-  SDL_WM_SetCaption("SimpleVideo Renderer", "SimpleVideo Renderer");
 
   // Set the clear color to black
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -215,7 +213,6 @@ bool SimpleVideo::StartScene() {
 
   int nxsize, nysize;
   if(SimpleTexture::ReacquireNeeded(nxsize, nysize)) {
-    SDL_SetVideoMode(nxsize, nysize, 0, video_flags);
     ResizeGL(nxsize, nysize);
     SimpleTexture::ReacquireContext();
     }
@@ -302,7 +299,7 @@ bool SimpleVideo::StartScene() {
 
 bool SimpleVideo::FinishScene() {
   glFlush();
-  SDL_GL_SwapBuffers();
+  SDL_GL_SwapWindow(window);
 
   return true;
   }
@@ -315,7 +312,6 @@ bool SimpleVideo::Render(Uint32 cur_time) {
   if(gui && !gui->RenderStart(cur_time, true)) return false;
   if(scene && !scene->Render(cur_time)) return false;
   if(gui && !gui->RenderFinish(cur_time, true)) return false;
-  //FinishScene();
 
   if(sbs) {
     glViewport((GLint)xsize/2, 0, (GLint)xsize/2, (GLint)ysize);
@@ -340,7 +336,11 @@ void SimpleVideo::SetGUI(SimpleGUI *g) {
   }
 
 bool SimpleVideo::ResizeGL(int xs, int ys) {
-  surface = SDL_SetVideoMode(xs, ys, 0, video_flags);
+//TODO: What's the equivalent of this?
+//  window = SDL_CreateWindow("SimpleVideo Renderer",
+//                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+//                             xs, ys, window_flags);
+//  glcontext = SDL_GL_CreateContext(window);
   xsize = xs;   ysize = ys;
 
   if(aspect != 0.0) {
@@ -367,9 +367,10 @@ bool SimpleVideo::ResizeGL(int xs, int ys) {
   return true;
   }
 
-static int oldmodex = 0, oldmodey = 0;	//Temporary!
+//static int oldmodex = 0, oldmodey = 0;	//Temporary!
 
 bool SimpleVideo::ToggleFullscreen(void) {
+/*  TODO: Apparently, I have to re-write all of this for SDL2
   char drv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   SDL_VideoDriverName((char *)drv, 15);
   if(strcmp(drv, "x11")) return false;
@@ -382,11 +383,8 @@ bool SimpleVideo::ToggleFullscreen(void) {
     int ctr, goal=-1;
     SDL_Rect **modes;
 
-    modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+    int num_modes = SDL_GetNumDisplayModes(0);
 
-    if(modes == (SDL_Rect **)0){
-      modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-      }
     if(modes == (SDL_Rect **)0){
       return false;
       }
@@ -414,9 +412,10 @@ bool SimpleVideo::ToggleFullscreen(void) {
     ResizeGL(modes[goal]->w, modes[goal]->h);
     }
   SDL_WM_ToggleFullScreen(surface);
-  video_flags ^= SDL_FULLSCREEN;
-  fullscreen_mode = (video_flags & SDL_FULLSCREEN) != 0;
+  window_flags ^= SDL_WINDOW_FULLSCREEN;
+  fullscreen_mode = (window_flags & SDL_WINDOW_FULLSCREEN) != 0;
 
+*/
   return true;
   }
 
@@ -665,32 +664,33 @@ void SimpleVideo::ResetSubscreen() {
 
 const vector<SimpleVideo_Mode> SimpleVideo::GetFullScreenModes() const {
   vector<SimpleVideo_Mode> modes;
-  SDL_Rect **sdl_modes = SDL_ListModes(NULL, video_flags|SDL_FULLSCREEN);
-  for(int m = 0; sdl_modes[m]; ++m) {
-    SimpleVideo_Mode mode = { sdl_modes[m]->w, sdl_modes[m]->h };
-    modes.push_back(mode);
-    }
+//  TODO: Have to re-write this.
+//  SDL_Rect **sdl_modes = SDL_ListModes(NULL, window_flags|SDL_WINDOW_FULLSCREEN);
+//  for(int m = 0; sdl_modes[m]; ++m) {
+//    SimpleVideo_Mode mode = { sdl_modes[m]->w, sdl_modes[m]->h };
+//    modes.push_back(mode);
+//    }
   return modes;
   }
 
 void SimpleVideo::SetFullScreenMode(int xs, int ys) {
-  video_flags |= SDL_FULLSCREEN;
+  window_flags |= SDL_WINDOW_FULLSCREEN;
 
-  SDL_Event event;
-  event.type = SDL_VIDEORESIZE;
-  event.resize.w = xs;
-  event.resize.h = ys;
-  SDL_PushEvent(&event);
+//  SDL_Event event;
+//  event.type = SDL_VIDEORESIZE;
+//  event.resize.w = xs;
+//  event.resize.h = ys;
+//  SDL_PushEvent(&event);
   }
 
 void SimpleVideo::SetWindowedMode(int xs, int ys) {
-  video_flags &= (~SDL_FULLSCREEN);
+  window_flags &= (~SDL_WINDOW_FULLSCREEN);
 
-  SDL_Event event;
-  event.type = SDL_VIDEORESIZE;
-  event.resize.w = xs;
-  event.resize.h = ys;
-  SDL_PushEvent(&event);
+//  SDL_Event event;
+//  event.type = SDL_VIDEORESIZE;
+//  event.resize.w = xs;
+//  event.resize.h = ys;
+//  SDL_PushEvent(&event);
   }
 
 void SimpleVideo::GetViewLimits(
