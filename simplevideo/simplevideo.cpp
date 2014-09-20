@@ -37,7 +37,7 @@
 
 using namespace std;
 
-#include "sv.h"
+#include "simplevideo.h"
 #include "st.h"
 
 #include "simplescene.h"
