@@ -175,19 +175,27 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   zoom_delay = 0;
   }
 
+void SimpleVideo::EnableLighting() {
+  glEnable(GL_LIGHTING);
+  }
+
+void SimpleVideo::DisableLighting() {
+  glDisable(GL_LIGHTING);
+  }
+
 void SimpleVideo::SetOrtho() {
   flags = SV_ORTHO;
   }
 
 void SimpleVideo::SetPerspective(float vert_fov) {
-  if(vert_fov > 90.0) vert_fov = 90.0;
+  if(vert_fov > 360.0) vert_fov = 360.0;
   else if(vert_fov < 0.0) vert_fov = 0.0;
 
   flags = 0;
   yfov = vert_fov;
 
-  if(down < MIN_DOWN + (yfov/2.0)) down = MIN_DOWN + (yfov/2.0);
-  if(targ_down < MIN_DOWN + (yfov/2.0)) targ_down = MIN_DOWN + (yfov/2.0);
+//  if(down < MIN_DOWN + (yfov/2.0)) down = MIN_DOWN + (yfov/2.0);
+//  if(targ_down < MIN_DOWN + (yfov/2.0)) targ_down = MIN_DOWN + (yfov/2.0);
   }
 
 SimpleVideo::~SimpleVideo() {
@@ -271,7 +279,7 @@ bool SimpleVideo::StartScene() {
     }
   else {
     //FIXME: Do a real clip/view-range calculation
-    gluPerspective(yfov, asp, 0.5, 16.0);
+    gluPerspective(yfov, asp, 0.01, 16.0);
     }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -524,8 +532,8 @@ void SimpleVideo::CalcAng(float &ang, Uint32 cur_time) {
 
 void SimpleVideo::SetDown(float dn, Uint32 delay) {
   //FIXME: Smooth Interpolation!
-  if(dn > 90.0) dn = 90.0;
-  else if(dn < MIN_DOWN) dn = MIN_DOWN;
+//  if(dn > 90.0) dn = 90.0;
+//  else if(dn < MIN_DOWN) dn = MIN_DOWN;
 
   down = dn;
   targ_down = down;

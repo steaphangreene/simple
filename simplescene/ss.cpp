@@ -63,7 +63,6 @@ SimpleScene::~SimpleScene() {
   }
 
 bool SimpleScene::Render(Uint32 offset) {
-  glDisable(GL_LIGHTING);	//FIXME: Real Scene Lighting
   if(SimpleVideo::Current() != NULL) {	//FIXME: What if neither way is defined?
     SimpleVideo::Current()->GetViewLimits(
 	xlim0, ylim0, zlim0, xlim1, ylim1, zlim1);
@@ -581,7 +580,6 @@ bool SimpleScene::DrawParticles(Uint32 offset) {
   float view[16];
   glGetFloatv(GL_MODELVIEW_MATRIX, view);
 
-  glDisable(GL_LIGHTING);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glDepthMask(GL_FALSE);

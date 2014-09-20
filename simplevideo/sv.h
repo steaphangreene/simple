@@ -44,6 +44,9 @@ public:
   void SetSubscreen(float xs, float ys, float xe, float ye);
   void ResetSubscreen();
 
+  void EnableLighting();
+  void DisableLighting();
+
   bool StartScene();
   bool FinishScene();
 

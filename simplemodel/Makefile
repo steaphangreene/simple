@@ -43,8 +43,8 @@ OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_xyplane.o $(ARCH)/simplemodel_xzplane.o \
 	$(ARCH)/simplemodel_yzplane.o $(ARCH)/simplemodel_3ds.o \
 	$(ARCH)/simplemodel_obj.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture
-CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene
+CXXLIBS:=	-lSDL_ttf -lSDL_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
@@ -56,8 +56,8 @@ WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_xyplane.win32_o simplemodel_xzplane.win32_o \
 	simplemodel_yzplane.win32_o \
 	simplemodel_3ds.win32_o simplemodel_obj.win32_o
-WCXXFLAGS:=	$(WFLAGS) -I../simpletexture
-WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a
+WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplevideo -I../simplescene
+WCXXLIBS:=	-lSDL_ttf -lSDL_image $(WLIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a
 
 $(ARCH):
 	mkdir -p $(ARCH)
@@ -100,16 +100,22 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1
+test:	test1 test2
 
 test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
-win32_test:	test1.exe
+test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a
+	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
+	
+win32_test:	test1.exe test2.exe
 wintest:	win32_test
 
 test1.exe:	test1.win32_o renderer.win32_o libsimplemodel.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimplemodel.win32_a $(WCXXLIBS)
+	
+test2.exe:	test2.win32_o renderer.win32_o libsimplemodel.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o libsimplemodel.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
