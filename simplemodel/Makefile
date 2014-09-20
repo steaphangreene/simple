@@ -102,10 +102,11 @@ clean:
 
 test:	test1 test2
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a
+test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
+
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
-test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a
+test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe

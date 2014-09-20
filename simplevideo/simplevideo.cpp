@@ -320,7 +320,9 @@ bool SimpleVideo::Render(Uint32 cur_time) {
     glViewport((GLint)xsize/2, 0, (GLint)xsize/2, (GLint)ysize);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
+    glMatrixMode(GL_PROJECTION);
     glTranslatef(-0.2, 0.0, 0.0);
+    glMatrixMode(GL_MODELVIEW);
     if(gui && !gui->RenderStart(cur_time, true)) return false;
     if(scene && !scene->Render(cur_time)) return false;
     if(gui && !gui->RenderFinish(cur_time, true)) return false;
