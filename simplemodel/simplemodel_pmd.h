@@ -56,7 +56,6 @@ protected:
     };
 
   struct PMDMaterial {
-    Uint8 mode;
     Uint32 num_tris;
     float ambient[3];
     float diffuse[4];

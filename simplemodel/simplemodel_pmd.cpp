@@ -185,6 +185,10 @@ bool SimpleModel_PMD::Load(const string &filenm,
     material[mat].num_tris /= 3;
 
     string texfile_part = ReadString(model, 20);
+    if(texfile_part.find('*') != string::npos) {
+      texfile_part = texfile_part.substr(0, texfile_part.find('*'));
+      // FIXME: Ignoring sphere part (after the '*')
+      }
     string texfile = filename.substr(0, filename.find_last_of("/") + 1);
     texfile += texfile_part;
     SimpleTexture *tmptex = new SimpleTexture(texfile.c_str());
@@ -206,6 +210,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
 
+  glDisable(GL_CULL_FACE);
   for(Uint32 tri = 0; tri < triangles.size(); tri++) {
     if(tri >= to_next_mat) {
       do {
@@ -222,12 +227,6 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       else {
         glEnable(GL_TEXTURE);
         glBindTexture(GL_TEXTURE_2D, material[mat].texture->GLTexture());
-        }
-      if(material[mat].mode & 0x01) {
-        glDisable(GL_CULL_FACE);
-        }
-      else {
-        glEnable(GL_CULL_FACE);
         }
 
       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
