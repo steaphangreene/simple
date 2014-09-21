@@ -27,11 +27,11 @@ win32:	libsimpletexture.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl gl --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl gl --cflags`
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/st.o $(ARCH)/stt.o $(ARCH)/stt_default.o \
 	$(ARCH)/stt_invisible.o $(ARCH)/stt_button.o \
@@ -64,26 +64,26 @@ ChangeLog:	*.cpp *.h TODO COPYING Makefile .svn tests/*.cpp tests/*.h
 
 test:	test1
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpletexture.a
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimpletexture.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a ../simplegui/$(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a ../simplegui/$(ARCH)/libsimplegui.a $(CXXLIBS)
 
 win32_test:	test1.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o libsimpletexture.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimpletexture.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o libsimpletexture.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o libsimpletexture.win32_a $(WCXXLIBS)
 
 $(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ARCH)/%.o:	tests/%.cpp | $(ARCH)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I../simplevideo -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@
 
 %.win32_o:	tests/%.cpp $(ARCH)/%.o
-	$(WCXX) $(WCXXFLAGS) -c $< -o $@
+	$(WCXX) $(WCXXFLAGS) -I../simplevideo -c $< -o $@
 
 deps.$(ARCH).mk:	*.cpp *.h
 #	$(CXX) $(CXXFLAGS) -MM *.cpp tests/*.cpp | sed "s|^\(.*\)\.o:|x86_64-linux-gnu/\1.o:|" > $@

@@ -104,38 +104,38 @@ clean:
 
 test:	test1 test2 test3 test4 test5
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test2:	$(ARCH)/test2.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 
-test3:  $(ARCH)/test3.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test3 $(ARCH)/test3.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test3:  $(ARCH)/test3.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test3 $(ARCH)/test3.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test4:  $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test4 $(ARCH)/test4.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test4:  $(ARCH)/test4.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test4 $(ARCH)/test4.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
-test5:  $(ARCH)/test5.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test5 $(ARCH)/test5.o $(ARCH)/renderer.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
+test5:  $(ARCH)/test5.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test5 $(ARCH)/test5.o $(ARCH)/audio.o $(ARCH)/libsimplegui.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe test3.exe test4.exe test5.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 
-test2.exe:	test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+test2.exe:	test2.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 
-test3.exe:	test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+test3.exe:	test3.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test3.exe test3.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
-test4.exe:	test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+test4.exe:	test4.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test4.exe test4.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
-test5.exe:	test5.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test5.exe test5.win32_o renderer.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
+test5.exe:	test5.win32_o audio.win32_o libsimplegui.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test5.exe test5.win32_o audio.win32_o libsimplegui.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

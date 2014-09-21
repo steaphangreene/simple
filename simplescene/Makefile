@@ -79,14 +79,14 @@ clean:
 
 test:	test1
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplescene.a
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplescene.a $(CXXLIBS)
+test1:	$(ARCH)/test1.o $(ARCH)/libsimplescene.a
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/libsimplescene.a $(CXXLIBS)
 	
 win32_test:	test1.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o libsimplescene.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimplescene.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o libsimplescene.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o libsimplescene.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

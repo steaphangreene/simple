@@ -31,7 +31,8 @@
 using namespace std;
 
 #include "../simplegui.h"
-#include "renderer.h"
+
+#include "simplevideo.h"
 #include "audio.h"
 
 #include "click.h"
@@ -41,6 +42,8 @@ static SimpleGUI *gui;
 
 static bool go_left = false, go_right = false, go_up = false, go_down = false;
 static SG_Tabs *tabs = NULL;
+
+SimpleVideo *video;
 
 int event_thread_handler(void *arg) {
   int click = audio_buildsound(click_data, sizeof(click_data));
@@ -93,10 +96,10 @@ int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
     if(go_up)    { tabs->Up();    go_up = false;    }
     if(go_down)  { tabs->Down();  go_down = false;  }
 
-    start_scene();
+    video->StartScene();
     gui->RenderStart(cur_time, true);
     gui->RenderFinish(cur_time, true);
-    finish_scene();
+    video->FinishScene();
     }
   return 0;
   }
@@ -138,9 +141,12 @@ int main(int argc, char **argv) {
     break;
     }
 
-  if(!init_renderer(xs, ys)) {
-    fprintf(stderr, "Warning!  Graphics failed to init!\n");
-    }
+  // Set up SimpleVideo, aligned just like old renderer was
+  SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
+  video->SetDown(0.0, 0);
+  video->SetAngle(90.0, 0);
+  video->SetPosition(6.0, 0.0, 0);
+
   audio_init(2048);
 
 //  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);

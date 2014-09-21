@@ -172,6 +172,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
 
   down = 60.0;
   if(flags & SV_ORTHO) down = 30.0;
+
   targ_down = down;
   down_start = 0;
   down_delay = 0;

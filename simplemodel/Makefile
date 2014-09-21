@@ -27,11 +27,11 @@ win32:	libsimplemodel.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl --libs` `pkg-config zziplib --libs` -lGL -lGLU
+FLAGS=	-g -Wall -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl gl --cflags` `pkg-config zziplib --cflags`
+LIBS=	`pkg-config sdl gl --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
-WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl --cflags`
-WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
+WFLAGS=	-s -O2 -Wall `/opt/i586-mingw32msvc/bin/pkg-config sdl gl --cflags`
+WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl gl --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
@@ -102,21 +102,21 @@ clean:
 
 test:	test1 test2
 
-test1:	$(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
+test1:	$(ARCH)/test1.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
-	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
+	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
-test2:	$(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
-	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/renderer.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
+test2:	$(ARCH)/test2.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
+	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/libsimplemodel.a $(CXXLIBS)
 	
 win32_test:	test1.exe test2.exe
 wintest:	win32_test
 
-test1.exe:	test1.win32_o renderer.win32_o libsimplemodel.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o renderer.win32_o libsimplemodel.win32_a $(WCXXLIBS)
+test1.exe:	test1.win32_o libsimplemodel.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o libsimplemodel.win32_a $(WCXXLIBS)
 	
-test2.exe:	test2.win32_o renderer.win32_o libsimplemodel.win32_a
-	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o renderer.win32_o libsimplemodel.win32_a $(WCXXLIBS)
+test2.exe:	test2.win32_o libsimplemodel.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o libsimplemodel.win32_a $(WCXXLIBS)
 	
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar

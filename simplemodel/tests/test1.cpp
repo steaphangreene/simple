@@ -30,7 +30,8 @@
 using namespace std;
 
 #include "../simplemodel.h"
-#include "renderer.h"
+
+#include "simplevideo.h"
 
 static vector<int> anims;
 static vector<Uint32> times;
@@ -130,9 +131,11 @@ int main(int argc, char **argv) {
     exit(1);
     }
 
-  if(!init_renderer(xs, ys, bgcolor)) {
-    fprintf(stderr, "Warning!  Graphics failed to init!\n");
-    }
+  SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
+  video->SetDown(0.0, 0);
+  video->SetAngle(90.0, 0);
+  video->SetPosition(2.5, 0.0, 0);
+  video->SetZPosition(-0.5, 0);
 
   SimpleTexture::SetColor(0, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
   banner = new SimpleTexture(0);
@@ -293,7 +296,7 @@ int main(int argc, char **argv) {
           }
 	}
       }
-    start_scene();
+    video->StartScene();
 
     cur_time = SDL_GetTicks();
 
@@ -351,7 +354,7 @@ int main(int argc, char **argv) {
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
 
-    finish_scene();
+    video->FinishScene();
     }
 
   return 0;

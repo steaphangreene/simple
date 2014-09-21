@@ -30,7 +30,7 @@
 using namespace std;
 
 #include "../simpletexture.h"
-#include "renderer.h"
+#include "simplevideo.h"
 
 int main(int argc, char **argv) {
   int xs = 1024, ys = 768;
@@ -43,9 +43,11 @@ int main(int argc, char **argv) {
 
   SimpleTexture *tex = new SimpleTexture(argv[1]);
 
-  if(!init_renderer(xs, ys)) {
-    fprintf(stderr, "Warning!  Graphics failed to init!\n");
-    }
+  // Set up SimpleVideo, aligned just like old renderer was
+  SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
+  video->SetDown(0.0, 0);
+  video->SetAngle(90.0, 0);
+  video->SetPosition(6.0, 0.0, 0);
 
   int quit = 0;
   while(!quit) {
@@ -73,7 +75,7 @@ int main(int argc, char **argv) {
 	  }break;
         }
       }
-    start_scene();
+    video->StartScene();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -117,7 +119,7 @@ int main(int argc, char **argv) {
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 
-    finish_scene();
+    video->FinishScene();
 
     SDL_Delay(10);	// Let the OS breathe
     }

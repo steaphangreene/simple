@@ -32,7 +32,8 @@
 using namespace std;
 
 #include "../simplegui.h"
-#include "renderer.h"
+
+#include "simplevideo.h"
 #include "audio.h"
 
 #include "click.h"
@@ -73,9 +74,12 @@ int main(int argc, char **argv) {
     break;
     }
 
-  if(!init_renderer(xs, ys)) {
-    fprintf(stderr, "Warning!  Graphics failed to init!\n");
-    }
+  // Set up SimpleVideo, aligned just like old renderer was
+  SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
+  video->SetDown(0.0, 0);
+  video->SetAngle(90.0, 0);
+  video->SetPosition(6.0, 0.0, 0);
+
   audio_init(2048);
 
   int click = audio_buildsound(click_data, sizeof(click_data));
@@ -170,9 +174,9 @@ int main(int argc, char **argv) {
 	user_quit = 1;
 	}
       } while(gui->PollEvent(&event));
-    start_scene();
+    video->StartScene();
     gui->Render(SDL_GetTicks());
-    finish_scene();
+    video->FinishScene();
     }
 
   delete gui;    //Will delete all children
