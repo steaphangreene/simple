@@ -31,6 +31,7 @@ using namespace std;
 #include "../simplemodel.h"
 
 #include "simplevideo.h"
+#include "simpleaudio.h"
 
 static vector<int> anims;
 static vector<Uint32> times;
@@ -131,6 +132,8 @@ int main(int argc, char **argv) {
     }
 
   SimpleVideo *video = new SimpleVideo(xs, ys, 0.0);
+  SimpleAudio *audio = new SimpleAudio(4096);
+
   video->SetDown(0.0, 0);
   video->SetAngle(90.0, 0);
   video->SetPosition(2.5, 0.0, 0);
@@ -148,6 +151,10 @@ int main(int argc, char **argv) {
   while(argc-barg >= 1) {
     if(argc-barg >= 2 && strcmp(argv[barg], "-s") == 0) {
       skinname.push_back(argv[barg + 1]);
+      barg += 2;
+      }
+    else if(argc-barg >= 2 && strcmp(argv[barg], "-m") == 0) {
+      audio->Play(audio->LoadMusic(argv[barg + 1]));
       barg += 2;
       }
     else {

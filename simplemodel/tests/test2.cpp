@@ -23,6 +23,7 @@
 #include "SDL_opengl.h"
 
 #include "simplevideo.h"
+#include "simpleaudio.h"
 #include "simplescene.h"
 #include "simplegui.h"
 
@@ -132,6 +133,7 @@ int main(int argc, char **argv) {
     }
 
   SimpleVideo *video = new SimpleVideo(1920, 1080, 0.0);
+  SimpleAudio *audio = new SimpleAudio(4096);
   SimpleScene *scene = new SimpleScene();
   SimpleGUI *gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 16.0/9.0);
 
@@ -162,6 +164,10 @@ int main(int argc, char **argv) {
   while(argc-barg >= 1) {
     if(argc-barg >= 2 && strcmp(argv[barg], "-s") == 0) {
       skinname.push_back(argv[barg + 1]);
+      barg += 2;
+      }
+    else if(argc-barg >= 2 && strcmp(argv[barg], "-m") == 0) {
+      audio->Play(audio->LoadMusic(argv[barg + 1]));
       barg += 2;
       }
     else {
