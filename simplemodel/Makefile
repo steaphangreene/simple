@@ -43,7 +43,7 @@ OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_xyplane.o $(ARCH)/simplemodel_xzplane.o \
 	$(ARCH)/simplemodel_yzplane.o $(ARCH)/simplemodel_3ds.o \
 	$(ARCH)/simplemodel_obj.o
-CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui
+CXXFLAGS:=	$(FLAGS) --std=c++11 -I../simpletexture -I../simplevideo -I../simplescene -I../simplegui -I../simpleaudio 
 CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a
 
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
@@ -80,7 +80,7 @@ $(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ARCH)/%.o:	tests/%.cpp | $(ARCH)
-	$(CXX) $(CXXFLAGS) -I../simpleaudio -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 iconv_string.win32_o:	iconv_string.c | $(ARCH)/iconv_string.o
 	$(WCC) $(WCFLAGS) -c $< -o $@

@@ -33,6 +33,8 @@ using namespace std;
 #include "saferead.h"
 #include "iconv_string.h"
 
+#define BONE_NONE 0xFFFF
+
 SimpleModel_PMD::SimpleModel_PMD(const string &filenm,
 	const string &defskin) {
   Load(filenm, defskin);
@@ -49,9 +51,11 @@ string SimpleModel_PMD::ReadString(SDL_RWops *model, size_t len) const {
   memset(ch, 0, len+4);
   SDL_RWread(model, ch, 1, len);
 
+  if(strlen(ch) < len) len = strlen(ch);
+
   string ret;
   char *utf8 = NULL;
-  if (iconv_string("UTF-8", "Shift_JIS", ch, ch+len, &utf8, NULL) < 0) {
+  if (iconv_string("UTF-8", "Shift_JIS", ch, ch+len+1, &utf8, NULL) < 0) {
     //perror("iconv_string");
     ret = ch;
     }
@@ -111,33 +115,25 @@ bool SimpleModel_PMD::Load(const string &filenm,
     float x, y, z;
 
     // Location vector
-    freadLE(y, model);
-    freadLE(z, model);
-    freadLE(x, model);
-
-    // Normalize to SimpleModel proportions and axes
-    vertices[vert].vertex[0] = x / -8.0;
-    vertices[vert].vertex[1] = y / -8.0;
-    vertices[vert].vertex[2] = z / 8.0;
+    freadLE(vertices[vert].vertex[0], model);
+    freadLE(vertices[vert].vertex[1], model);
+    freadLE(vertices[vert].vertex[2], model);
 
     // Normal vector
-    freadLE(y, model);
-    freadLE(z, model);
-    freadLE(x, model);
-
-    // Normalize to SimpleModel axes
-    vertices[vert].normal[0] = -x;
-    vertices[vert].normal[1] = -y;
-    vertices[vert].normal[2] = z;
+    freadLE(vertices[vert].normal[0], model);
+    freadLE(vertices[vert].normal[1], model);
+    freadLE(vertices[vert].normal[2], model);
 
     // Texture coordinates
     freadLE(vertices[vert].texture[0], model);
     freadLE(vertices[vert].texture[1], model);
 
-    // Skip the bones for now
-    SDL_RWseek(model, 2, SEEK_CUR);
-    SDL_RWseek(model, 2, SEEK_CUR);
-    SDL_RWseek(model, 1, SEEK_CUR);
+    // Bone(s) this vertex is linked to
+    freadLE(vertices[vert].bone[0], model);
+    freadLE(vertices[vert].bone[1], model);
+    Uint8 weight;
+    freadLE(weight, model);
+    vertices[vert].bone_weight = ((float)(weight)) / 100.0;
 
     // We don't draw edges
     SDL_RWseek(model, 1, SEEK_CUR);
@@ -211,15 +207,155 @@ bool SimpleModel_PMD::Load(const string &filenm,
       delete tmptex;
       }
     }
+
+  Uint16 num_bones;
+  freadLE(num_bones, model);
+  bone.resize(num_bones);
+  for(Uint16 bn = 0; bn < num_bones; ++bn) {
+    // Only interpret 15 of the 20 characters, so the name is consistent
+    bone[bn].name = ReadString(model, 15);
+    SDL_RWseek(model, 5, SEEK_CUR);
+
+    bone_by_name[bone[bn].name] = bn;
+
+    //fprintf(stderr, "Loading Bone #%u: %s\n", bn, bone[bn].name.c_str());
+
+    freadLE(bone[bn].parent, model);
+    freadLE(bone[bn].child, model);
+    freadLE(bone[bn].type, model);
+    freadLE(bone[bn].target, model);
+
+    freadLE(bone[bn].pos[0], model);
+    freadLE(bone[bn].pos[1], model);
+    freadLE(bone[bn].pos[2], model);
+    }
+
+  return false;
+  }
+
+bool SimpleModel_PMD::LoadAnimation(const string &filename) {
+  SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
+  if(!model) {
+    fprintf(stderr, "WARNING: Unable to open animation file '%s'!\n",
+	filename.c_str());
+    perror("WARNING");
+    return false;
+    }
+
+  //These are the parts of the header we're actually reading.
+  Sint8 magic[30];
+
+  //Read parts of the header of the VMD file
+  SDL_RWread(model, &magic, 1, sizeof(magic));
+  string name = "";
+  if(!strncmp((char *)magic, "Vocaloid Motion Data 0002", 26)) {
+    name = ReadString(model, 20);
+    }
+  else if(!strncmp((char *)magic, "Vocaloid Motion Data file", 26)) {
+    name = ReadString(model, 10);
+    }
+  else {
+    fprintf(stderr, "WARNING: File '%s' is not a VMD file!\n",
+	filename.c_str());
+    SDL_RWclose(model);
+    return false;
+    }
+  fprintf(stderr, "Loading VMD: %s\n", name.c_str());
+
+  Uint32 num_keyframes;
+  freadLE(num_keyframes, model);
+  for(Uint32 kf = 0; kf < num_keyframes; ++kf) {
+    string bone_name = ReadString(model, 15);
+
+    Uint32 frame;
+    freadLE(frame, model);
+
+    if(bone_by_name.count(bone_name) != 1) {
+      fprintf(stderr, "Discarding frame %u data for unknown bone (%s).\n",
+              frame, bone_name.c_str());
+      SDL_RWseek(model, 64+28, SEEK_CUR);
+      continue;
+      }
+
+    //fprintf(stderr, "Keeping frame %u data for known bone (%s).\n",
+    //        frame, bone_name.c_str());
+
+    Uint16 bone = bone_by_name[bone_name];
+
+    // Coordinate vector
+    freadLE(keyframe[bone][frame].pos[0], model);
+    freadLE(keyframe[bone][frame].pos[1], model);
+    freadLE(keyframe[bone][frame].pos[2], model);
+
+    // Rotation quaternion
+    freadLE(keyframe[bone][frame].rot.data[0], model);
+    freadLE(keyframe[bone][frame].rot.data[1], model);
+    freadLE(keyframe[bone][frame].rot.data[2], model);
+    freadLE(keyframe[bone][frame].rot.data[3], model);
+
+    // TODO: Lots of unknown data ignored
+    SDL_RWseek(model, 64, SEEK_CUR);
+    }
   return false;
   }
 
 bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 	const vector<Uint32> &start_time, Uint32 anim_offset) const {
 
+  float frame = float(cur_time - start_time[0]) * 30.0 / 1000.0;
+
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
   float xfact = 1.0, yfact = 1.0;
+
+  // Transform to SimpleModel axes and scale
+  glPushMatrix();
+  glScalef(0.125, 0.125, 0.125);
+  glRotatef(-90.0, 0.0, 1.0, 0.0);
+  glRotatef(-90.0, 0.0, 0.0, 1.0);
+
+  float bone_off[bone.size()][3];
+  Quaternion bone_rot[bone.size()];
+  for(Uint32 mat = 0; mat < bone.size(); ++mat) {
+    bone_off[mat][0] = 0.0;
+    bone_off[mat][1] = 0.0;
+    bone_off[mat][2] = 0.0;
+    bone_rot[mat].data[0] = 0.0;
+    bone_rot[mat].data[1] = 0.0;
+    bone_rot[mat].data[2] = 0.0;
+    bone_rot[mat].data[3] = 1.0;
+    }
+
+  for(auto bn=keyframe.begin(); bn != keyframe.end(); ++bn) {
+    Uint16 bone = bn->first;
+    Uint32 last = 0;
+    for(auto fr=bn->second.begin(); fr != bn->second.end(); ++fr) {
+      if(fr->first <= frame) {
+        bone_off[bone][0] = fr->second.pos[0];
+        bone_off[bone][1] = fr->second.pos[1];
+        bone_off[bone][2] = fr->second.pos[2];
+
+        bone_rot[bone] = fr->second.rot;
+
+        last = fr->first;
+        }
+      else {
+        float weight = float(frame - last) / float(fr->first - last);
+        Quaternion q1 = bone_rot[bone];
+        Quaternion q2 = fr->second.rot;
+        SLERP(bone_rot[bone], q1, q2, weight);
+
+        bone_off[bone][0] *= (1.0 - weight);
+        bone_off[bone][0] += weight * fr->second.pos[0];
+        bone_off[bone][1] *= (1.0 - weight);
+        bone_off[bone][1] += weight * fr->second.pos[0];
+        bone_off[bone][2] *= (1.0 - weight);
+        bone_off[bone][2] += weight * fr->second.pos[0];
+
+        break;
+        }
+      }
+    }
 
   glDisable(GL_CULL_FACE);
   for(Uint32 tri = 0; tri < triangles.size(); tri++) {
@@ -228,7 +364,10 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         ++mat;
         to_next_mat = tri + material[mat].num_tris;
         } while(tri >= to_next_mat);
-      if(tri > 0) glEnd();
+      if(tri > 0) {
+        glEnd();
+        glPopMatrix();
+        }
 
       if(MaterialDisabled(mat)) continue;
 
@@ -249,6 +388,43 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material[mat].specular);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material[mat].specularity);
 
+      glPushMatrix();
+
+      Quaternion rot_quat;
+      SLERP(rot_quat,
+            bone_rot[vertices[triangles[tri].vertex[0]].bone[0]],
+            bone_rot[vertices[triangles[tri].vertex[0]].bone[1]],
+            vertices[triangles[tri].vertex[0]].bone_weight);
+//      rot_quat = bone_rot[vertices[triangles[tri].vertex[0]].bone[1]];
+
+      Matrix4x4 rot_mat;
+      QuaternionToMatrix4x4(rot_mat, rot_quat);
+
+      glTranslatef(bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[0],
+                   bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[1],
+                   bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[2]);
+      glMultMatrixf(rot_mat.data);
+      glTranslatef(-bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[0],
+                   -bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[1],
+                   -bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[2]);
+
+/*
+      float x, y, z;
+      x = bone_off[vertices[triangles[tri].vertex[0]].bone[0]][0]
+            * vertices[triangles[tri].vertex[0]].bone_weight
+        + +bone_off[vertices[triangles[tri].vertex[0]].bone[1]][0]
+            * (1.0 - vertices[triangles[tri].vertex[0]].bone_weight);
+      y = bone_off[vertices[triangles[tri].vertex[0]].bone[0]][1]
+            * vertices[triangles[tri].vertex[0]].bone_weight
+        + +bone_off[vertices[triangles[tri].vertex[0]].bone[1]][1]
+            * (1.0 - vertices[triangles[tri].vertex[0]].bone_weight);
+      z = bone_off[vertices[triangles[tri].vertex[0]].bone[0]][2]
+            * vertices[triangles[tri].vertex[0]].bone_weight
+        + +bone_off[vertices[triangles[tri].vertex[0]].bone[1]][2]
+            * (1.0 - vertices[triangles[tri].vertex[0]].bone_weight);
+      glTranslatef(x, y, z);
+*/
+
       glBegin(GL_TRIANGLES);
       }
     for(Uint32 vert = 0; vert < 3; ++vert) {
@@ -259,13 +435,30 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                  vertices[triangles[tri].vertex[vert]].normal[1],
                  vertices[triangles[tri].vertex[vert]].normal[2]);
 
-      glVertex3f(vertices[triangles[tri].vertex[vert]].vertex[0],
-                 vertices[triangles[tri].vertex[vert]].vertex[1],
-                 vertices[triangles[tri].vertex[vert]].vertex[2]);
+      float xoff, yoff, zoff, bone_weight, x, y, z;
+      bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight;
+      Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
+      Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+      xoff = bone_off[bone1][0] * bone_weight
+           + bone_off[bone2][0] * (1.0 - bone_weight);
+      x = vertices[triangles[tri].vertex[vert]].vertex[0] + xoff;
+      yoff = bone_off[bone1][1] * bone_weight
+           + bone_off[bone2][1] * (1.0 - bone_weight);
+      y = vertices[triangles[tri].vertex[vert]].vertex[1] + yoff;
+      zoff = bone_off[bone1][2] * bone_weight
+           + bone_off[bone2][2] * (1.0 - bone_weight);
+      z = vertices[triangles[tri].vertex[vert]].vertex[2] + zoff;
+
+      glVertex3f(x, y, z);
       }
     }
 
-  if(mat >= 0) glEnd();
+  if(mat >= 0) {
+    glEnd();
+    glPopMatrix();
+    }
+
+  glPopMatrix();
 
   return true;
   }

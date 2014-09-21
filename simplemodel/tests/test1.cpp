@@ -153,6 +153,10 @@ int main(int argc, char **argv) {
       skinname.push_back(argv[barg + 1]);
       barg += 2;
       }
+    else if(argc-barg >= 2 && strcmp(argv[barg], "-a") == 0) {
+      mod.back()->LoadAnimation(argv[barg + 1]);
+      barg += 2;
+      }
     else if(argc-barg >= 2 && strcmp(argv[barg], "-m") == 0) {
       audio->Play(audio->LoadMusic(argv[barg + 1]));
       barg += 2;

@@ -39,6 +39,7 @@ public:
 
   const map<string, int> GetAnimations() { return animations; };
   int LookUpAnimation(const string &anim) const;
+  virtual bool LoadAnimation(const string &filenm) { return false; };
 
   const map<string, Uint32> GetTags() { return tags; };
 
