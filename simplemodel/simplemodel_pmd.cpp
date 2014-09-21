@@ -185,9 +185,19 @@ bool SimpleModel_PMD::Load(const string &filenm,
     material[mat].num_tris /= 3;
 
     string texfile_part = ReadString(model, 20);
+    if(texfile_part.length() < 3) {
+      fprintf(stderr, "WARNING: Blank tex '%s'\n", texfile_part.c_str());
+      material[mat].texture = NULL;
+      continue;
+      }
     if(texfile_part.find('*') != string::npos) {
       texfile_part = texfile_part.substr(0, texfile_part.find('*'));
       // FIXME: Ignoring sphere part (after the '*')
+      }
+    if(texfile_part.length() < 3) {
+      fprintf(stderr, "WARNING: Blank base tex '%s'\n", texfile_part.c_str());
+      material[mat].texture = NULL;
+      continue;
       }
     string texfile = filename.substr(0, filename.find_last_of("/") + 1);
     texfile += texfile_part;
@@ -198,8 +208,8 @@ bool SimpleModel_PMD::Load(const string &filenm,
     else {
       fprintf(stderr, "WARNING: Failed to load tex '%s'\n", texfile.c_str());
       material[mat].texture = NULL;
+      delete tmptex;
       }
-
     }
   return false;
   }
@@ -209,6 +219,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
+  float xfact = 1.0, yfact = 1.0;
 
   glDisable(GL_CULL_FACE);
   for(Uint32 tri = 0; tri < triangles.size(); tri++) {
@@ -223,10 +234,14 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       if(!material[mat].texture) {
         glDisable(GL_TEXTURE);
+        xfact = 1.0;
+        yfact = 1.0;
         }
       else {
         glEnable(GL_TEXTURE);
         glBindTexture(GL_TEXTURE_2D, material[mat].texture->GLTexture());
+        xfact = material[mat].texture->xfact;
+        yfact = material[mat].texture->yfact;
         }
 
       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
@@ -237,8 +252,8 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       glBegin(GL_TRIANGLES);
       }
     for(Uint32 vert = 0; vert < 3; ++vert) {
-      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texture[0],
-                   vertices[triangles[tri].vertex[vert]].texture[1]);
+      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texture[0] * xfact,
+                   vertices[triangles[tri].vertex[vert]].texture[1] * yfact);
 
       glNormal3f(vertices[triangles[tri].vertex[vert]].normal[0],
                  vertices[triangles[tri].vertex[vert]].normal[1],
