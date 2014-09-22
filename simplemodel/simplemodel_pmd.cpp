@@ -262,9 +262,9 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     }
   fprintf(stderr, "Loading VMD: %s\n", name.c_str());
 
-  Uint32 num_keyframes;
-  freadLE(num_keyframes, model);
-  for(Uint32 kf = 0; kf < num_keyframes; ++kf) {
+  Uint32 num_bone_frames;
+  freadLE(num_bone_frames, model);
+  for(Uint32 kf = 0; kf < num_bone_frames; ++kf) {
     string bone_name = ReadString(model, 15);
 
     Uint32 frame;
@@ -280,27 +280,27 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     Uint16 bone = bone_by_name[bone_name];
 
     // Coordinate vector
-    freadLE(keyframe[bone][frame].pos[0], model);
-    freadLE(keyframe[bone][frame].pos[1], model);
-    freadLE(keyframe[bone][frame].pos[2], model);
+    freadLE(bone_frame[bone][frame].pos[0], model);
+    freadLE(bone_frame[bone][frame].pos[1], model);
+    freadLE(bone_frame[bone][frame].pos[2], model);
 
     // Rotation quaternion
-    freadLE(keyframe[bone][frame].rot.x, model);
-    freadLE(keyframe[bone][frame].rot.y, model);
-    freadLE(keyframe[bone][frame].rot.z, model);
-    freadLE(keyframe[bone][frame].rot.w, model);
+    freadLE(bone_frame[bone][frame].rot.x, model);
+    freadLE(bone_frame[bone][frame].rot.y, model);
+    freadLE(bone_frame[bone][frame].rot.z, model);
+    freadLE(bone_frame[bone][frame].rot.w, model);
 
 //    if(bone == 0) {
 //      fprintf(stderr, "Loaded frame %u data for known bone #%u (%s).  ",
 //              frame, bone, bone_name.c_str());
 //      fprintf(stderr, "(%1.2f, %1.2f, %1.2f), [%1.2f, %1.2f, %1.2f]\n",
-//              keyframe[bone][frame].pos[0],
-//              keyframe[bone][frame].pos[1],
-//              keyframe[bone][frame].pos[2],
-//              keyframe[bone][frame].rot.w,
-//              keyframe[bone][frame].rot.x,
-//              keyframe[bone][frame].rot.y,
-//              keyframe[bone][frame].rot.z);
+//              bone_frame[bone][frame].pos[0],
+//              bone_frame[bone][frame].pos[1],
+//              bone_frame[bone][frame].pos[2],
+//              bone_frame[bone][frame].rot.w,
+//              bone_frame[bone][frame].rot.x,
+//              bone_frame[bone][frame].rot.y,
+//              bone_frame[bone][frame].rot.z);
 //      }
 
     // TODO: Lots of unknown data ignored
@@ -336,7 +336,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     bone_rot[bn].w = 1.0;
     }
 
-  for(auto bn=keyframe.begin(); bn != keyframe.end(); ++bn) {
+  for(auto bn=bone_frame.begin(); bn != bone_frame.end(); ++bn) {
     Uint16 bone_id = bn->first;
     Uint32 last = 0xFFFFFFFF;
     Quaternion rot = {1.0, 0.0, 0.0, 0.0};

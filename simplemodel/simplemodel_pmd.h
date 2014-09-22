@@ -90,7 +90,7 @@ protected:
     };
 
   // Bone ID, Frame #, Data
-  map<Uint16,map<Uint32,VMDBoneKeyFrame>> keyframe;
+  map<Uint16,map<Uint32,VMDBoneKeyFrame>> bone_frame;
   };
 
 #endif	//SIMPLEMODEL_PMD_H
