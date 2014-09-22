@@ -187,7 +187,12 @@ protected:
   static void SLERP(Matrix4x4 &res,
 	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
   static void SLERP(Quaternion &res,
-	const Quaternion &q1, const Quaternion &q2, const float t);
+	const Quaternion q1, const Quaternion q2, const float t);
+
+  static void Multiply(Quaternion &res, Quaternion q1, Quaternion q2);
+  static void CombineQuaternions(Quaternion &res, Quaternion q1, Quaternion q2);
+  static void QuaternionRotate(float &x, float &y, float &z,
+                               const Quaternion &rot);
 
   static bool gl_ext_detected;
   static void SetupGLEXT();

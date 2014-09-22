@@ -351,7 +351,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         z = z * (1.0 - weight) + weight * fr->second.pos[2];
 
         while(bone_id != 0) {
-          bone_rot[bone_id] = rot;
+          CombineQuaternions(bone_rot[bone_id], rot, bone_rot[bone_id]);
 
           bone_off[bone_id][0] += x;
           bone_off[bone_id][1] += y;
@@ -398,6 +398,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       glPushMatrix();
 
+/*
       float bone_weight = vertices[triangles[tri].vertex[0]].bone_weight;
       Quaternion rot_quat, q1, q2;
       q1 = bone_rot[vertices[triangles[tri].vertex[0]].bone[0]];
@@ -416,6 +417,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 // USE JUST 1
 //      rot_quat = bone_rot[vertices[triangles[tri].vertex[0]].bone[0]];
 
+
       Matrix4x4 rot_mat;
       QuaternionToMatrix4x4(rot_mat, rot_quat);
 
@@ -426,6 +428,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       glTranslatef(-bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[0],
                    -bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[1],
                    -bone[vertices[triangles[tri].vertex[0]].bone[0]].pos[2]);
+*/
 
 /*
       float x, y, z;
@@ -458,6 +461,25 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight;
       Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
       Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+
+      Quaternion rot_quat, q1, q2;
+      q1 = bone_rot[bone1];
+      q2 = bone_rot[bone2];
+
+// NLERP
+      rot_quat.w = q1.w * bone_weight + q2.w * (1.0 - bone_weight);
+      rot_quat.x = q1.x * bone_weight + q2.x * (1.0 - bone_weight);
+      rot_quat.y = q1.y * bone_weight + q2.y * (1.0 - bone_weight);
+      rot_quat.z = q1.z * bone_weight + q2.z * (1.0 - bone_weight);
+      Normalize(rot_quat, rot_quat);
+
+// SLERP
+//      SLERP(rot_quat, q1, q2, bone_weight);
+
+// USE JUST 1
+//      rot_quat = bone_rot[vertices[triangles[tri].vertex[0]].bone[0]];
+
+
 //      xpos = bone[bone1].pos[0] * bone_weight
 //           + bone[bone2].pos[0] * (1.0 - bone_weight);
       xoff = bone_off[bone1][0] * bone_weight
@@ -471,14 +493,16 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       zoff = bone_off[bone1][2] * bone_weight
            + bone_off[bone2][2] * (1.0 - bone_weight);
 
+      x = vertices[triangles[tri].vertex[vert]].vertex[0] + xoff;
+      y = vertices[triangles[tri].vertex[vert]].vertex[1] + yoff;
+      z = vertices[triangles[tri].vertex[vert]].vertex[2] + zoff;
+
 // TODO: Working on this
 //      x -= xpos;
 //      y -= ypos;
 //      z -= zpos;
 
-      x = vertices[triangles[tri].vertex[vert]].vertex[0] + xoff;
-      y = vertices[triangles[tri].vertex[vert]].vertex[1] + yoff;
-      z = vertices[triangles[tri].vertex[vert]].vertex[2] + zoff;
+      QuaternionRotate(x, y, z, rot_quat);
 
       glVertex3f(x, y, z);
       }

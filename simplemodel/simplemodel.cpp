@@ -443,9 +443,37 @@ void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat) 
     }
   }
 
+void SimpleModel::Multiply(Quaternion &res,
+                           const Quaternion q1,
+                           const Quaternion q2) {
+  res.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+  res.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+  res.y = q1.w * q2.y + q1.y * q2.w + q1.z * q2.x - q1.x * q2.z;
+  res.z = q1.w * q2.z + q1.z * q2.w + q1.x * q2.y - q1.y * q2.x;
+  }
+
+void SimpleModel::CombineQuaternions(Quaternion &res,
+                                     const Quaternion q1,
+                                     const Quaternion q2) {
+//  Multiply(res, q1, q2);
+  res = q1;
+  }
+
+void SimpleModel::QuaternionRotate(float &x, float &y, float &z,
+                                    const Quaternion &rot) {
+  Quaternion vec = { 0.0, x, y, z};
+  Quaternion conj = { rot.w, -rot.x, -rot.y, -rot.z };
+  Quaternion tmp;
+  Multiply(tmp, vec, conj);
+  Multiply(vec, rot, tmp);
+
+  x = vec.x;
+  y = vec.y;
+  z = vec.z;
+  }
 
 void SimpleModel::SLERP(Quaternion &res,
-	const Quaternion &q1, const Quaternion &q2, const float t) {
+	const Quaternion q1, const Quaternion q2, const float t) {
   float cos_theta, ab_cos_theta, s1, s2;
 
   cos_theta = q1.x * q2.x + q1.y * q2.y
