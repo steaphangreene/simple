@@ -339,6 +339,12 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
         q1 = fr->second.rot;
 
+        bone_off[bone_id][0] = x;
+        bone_off[bone_id][1] = y;
+        bone_off[bone_id][2] = z;
+
+        bone_rot[bone_id] = q1;
+
         last = fr->first;
         }
       else {
@@ -350,16 +356,12 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         y = y * (1.0 - weight) + weight * fr->second.pos[1];
         z = z * (1.0 - weight) + weight * fr->second.pos[2];
 
-        while(bone_id != 0) {
-          CombineQuaternions(bone_rot[bone_id], rot, bone_rot[bone_id]);
+        bone_rot[bone_id] = rot;
 
-          bone_off[bone_id][0] += x;
-          bone_off[bone_id][1] += y;
-          bone_off[bone_id][2] += z;
+        bone_off[bone_id][0] = x;
+        bone_off[bone_id][1] = y;
+        bone_off[bone_id][2] = z;
 
-          // TODO: It's way more complicated than this.  :)
-          bone_id = bone[bone_id].child;
-          }
         break;
         }
       }
