@@ -348,13 +348,13 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         last = fr->first;
         }
       else {
-        float weight = float(frame - last) / float(fr->first - last);
+        float progress = float(frame - last) / float(fr->first - last);
         q2 = fr->second.rot;
-        SLERP(rot, q1, q2, weight);
+        SLERP(rot, q1, q2, progress);
 
-        x = x * (1.0 - weight) + weight * fr->second.pos[0];
-        y = y * (1.0 - weight) + weight * fr->second.pos[1];
-        z = z * (1.0 - weight) + weight * fr->second.pos[2];
+        x = x * (1.0 - progress) + progress * fr->second.pos[0];
+        y = y * (1.0 - progress) + progress * fr->second.pos[1];
+        z = z * (1.0 - progress) + progress * fr->second.pos[2];
 
         bone_rot[bone_id] = rot;
 
@@ -416,19 +416,8 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       q1 = bone_rot[bone1];
       q2 = bone_rot[bone2];
 
-// NLERP
-//      rot_quat.w = q1.w * bone_weight + q2.w * (1.0 - bone_weight);
-//      rot_quat.x = q1.x * bone_weight + q2.x * (1.0 - bone_weight);
-//      rot_quat.y = q1.y * bone_weight + q2.y * (1.0 - bone_weight);
-//      rot_quat.z = q1.z * bone_weight + q2.z * (1.0 - bone_weight);
-//      Normalize(rot_quat, rot_quat);
-
-// SLERP
-      SLERP(rot_quat, q1, q2, bone_weight);
-
-// USE JUST 1
-//      rot_quat = bone_rot[vertices[triangles[tri].vertex[0]].bone[0]];
-
+      // Note: q1 and q2 are swapped, this has weight of first, not progress
+      SLERP(rot_quat, q2, q1, bone_weight);
 
       xpos = bone[bone1].pos[0] * bone_weight
            + bone[bone2].pos[0] * (1.0 - bone_weight);
