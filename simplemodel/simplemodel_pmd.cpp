@@ -326,14 +326,14 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   float bone_off[bone.size()][3];
   Quaternion bone_rot[bone.size()];
-  for(Uint32 mat = 0; mat < bone.size(); ++mat) {
-    bone_off[mat][0] = 0.0;
-    bone_off[mat][1] = 0.0;
-    bone_off[mat][2] = 0.0;
-    bone_rot[mat].x = 0.0;
-    bone_rot[mat].y = 0.0;
-    bone_rot[mat].z = 0.0;
-    bone_rot[mat].w = 1.0;
+  for(Uint32 bn = 0; bn < bone.size(); ++bn) {
+    bone_off[bn][0] = 0.0;
+    bone_off[bn][1] = 0.0;
+    bone_off[bn][2] = 0.0;
+    bone_rot[bn].x = 0.0;
+    bone_rot[bn].y = 0.0;
+    bone_rot[bn].z = 0.0;
+    bone_rot[bn].w = 1.0;
     }
 
   for(auto bn=keyframe.begin(); bn != keyframe.end(); ++bn) {
