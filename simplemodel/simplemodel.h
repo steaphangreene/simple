@@ -177,6 +177,9 @@ protected:
 	const Matrix4x4 &m8);
   static void Normalize(Quaternion &res, const Quaternion &quat);
 
+  static void MatrixTransform(float &x, float &y, float &z,
+                              const Matrix4x4 &rot);
+
   //Interpolations
   template <class Tp>
   static void LERP(Tp &res, const Tp &m1, const Tp &m2, float t) {
