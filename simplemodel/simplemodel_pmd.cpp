@@ -456,15 +456,26 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       zoff = bone_off[bone1][2] * bone_weight
            + bone_off[bone2][2] * (1.0 - bone_weight);
 
-      x = vertices[triangles[tri].vertex[vert]].vertex[0] - xpos;
-      y = vertices[triangles[tri].vertex[vert]].vertex[1] - ypos;
-      z = vertices[triangles[tri].vertex[vert]].vertex[2] - zpos;
+      x = vertices[triangles[tri].vertex[vert]].vertex[0];
+      y = vertices[triangles[tri].vertex[vert]].vertex[1];
+      z = vertices[triangles[tri].vertex[vert]].vertex[2];
 
-      QuaternionRotate(x, y, z, rot_quat);
+      Matrix4x4 pre = identity4x4;
+      pre.data[3]  = -xpos;
+      pre.data[7]  = -ypos;
+      pre.data[11] = -zpos;
 
-      x += xpos + xoff;
-      y += ypos + yoff;
-      z += zpos + zoff;
+      Matrix4x4 rot;
+      QuaternionToMatrix4x4(rot, rot_quat);
+
+      Matrix4x4 post = identity4x4;
+      post.data[3] = xpos + xoff;
+      post.data[7] = ypos + yoff;
+      post.data[11] = zpos + zoff;
+
+      Matrix4x4 trans;
+      Multiply(trans, pre, rot, post);
+      MatrixTransform(x, y, z, trans);
 
       glVertex3f(x, y, z);
       }
