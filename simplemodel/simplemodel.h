@@ -190,7 +190,6 @@ protected:
 	const Quaternion q1, const Quaternion q2, const float t);
 
   static void Multiply(Quaternion &res, Quaternion q1, Quaternion q2);
-  static void CombineQuaternions(Quaternion &res, Quaternion q1, Quaternion q2);
   static void QuaternionRotate(float &x, float &y, float &z,
                                const Quaternion &rot);
 

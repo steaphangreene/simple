@@ -366,12 +366,20 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         y = y * (1.0 - progress) + progress * fr->second.pos[1];
         z = z * (1.0 - progress) + progress * fr->second.pos[2];
 
-        bone_rot[bone_id] = rot;
+        Uint16 parent = bone[bone_id].parent;
+        if(parent != 0xFFFF) {
+          bone_rot[bone_id] = bone_rot[parent];
 
-        bone_off[bone_id][0] = x;
-        bone_off[bone_id][1] = y;
-        bone_off[bone_id][2] = z;
+          bone_off[bone_id][0] = bone_off[parent][0];
+          bone_off[bone_id][1] = bone_off[parent][1];
+          bone_off[bone_id][2] = bone_off[parent][2];
+          }
 
+        Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
+
+        bone_off[bone_id][0] += x;
+        bone_off[bone_id][1] += y;
+        bone_off[bone_id][2] += z;
         break;
         }
       }

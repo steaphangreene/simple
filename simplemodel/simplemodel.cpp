@@ -452,13 +452,6 @@ void SimpleModel::Multiply(Quaternion &res,
   res.z = q1.w * q2.z + q1.z * q2.w + q1.x * q2.y - q1.y * q2.x;
   }
 
-void SimpleModel::CombineQuaternions(Quaternion &res,
-                                     const Quaternion q1,
-                                     const Quaternion q2) {
-//  Multiply(res, q1, q2);
-  res = q1;
-  }
-
 void SimpleModel::QuaternionRotate(float &x, float &y, float &z,
                                     const Quaternion &rot) {
   Quaternion vec = { 0.0, x, y, z};
