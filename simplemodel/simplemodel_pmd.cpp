@@ -338,50 +338,54 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   for(auto bn=keyframe.begin(); bn != keyframe.end(); ++bn) {
     Uint16 bone_id = bn->first;
-    Uint32 last = 0;
-    Quaternion q1 = {1.0, 0.0, 0.0, 0.0}, q2, rot;
+    Uint32 last = 0xFFFFFFFF;
+    Quaternion rot = {1.0, 0.0, 0.0, 0.0};
     float x = 0.0, y = 0.0, z = 0.0;
     for(auto fr=bn->second.begin(); fr != bn->second.end(); ++fr) {
       if(fr->first <= frame) {
         x = fr->second.pos[0];
         y = fr->second.pos[1];
         z = fr->second.pos[2];
-
-        q1 = fr->second.rot;
-
-        bone_off[bone_id][0] = x;
-        bone_off[bone_id][1] = y;
-        bone_off[bone_id][2] = z;
-
-        bone_rot[bone_id] = q1;
+        rot = fr->second.rot;
 
         last = fr->first;
         }
       else {
-        float progress = float(frame - last) / float(fr->first - last);
-        q2 = fr->second.rot;
-        SLERP(rot, q1, q2, progress);
+        // The above case should have *always* triggered before this
+        if(last == 0xFFFFFFFF) {
+          fprintf(stderr, "WARNING: Everything is ruined.\n");
+          }
 
+        float progress = float(frame - last) / float(fr->first - last);
+        SLERP(rot, rot, fr->second.rot, progress);
         x = x * (1.0 - progress) + progress * fr->second.pos[0];
         y = y * (1.0 - progress) + progress * fr->second.pos[1];
         z = z * (1.0 - progress) + progress * fr->second.pos[2];
 
-        Uint16 parent = bone[bone_id].parent;
-        if(parent != 0xFFFF) {
-          bone_rot[bone_id] = bone_rot[parent];
-
-          bone_off[bone_id][0] = bone_off[parent][0];
-          bone_off[bone_id][1] = bone_off[parent][1];
-          bone_off[bone_id][2] = bone_off[parent][2];
-          }
-
-        Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
-
-        bone_off[bone_id][0] += x;
-        bone_off[bone_id][1] += y;
-        bone_off[bone_id][2] += z;
         break;
         }
+      }
+
+    Uint16 parent = bone[bone_id].parent;
+    if(parent != 0xFFFF) {
+      bone_rot[bone_id] = bone_rot[parent];
+
+      bone_off[bone_id][0] = bone_off[parent][0];
+      bone_off[bone_id][1] = bone_off[parent][1];
+      bone_off[bone_id][2] = bone_off[parent][2];
+
+      Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
+
+      bone_off[bone_id][0] += x;
+      bone_off[bone_id][1] += y;
+      bone_off[bone_id][2] += z;
+      }
+    else {
+      bone_rot[bone_id] = rot;
+
+      bone_off[bone_id][0] = x;
+      bone_off[bone_id][1] = y;
+      bone_off[bone_id][2] = z;
       }
     }
 
