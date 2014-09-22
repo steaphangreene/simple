@@ -385,19 +385,19 @@ void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
   }
 
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
-  mat.data[0] = 1.0f - 2.0f * (quat.w * quat.w + quat.x * quat.x);
-  mat.data[1] = 2.0f * (quat.z * quat.w - quat.y * quat.x);
-  mat.data[2] = 2.0f * (quat.z * quat.x + quat.y * quat.w);
+  mat.data[0] = 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z);
+  mat.data[1] = 2.0f * (quat.x * quat.y + quat.z * quat.w);
+  mat.data[2] = 2.0f * (quat.x * quat.z - quat.y * quat.w);
   mat.data[3] = 0.0f;
 
-  mat.data[4] = 2.0f * (quat.z * quat.w + quat.y * quat.x);
-  mat.data[5] = 1.0f - 2.0f * (quat.z * quat.z + quat.x * quat.x);
-  mat.data[6] = 2.0f * (quat.w * quat.x - quat.y * quat.z);
+  mat.data[4] = 2.0f * (quat.x * quat.y - quat.z * quat.w);
+  mat.data[5] = 1.0f - 2.0f * (quat.x * quat.x + quat.z * quat.z);
+  mat.data[6] = 2.0f * (quat.y * quat.z + quat.x * quat.w);
   mat.data[7] = 0.0f;
 
-  mat.data[8] = 2.0f * (quat.z * quat.x - quat.y * quat.w);
-  mat.data[9] = 2.0f * (quat.w * quat.x + quat.y * quat.z);
-  mat.data[10] = 1.0f - 2.0f * (quat.z * quat.z + quat.w * quat.w);
+  mat.data[8] = 2.0f * (quat.x * quat.z + quat.y * quat.w);
+  mat.data[9] = 2.0f * (quat.y * quat.z - quat.x * quat.w);
+  mat.data[10] = 1.0f - 2.0f * (quat.x * quat.x - quat.z * quat.z);
   mat.data[11] = 0.0f;
 
   mat.data[12] = 0;
