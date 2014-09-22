@@ -827,11 +827,11 @@ bool SimpleModel_MDX::HandleKGRT(SDL_RWops * model, MDXRotationInfo_KGRT & rot) 
 
   for(Uint32 i = 0; i < nunks; ++i) {
     freadLE(rot.key_frames.at(i).frame, model);
-    freadLE(rot.key_frames.at(i).quat.data[0], model);
-    freadLE(rot.key_frames.at(i).quat.data[1], model);
-    freadLE(rot.key_frames.at(i).quat.data[2], model);
-    freadLE(rot.key_frames.at(i).quat.data[3], model);
-    rot.key_frames.at(i).quat.data[3] = -(rot.key_frames.at(i).quat.data[3]);
+    freadLE(rot.key_frames.at(i).quat.x, model);
+    freadLE(rot.key_frames.at(i).quat.y, model);
+    freadLE(rot.key_frames.at(i).quat.x, model);
+    freadLE(rot.key_frames.at(i).quat.w, model);
+    rot.key_frames.at(i).quat.w = -(rot.key_frames.at(i).quat.w);
     if(rot.line_type > InterpolationTypeLinear) {
       freadLE(rot.key_frames.at(i).in_tan[0], model);
       freadLE(rot.key_frames.at(i).in_tan[1], model);

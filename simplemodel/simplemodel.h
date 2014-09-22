@@ -136,7 +136,7 @@ protected:
   static Matrix4x4 identity4x4;
 
   struct Quaternion {
-    float data[4];	//Note: Order is X, Y, Z, W
+    float w, x, y, z;
     };
 
   //Conversions

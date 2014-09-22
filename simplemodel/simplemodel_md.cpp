@@ -212,7 +212,7 @@ void SimpleModel_MD::CalcTransforms(TransformInfo & cur_trans, const Matrix4x4 &
 
 void SimpleModel_MD::MDXBone::CalcBoneTransform(Matrix4x4 & res, const MDXVertex & center, const Matrix4x4 & pmat, const AnimationInfo & anim_info) const {
   MDXVertex translation;
-  Quaternion rotation = {{0.0}};
+  Quaternion rotation = {1.0, 0.0, 0.0, 0.0};
   bool has_translation = false;
   bool has_rotation = false;
 
@@ -405,7 +405,7 @@ int SimpleModel_MD::NormalizeFrame(const vector<int> &anim, int frame) const {
 void SimpleModel_MD::MDXBone::LERP(MDXVertex & res, const MDXVertex & v1, const MDXVertex & v2, const float factor) const {
 	float k1 = 1.0 - factor;
 	float k2 = factor;
-			
+
 	res.x = v1.x * k1 + v2.x * k2;
 	res.y = v1.y * k1 + v2.y * k2;
 	res.z = v1.z * k1 + v2.z * k2;

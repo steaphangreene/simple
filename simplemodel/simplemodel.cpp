@@ -265,13 +265,12 @@ const vector<string> &SimpleModel::GetSkinList() {
   }
 
 void SimpleModel::Normalize(Quaternion &res, const Quaternion &quat) {
-  float scale = sqrtf(quat.data[0]*quat.data[0]
-	+ quat.data[1]*quat.data[1] + quat.data[2]*quat.data[2]
-	+ quat.data[3]*quat.data[3]);
-  res.data[0] = quat.data[0] / scale;
-  res.data[1] = quat.data[1] / scale;
-  res.data[2] = quat.data[2] / scale;
-  res.data[3] = quat.data[3] / scale;
+  float scale = sqrtf(quat.w * quat.w + quat.x * quat.x
+                      + quat.y * quat.y + quat.z * quat.z);
+  res.w = quat.w / scale;
+  res.x = quat.x / scale;
+  res.y = quat.y / scale;
+  res.z = quat.z / scale;
   }
 
 void SimpleModel::SLERP(Matrix4x4 &res,
@@ -386,28 +385,19 @@ void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
   }
 
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat) {
-  mat.data[0] = 1.0f - 2.0f *
-	(quat.data[1] * quat.data[1] + quat.data[2] * quat.data[2]);
-  mat.data[1] = 2.0f *
-	(quat.data[0] * quat.data[1] - quat.data[3] * quat.data[2]);
-  mat.data[2] = 2.0f *
-	(quat.data[0] * quat.data[2] + quat.data[3] * quat.data[1]);
+  mat.data[0] = 1.0f - 2.0f * (quat.w * quat.w + quat.x * quat.x);
+  mat.data[1] = 2.0f * (quat.z * quat.w - quat.y * quat.x);
+  mat.data[2] = 2.0f * (quat.z * quat.x + quat.y * quat.w);
   mat.data[3] = 0.0f;
 
-  mat.data[4] = 2.0f *
-	(quat.data[0] * quat.data[1] + quat.data[3] * quat.data[2]);
-  mat.data[5] = 1.0f - 2.0f *
-	(quat.data[0] * quat.data[0] + quat.data[2] * quat.data[2]);
-  mat.data[6] = 2.0f *
-	(quat.data[1] * quat.data[2] - quat.data[3] * quat.data[0]);
+  mat.data[4] = 2.0f * (quat.z * quat.w + quat.y * quat.x);
+  mat.data[5] = 1.0f - 2.0f * (quat.z * quat.z + quat.x * quat.x);
+  mat.data[6] = 2.0f * (quat.w * quat.x - quat.y * quat.z);
   mat.data[7] = 0.0f;
 
-  mat.data[8] = 2.0f *
-	(quat.data[0] * quat.data[2] - quat.data[3] * quat.data[1]);
-  mat.data[9] = 2.0f *
-	(quat.data[1] * quat.data[2] + quat.data[3] * quat.data[0]);
-  mat.data[10] = 1.0f - 2.0f *
-	(quat.data[0] * quat.data[0] + quat.data[1] * quat.data[1]);
+  mat.data[8] = 2.0f * (quat.z * quat.x - quat.y * quat.w);
+  mat.data[9] = 2.0f * (quat.w * quat.x + quat.y * quat.z);
+  mat.data[10] = 1.0f - 2.0f * (quat.z * quat.z + quat.w * quat.w);
   mat.data[11] = 0.0f;
 
   mat.data[12] = 0;
@@ -423,32 +413,32 @@ void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat) 
 
   if(trace > 0.00000001f) {
     scale = sqrt(trace) * 2.0f;
-    quat.data[0] = (mat.data[9] - mat.data[6]) / scale;
-    quat.data[1] = (mat.data[2] - mat.data[8]) / scale;
-    quat.data[2] = (mat.data[4] - mat.data[1]) / scale;
-    quat.data[3] = 0.25 * scale;
+    quat.x = (mat.data[9] - mat.data[6]) / scale;
+    quat.y = (mat.data[2] - mat.data[8]) / scale;
+    quat.z = (mat.data[4] - mat.data[1]) / scale;
+    quat.w = 0.25 * scale;
     }
   else {
     if(mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
       scale  = sqrt(1.0f + mat.data[0] - mat.data[5] - mat.data[10]) * 2.0f;
-      quat.data[0] = 0.25f * scale;
-      quat.data[1] = (mat.data[1] + mat.data[4]) / scale;
-      quat.data[2] = (mat.data[2] + mat.data[8]) / scale;
-      quat.data[3] = (mat.data[9] - mat.data[6]) / scale;
+      quat.x = 0.25f * scale;
+      quat.y = (mat.data[1] + mat.data[4]) / scale;
+      quat.z = (mat.data[2] + mat.data[8]) / scale;
+      quat.w = (mat.data[9] - mat.data[6]) / scale;
       }
     else if(mat.data[5] > mat.data[10]) {
       scale  = sqrt(1.0f + mat.data[5] - mat.data[0] - mat.data[10]) * 2.0f;
-      quat.data[0] = (mat.data[1] + mat.data[4]) / scale;
-      quat.data[1] = 0.25f * scale;
-      quat.data[2] = (mat.data[6] + mat.data[9]) / scale;
-      quat.data[3] = (mat.data[2] - mat.data[8]) / scale;
+      quat.x = (mat.data[1] + mat.data[4]) / scale;
+      quat.y = 0.25f * scale;
+      quat.z = (mat.data[6] + mat.data[9]) / scale;
+      quat.w = (mat.data[2] - mat.data[8]) / scale;
       }
     else {
       scale  = sqrt(1.0f + mat.data[10] - mat.data[0] - mat.data[5]) * 2.0f;
-      quat.data[0] = (mat.data[2] + mat.data[8]) / scale;
-      quat.data[1] = (mat.data[6] + mat.data[9]) / scale;
-      quat.data[2] = 0.25f * scale;
-      quat.data[3] = (mat.data[4] - mat.data[1]) / scale;
+      quat.x = (mat.data[2] + mat.data[8]) / scale;
+      quat.y = (mat.data[6] + mat.data[9]) / scale;
+      quat.z = 0.25f * scale;
+      quat.w = (mat.data[4] - mat.data[1]) / scale;
       }
     }
   }
@@ -458,8 +448,8 @@ void SimpleModel::SLERP(Quaternion &res,
 	const Quaternion &q1, const Quaternion &q2, const float t) {
   float cos_theta, ab_cos_theta, s1, s2;
 
-  cos_theta = q1.data[1] * q2.data[1] + q1.data[2] * q2.data[2]
-	+ q1.data[3] * q2.data[3] + q1.data[0] * q2.data[0];
+  cos_theta = q1.x * q2.x + q1.y * q2.y
+	+ q1.z * q2.z + q1.w * q2.w;
   ab_cos_theta = fabsf(cos_theta);
 
   // Calculate the coefficients s1 and s2
@@ -474,16 +464,16 @@ void SimpleModel::SLERP(Quaternion &res,
     s2 = t;
     }
   if(cos_theta < 0.0) {
-    res.data[0] = s1 * q1.data[0] - s2 * q2.data[0];	// W
-    res.data[1] = s1 * q1.data[1] - s2 * q2.data[1];	// X
-    res.data[2] = s1 * q1.data[2] - s2 * q2.data[2];	// Y
-    res.data[3] = s1 * q1.data[3] - s2 * q2.data[3];	// Z
+    res.w = s1 * q1.w - s2 * q2.w;	// W
+    res.x = s1 * q1.x - s2 * q2.x;	// X
+    res.y = s1 * q1.y - s2 * q2.y;	// Y
+    res.z = s1 * q1.z - s2 * q2.z;	// Z
     }
   else {
-    res.data[0] = s1 * q1.data[0] + s2 * q2.data[0];	// W
-    res.data[1] = s1 * q1.data[1] + s2 * q2.data[1];	// X
-    res.data[2] = s1 * q1.data[2] + s2 * q2.data[2];	// Y
-    res.data[3] = s1 * q1.data[3] + s2 * q2.data[3];	// Z
+    res.w = s1 * q1.w + s2 * q2.w;	// W
+    res.x = s1 * q1.x + s2 * q2.x;	// X
+    res.y = s1 * q1.y + s2 * q2.y;	// Y
+    res.z = s1 * q1.z + s2 * q2.z;	// Z
     }
   }
 

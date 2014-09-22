@@ -288,10 +288,10 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(keyframe[bone][frame].pos[2], model);
 
     // Rotation quaternion
-    freadLE(keyframe[bone][frame].rot.data[0], model);
-    freadLE(keyframe[bone][frame].rot.data[1], model);
-    freadLE(keyframe[bone][frame].rot.data[2], model);
-    freadLE(keyframe[bone][frame].rot.data[3], model);
+    freadLE(keyframe[bone][frame].rot.x, model);
+    freadLE(keyframe[bone][frame].rot.y, model);
+    freadLE(keyframe[bone][frame].rot.z, model);
+    freadLE(keyframe[bone][frame].rot.w, model);
 
     // TODO: Lots of unknown data ignored
     SDL_RWseek(model, 64, SEEK_CUR);
@@ -320,16 +320,16 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     bone_off[mat][0] = 0.0;
     bone_off[mat][1] = 0.0;
     bone_off[mat][2] = 0.0;
-    bone_rot[mat].data[0] = 0.0;
-    bone_rot[mat].data[1] = 0.0;
-    bone_rot[mat].data[2] = 0.0;
-    bone_rot[mat].data[3] = 1.0;
+    bone_rot[mat].x = 0.0;
+    bone_rot[mat].y = 0.0;
+    bone_rot[mat].z = 0.0;
+    bone_rot[mat].w = 1.0;
     }
 
   for(auto bn=keyframe.begin(); bn != keyframe.end(); ++bn) {
     Uint16 bone_id = bn->first;
     Uint32 last = 0;
-    Quaternion q1 = {{1.0, 0.0, 0.0, 0.0}}, q2, rot;
+    Quaternion q1 = {1.0, 0.0, 0.0, 0.0}, q2, rot;
     float x = 0.0, y = 0.0, z = 0.0;
     for(auto fr=bn->second.begin(); fr != bn->second.end(); ++fr) {
       if(fr->first <= frame) {
@@ -404,14 +404,10 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       q2 = bone_rot[vertices[triangles[tri].vertex[0]].bone[1]];
 
 // NLERP
-      rot_quat.data[0] = q1.data[0] * bone_weight
-                       + q2.data[0] * (1.0 - bone_weight);
-      rot_quat.data[1] = q1.data[1] * bone_weight
-                       + q2.data[1] * (1.0 - bone_weight);
-      rot_quat.data[2] = q1.data[2] * bone_weight
-                       + q2.data[2] * (1.0 - bone_weight);
-      rot_quat.data[3] = q1.data[3] * bone_weight
-                       + q2.data[3] * (1.0 - bone_weight);
+      rot_quat.w = q1.w * bone_weight + q2.w * (1.0 - bone_weight);
+      rot_quat.x = q1.x * bone_weight + q2.x * (1.0 - bone_weight);
+      rot_quat.y = q1.y * bone_weight + q2.y * (1.0 - bone_weight);
+      rot_quat.z = q1.z * bone_weight + q2.z * (1.0 - bone_weight);
       Normalize(rot_quat, rot_quat);
 
 // SLERP
