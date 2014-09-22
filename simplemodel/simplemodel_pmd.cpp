@@ -271,14 +271,11 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(frame, model);
 
     if(bone_by_name.count(bone_name) != 1) {
-      fprintf(stderr, "Discarding frame %u data for unknown bone (%s).\n",
-              frame, bone_name.c_str());
+//      fprintf(stderr, "Discarding frame %u data for unknown bone (%s).\n",
+//              frame, bone_name.c_str());
       SDL_RWseek(model, 64+28, SEEK_CUR);
       continue;
       }
-
-    //fprintf(stderr, "Keeping frame %u data for known bone (%s).\n",
-    //        frame, bone_name.c_str());
 
     Uint16 bone = bone_by_name[bone_name];
 
@@ -292,6 +289,19 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(keyframe[bone][frame].rot.y, model);
     freadLE(keyframe[bone][frame].rot.z, model);
     freadLE(keyframe[bone][frame].rot.w, model);
+
+//    if(bone == 0) {
+//      fprintf(stderr, "Loaded frame %u data for known bone #%u (%s).  ",
+//              frame, bone, bone_name.c_str());
+//      fprintf(stderr, "(%1.2f, %1.2f, %1.2f), [%1.2f, %1.2f, %1.2f]\n",
+//              keyframe[bone][frame].pos[0],
+//              keyframe[bone][frame].pos[1],
+//              keyframe[bone][frame].pos[2],
+//              keyframe[bone][frame].rot.w,
+//              keyframe[bone][frame].rot.x,
+//              keyframe[bone][frame].rot.y,
+//              keyframe[bone][frame].rot.z);
+//      }
 
     // TODO: Lots of unknown data ignored
     SDL_RWseek(model, 64, SEEK_CUR);
