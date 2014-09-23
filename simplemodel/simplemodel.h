@@ -141,6 +141,7 @@ protected:
 
   //Conversions
   static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat);
+  static void QuaternionInverseToMatrix4x4(Matrix4x4 &mat, const Quaternion quat);
   static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat);
 
   //Math
