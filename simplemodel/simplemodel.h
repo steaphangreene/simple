@@ -140,55 +140,55 @@ protected:
     };
 
   //Conversions
-  static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat);
-  static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
+  static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat);
+  static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat);
 
   //Math
   template <class Tp>
-  static void Add(Tp &res, const Tp &m1, const Tp &m2) {
+  static void Add(Tp &res, const Tp m1, const Tp m2) {
     for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = m1.data[n] + m2.data[n];
       }
     }
   template <class Tp>
-  static void Multiply(Tp &res, const Tp &mat, float scale) {
+  static void Multiply(Tp &res, const Tp mat, float scale) {
     for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = mat.data[n] * scale;
       }
     }
   static void Multiply(Matrix4x4 &res,
-	const Matrix4x4 &m1, const Matrix4x4 &m2);
+	const Matrix4x4 m1, const Matrix4x4 m2);
   static void Multiply(Matrix4x4 &res,
-	const Matrix4x4 &m1, const Matrix4x4 &m2, const Matrix4x4 &m3);
-  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
-	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4);
-  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
-	const Matrix4x4 &m2, const Matrix4x4 &m3,
-	const Matrix4x4 &m4, const Matrix4x4 &m5);
-  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
-	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
-	const Matrix4x4 &m5, const Matrix4x4 &m6);
-  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
-	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
-	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7);
-  static void Multiply(Matrix4x4 &res, const Matrix4x4 &m1,
-	const Matrix4x4 &m2, const Matrix4x4 &m3, const Matrix4x4 &m4,
-	const Matrix4x4 &m5, const Matrix4x4 &m6, const Matrix4x4 &m7,
-	const Matrix4x4 &m8);
-  static void Normalize(Quaternion &res, const Quaternion &quat);
+	const Matrix4x4 m1, const Matrix4x4 m2, const Matrix4x4 m3);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 m1,
+	const Matrix4x4 m2, const Matrix4x4 m3, const Matrix4x4 m4);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 m1,
+	const Matrix4x4 m2, const Matrix4x4 m3,
+	const Matrix4x4 m4, const Matrix4x4 m5);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 m1,
+	const Matrix4x4 m2, const Matrix4x4 m3, const Matrix4x4 m4,
+	const Matrix4x4 m5, const Matrix4x4 m6);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 m1,
+	const Matrix4x4 m2, const Matrix4x4 m3, const Matrix4x4 m4,
+	const Matrix4x4 m5, const Matrix4x4 m6, const Matrix4x4 m7);
+  static void Multiply(Matrix4x4 &res, const Matrix4x4 m1,
+	const Matrix4x4 m2, const Matrix4x4 m3, const Matrix4x4 m4,
+	const Matrix4x4 m5, const Matrix4x4 m6, const Matrix4x4 m7,
+	const Matrix4x4 m8);
+  static void Normalize(Quaternion &res, const Quaternion quat);
 
   static void MatrixTransform(float &x, float &y, float &z,
                               const Matrix4x4 &rot);
 
   //Interpolations
   template <class Tp>
-  static void LERP(Tp &res, const Tp &m1, const Tp &m2, float t) {
+  static void LERP(Tp &res, const Tp m1, const Tp m2, float t) {
     for(unsigned int n=0; n < sizeof(res.data)/sizeof(res.data[0]); ++n) {
       res.data[n] = m1.data[n]*(1.0-t) + m2.data[n]*t;
       }
     }
   static void SLERP(Matrix4x4 &res,
-	const Matrix4x4 &m1, const Matrix4x4 &m2, const float t);
+	const Matrix4x4 m1, const Matrix4x4 m2, const float t);
   static void SLERP(Quaternion &res,
 	const Quaternion q1, const Quaternion q2, const float t);
 
