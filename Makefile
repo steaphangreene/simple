@@ -36,7 +36,7 @@ all:	build
 
 #PRODUCTION OPTIONS (STANDARD)
 CXX=	$(ARCH)-g++
-FLAGS=	-g -Werror `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
+FLAGS=	--std=c++11 -g -Werror `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
 LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lGL -lGLU
 
 #DEGUGGING OPTIONS (NO EFENCE)

@@ -28,7 +28,7 @@ win32:	libsimpleconnect.win32_a
 
 #All of this is usually overridden by the main Makefile
 CXX=	g++
-FLAGS=	-g -Werror -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
+FLAGS=	--std=c++11 -g -Werror -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
 LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lGL -lGLU
 WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Werror `/opt/i586-mingw32msvc/bin/pkg-config sdl2 --cflags`
