@@ -41,7 +41,7 @@ using namespace std;
 #include "simplevideo.h"
 
 #ifndef HUGE_VAL	//FIXME: Is there A More Portable Way?
-#define HUGE_VAL (1.0/0.0)
+#define HUGE_VAL 1.0/0.0
 #endif
 
 SimpleScene *SimpleScene::current = NULL;
@@ -198,7 +198,7 @@ void SimpleScene::TargetObject(SS_Object obj, float xt, float yt, float zt,
   }
 
 void SimpleScene::UnTargetObject(SS_Object obj, Uint32 end, Uint32 dur) {
-  Coord targ = { HUGE_VAL, HUGE_VAL, HUGE_VAL };
+  Coord targ = { float(HUGE_VAL), float(HUGE_VAL), float(HUGE_VAL) };
   ActionTime act = { end, dur };
   objects[obj].targets.push_front(pair<Coord, ActionTime>(targ, act));
   }

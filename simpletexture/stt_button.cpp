@@ -83,7 +83,7 @@ SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf,
 
   SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, col.r, col.g, col.b));
 
-  Uint32 width = ysize/8;
+  int width = ysize/8;
   if(width > xsize/8) width = xsize/8;
 
   SDL_Rect lft = { 0, 0, width, surf->h };

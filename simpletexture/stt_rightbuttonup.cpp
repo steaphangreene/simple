@@ -30,7 +30,7 @@ SDL_Surface *STT_RightButton_Up::BuildTexture(SDL_Surface *surf,
   SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
 	base_col(col), light_col(col), dark_col(col));
 
-  Uint32 width = xsize/16;
+  int width = xsize/16;
   if(width > ysize/16) width = ysize/16;
   if(width < 1) width = 1;
 
