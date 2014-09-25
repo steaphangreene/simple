@@ -112,8 +112,6 @@ bool SimpleModel_PMD::Load(const string &filenm,
   freadLE(num_vertices, model);
   vertices.resize(num_vertices);
   for(Uint32 vert = 0; vert < num_vertices; ++vert) {
-    float x, y, z;
-
     // Location vector
     freadLE(vertices[vert].vertex[0], model);
     freadLE(vertices[vert].vertex[1], model);
@@ -324,40 +322,33 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   glRotatef(-90.0, 0.0, 1.0, 0.0);
   glRotatef(-90.0, 0.0, 0.0, 1.0);
 
-  float bone_off[bone.size()][3];
-  Quaternion bone_rot[bone.size()];
+  Matrix4x4 bone_trans[bone.size()];
+
   for(Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     Uint32 last = 0xFFFFFFFF;
-    Quaternion rot = {1.0, 0.0, 0.0, 0.0};
-    float x = 0.0, y = 0.0, z = 0.0;
-
+    Matrix4x4 btrans = identity4x4;
     if(bone[bone_id].parent != 0xFFFF) {
-      bone_off[bone_id][0] = bone_off[bone[bone_id].parent][0];
-      bone_off[bone_id][1] = bone_off[bone[bone_id].parent][1];
-      bone_off[bone_id][2] = bone_off[bone[bone_id].parent][2];
-      bone_rot[bone_id] = bone_rot[bone[bone_id].parent];
+      bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
       }
     else {
-      bone_off[bone_id][0] = 0.0;
-      bone_off[bone_id][1] = 0.0;
-      bone_off[bone_id][2] = 0.0;
-      bone_rot[bone_id].x = 0.0;
-      bone_rot[bone_id].y = 0.0;
-      bone_rot[bone_id].z = 0.0;
-      bone_rot[bone_id].w = 1.0;
+      bone_trans[bone_id] = identity4x4;
       }
 
     if(bone_frame.count(bone_id) == 0) {
       continue;
       }
 
-
     for(auto fr=bone_frame.at(bone_id).begin(); fr != bone_frame.at(bone_id).end(); ++fr) {
       if(fr->first <= frame) {
-        x = fr->second.pos[0];
-        y = fr->second.pos[1];
-        z = fr->second.pos[2];
-        rot = fr->second.rot;
+        Matrix4x4 pre = identity4x4, post = identity4x4, trans;
+        QuaternionToMatrix4x4(trans, fr->second.rot);
+        pre.data[12] = -bone[bone_id].pos[0];
+        pre.data[13] = -bone[bone_id].pos[1];
+        pre.data[14] = -bone[bone_id].pos[2];
+        post.data[12] = fr->second.pos[0] + bone[bone_id].pos[0];
+        post.data[13] = fr->second.pos[1] + bone[bone_id].pos[1];
+        post.data[14] = fr->second.pos[2] + bone[bone_id].pos[2];
+        Multiply(btrans, post, trans, pre);
 
         last = fr->first;
         }
@@ -368,19 +359,24 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
           }
 
         float progress = float(frame - last) / float(fr->first - last);
-        SLERP(rot, rot, fr->second.rot, progress);
-        x = x * (1.0 - progress) + progress * fr->second.pos[0];
-        y = y * (1.0 - progress) + progress * fr->second.pos[1];
-        z = z * (1.0 - progress) + progress * fr->second.pos[2];
+
+        Matrix4x4 pre = identity4x4, post = identity4x4, trans;
+        QuaternionToMatrix4x4(trans, fr->second.rot);
+        pre.data[12] = -bone[bone_id].pos[0];
+        pre.data[13] = -bone[bone_id].pos[1];
+        pre.data[14] = -bone[bone_id].pos[2];
+        post.data[12] = fr->second.pos[0] + bone[bone_id].pos[0];
+        post.data[13] = fr->second.pos[1] + bone[bone_id].pos[1];
+        post.data[14] = fr->second.pos[2] + bone[bone_id].pos[2];
+        Multiply(trans, post, trans, pre);
+
+        SLERP(btrans, btrans, trans, progress);
 
         break;
         }
       }
 
-    Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
-    bone_off[bone_id][0] += x;
-    bone_off[bone_id][1] += y;
-    bone_off[bone_id][2] += z;
+    Multiply(bone_trans[bone_id], btrans, bone_trans[bone_id]);
     }
 
   glDisable(GL_CULL_FACE);
@@ -423,53 +419,23 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                  vertices[triangles[tri].vertex[vert]].normal[1],
                  vertices[triangles[tri].vertex[vert]].normal[2]);
 
-      float xoff, yoff, zoff, bone_weight, x, y, z, xpos, ypos, zpos;
+      float bone_weight, x, y, z;
       bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight;
       Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
       Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
 
-      Quaternion rot_quat, q1, q2;
-      q1 = bone_rot[bone1];
-      q2 = bone_rot[bone2];
+      Matrix4x4 mat, m1, m2;
+      m1 = bone_trans[bone1];
+      m2 = bone_trans[bone2];
 
-      // Note: q1 and q2 are swapped, this has weight of first, not progress
-      SLERP(rot_quat, q2, q1, bone_weight);
-
-      xpos = bone[bone1].pos[0] * bone_weight
-           + bone[bone2].pos[0] * (1.0 - bone_weight);
-      xoff = bone_off[bone1][0] * bone_weight
-           + bone_off[bone2][0] * (1.0 - bone_weight);
-
-      ypos = bone[bone1].pos[1] * bone_weight
-           + bone[bone2].pos[1] * (1.0 - bone_weight);
-      yoff = bone_off[bone1][1] * bone_weight
-           + bone_off[bone2][1] * (1.0 - bone_weight);
-
-      zpos = bone[bone1].pos[2] * bone_weight
-           + bone[bone2].pos[2] * (1.0 - bone_weight);
-      zoff = bone_off[bone1][2] * bone_weight
-           + bone_off[bone2][2] * (1.0 - bone_weight);
+      // Note: m1 and m2 are swapped, this has weight of first, not progress
+      SLERP(mat, m2, m1, bone_weight);
 
       x = vertices[triangles[tri].vertex[vert]].vertex[0];
       y = vertices[triangles[tri].vertex[vert]].vertex[1];
       z = vertices[triangles[tri].vertex[vert]].vertex[2];
 
-      Matrix4x4 pre = identity4x4;
-      pre.data[3]  = -xpos;
-      pre.data[7]  = -ypos;
-      pre.data[11] = -zpos;
-
-      Matrix4x4 rot;
-      QuaternionToMatrix4x4(rot, rot_quat);
-
-      Matrix4x4 post = identity4x4;
-      post.data[3] = xpos + xoff;
-      post.data[7] = ypos + yoff;
-      post.data[11] = zpos + zoff;
-
-      Matrix4x4 trans;
-      Multiply(trans, pre, rot, post);
-      MatrixTransform(x, y, z, trans);
+      MatrixTransform(x, y, z, mat);
 
       glVertex3f(x, y, z);
       }
