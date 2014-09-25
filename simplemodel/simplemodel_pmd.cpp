@@ -287,19 +287,8 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(bone_frame[bone][frame].rot.y, model);
     freadLE(bone_frame[bone][frame].rot.z, model);
     freadLE(bone_frame[bone][frame].rot.w, model);
-
-//    if(bone == 0) {
-//      fprintf(stderr, "Loaded frame %u data for known bone #%u (%s).  ",
-//              frame, bone, bone_name.c_str());
-//      fprintf(stderr, "(%1.2f, %1.2f, %1.2f), [%1.2f, %1.2f, %1.2f]\n",
-//              bone_frame[bone][frame].pos[0],
-//              bone_frame[bone][frame].pos[1],
-//              bone_frame[bone][frame].pos[2],
-//              bone_frame[bone][frame].rot.w,
-//              bone_frame[bone][frame].rot.x,
-//              bone_frame[bone][frame].rot.y,
-//              bone_frame[bone][frame].rot.z);
-//      }
+    // D3D Quaternions are backward, fix them
+    bone_frame[bone][frame].rot.z = -bone_frame[bone][frame].rot.z;
 
     // TODO: Lots of unknown data ignored
     SDL_RWseek(model, 64, SEEK_CUR);
