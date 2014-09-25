@@ -490,12 +490,12 @@ void SimpleModel::QuaternionRotate(float &x, float &y, float &z,
 void SimpleModel::MatrixTransform(float &x, float &y, float &z,
                             const Matrix4x4 &trans) {
   float X = x, Y = y, Z = z, W = 1.0;
-  x = trans.data[0]  * X + trans.data[1]  * Y
-    + trans.data[2]  * Z + trans.data[3]  * W;
-  y = trans.data[4]  * X + trans.data[5]  * Y
-    + trans.data[6]  * Z + trans.data[7]  * W;
-  z = trans.data[8]  * X + trans.data[9]  * Y
-    + trans.data[10] * Z + trans.data[11] * W;
+  x = trans.data[0]  * X + trans.data[4]  * Y
+    + trans.data[8]  * Z + trans.data[12]  * W;
+  y = trans.data[1]  * X + trans.data[5]  * Y
+    + trans.data[9]  * Z + trans.data[13]  * W;
+  z = trans.data[2]  * X + trans.data[6]  * Y
+    + trans.data[10] * Z + trans.data[14] * W;
   }
 
 void SimpleModel::SLERP(Quaternion &res,
