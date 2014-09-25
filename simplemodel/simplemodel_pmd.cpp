@@ -326,22 +326,33 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   float bone_off[bone.size()][3];
   Quaternion bone_rot[bone.size()];
-  for(Uint32 bn = 0; bn < bone.size(); ++bn) {
-    bone_off[bn][0] = 0.0;
-    bone_off[bn][1] = 0.0;
-    bone_off[bn][2] = 0.0;
-    bone_rot[bn].x = 0.0;
-    bone_rot[bn].y = 0.0;
-    bone_rot[bn].z = 0.0;
-    bone_rot[bn].w = 1.0;
-    }
-
-  for(auto bn=bone_frame.begin(); bn != bone_frame.end(); ++bn) {
-    Uint16 bone_id = bn->first;
+  for(Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     Uint32 last = 0xFFFFFFFF;
     Quaternion rot = {1.0, 0.0, 0.0, 0.0};
     float x = 0.0, y = 0.0, z = 0.0;
-    for(auto fr=bn->second.begin(); fr != bn->second.end(); ++fr) {
+
+    if(bone[bone_id].parent != 0xFFFF) {
+      bone_off[bone_id][0] = bone_off[bone[bone_id].parent][0];
+      bone_off[bone_id][1] = bone_off[bone[bone_id].parent][1];
+      bone_off[bone_id][2] = bone_off[bone[bone_id].parent][2];
+      bone_rot[bone_id] = bone_rot[bone[bone_id].parent];
+      }
+    else {
+      bone_off[bone_id][0] = 0.0;
+      bone_off[bone_id][1] = 0.0;
+      bone_off[bone_id][2] = 0.0;
+      bone_rot[bone_id].x = 0.0;
+      bone_rot[bone_id].y = 0.0;
+      bone_rot[bone_id].z = 0.0;
+      bone_rot[bone_id].w = 1.0;
+      }
+
+    if(bone_frame.count(bone_id) == 0) {
+      continue;
+      }
+
+
+    for(auto fr=bone_frame.at(bone_id).begin(); fr != bone_frame.at(bone_id).end(); ++fr) {
       if(fr->first <= frame) {
         x = fr->second.pos[0];
         y = fr->second.pos[1];
@@ -366,27 +377,10 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         }
       }
 
-    Uint16 parent = bone[bone_id].parent;
-    if(parent != 0xFFFF) {
-      bone_rot[bone_id] = bone_rot[parent];
-
-      bone_off[bone_id][0] = bone_off[parent][0];
-      bone_off[bone_id][1] = bone_off[parent][1];
-      bone_off[bone_id][2] = bone_off[parent][2];
-
-      Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
-
-      bone_off[bone_id][0] += x;
-      bone_off[bone_id][1] += y;
-      bone_off[bone_id][2] += z;
-      }
-    else {
-      bone_rot[bone_id] = rot;
-
-      bone_off[bone_id][0] = x;
-      bone_off[bone_id][1] = y;
-      bone_off[bone_id][2] = z;
-      }
+    Multiply(bone_rot[bone_id], bone_rot[bone_id], rot);
+    bone_off[bone_id][0] += x;
+    bone_off[bone_id][1] += y;
+    bone_off[bone_id][2] += z;
     }
 
   glDisable(GL_CULL_FACE);
