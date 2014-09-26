@@ -386,40 +386,18 @@ void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 m1,
 
 void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat) {
   mat.data[0] = 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z);
-  mat.data[1] = 2.0f * (quat.x * quat.y + quat.z * quat.w);
-  mat.data[2] = 2.0f * (quat.x * quat.z - quat.y * quat.w);
+  mat.data[1] = 2.0f * (quat.x * quat.y - quat.z * quat.w);
+  mat.data[2] = 2.0f * (quat.x * quat.z + quat.y * quat.w);
   mat.data[3] = 0.0f;
 
-  mat.data[4] = 2.0f * (quat.x * quat.y - quat.z * quat.w);
+  mat.data[4] = 2.0f * (quat.x * quat.y + quat.z * quat.w);
   mat.data[5] = 1.0f - 2.0f * (quat.x * quat.x + quat.z * quat.z);
-  mat.data[6] = 2.0f * (quat.y * quat.z + quat.x * quat.w);
+  mat.data[6] = 2.0f * (quat.y * quat.z - quat.x * quat.w);
   mat.data[7] = 0.0f;
 
-  mat.data[8] = 2.0f * (quat.x * quat.z + quat.y * quat.w);
-  mat.data[9] = 2.0f * (quat.y * quat.z - quat.x * quat.w);
-  mat.data[10] = 1.0f - 2.0f * (quat.x * quat.x - quat.z * quat.z);
-  mat.data[11] = 0.0f;
-
-  mat.data[12] = 0;
-  mat.data[13] = 0;
-  mat.data[14] = 0;
-  mat.data[15] = 1.0f;
-  }
-
-void SimpleModel::QuaternionInverseToMatrix4x4(Matrix4x4 &mat, const Quaternion quat) {
-  mat.data[0] = 1.0f - 2.0f * (-quat.y * -quat.y + -quat.z * -quat.z);
-  mat.data[1] = 2.0f * (-quat.x * -quat.y + -quat.z * quat.w);
-  mat.data[2] = 2.0f * (-quat.x * -quat.z - -quat.y * quat.w);
-  mat.data[3] = 0.0f;
-
-  mat.data[4] = 2.0f * (-quat.x * -quat.y - -quat.z * quat.w);
-  mat.data[5] = 1.0f - 2.0f * (-quat.x * -quat.x + -quat.z * -quat.z);
-  mat.data[6] = 2.0f * (-quat.y * -quat.z + -quat.x * quat.w);
-  mat.data[7] = 0.0f;
-
-  mat.data[8] = 2.0f * (-quat.x * -quat.z + -quat.y * quat.w);
-  mat.data[9] = 2.0f * (-quat.y * -quat.z - -quat.x * quat.w);
-  mat.data[10] = 1.0f - 2.0f * (-quat.x * -quat.x - -quat.z * -quat.z);
+  mat.data[8] = 2.0f * (quat.x * quat.z - quat.y * quat.w);
+  mat.data[9] = 2.0f * (quat.y * quat.z + quat.x * quat.w);
+  mat.data[10] = 1.0f - 2.0f * (quat.x * quat.x + quat.y * quat.y);
   mat.data[11] = 0.0f;
 
   mat.data[12] = 0;
@@ -429,38 +407,35 @@ void SimpleModel::QuaternionInverseToMatrix4x4(Matrix4x4 &mat, const Quaternion 
   }
 
 void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat) {
-  float trace, scale;
-
-  trace = 1 + mat.data[0] + mat.data[5] + mat.data[10];
-
-  if(trace > 0.00000001f) {
-    scale = sqrt(trace) * 2.0f;
-    quat.x = (mat.data[9] - mat.data[6]) / scale;
-    quat.y = (mat.data[2] - mat.data[8]) / scale;
-    quat.z = (mat.data[4] - mat.data[1]) / scale;
-    quat.w = 0.25 * scale;
+  float trace = mat.data[0] + mat.data[5] + mat.data[10];
+  if(trace > 0.0) {
+    float s = 0.5f / sqrtf(trace+ 1.0f);
+    quat.w = 0.25f / s;
+    quat.x = ( mat.data[9] - mat.data[6] ) * s;
+    quat.y = ( mat.data[2] - mat.data[8] ) * s;
+    quat.z = ( mat.data[4] - mat.data[1] ) * s;
     }
   else {
-    if(mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
-      scale  = sqrt(1.0f + mat.data[0] - mat.data[5] - mat.data[10]) * 2.0f;
-      quat.x = 0.25f * scale;
-      quat.y = (mat.data[1] + mat.data[4]) / scale;
-      quat.z = (mat.data[2] + mat.data[8]) / scale;
-      quat.w = (mat.data[9] - mat.data[6]) / scale;
+    if (mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
+      float s = 2.0f * sqrtf( 1.0f + mat.data[0] - mat.data[5] - mat.data[10]);
+      quat.w = (mat.data[9] - mat.data[6] ) / s;
+      quat.x = 0.25f * s;
+      quat.y = (mat.data[1] + mat.data[4] ) / s;
+      quat.z = (mat.data[2] + mat.data[8] ) / s;
       }
-    else if(mat.data[5] > mat.data[10]) {
-      scale  = sqrt(1.0f + mat.data[5] - mat.data[0] - mat.data[10]) * 2.0f;
-      quat.x = (mat.data[1] + mat.data[4]) / scale;
-      quat.y = 0.25f * scale;
-      quat.z = (mat.data[6] + mat.data[9]) / scale;
-      quat.w = (mat.data[2] - mat.data[8]) / scale;
+    else if (mat.data[5] > mat.data[10]) {
+      float s = 2.0f * sqrtf( 1.0f + mat.data[5] - mat.data[0] - mat.data[10]);
+      quat.w = (mat.data[2] - mat.data[8] ) / s;
+      quat.x = (mat.data[1] + mat.data[4] ) / s;
+      quat.y = 0.25f * s;
+      quat.z = (mat.data[6] + mat.data[9] ) / s;
       }
     else {
-      scale  = sqrt(1.0f + mat.data[10] - mat.data[0] - mat.data[5]) * 2.0f;
-      quat.x = (mat.data[2] + mat.data[8]) / scale;
-      quat.y = (mat.data[6] + mat.data[9]) / scale;
-      quat.z = 0.25f * scale;
-      quat.w = (mat.data[4] - mat.data[1]) / scale;
+      float s = 2.0f * sqrtf( 1.0f + mat.data[10] - mat.data[0] - mat.data[5] );
+      quat.w = (mat.data[4] - mat.data[1] ) / s;
+      quat.x = (mat.data[2] + mat.data[8] ) / s;
+      quat.y = (mat.data[6] + mat.data[9] ) / s;
+      quat.z = 0.25f * s;
       }
     }
   }
