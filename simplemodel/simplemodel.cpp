@@ -409,32 +409,32 @@ void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat) {
 void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat) {
   float trace = mat.data[0] + mat.data[5] + mat.data[10];
   if(trace > 0.0) {
-    float s = 0.5f / sqrtf(trace+ 1.0f);
+    float s = 0.5f / sqrtf(trace + 1.0f);
     quat.w = 0.25f / s;
-    quat.x = ( mat.data[9] - mat.data[6] ) * s;
-    quat.y = ( mat.data[2] - mat.data[8] ) * s;
-    quat.z = ( mat.data[4] - mat.data[1] ) * s;
+    quat.x = ( mat.data[6] - mat.data[9] ) * s;
+    quat.y = ( mat.data[8] - mat.data[2] ) * s;
+    quat.z = ( mat.data[1] - mat.data[4] ) * s;
     }
   else {
     if (mat.data[0] > mat.data[5] && mat.data[0] > mat.data[10]) {
       float s = 2.0f * sqrtf( 1.0f + mat.data[0] - mat.data[5] - mat.data[10]);
-      quat.w = (mat.data[9] - mat.data[6] ) / s;
+      quat.w = (mat.data[6] - mat.data[9] ) / s;
       quat.x = 0.25f * s;
-      quat.y = (mat.data[1] + mat.data[4] ) / s;
-      quat.z = (mat.data[2] + mat.data[8] ) / s;
+      quat.y = (mat.data[4] + mat.data[1] ) / s;
+      quat.z = (mat.data[8] + mat.data[2] ) / s;
       }
     else if (mat.data[5] > mat.data[10]) {
       float s = 2.0f * sqrtf( 1.0f + mat.data[5] - mat.data[0] - mat.data[10]);
-      quat.w = (mat.data[2] - mat.data[8] ) / s;
-      quat.x = (mat.data[1] + mat.data[4] ) / s;
+      quat.w = (mat.data[8] - mat.data[2] ) / s;
+      quat.x = (mat.data[4] + mat.data[1] ) / s;
       quat.y = 0.25f * s;
-      quat.z = (mat.data[6] + mat.data[9] ) / s;
+      quat.z = (mat.data[9] + mat.data[6] ) / s;
       }
     else {
       float s = 2.0f * sqrtf( 1.0f + mat.data[10] - mat.data[0] - mat.data[5] );
-      quat.w = (mat.data[4] - mat.data[1] ) / s;
-      quat.x = (mat.data[2] + mat.data[8] ) / s;
-      quat.y = (mat.data[6] + mat.data[9] ) / s;
+      quat.w = (mat.data[1] - mat.data[4] ) / s;
+      quat.x = (mat.data[8] + mat.data[2] ) / s;
+      quat.y = (mat.data[9] + mat.data[6] ) / s;
       quat.z = 0.25f * s;
       }
     }
