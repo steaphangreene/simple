@@ -287,8 +287,6 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(bone_frame[bone][frame].rot.y, model);
     freadLE(bone_frame[bone][frame].rot.z, model);
     freadLE(bone_frame[bone][frame].rot.w, model);
-    // D3D Quaternions are backward, fix them
-    bone_frame[bone][frame].rot.z = -bone_frame[bone][frame].rot.z;
 
     // TODO: Lots of unknown data ignored
     SDL_RWseek(model, 64, SEEK_CUR);
