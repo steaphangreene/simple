@@ -259,6 +259,74 @@ int main(int argc, char **argv) {
     fprintf(stderr, "ERROR: 4x4 xz9090 transformation failed!\n\n");
     }
 
+  SimpleModel::Matrix4x4 m1, m2, mres;
+  m1.data[0] = 2.0;
+  m1.data[1] = 3.0;
+  m1.data[2] = 4.0;
+  m1.data[3] = 5.0;
+  m1.data[4] = 6.0;
+  m1.data[5] = 7.0;
+  m1.data[6] = 8.0;
+  m1.data[7] = 9.0;
+  m1.data[8] = 10.0;
+  m1.data[9] = 11.0;
+  m1.data[10] = 12.0;
+  m1.data[11] = 13.0;
+  m1.data[12] = 14.0;
+  m1.data[13] = 15.0;
+  m1.data[14] = 16.0;
+  m1.data[15] = 17.0;
+  m2.data[0] = 18.0;
+  m2.data[1] = 19.0;
+  m2.data[2] = 20.0;
+  m2.data[3] = 21.0;
+  m2.data[4] = 22.0;
+  m2.data[5] = 23.0;
+  m2.data[6] = 24.0;
+  m2.data[7] = 25.0;
+  m2.data[8] = 26.0;
+  m2.data[9] = 27.0;
+  m2.data[10] = 28.0;
+  m2.data[11] = 29.0;
+  m2.data[12] = 30.0;
+  m2.data[13] = 31.0;
+  m2.data[14] = 32.0;
+  m2.data[15] = 33.0;
+  mres.data[0] = 356.0;
+  mres.data[1] = 370.0;
+  mres.data[2] = 384.0;
+  mres.data[3] = 398.0;
+  mres.data[4] = 740.0;
+  mres.data[5] = 770.0;
+  mres.data[6] = 800.0;
+  mres.data[7] = 830.0;
+  mres.data[8] = 1124.0;
+  mres.data[9] = 1170.0;
+  mres.data[10] = 1216.0;
+  mres.data[11] = 1262.0;
+  mres.data[12] = 1508.0;
+  mres.data[13] = 1570.0;
+  mres.data[14] = 1632.0;
+  mres.data[15] = 1694.0;
+  SimpleModel::Multiply(mat, m2, m1);
+  if(!close_enough(mat, mres)) {
+    fprintf(stderr, "ERROR: 4x4 multiplication(2) failed!\n\n");
+    }
+  SimpleModel::Multiply(mat, mident, m2, m1);
+  if(!close_enough(mat, mres)) {
+    fprintf(stderr, "ERROR: 4x4 multiplication(3) failed!\n\n");
+    }
+
+  SimpleModel::Multiply(mat, mident, m2, mident, m1);
+  if(!close_enough(mat, mres)) {
+    fprintf(stderr, "ERROR: 4x4 multiplication(4) failed!\n\n");
+    }
+
+  SimpleModel::Multiply(mat, mident, m2, mident, m1, mident);
+  if(!close_enough(mat, mres)) {
+    fprintf(stderr, "ERROR: 4x4 multiplication(5) failed!\n\n");
+    }
+
   fprintf(stderr, "\nTesting Complete.\n");
   return 0;
   }
