@@ -363,7 +363,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         }
       }
 
-    Multiply(bone_trans[bone_id], btrans, bone_trans[bone_id]);
+    Multiply(bone_trans[bone_id], bone_trans[bone_id], btrans);
     }
 
   glDisable(GL_CULL_FACE);
