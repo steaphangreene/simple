@@ -123,6 +123,7 @@ int main(int argc, char **argv) {
   SimpleModel::Quaternion qy90 = { 0.70710678118, 0.0, 0.70710678118, 0.0 };
   SimpleModel::Quaternion qz90 = { 0.70710678118, 0.0, 0.0, 0.70710678118 };
   SimpleModel::Quaternion qxz9090 = { 0.5, 0.5, 0.5, 0.5 };
+  SimpleModel::Quaternion quat = { 1.0, 0.0, 0.0, 0.0 };
   print(qident);
 
   SimpleModel::Matrix4x4 mident = SimpleModel::identity4x4;
@@ -164,6 +165,16 @@ int main(int argc, char **argv) {
     }
 
   pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qx180)) {
+    fprintf(stderr, "ERROR: 4x4 x180 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 x180 mangled rotate failed!\n\n");
+    }
+
+  pos = start;
   res = pos;
   res.data[0] = -pos.data[0];
   res.data[2] = -pos.data[2];
@@ -177,6 +188,16 @@ int main(int argc, char **argv) {
   SimpleModel::MatrixTransform(pos, mat);
   if(!close_enough(pos, res)) {
     fprintf(stderr, "ERROR: 4x4 y180 transformation failed!\n\n");
+    }
+
+  pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qy180)) {
+    fprintf(stderr, "ERROR: 4x4 y180 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 y180 mangled rotate failed!\n\n");
     }
 
   pos = start;
@@ -196,6 +217,16 @@ int main(int argc, char **argv) {
     }
 
   pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qz180)) {
+    fprintf(stderr, "ERROR: 4x4 z180 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 z180 mangled rotate failed!\n\n");
+    }
+
+  pos = start;
   res = pos;
   res.data[1] = -pos.data[2];
   res.data[2] = pos.data[1];
@@ -209,6 +240,16 @@ int main(int argc, char **argv) {
   SimpleModel::MatrixTransform(pos, mat);
   if(!close_enough(pos, res)) {
     fprintf(stderr, "ERROR: 4x4 x90 transformation failed!\n\n");
+    }
+
+  pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qx90)) {
+    fprintf(stderr, "ERROR: 4x4 x90 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 x90 mangled rotate failed!\n\n");
     }
 
   pos = start;
@@ -228,6 +269,16 @@ int main(int argc, char **argv) {
     }
 
   pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qy90)) {
+    fprintf(stderr, "ERROR: 4x4 y90 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 y90 mangled rotate failed!\n\n");
+    }
+
+  pos = start;
   res = pos;
   res.data[0] = -pos.data[1];
   res.data[1] = pos.data[0];
@@ -244,6 +295,16 @@ int main(int argc, char **argv) {
     }
 
   pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qz90)) {
+    fprintf(stderr, "ERROR: 4x4 z90 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 z90 mangled rotate failed!\n\n");
+    }
+
+  pos = start;
   res.data[0] = pos.data[2];
   res.data[1] = pos.data[0];
   res.data[2] = pos.data[1];
@@ -257,6 +318,16 @@ int main(int argc, char **argv) {
   SimpleModel::MatrixTransform(pos, mat);
   if(!close_enough(pos, res)) {
     fprintf(stderr, "ERROR: 4x4 xz9090 transformation failed!\n\n");
+    }
+
+  pos = start;
+  SimpleModel::Matrix4x4ToQuaternion(quat, mat);
+  if(!close_enough(quat, qxz9090)) {
+    fprintf(stderr, "ERROR: 4x4 xz9090 mangle failed!\n\n");
+    }
+  SimpleModel::QuaternionRotate(pos, quat);
+  if(!close_enough(pos, res)) {
+    fprintf(stderr, "ERROR: 4x4 xz9090 mangled rotate failed!\n\n");
     }
 
   SimpleModel::Matrix4x4 m1, m2, mres;
