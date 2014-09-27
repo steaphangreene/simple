@@ -101,22 +101,7 @@ public:
   static SimpleModel *LoadModel(const string &filename, const string &defskin = "");
   static SimpleModel *LoadModel(const string &filename, const vector<string> &skins);
 
-protected:
-  virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-
-  string filename;
-  vector<SimpleTexture *> texture;
-  map<string, int> animations;
-  map<string, Uint32> tags;
-  map<Uint32, SimpleModel *> submodels;
-  map<Uint32, Uint32> tag_anim_offsets;
-  set<Uint32> target_models;
-
-  static vector<string> source_files;
-
+  //Exported Sub-Classes, and their Support Function
   struct Vector2 {
     float data[2];
     };
@@ -177,6 +162,7 @@ protected:
 	const Matrix4x4 m8);
   static void Normalize(Quaternion &res, const Quaternion quat);
 
+  static void MatrixTransform(Vector3 &v, const Matrix4x4 &rot);
   static void MatrixTransform(float &x, float &y, float &z,
                               const Matrix4x4 &rot);
 
@@ -195,6 +181,23 @@ protected:
   static void Multiply(Quaternion &res, Quaternion q1, Quaternion q2);
   static void QuaternionRotate(float &x, float &y, float &z,
                                const Quaternion &rot);
+  static void QuaternionRotate(Vector3 &v, const Quaternion &rot);
+
+protected:
+  virtual bool RenderSelf(Uint32 cur_time,
+	const vector<int> &anim = vector<int>(),
+	const vector<Uint32> &start_time = vector<Uint32>(),
+	Uint32 anim_offset = 0) const;
+
+  string filename;
+  vector<SimpleTexture *> texture;
+  map<string, int> animations;
+  map<string, Uint32> tags;
+  map<Uint32, SimpleModel *> submodels;
+  map<Uint32, Uint32> tag_anim_offsets;
+  set<Uint32> target_models;
+
+  static vector<string> source_files;
 
   static bool gl_ext_detected;
   static void SetupGLEXT();

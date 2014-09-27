@@ -1,4 +1,4 @@
 simple-config
 simple*/deps.*.mk
 simple*/*-*/
-simple*/test[1-9]
+simple*/test[0-9]

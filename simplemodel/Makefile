@@ -100,24 +100,31 @@ clean:
 	mkdir -p $(ARCH)	# So rmdir doesn't fail
 	rmdir $(ARCH)
 
-test:	test1 test2
+test:	test0 test1 test2
+
+test0:	$(ARCH)/test0.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a ../simpleaudio/$(ARCH)/libsimpleaudio.a
+
+	$(CXX) $(CXXFLAGS) -o test0 $(ARCH)/test0.o $(ARCH)/libsimplemodel.a $(CXXLIBS) ../simpleaudio/$(ARCH)/libsimpleaudio.a -lSDL2_mixer
 
 test1:	$(ARCH)/test1.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a ../simpleaudio/$(ARCH)/libsimpleaudio.a
 
 	$(CXX) $(CXXFLAGS) -o test1 $(ARCH)/test1.o $(ARCH)/libsimplemodel.a $(CXXLIBS) ../simpleaudio/$(ARCH)/libsimpleaudio.a -lSDL2_mixer
-	
+
 test2:	$(ARCH)/test2.o $(ARCH)/libsimplemodel.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplegui/$(ARCH)/libsimplegui.a ../simpleaudio/$(ARCH)/libsimpleaudio.a
 	$(CXX) $(CXXFLAGS) -o test2 $(ARCH)/test2.o $(ARCH)/libsimplemodel.a $(CXXLIBS) ../simpleaudio/$(ARCH)/libsimpleaudio.a -lSDL2_mixer
-	
-win32_test:	test1.exe test2.exe
+
+win32_test:	test0.exe test1.exe test2.exe
 wintest:	win32_test
+
+test0.exe:	test0.win32_o libsimplemodel.win32_a
+	$(WCXX) $(WCXXFLAGS) -o test0.exe test0.win32_o libsimplemodel.win32_a $(WCXXLIBS)
 
 test1.exe:	test1.win32_o libsimplemodel.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test1.exe test1.win32_o libsimplemodel.win32_a $(WCXXLIBS)
-	
+
 test2.exe:	test2.win32_o libsimplemodel.win32_a
 	$(WCXX) $(WCXXFLAGS) -o test2.exe test2.win32_o libsimplemodel.win32_a $(WCXXLIBS)
-	
+
 TSTR:=	$(shell date -u +"%Y%m%d%H%M")
 backup:	tar
 tar:
