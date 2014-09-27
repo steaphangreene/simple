@@ -84,9 +84,10 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   atexit(SDL_Quit);
 
   window_flags = SDL_WINDOW_OPENGL;
-  window_flags |= SDL_WINDOW_RESIZABLE;
   if(fullscreen_mode)
-    window_flags |= SDL_WINDOW_FULLSCREEN;
+    window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  else
+    window_flags |= SDL_WINDOW_RESIZABLE;
 
 //  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
