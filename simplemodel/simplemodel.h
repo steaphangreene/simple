@@ -181,6 +181,10 @@ public:
 	const Matrix4x4 m1, const Matrix4x4 m2, const float t,
 	const float * const bez_x, const float * const bez_y,
 	const float * const bez_z, const float * const bez_r);
+  static void BERP(Vector3 &res,
+	const Vector3 v1, const Vector3 v2, const float t,
+	const float * const bez_x, const float * const bez_y,
+	const float * const bez_z);
   static void BERP(Quaternion &res,
 	const Quaternion q1, const Quaternion q2, const float t,
 	const float * const bez_r);

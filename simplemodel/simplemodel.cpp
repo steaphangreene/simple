@@ -273,6 +273,40 @@ void SimpleModel::Normalize(Quaternion &res, const Quaternion quat) {
   res.z = quat.z / scale;
   }
 
+void SimpleModel::BERP(Vector3 &res,
+	const Vector3 v1, const Vector3 v2, const float t,
+	const float * const bez_x, const float * const bez_y,
+	const float * const bez_z) {
+  float p1, p2, c1, c2, c3, start, span;
+
+  start = v1.data[0];
+  span = v2.data[0] - v1.data[0];
+  p1 = bez_x[0];
+  p2 = bez_x[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[0] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = v1.data[1];
+  span = v2.data[1] - v1.data[1];
+  p1 = bez_y[0];
+  p2 = bez_y[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[1] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = v1.data[2];
+  span = v2.data[2] - v1.data[2];
+  p1 = bez_z[0];
+  p2 = bez_z[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[2] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+  }
+
 void SimpleModel::BERP(Matrix4x4 &res,
 	const Matrix4x4 m1, const Matrix4x4 m2, const float t,
 	const float * const bez_x, const float * const bez_y,
