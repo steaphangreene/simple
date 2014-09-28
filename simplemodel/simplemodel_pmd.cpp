@@ -31,7 +31,6 @@ using namespace std;
 
 #include "simplemodel_pmd.h"
 #include "saferead.h"
-#include "iconv_string.h"
 
 SimpleModel_PMD::SimpleModel_PMD(const string &filename,
 	const string &defskin) {

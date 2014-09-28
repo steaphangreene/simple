@@ -36,7 +36,6 @@ WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 gl --libs` -lSDL -lpng -ljpeg 
 OBJS:=	$(ARCH)/simplemodel.o $(ARCH)/simplemodel_q3dir.o \
 	$(ARCH)/simplemodel_md3.o $(ARCH)/simplemodel_md2.o \
 	$(ARCH)/simplemodel_pmx.o $(ARCH)/simplemodel_pmd.o \
-	$(ARCH)/iconv_string.o \
 	$(ARCH)/simplemodel_md.o $(ARCH)/simplemodel_mdx.o \
 	$(ARCH)/simplemodel_sphere.o $(ARCH)/simplemodel_wedge.o \
 	$(ARCH)/simplemodel_cone.o $(ARCH)/simplemodel_cube.o \
@@ -49,7 +48,6 @@ CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS) ../simpletexture/$(ARCH)/libsimpletext
 WOBJS:=	simplemodel.win32_o simplemodel_q3dir.win32_o \
 	simplemodel_md3.win32_o simplemodel_md2.win32_o \
 	simplemodel_pmx.win32_o simplemodel_pmd.win32_o \
-	iconv_string.win32_o \
 	simplemodel_md.win32_o simplemodel_mdx.win32_o \
 	simplemodel_sphere.win32_o simplemodel_wedge.win32_o \
 	simplemodel_cone.win32_o simplemodel_cube.win32_o \
@@ -73,17 +71,11 @@ libsimplemodel.win32_a:	$(WOBJS)
 ChangeLog:	*.cpp *.h TODO COPYING Makefile tests/*.cpp tests/*.h .svn
 	../scripts/svn2cl.sh | sed 's-  stea-  sgreene-g' > ChangeLog
 
-$(ARCH)/iconv_string.o:	iconv_string.c | $(ARCH)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 $(ARCH)/%.o:	%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ARCH)/%.o:	tests/%.cpp | $(ARCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-iconv_string.win32_o:	iconv_string.c | $(ARCH)/iconv_string.o
-	$(WCC) $(WCFLAGS) -c $< -o $@
 
 %.win32_o:	%.cpp $(ARCH)/%.o
 	$(WCXX) $(WCXXFLAGS) -c $< -o $@

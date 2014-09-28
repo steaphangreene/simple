@@ -26,12 +26,15 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <cerrno>
 #include <algorithm>
+
+#include <iconv.h>
+
 using namespace std;
 
 #include "simplemodel_pmx.h"
 #include "saferead.h"
-#include "iconv_string.h"
 
 SimpleModel_PMX::SimpleModel_PMX(const string &filename,
 	const string &defskin) {
@@ -72,6 +75,13 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
   Uint32 len;
   string ret = "";
   freadLE(len, model);
+
+  // The docs seem to be wrong, these are in UTF-16, not Shift_JIS.  :/
+  iconv_t cd = iconv_open("UTF-8", "UTF-16LE");
+  if(cd == iconv_t(-1)) {
+    fprintf(stderr, "ERROR: Can't convert charactersets!\n");
+    exit(1);
+    }
   for(Uint32 i = 0; i < len; ++i) {
     if(text_encoding == 1) {
       Uint8 ch;
@@ -83,14 +93,15 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
       char ch[2];
       freadLE(ch[0], model);
       freadLE(ch[1], model);
+      char *in = ch;
       char *utf8 = (char*)malloc(32);
       memset(utf8, 0, 32);
+      char *out = utf8;
 
-//    The docs seem to be wrong, these are in UTF-16, not Shift_JIS.  :/
-      if (iconv_string("UTF-8", "UTF-16LE",
-                       ch, ch+2,
-                       &utf8, NULL) < 0)
-        perror("iconv_string");
+      size_t in_left = 2;
+      size_t out_left = 32;
+      if (iconv(cd, &in, &in_left, &out, &out_left) == size_t(-1))
+        perror("iconv");
       ret += utf8;
       }
     else {
@@ -107,6 +118,12 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
   }
 
 string SimpleModel_PMX::ReadString(SDL_RWops *model, size_t len) const {
+  iconv_t cd = iconv_open("UTF-8", "Shift_JIS");
+  if(cd == iconv_t(-1)) {
+    fprintf(stderr, "ERROR: Can't convert charactersets!\n");
+    exit(1);
+    }
+
   char *ch = (char*)malloc(len+4);
   memset(ch, 0, len+4);
   SDL_RWread(model, ch, 1, len);
@@ -114,14 +131,19 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model, size_t len) const {
   if(strlen(ch) < len) len = strlen(ch);
 
   string ret;
-  char *utf8 = NULL;
-  if (iconv_string("UTF-8", "Shift_JIS", ch, ch+len+1, &utf8, NULL) < 0) {
-    //perror("iconv_string");
-    ret = ch;
+  char *in = ch;
+  char *utf8 = (char*)malloc(len*4);
+  memset(utf8, 0, len*4);
+  char *out = utf8;
+  size_t in_left = len;
+  size_t out_left = len*4;
+  while(in_left > 0) {
+    if(iconv(cd, &in, &in_left, &out, &out_left) == size_t(-1)) {
+      perror("iconv");
+      exit(1);
+      }
     }
-  else {
-    ret = utf8;
-    }
+  ret = utf8;
   free(utf8);
   free(ch);
 
