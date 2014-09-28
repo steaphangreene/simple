@@ -130,7 +130,7 @@ bool SimpleModel_PMD::Load(const string &filename,
   triangles.resize(num_triangles);
   for(Uint32 tri = 0; tri < num_triangles; ++tri) {
     for(Uint32 vert = 0; vert < 3; ++vert) {
-      Uint16 idx;
+      Uint16 idx = 0;
       freadLE(idx, model);
       triangles[tri].vertex[vert] = idx;
       }
