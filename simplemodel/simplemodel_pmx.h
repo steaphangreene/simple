@@ -46,6 +46,8 @@ public:
   virtual bool Load(const string &filenm,
 	const string &defskin = "default");
 
+  virtual bool LoadAnimation(const string &filenm);
+
 protected:
   virtual bool RenderSelf(Uint32 cur_time,
 	const vector<int> &anim = vector<int>(),
@@ -57,6 +59,7 @@ protected:
 
   Uint8 text_encoding;
   string ReadString(SDL_RWops *model) const;
+  string ReadString(SDL_RWops *model, size_t len) const;
 
   Uint32 ReadVarInt(SDL_RWops *model, Uint8 size) const;
 
@@ -94,6 +97,19 @@ protected:
   vector<PMXTriangle> triangles;
   vector<PMXMaterial> material;
   vector<PMXBone> bone;
+  map<string,Uint32> bone_by_name;
+
+  struct VMDBoneKeyFrame {
+    Vector3 pos;
+    Quaternion rot;
+    float bez_x[4];
+    float bez_y[4];
+    float bez_z[4];
+    float bez_r[4];
+    };
+
+  // Bone ID, Frame #, Data
+  map<Uint16,map<Uint32,VMDBoneKeyFrame>> bone_frame;
   };
 
 #endif	//SIMPLEMODEL_PMX_H

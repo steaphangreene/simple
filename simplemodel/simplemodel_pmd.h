@@ -44,7 +44,6 @@ protected:
   SimpleModel_PMD();
   string modelname, skinname;
 
-  Uint8 text_encoding;
   string ReadString(SDL_RWops *model, size_t len) const;
 
   struct PMDVertex {
