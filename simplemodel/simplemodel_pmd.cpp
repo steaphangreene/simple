@@ -223,9 +223,9 @@ bool SimpleModel_PMD::Load(const string &filenm,
     freadLE(bone[bn].type, model);
     freadLE(bone[bn].target, model);
 
-    freadLE(bone[bn].pos[0], model);
-    freadLE(bone[bn].pos[1], model);
-    freadLE(bone[bn].pos[2], model);
+    freadLE(bone[bn].pos.data[0], model);
+    freadLE(bone[bn].pos.data[1], model);
+    freadLE(bone[bn].pos.data[2], model);
     }
 
   return false;
@@ -278,9 +278,9 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     Uint16 bone = bone_by_name[bone_name];
 
     // Coordinate vector
-    freadLE(bone_frame[bone][frame].pos[0], model);
-    freadLE(bone_frame[bone][frame].pos[1], model);
-    freadLE(bone_frame[bone][frame].pos[2], model);
+    freadLE(bone_frame[bone][frame].pos.data[0], model);
+    freadLE(bone_frame[bone][frame].pos.data[1], model);
+    freadLE(bone_frame[bone][frame].pos.data[2], model);
 
     // Rotation quaternion
     freadLE(bone_frame[bone][frame].rot.x, model);
@@ -344,7 +344,6 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Matrix4x4 bone_trans[bone.size()];
 
   for(Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-    Uint32 last = 0xFFFFFFFF;
     Matrix4x4 btrans = identity4x4;
     if(bone[bone_id].parent != 0xFFFF) {
       bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
@@ -357,40 +356,47 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       continue;
       }
 
-    for(auto fr=bone_frame.at(bone_id).begin(); fr != bone_frame.at(bone_id).end(); ++fr) {
-      if(fr->first <= frame) {
-        Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-        QuaternionToMatrix4x4(trans, fr->second.rot);
-        pre.data[12] = -bone[bone_id].pos[0];
-        pre.data[13] = -bone[bone_id].pos[1];
-        pre.data[14] = -bone[bone_id].pos[2];
-        post.data[12] = fr->second.pos[0] + bone[bone_id].pos[0];
-        post.data[13] = fr->second.pos[1] + bone[bone_id].pos[1];
-        post.data[14] = fr->second.pos[2] + bone[bone_id].pos[2];
-        Multiply(btrans, post, trans, pre);
+    for(auto fr=bone_frame.at(bone_id).begin(); fr != bone_frame.at(bone_id).end();) {
+      auto f1 = fr;
+      ++fr;
+      if(fr == bone_frame.at(bone_id).end() || fr->first > frame) {
 
-        last = fr->first;
-        }
-      else {
-        // The above case should have *always* triggered before this
-        if(last == 0xFFFFFFFF) {
-          fprintf(stderr, "WARNING: Everything is ruined.\n");
+        if(fr == bone_frame.at(bone_id).end()) {
+          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
+          QuaternionToMatrix4x4(trans, f1->second.rot);
+          pre.data[12] = -bone[bone_id].pos.data[0];
+          pre.data[13] = -bone[bone_id].pos.data[1];
+          pre.data[14] = -bone[bone_id].pos.data[2];
+          post.data[12] = f1->second.pos.data[0] + bone[bone_id].pos.data[0];
+          post.data[13] = f1->second.pos.data[1] + bone[bone_id].pos.data[1];
+          post.data[14] = f1->second.pos.data[2] + bone[bone_id].pos.data[2];
+          Multiply(btrans, post, trans, pre);
           }
+        else {
+          float progress = float(frame - f1->first)
+                           / float(fr->first - f1->first);
 
-        float progress = float(frame - last) / float(fr->first - last);
+          Vector3 pos1 = f1->second.pos;
+          Vector3 pos2 = fr->second.pos;
+          Vector3 pos;
+          //BERP(pos, pos1, pos2, progress,
+          //     fr->second.bez_x, fr->second.bez_y, fr->second.bez_z);
+          LERP(pos, pos1, pos2, progress);
 
-        Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-        QuaternionToMatrix4x4(trans, fr->second.rot);
-        pre.data[12] = -bone[bone_id].pos[0];
-        pre.data[13] = -bone[bone_id].pos[1];
-        pre.data[14] = -bone[bone_id].pos[2];
-        post.data[12] = fr->second.pos[0] + bone[bone_id].pos[0];
-        post.data[13] = fr->second.pos[1] + bone[bone_id].pos[1];
-        post.data[14] = fr->second.pos[2] + bone[bone_id].pos[2];
-        Multiply(trans, post, trans, pre);
+          Quaternion rot;
+          //BERP(rot, f1->second.rot, fr->second.rot, progress, fr->second.bez_r);
+          SLERP(rot, f1->second.rot, fr->second.rot, progress);
 
-        SLERP(btrans, btrans, trans, progress);
-
+          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
+          QuaternionToMatrix4x4(trans, rot);
+          pre.data[12] = -bone[bone_id].pos.data[0];
+          pre.data[13] = -bone[bone_id].pos.data[1];
+          pre.data[14] = -bone[bone_id].pos.data[2];
+          post.data[12] = pos.data[0] + bone[bone_id].pos.data[0];
+          post.data[13] = pos.data[1] + bone[bone_id].pos.data[1];
+          post.data[14] = pos.data[2] + bone[bone_id].pos.data[2];
+          Multiply(btrans, post, trans, pre);
+          }
         break;
         }
       }
@@ -448,7 +454,7 @@ bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       m2 = bone_trans[bone2];
 
       // Note: m1 and m2 are swapped, this has weight of first, not progress
-      SLERP(mat, m2, m1, bone_weight);
+      LERP(mat, m2, m1, bone_weight);
 
       x = vertices[triangles[tri].vertex[vert]].vertex[0];
       y = vertices[triangles[tri].vertex[vert]].vertex[1];

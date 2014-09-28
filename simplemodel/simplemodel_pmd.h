@@ -74,7 +74,7 @@ protected:
     Uint16 child;
     Uint8 type;
     Uint16 target;
-    float pos[3];
+    Vector3 pos;
     };
 
   Uint32 num_tags;	// Number of tags PER FRAME
@@ -85,7 +85,7 @@ protected:
   map<string,Uint16> bone_by_name;
 
   struct VMDBoneKeyFrame {
-    float pos[3];
+    Vector3 pos;
     Quaternion rot;
     float bez_x[4];
     float bez_y[4];
