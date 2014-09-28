@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleGUI Example Module by Steaphan Greene
 //
-//  Copyright 2005-2006 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2005-2014 Steaphan Greene <steaphan@gmail.com>
 //
 //  SimpleGUI is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by

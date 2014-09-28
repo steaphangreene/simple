@@ -1,6 +1,6 @@
 // *************************************************************************
 //  This file was created by a data-conversion script written by
-//  Steaphan Greene <stea@cs.binghamton.edu>
+//  Steaphan Greene <steaphan@gmail.com>
 //
 //  The data herein is Copyright 2000 Neale Davidson
 //  This is a converted form of: Adventure Subtitles Normal.ttf
@@ -12,7 +12,7 @@
 //
 //  This file is part of the SimpleGUI Example Module by Steaphan Greene
 //
-//  Copyright 2008 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2008 Steaphan Greene <steaphan@gmail.com>
 //
 //  SimpleGUI is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by

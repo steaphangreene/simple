@@ -1,7 +1,7 @@
 # *************************************************************************
 #  This file is part of the SimpleModel Example Module by Steaphan Greene
 #
-#  Copyright 2005-2008 Steaphan Greene <stea@cs.binghamton.edu>
+#  Copyright 2005-2014 Steaphan Greene <steaphan@gmail.com>
 #
 #  SimpleModel is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

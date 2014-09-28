@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is adapted from a part of Acid Rain by Steaphan Greene
 //
-//  Copyright 2002-2005 Steaphan Greene <stea@cs.binghamton.edu>
+//  Copyright 2002-2014 Steaphan Greene <steaphan@gmail.com>
 //
 //  SimpleGUI is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by

@@ -1,6 +1,6 @@
 // *************************************************************************
 //  This file was created by a data-conversion script written by
-//  Steaphan Greene <stea@cs.binghamton.edu>
+//  Steaphan Greene <steaphan@gmail.com>
 //
 //  I make no claim to ownership or copyright of this data or this file.
 //
