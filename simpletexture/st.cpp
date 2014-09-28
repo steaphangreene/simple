@@ -552,7 +552,7 @@ void SimpleTexture::BuildBlankTexture() {
   }
 
 void SimpleTexture::BuildTextTexture() {
-  int bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
+  Uint32 bxsize = 0, bysize = 0, xsize = 0, ysize = 0, xoff = 0, yoff = 0;
 
   float ylines = text->visible_ylines;
   float xlines = text->visible_xlines;
@@ -694,7 +694,7 @@ void SimpleTexture::BuildTextTexture() {
       }
     }
 
-  { SDL_Rect srec = { 0, 0, 0, 0}, drec = { xoff, yoff, 0, 0 };
+  { SDL_Rect srec = { 0, 0, 0, 0}, drec = { int(xoff), int(yoff), 0, 0 };
     srec.x = (int)(fsz * text->visible_xoffset + 0.5);
     srec.w = (int)(fsz * xlines + 0.5);
 
@@ -712,7 +712,7 @@ void SimpleTexture::BuildTextTexture() {
       //SDL_SetSurfaceAlphaMod(text->rendered_text, SDL_ALPHA_TRANSPARENT);
       }
 
-    if(srec.w < text->text_xsize) {
+    if(srec.w < int(text->text_xsize)) {
       if(text->alignment == ST_ALIGN_CENTER) {
 	srec.x += ((text->text_xsize - srec.w) / 2);
 	}
@@ -720,7 +720,7 @@ void SimpleTexture::BuildTextTexture() {
 	srec.x += (text->text_xsize - srec.w);
 	}
       }
-    else if(srec.w > text->text_xsize) {
+    else if(srec.w > int(text->text_xsize)) {
       if(text->alignment == ST_ALIGN_CENTER) {
 	drec.x -= ((text->text_xsize - srec.w) / 2);
 	}
@@ -851,7 +851,7 @@ void SimpleTexture::SetText(const string txt) {
     text->lines.push_back(text->message.substr(lpos, pos - lpos));
     int xs = 0, ys = 0;
     TTF_SizeText(Font(text->font_size), text->lines.back().c_str(), &xs, &ys);
-    if(text->text_xsize < xs) text->text_xsize = xs;
+    if(text->text_xsize < Uint32(xs)) text->text_xsize = xs;
     lpos = pos+1;
     }
   text->text_ysize = TTF_FontLineSkip(Font(text->font_size)) * text->lines.size();

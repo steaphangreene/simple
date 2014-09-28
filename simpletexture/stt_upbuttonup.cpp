@@ -31,7 +31,7 @@ SDL_Surface *STT_UpButton_Up::BuildTexture(SDL_Surface *surf,
 	base_col(col), light_col(col), dark_col(col));
 
   int width = ysize/16;
-  if(width > xsize/16) width = xsize/16;
+  if(width > int(xsize/16)) width = xsize/16;
   if(width < 1) width = 1;
 
   SDL_Rect point = { width * 2, width * 2, width, width };

@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 
   fprintf(stderr, "\nTesting:\n\n");
 
-  SimpleModel::Vector3 pos = { 1.0, 2.0, 4.0 };
+  SimpleModel::Vector3 pos = { { 1.0, 2.0, 4.0 } };
   SimpleModel::Vector3 start = pos;
   SimpleModel::Vector3 res = pos;
 

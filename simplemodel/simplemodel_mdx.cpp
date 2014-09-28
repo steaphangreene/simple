@@ -401,8 +401,6 @@ bool SimpleModel_MDX::HandleMaterials(SDL_RWops * model) {
 
 bool SimpleModel_MDX::HandleMaterial(SDL_RWops * model) {
   Uint32 chunk_size = 0;
-  Uint32 file_offset = SDL_RWtell(model);
-  Uint32 bytes_read = 0;
 
   freadLE(chunk_size, model);
 
@@ -424,7 +422,6 @@ bool SimpleModel_MDX::HandleMaterial(SDL_RWops * model) {
   Uint32 num_layers;
   freadLE(num_layers, model);
 
-  bytes_read = SDL_RWtell(model) - file_offset;
   while(material.layers.size() < num_layers) {
     MDXLayer layer;
     Uint32 layer_size;
@@ -432,7 +429,6 @@ bool SimpleModel_MDX::HandleMaterial(SDL_RWops * model) {
     SDL_RWseek(model, 8, SEEK_CUR);
     freadLE(layer.texture_id, model);
     SDL_RWseek(model, layer_size - 16, SEEK_CUR);
-    bytes_read = SDL_RWtell(model) - file_offset;
     material.layers.push_back(layer);
     }
   materials.push_back(material);

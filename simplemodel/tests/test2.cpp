@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
       }
     }
 
-  for(int m = 0; m < sobj.size(); ++m) {
+  for(size_t m = 0; m < sobj.size(); ++m) {
     scene->MoveObject(sobj[m], 0.0, m * 2.0, 0.0);
     }
 

@@ -197,8 +197,6 @@ bool SimpleModel_PMX::Load(const string &filename,
 
   vertices.resize(num_vertices);
   for(Uint32 vert = 0; vert < num_vertices; ++vert) {
-    float x, y, z;
-
     // Location vector
     freadLE(vertices[vert].vertex[0], model);
     freadLE(vertices[vert].vertex[1], model);

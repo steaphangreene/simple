@@ -84,7 +84,7 @@ SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf,
   SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, col.r, col.g, col.b));
 
   int width = ysize/8;
-  if(width > xsize/8) width = xsize/8;
+  if(width > int(xsize/8)) width = xsize/8;
 
   SDL_Rect lft = { 0, 0, width, surf->h };
   SDL_Rect top = { 0, 0, surf->w, width };
@@ -102,7 +102,7 @@ SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf,
   btm.y = ysize - width;
   btm.h = 1;
 
-  for(Uint32 x = 0; x < width; ++x) {
+  for(int x = 0; x < width; ++x) {
     SDL_FillRect(surf, &rgt, SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
     SDL_FillRect(surf, &btm, SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
     --rgt.y;  --btm.x;
