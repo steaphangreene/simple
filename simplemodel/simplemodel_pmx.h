@@ -24,6 +24,19 @@
 
 #include "simplemodel.h"
 
+#define PMX_BONE_FLAG_TAILPOS_IS_BONE 0x0001
+#define PMX_BONE_FLAG_CAN_ROTATE 0x0002
+#define PMX_BONE_FLAG_CAN_TRANSLATE 0x0004
+#define PMX_BONE_FLAG_IS_VISIBLE 0x0008
+#define PMX_BONE_FLAG_CAN_MANIPULATE 0x0010
+#define PMX_BONE_FLAG_IS_IK 0x0020
+#define PMX_BONE_FLAG_IS_EXTERNAL_ROTATION 0x0100
+#define PMX_BONE_FLAG_IS_EXTERNAL_TRANSLATION 0x0200
+#define PMX_BONE_FLAG_HAS_FIXED_AXIS 0x0400
+#define PMX_BONE_FLAG_HAS_LOCAL_COORDINATE 0x0800
+#define PMX_BONE_FLAG_IS_AFTER_PHYSICS_DEFORM 0x1000
+#define PMX_BONE_FLAG_IS_EXTERNAL_PARENT_DEFORM 0x2000
+
 class SimpleModel_PMX : public SimpleModel {
 public:
   SimpleModel_PMX(const string &filenm,
@@ -45,6 +58,8 @@ protected:
   Uint8 text_encoding;
   string ReadString(SDL_RWops *model) const;
 
+  Uint32 ReadVarInt(SDL_RWops *model, Uint8 size) const;
+
   struct PMXVertex {
     float vertex[3];
     float normal[3];
@@ -65,10 +80,18 @@ protected:
     float specularity;
     };
 
+  struct PMXBone {
+    string name;
+    Vector3 pos;
+    Uint32 parent;
+    Uint16 flags;
+    };
+
   Uint32 num_tags;	// Number of tags PER FRAME
   vector<PMXVertex> vertices;
   vector<PMXTriangle> triangles;
   vector<PMXMaterial> material;
+  vector<PMXBone> bone;
   };
 
 #endif	//SIMPLEMODEL_PMX_H

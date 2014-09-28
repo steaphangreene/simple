@@ -44,6 +44,28 @@ SimpleModel_PMX::SimpleModel_PMX() {
 SimpleModel_PMX::~SimpleModel_PMX() {
   }
 
+Uint32 SimpleModel_PMX::ReadVarInt(SDL_RWops *model, Uint8 size) const {
+  if(size == 1) {
+    Uint8 idx;
+    freadLE(idx, model);
+    return Uint32(idx);
+    }
+  else if(size == 2) {
+    Uint16 idx;
+    freadLE(idx, model);
+    return Uint32(idx);
+    }
+  else if(size == 4) {
+    Uint32 idx;
+    freadLE(idx, model);
+    return idx;
+    }
+  else {
+    fprintf(stderr, "Bad VarInt Size: %u\n", size);
+    exit(1);
+    }
+  }
+
 string SimpleModel_PMX::ReadString(SDL_RWops *model) const {
   Uint32 len;
   string ret = "";
@@ -232,25 +254,7 @@ bool SimpleModel_PMX::Load(const string &filenm,
   triangles.resize(num_triangles);
   for(Uint32 tri = 0; tri < num_triangles; ++tri) {
     for(Uint32 vert = 0; vert < 3; ++vert) {
-      if(vertex_size == 1) {
-        Uint8 idx;
-        freadLE(idx, model);
-        triangles[tri].vertex[vert] = idx;
-        }
-      else if(vertex_size == 2) {
-        Uint16 idx;
-        freadLE(idx, model);
-        triangles[tri].vertex[vert] = idx;
-        }
-      else if(vertex_size == 4) {
-        Uint32 idx;
-        freadLE(idx, model);
-        triangles[tri].vertex[vert] = idx;
-        }
-      else {
-        fprintf(stderr, "Bad Vertex Size: %u\n", vertex_size);
-        exit(1);
-        }
+      triangles[tri].vertex[vert] = ReadVarInt(model, vertex_size);
       }
     }
 
@@ -303,25 +307,7 @@ bool SimpleModel_PMX::Load(const string &filenm,
     SDL_RWseek(model, 16, SEEK_CUR); // Edge Color
     SDL_RWseek(model, 4, SEEK_CUR); // Edge Size
 
-    if(texture_index_size == 1) {
-      Uint8 idx;
-      freadLE(idx, model);
-      material[mat].texidx = idx;
-      }
-    else if(texture_index_size == 2) {
-      Uint16 idx;
-      freadLE(idx, model);
-      material[mat].texidx = idx;
-      }
-    else if(texture_index_size == 4) {
-      Uint32 idx;
-      freadLE(idx, model);
-      material[mat].texidx = idx;
-      }
-    else {
-      fprintf(stderr, "Bad Texture Index Size: %u\n", texture_index_size);
-      exit(1);
-      }
+    material[mat].texidx = ReadVarInt(model, texture_index_size);
 
     SDL_RWseek(model, texture_index_size, SEEK_CUR); // Sphere Index
     SDL_RWseek(model, 1, SEEK_CUR); // Sphere Mode
@@ -340,6 +326,56 @@ bool SimpleModel_PMX::Load(const string &filenm,
     freadLE(material[mat].num_tris, model);
     material[mat].num_tris /= 3;
     }
+
+  // This section is not in the doc I have.  Using the force here.
+  Uint32 num_bones;
+  freadLE(num_bones, model);
+  bone.resize(num_bones);
+  for(Uint32 bn = 0; bn < num_bones; ++bn) {
+    bone[bn].name = ReadString(model); // Name
+    string name = ReadString(model); // English name (usually blank)
+    freadLE(bone[bn].pos.data[0], model);
+    freadLE(bone[bn].pos.data[1], model);
+    freadLE(bone[bn].pos.data[2], model);
+    bone[bn].parent = ReadVarInt(model, bone_index_size);
+    SDL_RWseek(model, 4, SEEK_CUR); // "Layer"?
+    freadLE(bone[bn].flags, model);
+    if(bone[bn].flags & PMX_BONE_FLAG_TAILPOS_IS_BONE) {
+      ReadVarInt(model, bone_index_size); // "Tail"?
+      }
+    else {
+      SDL_RWseek(model, 12, SEEK_CUR); // "Tail (Vector3)"?
+      }
+    if(bone[bn].flags & PMX_BONE_FLAG_IS_EXTERNAL_ROTATION) {
+      ReadVarInt(model, bone_index_size); // "Effector"?
+      SDL_RWseek(model, 4, SEEK_CUR); // "Factor (float)"?
+      }
+    if(bone[bn].flags & PMX_BONE_FLAG_HAS_FIXED_AXIS) {
+      SDL_RWseek(model, 12, SEEK_CUR); // "Fixed Axis (Vector3)"?
+      }
+    if(bone[bn].flags & PMX_BONE_FLAG_HAS_LOCAL_COORDINATE) {
+      SDL_RWseek(model, 12, SEEK_CUR); // "X Vector (Vector3)"?
+      SDL_RWseek(model, 12, SEEK_CUR); // "Z Vector (Vector3)"?
+      }
+    if(bone[bn].flags & PMX_BONE_FLAG_IS_EXTERNAL_PARENT_DEFORM) {
+      SDL_RWseek(model, 4, SEEK_CUR); // "External Key (Uint32)"?
+      }
+    if(bone[bn].flags & PMX_BONE_FLAG_IS_IK) {
+      ReadVarInt(model, bone_index_size); // "IK Info (?)"?
+      SDL_RWseek(model, 8, SEEK_CUR); // "IK Info (?)"?
+      Uint32 num_ik_links;
+      freadLE(num_ik_links, model);
+      for(Uint32 ik_link = 0; ik_link < num_ik_links; ++ik_link) {
+        ReadVarInt(model, bone_index_size); // "IK Link Info (?)"?
+        Uint8 ik_limit_angle;
+        freadLE(ik_limit_angle, model); // ?
+        if(ik_limit_angle == 1) {
+          SDL_RWseek(model, 24, SEEK_CUR); // "min/max (Vector3 x 2)"?
+          }
+        }
+      }
+    }
+
   return false;
   }
 
