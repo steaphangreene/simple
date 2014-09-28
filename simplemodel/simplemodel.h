@@ -160,11 +160,11 @@ public:
 	const Matrix4x4 m2, const Matrix4x4 m3, const Matrix4x4 m4,
 	const Matrix4x4 m5, const Matrix4x4 m6, const Matrix4x4 m7,
 	const Matrix4x4 m8);
-  static void Normalize(Quaternion &res, const Quaternion quat);
 
   static void MatrixTransform(Vector3 &v, const Matrix4x4 &rot);
   static void MatrixTransform(float &x, float &y, float &z,
                               const Matrix4x4 &rot);
+  static void Normalize(Matrix4x4 &res, const Matrix4x4 quat);
 
   //Interpolations
   template <class Tp>
@@ -177,11 +177,19 @@ public:
 	const Matrix4x4 m1, const Matrix4x4 m2, const float t);
   static void SLERP(Quaternion &res,
 	const Quaternion q1, const Quaternion q2, const float t);
+  static void BERP(Matrix4x4 &res,
+	const Matrix4x4 m1, const Matrix4x4 m2, const float t,
+	const float * const bez_x, const float * const bez_y,
+	const float * const bez_z, const float * const bez_r);
+  static void BERP(Quaternion &res,
+	const Quaternion q1, const Quaternion q2, const float t,
+	const float * const bez_r);
 
   static void Multiply(Quaternion &res, Quaternion q1, Quaternion q2);
   static void QuaternionRotate(float &x, float &y, float &z,
                                const Quaternion &rot);
   static void QuaternionRotate(Vector3 &v, const Quaternion &rot);
+  static void Normalize(Quaternion &res, const Quaternion quat);
 
 protected:
   virtual bool RenderSelf(Uint32 cur_time,

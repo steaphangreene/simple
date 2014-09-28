@@ -273,6 +273,89 @@ void SimpleModel::Normalize(Quaternion &res, const Quaternion quat) {
   res.z = quat.z / scale;
   }
 
+void SimpleModel::BERP(Matrix4x4 &res,
+	const Matrix4x4 m1, const Matrix4x4 m2, const float t,
+	const float * const bez_x, const float * const bez_y,
+	const float * const bez_z, const float * const bez_r) {
+  Quaternion q1, q2, qres;
+  Matrix4x4ToQuaternion(q1, m1);
+  Matrix4x4ToQuaternion(q2, m2);
+  BERP(qres, q1, q2, t, bez_r);
+  Normalize(qres, qres); // TODO: Should not need this
+  QuaternionToMatrix4x4(res, qres);
+
+  float p1, p2, c1, c2, c3, start, span;
+
+  start = m1.data[12];
+  span = m2.data[12] - m1.data[12];
+  p1 = bez_x[0];
+  p2 = bez_x[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[12] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = m1.data[13];
+  span = m2.data[13] - m1.data[13];
+  p1 = bez_y[0];
+  p2 = bez_y[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[13] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = m1.data[14];
+  span = m2.data[14] - m1.data[14];
+  p1 = bez_z[0];
+  p2 = bez_z[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.data[14] = start + (t * (c1 + t * (c2 + t * c3))) * span;
+  }
+
+void SimpleModel::BERP(Quaternion &res,
+	const Quaternion q1, const Quaternion q2, const float t,
+        const float * const bez_r) {
+  float p1, p2, c1, c2, c3, start, span;
+
+  start = q1.w;
+  span = q2.w - q1.w;
+  p1 = bez_r[0];
+  p2 = bez_r[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.w = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = q1.x;
+  span = q2.x - q1.x;
+  p1 = bez_r[0];
+  p2 = bez_r[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.x = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = q1.y;
+  span = q2.y - q1.y;
+  p1 = bez_r[0];
+  p2 = bez_r[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.y = start + (t * (c1 + t * (c2 + t * c3))) * span;
+
+  start = q1.z;
+  span = q2.z - q1.z;
+  p1 = bez_r[0];
+  p2 = bez_r[2];
+  c3 = 3 * p1;
+  c2 = 3 * (p2 - p1) - c3;
+  c1 = 1 - c3 - c2;
+  res.z = start + (t * (c1 + t * (c2 + t * c3))) * span;
+  }
+
 void SimpleModel::SLERP(Matrix4x4 &res,
 	const Matrix4x4 m1, const Matrix4x4 m2, const float t) {
   Quaternion q1, q2, qres;
