@@ -55,7 +55,6 @@ protected:
 	Uint32 anim_offset = 0) const;
 
   SimpleModel_PMX();
-  string modelname, skinname;
 
   Uint8 text_encoding;
   string ReadString(SDL_RWops *model) const;
@@ -92,7 +91,6 @@ protected:
     Uint16 flags;
     };
 
-  Uint32 num_tags;	// Number of tags PER FRAME
   vector<PMXVertex> vertices;
   vector<PMXTriangle> triangles;
   vector<PMXMaterial> material;

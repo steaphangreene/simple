@@ -37,11 +37,6 @@ public:
 
 protected:
   SimpleModel_PMD();
-  string modelname, skinname;
-
-  string ReadString(SDL_RWops *model, size_t len) const;
-
-  Uint32 num_tags;	// Number of tags PER FRAME
   };
 
 #endif	//SIMPLEMODEL_PMD_H

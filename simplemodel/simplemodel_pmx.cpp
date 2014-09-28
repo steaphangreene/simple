@@ -33,9 +33,9 @@ using namespace std;
 #include "saferead.h"
 #include "iconv_string.h"
 
-SimpleModel_PMX::SimpleModel_PMX(const string &filenm,
+SimpleModel_PMX::SimpleModel_PMX(const string &filename,
 	const string &defskin) {
-  Load(filenm, defskin);
+  Load(filename, defskin);
   }
 
 SimpleModel_PMX::SimpleModel_PMX() {
@@ -130,11 +130,8 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model, size_t len) const {
   return ret;
   }
 
-bool SimpleModel_PMX::Load(const string &filenm,
+bool SimpleModel_PMX::Load(const string &filename,
 	const string &defskin) {
-  filename = filenm;
-  skinname = defskin;
-
   SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",

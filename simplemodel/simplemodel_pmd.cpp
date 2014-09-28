@@ -35,9 +35,9 @@ using namespace std;
 
 #define BONE_NONE 0xFFFF
 
-SimpleModel_PMD::SimpleModel_PMD(const string &filenm,
+SimpleModel_PMD::SimpleModel_PMD(const string &filename,
 	const string &defskin) {
-  Load(filenm, defskin);
+  Load(filename, defskin);
   }
 
 SimpleModel_PMD::SimpleModel_PMD() {
@@ -46,37 +46,8 @@ SimpleModel_PMD::SimpleModel_PMD() {
 SimpleModel_PMD::~SimpleModel_PMD() {
   }
 
-string SimpleModel_PMD::ReadString(SDL_RWops *model, size_t len) const {
-  char *ch = (char*)malloc(len+4);
-  memset(ch, 0, len+4);
-  SDL_RWread(model, ch, 1, len);
-
-  if(strlen(ch) < len) len = strlen(ch);
-
-  string ret;
-  char *utf8 = NULL;
-  if (iconv_string("UTF-8", "Shift_JIS", ch, ch+len+1, &utf8, NULL) < 0) {
-    //perror("iconv_string");
-    ret = ch;
-    }
-  else {
-    ret = utf8;
-    }
-  free(utf8);
-  free(ch);
-
-  // Found some with an extra space in this field - detect and fix that
-  if(ret[ret.length()-1] == ' ') ret = ret.substr(0, ret.length()-1);
-
-//  fprintf(stderr, "[%lu] '%s'\n", len, ret.c_str());
-  return ret;
-  }
-
-bool SimpleModel_PMD::Load(const string &filenm,
+bool SimpleModel_PMD::Load(const string &filename,
 	const string &defskin) {
-  filename = filenm;
-  skinname = defskin;
-
   SDL_RWops *model = SDL_RWFromZZIP(filename.c_str(), "rb");
   if(!model) {
     fprintf(stderr, "WARNING: Unable to open model file '%s'!\n",
