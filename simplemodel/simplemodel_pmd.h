@@ -33,8 +33,6 @@ public:
   virtual bool Load(const string &filenm,
 	const string &defskin = "default");
 
-  virtual bool LoadAnimation(const string &filenm);
-
 protected:
   SimpleModel_PMD();
   };
