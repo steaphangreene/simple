@@ -66,8 +66,9 @@ protected:
     float vertex[3];
     float normal[3];
     float texcoord[2];
-    Uint16 bone[2];
-    float bone_weight;
+    Uint16 bone[4];
+    float bone_weight[4];
+    Uint8 bone_weight_type;
     };
 
   struct PMXTriangle {

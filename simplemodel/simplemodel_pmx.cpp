@@ -211,34 +211,33 @@ bool SimpleModel_PMX::Load(const string &filename,
     freadLE(vertices[vert].texcoord[0], model);
     freadLE(vertices[vert].texcoord[1], model);
 
-    Uint8 weight_type;
-    freadLE(weight_type, model);
+    freadLE(vertices[vert].bone_weight_type, model);
+    if(vertices[vert].bone_weight_type == 0) {
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      }
+    else if(vertices[vert].bone_weight_type == 1) {
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
+      freadLE(vertices[vert].bone_weight[0], model);
+      vertices[vert].bone_weight[1] = 1.0 - vertices[vert].bone_weight[0];
+      }
+    else if(vertices[vert].bone_weight_type == 2) {
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[2] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[3] = ReadVarInt(model, bone_index_size);
+      freadLE(vertices[vert].bone_weight[0], model);
+      freadLE(vertices[vert].bone_weight[1], model);
+      freadLE(vertices[vert].bone_weight[2], model);
+      freadLE(vertices[vert].bone_weight[3], model);
+      }
+    else if(vertices[vert].bone_weight_type == 3) {
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
 
-    if(weight_type == 0) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone[1] = 0;
-      vertices[vert].bone_weight = 1.0;
-      }
-    else if(weight_type == 1) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
-      freadLE(vertices[vert].bone_weight, model);
-      }
-    else if(weight_type == 2) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone_weight = 0.5;
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
-      }
-    else if(weight_type == 3) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
-      vertices[vert].bone_weight = 0.5;
+      // TODO: No clue yet what this is.
+      vertices[vert].bone_weight[0] = 0.5;
+      vertices[vert].bone_weight[1] = 0.5;
       SDL_RWseek(model, 4, SEEK_CUR);
 
       SDL_RWseek(model, 4, SEEK_CUR);
@@ -254,7 +253,8 @@ bool SimpleModel_PMX::Load(const string &filename,
       SDL_RWseek(model, 4, SEEK_CUR);
       }
     else {
-      fprintf(stderr, "ERROR: Unknown weight_type: %u\n", weight_type);
+      fprintf(stderr, "ERROR: Unknown bone_weight_type: %u\n",
+              vertices[vert].bone_weight_type);
       exit(1);
       }
 
@@ -611,17 +611,25 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                  vertices[triangles[tri].vertex[vert]].normal[1],
                  vertices[triangles[tri].vertex[vert]].normal[2]);
 
-      float bone_weight, x, y, z;
-      bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight;
-      Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
-      Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+      Matrix4x4 mat;
+      if(vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
+        mat = bone_trans[vertices[triangles[tri].vertex[vert]].bone[0]];
+        }
+      else {
+        float bone_weight;
+        bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
+        Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
+        Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
 
-      Matrix4x4 mat, m1, m2;
-      m1 = bone_trans[bone1];
-      m2 = bone_trans[bone2];
+        Matrix4x4 m1, m2;
+        m1 = bone_trans[bone1];
+        m2 = bone_trans[bone2];
 
-      // Note: m1 and m2 are swapped, this has weight of first, not progress
-      LERP(mat, m2, m1, bone_weight);
+        // Note: m1 and m2 are swapped, this has weight of first, not progress
+        LERP(mat, m2, m1, bone_weight);
+        }
+
+      float x, y, z;
 
       x = vertices[triangles[tri].vertex[vert]].vertex[0];
       y = vertices[triangles[tri].vertex[vert]].vertex[1];

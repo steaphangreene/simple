@@ -102,7 +102,21 @@ bool SimpleModel_PMD::Load(const string &filename,
     freadLE(vertices[vert].bone[1], model);
     Uint8 weight;
     freadLE(weight, model);
-    vertices[vert].bone_weight = ((float)(weight)) / 100.0;
+    if(weight == 100) {
+      // Really only the first bone, equivalent to PMX type 0
+      vertices[vert].bone_weight_type = 0;
+      }
+    else if(weight == 0) {
+      // Really only the second bone, convert to PMX type 0
+      vertices[vert].bone_weight_type = 0;
+      vertices[vert].bone[0] = vertices[vert].bone[1];
+      }
+    else {
+      // Normal PMD two-bone weight, equivalent to PMX type 1
+      vertices[vert].bone_weight_type = 1;
+      vertices[vert].bone_weight[0] = ((float)(weight)) / 100.0;
+      vertices[vert].bone_weight[1] = 1.0 - vertices[vert].bone_weight[0];
+      }
 
     // We don't draw edges
     SDL_RWseek(model, 1, SEEK_CUR);
