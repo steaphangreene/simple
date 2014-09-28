@@ -157,6 +157,8 @@ bool SimpleModel_PMD::Load(const string &filenm,
   freadLE(num_materials, model);
   material.resize(num_materials);
   for(Uint32 mat = 0; mat < num_materials; ++mat) {
+    material[mat].mode = 1; // All PMD materials are PMX equivalent of mode 1
+
     freadLE(material[mat].diffuse[0], model);
     freadLE(material[mat].diffuse[1], model);
     freadLE(material[mat].diffuse[2], model);
@@ -181,7 +183,8 @@ bool SimpleModel_PMD::Load(const string &filenm,
     string texfile_part = ReadString(model, 20);
     if(texfile_part.length() < 3) {
       fprintf(stderr, "WARNING: Blank tex '%s'\n", texfile_part.c_str());
-      material[mat].texture = NULL;
+      material[mat].texidx = texture.size();
+      texture.push_back(NULL);
       continue;
       }
     if(texfile_part.find('*') != string::npos) {
@@ -190,18 +193,21 @@ bool SimpleModel_PMD::Load(const string &filenm,
       }
     if(texfile_part.length() < 3) {
       fprintf(stderr, "WARNING: Blank base tex '%s'\n", texfile_part.c_str());
-      material[mat].texture = NULL;
+      material[mat].texidx = texture.size();
+      texture.push_back(NULL);
       continue;
       }
     string texfile = filename.substr(0, filename.find_last_of("/") + 1);
     texfile += texfile_part;
     SimpleTexture *tmptex = new SimpleTexture(texfile.c_str());
     if(tmptex->type != SIMPLETEXTURE_NONE) {
-      material[mat].texture = tmptex;
+      material[mat].texidx = texture.size();
+      texture.push_back(tmptex);
       }
     else {
       fprintf(stderr, "WARNING: Failed to load tex '%s'\n", texfile.c_str());
-      material[mat].texture = NULL;
+      material[mat].texidx = texture.size();
+      texture.push_back(NULL);
       delete tmptex;
       }
     }
@@ -218,10 +224,19 @@ bool SimpleModel_PMD::Load(const string &filenm,
 
     //fprintf(stderr, "Loading Bone #%u: %s\n", bn, bone[bn].name.c_str());
 
-    freadLE(bone[bn].parent, model);
-    freadLE(bone[bn].child, model);
-    freadLE(bone[bn].type, model);
-    freadLE(bone[bn].target, model);
+    Uint16 parent = 0xFFFF;
+    freadLE(parent, model);
+    bone[bn].parent = parent;
+
+    //freadLE(bone[bn].child, model);
+    SDL_RWseek(model, 2, SEEK_CUR);
+
+    Uint8 type;
+    freadLE(type, model);
+    // TODO: Convert "type" to PMX flags
+
+    //freadLE(bone[bn].target, model);
+    SDL_RWseek(model, 2, SEEK_CUR);
 
     freadLE(bone[bn].pos.data[0], model);
     freadLE(bone[bn].pos.data[1], model);
@@ -324,154 +339,4 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     SDL_RWseek(model, 48, SEEK_CUR);
     }
   return false;
-  }
-
-bool SimpleModel_PMD::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
-
-  float frame = float(cur_time - start_time[0]) * 30.0 / 1000.0;
-
-  Uint32 mat = -1;
-  Uint32 to_next_mat = 0;
-  float xfact = 1.0, yfact = 1.0;
-
-  // Transform to SimpleModel axes and scale
-  glPushMatrix();
-  glScalef(0.125, 0.125, 0.125);
-  glRotatef(-90.0, 0.0, 1.0, 0.0);
-  glRotatef(-90.0, 0.0, 0.0, 1.0);
-
-  Matrix4x4 bone_trans[bone.size()];
-
-  for(Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-    Matrix4x4 btrans = identity4x4;
-    if(bone[bone_id].parent != 0xFFFF) {
-      bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
-      }
-    else {
-      bone_trans[bone_id] = identity4x4;
-      }
-
-    if(bone_frame.count(bone_id) == 0) {
-      continue;
-      }
-
-    for(auto fr=bone_frame.at(bone_id).begin(); fr != bone_frame.at(bone_id).end();) {
-      auto f1 = fr;
-      ++fr;
-      if(fr == bone_frame.at(bone_id).end() || fr->first > frame) {
-
-        if(fr == bone_frame.at(bone_id).end()) {
-          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-          QuaternionToMatrix4x4(trans, f1->second.rot);
-          pre.data[12] = -bone[bone_id].pos.data[0];
-          pre.data[13] = -bone[bone_id].pos.data[1];
-          pre.data[14] = -bone[bone_id].pos.data[2];
-          post.data[12] = f1->second.pos.data[0] + bone[bone_id].pos.data[0];
-          post.data[13] = f1->second.pos.data[1] + bone[bone_id].pos.data[1];
-          post.data[14] = f1->second.pos.data[2] + bone[bone_id].pos.data[2];
-          Multiply(btrans, post, trans, pre);
-          }
-        else {
-          float progress = float(frame - f1->first)
-                           / float(fr->first - f1->first);
-
-          Vector3 pos1 = f1->second.pos;
-          Vector3 pos2 = fr->second.pos;
-          Vector3 pos;
-          //BERP(pos, pos1, pos2, progress,
-          //     fr->second.bez_x, fr->second.bez_y, fr->second.bez_z);
-          LERP(pos, pos1, pos2, progress);
-
-          Quaternion rot;
-          //BERP(rot, f1->second.rot, fr->second.rot, progress, fr->second.bez_r);
-          SLERP(rot, f1->second.rot, fr->second.rot, progress);
-
-          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-          QuaternionToMatrix4x4(trans, rot);
-          pre.data[12] = -bone[bone_id].pos.data[0];
-          pre.data[13] = -bone[bone_id].pos.data[1];
-          pre.data[14] = -bone[bone_id].pos.data[2];
-          post.data[12] = pos.data[0] + bone[bone_id].pos.data[0];
-          post.data[13] = pos.data[1] + bone[bone_id].pos.data[1];
-          post.data[14] = pos.data[2] + bone[bone_id].pos.data[2];
-          Multiply(btrans, post, trans, pre);
-          }
-        break;
-        }
-      }
-
-    Multiply(bone_trans[bone_id], bone_trans[bone_id], btrans);
-    }
-
-  glDisable(GL_CULL_FACE);
-  for(Uint32 tri = 0; tri < triangles.size(); tri++) {
-    if(tri >= to_next_mat) {
-      do {
-        ++mat;
-        to_next_mat = tri + material[mat].num_tris;
-        } while(tri >= to_next_mat);
-      if(tri > 0) {
-        glEnd();
-        }
-
-      if(MaterialDisabled(mat)) continue;
-
-      if(!material[mat].texture) {
-        glDisable(GL_TEXTURE);
-        xfact = 1.0;
-        yfact = 1.0;
-        }
-      else {
-        glEnable(GL_TEXTURE);
-        glBindTexture(GL_TEXTURE_2D, material[mat].texture->GLTexture());
-        xfact = material[mat].texture->xfact;
-        yfact = material[mat].texture->yfact;
-        }
-
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material[mat].diffuse);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material[mat].specular);
-      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material[mat].specularity);
-
-      glBegin(GL_TRIANGLES);
-      }
-    for(Uint32 vert = 0; vert < 3; ++vert) {
-      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texture[0] * xfact,
-                   vertices[triangles[tri].vertex[vert]].texture[1] * yfact);
-
-      glNormal3f(vertices[triangles[tri].vertex[vert]].normal[0],
-                 vertices[triangles[tri].vertex[vert]].normal[1],
-                 vertices[triangles[tri].vertex[vert]].normal[2]);
-
-      float bone_weight, x, y, z;
-      bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight;
-      Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
-      Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
-
-      Matrix4x4 mat, m1, m2;
-      m1 = bone_trans[bone1];
-      m2 = bone_trans[bone2];
-
-      // Note: m1 and m2 are swapped, this has weight of first, not progress
-      LERP(mat, m2, m1, bone_weight);
-
-      x = vertices[triangles[tri].vertex[vert]].vertex[0];
-      y = vertices[triangles[tri].vertex[vert]].vertex[1];
-      z = vertices[triangles[tri].vertex[vert]].vertex[2];
-
-      MatrixTransform(x, y, z, mat);
-
-      glVertex3f(x, y, z);
-      }
-    }
-
-  if(mat >= 0) {
-    glEnd();
-    glPopMatrix();
-    }
-
-  glPopMatrix();
-
-  return true;
   }

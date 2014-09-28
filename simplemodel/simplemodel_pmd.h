@@ -36,38 +36,12 @@ public:
   virtual bool LoadAnimation(const string &filenm);
 
 protected:
-  virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-
   SimpleModel_PMD();
   string modelname, skinname;
 
   string ReadString(SDL_RWops *model, size_t len) const;
 
-  struct PMDMaterial {
-    Uint32 num_tris;
-    float ambient[3];
-    float diffuse[4];
-    float specular[3];
-    float specularity;
-    SimpleTexture *texture;
-    };
-
-  struct PMDBone {
-    string name;
-    Uint16 parent;
-    Uint16 child;
-    Uint8 type;
-    Uint16 target;
-    Vector3 pos;
-    };
-
   Uint32 num_tags;	// Number of tags PER FRAME
-  vector<PMDMaterial> material;
-  vector<PMDBone> bone;
-  map<string,Uint16> bone_by_name;
   };
 
 #endif	//SIMPLEMODEL_PMD_H
