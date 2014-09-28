@@ -201,24 +201,14 @@ bool SimpleModel_PMX::Load(const string &filenm,
     float x, y, z;
 
     // Location vector
-    freadLE(y, model);
-    freadLE(z, model);
-    freadLE(x, model);
-
-    // Normalize to SimpleModel proportions and axes
-    vertices[vert].vertex[0] = x / -8.0;
-    vertices[vert].vertex[1] = y / -8.0;
-    vertices[vert].vertex[2] = z / 8.0;
+    freadLE(vertices[vert].vertex[0], model);
+    freadLE(vertices[vert].vertex[1], model);
+    freadLE(vertices[vert].vertex[2], model);
 
     // Normal vector
-    freadLE(y, model);
-    freadLE(z, model);
-    freadLE(x, model);
-
-    // Normalize to SimpleModel axes
-    vertices[vert].normal[0] = -x;
-    vertices[vert].normal[1] = -y;
-    vertices[vert].normal[2] = z;
+    freadLE(vertices[vert].normal[0], model);
+    freadLE(vertices[vert].normal[1], model);
+    freadLE(vertices[vert].normal[2], model);
 
     // Texture coordinates
     freadLE(vertices[vert].texture[0], model);
