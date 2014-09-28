@@ -65,7 +65,7 @@ protected:
   struct PMXVertex {
     float vertex[3];
     float normal[3];
-    float texture[2];
+    float texcoord[2];
     Uint16 bone[2];
     float bone_weight;
     };

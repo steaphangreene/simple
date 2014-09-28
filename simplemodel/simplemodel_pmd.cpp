@@ -94,8 +94,8 @@ bool SimpleModel_PMD::Load(const string &filename,
     freadLE(vertices[vert].normal[2], model);
 
     // Texture coordinates
-    freadLE(vertices[vert].texture[0], model);
-    freadLE(vertices[vert].texture[1], model);
+    freadLE(vertices[vert].texcoord[0], model);
+    freadLE(vertices[vert].texcoord[1], model);
 
     // Bone(s) this vertex is linked to
     freadLE(vertices[vert].bone[0], model);

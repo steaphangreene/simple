@@ -208,8 +208,8 @@ bool SimpleModel_PMX::Load(const string &filename,
     freadLE(vertices[vert].normal[2], model);
 
     // Texture coordinates
-    freadLE(vertices[vert].texture[0], model);
-    freadLE(vertices[vert].texture[1], model);
+    freadLE(vertices[vert].texcoord[0], model);
+    freadLE(vertices[vert].texcoord[1], model);
 
     Uint8 weight_type;
     freadLE(weight_type, model);
@@ -604,8 +604,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       glBegin(GL_TRIANGLES);
       }
     for(Uint32 vert = 0; vert < 3; ++vert) {
-      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texture[0] * xfact,
-                   vertices[triangles[tri].vertex[vert]].texture[1] * yfact);
+      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texcoord[0] * xfact,
+                   vertices[triangles[tri].vertex[vert]].texcoord[1] * yfact);
 
       glNormal3f(vertices[triangles[tri].vertex[vert]].normal[0],
                  vertices[triangles[tri].vertex[vert]].normal[1],
