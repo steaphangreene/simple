@@ -202,16 +202,19 @@ bool SimpleModel_PMX::Load(const string &filenm,
     freadLE(weight_type, model);
 
     if(weight_type == 0) {
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = 0;
+      vertices[vert].bone_weight = 1.0;
       }
     else if(weight_type == 1) {
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, 4, SEEK_CUR);
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
+      freadLE(vertices[vert].bone_weight, model);
       }
     else if(weight_type == 2) {
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone_weight = 0.5;
       SDL_RWseek(model, bone_index_size, SEEK_CUR);
       SDL_RWseek(model, bone_index_size, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
@@ -220,8 +223,9 @@ bool SimpleModel_PMX::Load(const string &filenm,
       SDL_RWseek(model, 4, SEEK_CUR);
       }
     else if(weight_type == 3) {
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
-      SDL_RWseek(model, bone_index_size, SEEK_CUR);
+      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
+      vertices[vert].bone_weight = 0.5;
       SDL_RWseek(model, 4, SEEK_CUR);
 
       SDL_RWseek(model, 4, SEEK_CUR);
