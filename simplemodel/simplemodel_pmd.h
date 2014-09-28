@@ -87,6 +87,10 @@ protected:
   struct VMDBoneKeyFrame {
     float pos[3];
     Quaternion rot;
+    float bez_x[4];
+    float bez_y[4];
+    float bez_z[4];
+    float bez_r[4];
     };
 
   // Bone ID, Frame #, Data

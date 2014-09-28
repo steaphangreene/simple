@@ -288,8 +288,40 @@ bool SimpleModel_PMD::LoadAnimation(const string &filename) {
     freadLE(bone_frame[bone][frame].rot.z, model);
     freadLE(bone_frame[bone][frame].rot.w, model);
 
-    // TODO: Lots of unknown data ignored
-    SDL_RWseek(model, 64, SEEK_CUR);
+    // Load bezier interp data... stored [0..127]
+    // X_x1, Y_x1, Z_x1, R_x1, X_y1, Y_y1, Z_y1, R_y1,
+    // X_x2, Y_x2, Z_x2, R_x2, X_y2, Y_y2, Z_y2, R_y2,
+    Uint8 bez[16];
+    SDL_RWread(model, bez, 1, 16);
+
+    // Scale them to anchor points (0.0, 0.0), and (1.0, 1.0)
+    for(Uint32 base = 0; base < 16; ++base) {
+      bone_frame[bone][frame].bez_x[0] = bez[0] / 127.0;
+      bone_frame[bone][frame].bez_x[1] = bez[4] / 127.0;
+      bone_frame[bone][frame].bez_x[2] = bez[8] / 127.0;
+      bone_frame[bone][frame].bez_x[3] = bez[12] / 127.0;
+      bone_frame[bone][frame].bez_y[0] = bez[1] / 127.0;
+      bone_frame[bone][frame].bez_y[1] = bez[5] / 127.0;
+      bone_frame[bone][frame].bez_y[2] = bez[9] / 127.0;
+      bone_frame[bone][frame].bez_y[3] = bez[13] / 127.0;
+      bone_frame[bone][frame].bez_z[0] = bez[2] / 127.0;
+      bone_frame[bone][frame].bez_z[1] = bez[6] / 127.0;
+      bone_frame[bone][frame].bez_z[2] = bez[10] / 127.0;
+      bone_frame[bone][frame].bez_z[3] = bez[14] / 127.0;
+      bone_frame[bone][frame].bez_r[0] = bez[3] / 127.0;
+      bone_frame[bone][frame].bez_r[1] = bez[7] / 127.0;
+      bone_frame[bone][frame].bez_r[2] = bez[11] / 127.0;
+      bone_frame[bone][frame].bez_r[3] = bez[15] / 127.0;
+      }
+
+    // Remaining 48 bytes are totally redundant???
+    // Y_x1, Z_x1, R_x1, X_y1, Y_y1, Z_y1, R_y1, X_x2,
+    // Y_x2, Z_x2, R_x2, X_y2, Y_y2, Z_y2, R_y2, 01,
+    // Z_x1, R_x1, X_y1, Y_y1, Z_y1, R_y1, X_x2, Y_x2,
+    // Z_x2, R_x2, X_y2, Y_y2, Z_y2, R_y2, 01, 00,
+    // R_x1, X_y1, Y_y1, Z_y1, R_y1, X_x2, Y_x2, Z_x2,
+    // R_x2, X_y2, Y_y2, Z_y2, R_y2, 01, 00, 00
+    SDL_RWseek(model, 48, SEEK_CUR);
     }
   return false;
   }
