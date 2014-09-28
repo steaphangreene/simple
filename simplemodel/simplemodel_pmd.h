@@ -22,9 +22,9 @@
 #ifndef	SIMPLEMODEL_PMD_H
 #define	SIMPLEMODEL_PMD_H
 
-#include "simplemodel.h"
+#include "simplemodel_pmx.h"
 
-class SimpleModel_PMD : public SimpleModel {
+class SimpleModel_PMD : public SimpleModel_PMX {
 public:
   SimpleModel_PMD(const string &filenm,
 	const string &defskin = "default");
@@ -46,18 +46,6 @@ protected:
 
   string ReadString(SDL_RWops *model, size_t len) const;
 
-  struct PMDVertex {
-    float vertex[3];
-    float normal[3];
-    float texture[2];
-    Uint16 bone[2];
-    float bone_weight;
-    };
-
-  struct PMDTriangle {
-    Uint32 vertex[3];
-    };
-
   struct PMDMaterial {
     Uint32 num_tris;
     float ambient[3];
@@ -77,23 +65,9 @@ protected:
     };
 
   Uint32 num_tags;	// Number of tags PER FRAME
-  vector<PMDVertex> vertices;
-  vector<PMDTriangle> triangles;
   vector<PMDMaterial> material;
   vector<PMDBone> bone;
   map<string,Uint16> bone_by_name;
-
-  struct VMDBoneKeyFrame {
-    Vector3 pos;
-    Quaternion rot;
-    float bez_x[4];
-    float bez_y[4];
-    float bez_z[4];
-    float bez_r[4];
-    };
-
-  // Bone ID, Frame #, Data
-  map<Uint16,map<Uint32,VMDBoneKeyFrame>> bone_frame;
   };
 
 #endif	//SIMPLEMODEL_PMD_H
