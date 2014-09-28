@@ -66,7 +66,7 @@ protected:
     float vertex[3];
     float normal[3];
     float texcoord[2];
-    Uint16 bone[4];
+    Uint32 bone[4];
     float bone_weight[4];
     Uint8 bone_weight_type;
     };
@@ -108,7 +108,7 @@ protected:
     };
 
   // Bone ID, Frame #, Data
-  map<Uint16,map<Uint32,VMDBoneKeyFrame>> bone_frame;
+  map<Uint32,map<Uint32,VMDBoneKeyFrame>> bone_frame;
   };
 
 #endif	//SIMPLEMODEL_PMX_H

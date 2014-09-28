@@ -33,8 +33,6 @@ using namespace std;
 #include "saferead.h"
 #include "iconv_string.h"
 
-#define BONE_NONE 0xFFFF
-
 SimpleModel_PMD::SimpleModel_PMD(const string &filename,
 	const string &defskin) {
   Load(filename, defskin);
@@ -98,8 +96,8 @@ bool SimpleModel_PMD::Load(const string &filename,
     freadLE(vertices[vert].texcoord[1], model);
 
     // Bone(s) this vertex is linked to
-    freadLE(vertices[vert].bone[0], model);
-    freadLE(vertices[vert].bone[1], model);
+    vertices[vert].bone[0] = ReadVarInt(model, 2);
+    vertices[vert].bone[1] = ReadVarInt(model, 2);
     Uint8 weight;
     freadLE(weight, model);
     if(weight == 100) {
@@ -197,10 +195,10 @@ bool SimpleModel_PMD::Load(const string &filename,
       }
     }
 
-  Uint16 num_bones;
-  freadLE(num_bones, model);
+  Uint32 num_bones;
+  num_bones = ReadVarInt(model, 2);
   bone.resize(num_bones);
-  for(Uint16 bn = 0; bn < num_bones; ++bn) {
+  for(Uint32 bn = 0; bn < num_bones; ++bn) {
     // Only interpret 15 of the 20 characters, so the name is consistent
     bone[bn].name = ReadString(model, 15);
     SDL_RWseek(model, 5, SEEK_CUR);
@@ -209,9 +207,7 @@ bool SimpleModel_PMD::Load(const string &filename,
 
     //fprintf(stderr, "Loading Bone #%u: %s\n", bn, bone[bn].name.c_str());
 
-    Uint16 parent = 0xFFFF;
-    freadLE(parent, model);
-    bone[bn].parent = parent;
+    bone[bn].parent = ReadVarInt(model, 2);
 
     //freadLE(bone[bn].child, model);
     SDL_RWseek(model, 2, SEEK_CUR);

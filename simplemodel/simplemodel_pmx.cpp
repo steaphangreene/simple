@@ -48,11 +48,13 @@ Uint32 SimpleModel_PMX::ReadVarInt(SDL_RWops *model, Uint8 size) const {
   if(size == 1) {
     Uint8 idx;
     freadLE(idx, model);
+    if(idx == 0xFF) return 0xFFFFFFFF;
     return Uint32(idx);
     }
   else if(size == 2) {
     Uint16 idx;
     freadLE(idx, model);
+    if(idx == 0xFFFF) return 0xFFFFFFFF;
     return Uint32(idx);
     }
   else if(size == 4) {
@@ -511,7 +513,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   for(Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     Matrix4x4 btrans = identity4x4;
-    if(bone[bone_id].parent != 0xFFFF) {
+    if(bone[bone_id].parent != 0xFFFFFFFF) {
       bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
       }
     else {
