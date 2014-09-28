@@ -596,16 +596,17 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       if(MaterialDisabled(mat)) continue;
 
-      if(!material[mat].texture) {
+      Uint32 tex = material[mat].texidx;
+      if(tex == 255 || !texture[tex]) {
         glDisable(GL_TEXTURE);
         xfact = 1.0;
         yfact = 1.0;
         }
       else {
         glEnable(GL_TEXTURE);
-        glBindTexture(GL_TEXTURE_2D, material[mat].texture->GLTexture());
-        xfact = material[mat].texture->xfact;
-        yfact = material[mat].texture->yfact;
+        glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
+        xfact = texture[tex]->xfact;
+        yfact = texture[tex]->yfact;
         }
 
       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
