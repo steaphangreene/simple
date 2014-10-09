@@ -673,8 +673,9 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
             Normalize(diff, diff);
 
             Quaternion reset;
-            Matrix4x4 mat_reset;
             Matrix4x4ToQuaternion(reset, bone_space[link]);
+            Matrix4x4 mat_restore, mat_reset;
+            QuaternionToMatrix4x4(mat_restore, reset);
             reset.x = -reset.x;
             reset.y = -reset.y;
             reset.z = -reset.z;
@@ -682,7 +683,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
             Matrix4x4 mat_diff;
             QuaternionToMatrix4x4(mat_diff, diff);
-            Multiply(bone_rot[link], mat_diff, mat_reset, bone_rot[link]);
+            Multiply(bone_rot[link], mat_restore, mat_diff, mat_reset,
+                     bone_rot[link]);
 
             // Re-calculate the affected bone spaces, after one IK step
             vector<Uint32> bones = ik_link.at(bone_id);
