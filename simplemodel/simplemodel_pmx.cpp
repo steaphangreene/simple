@@ -720,6 +720,9 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     }
   }
 
+  // Calculate all the normal bone spaces, after IK run
+  CalculateSpaces(bone_space, bone_rot, bone_pos);
+
   glDisable(GL_CULL_FACE);
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
     if (tri >= to_next_mat) {
