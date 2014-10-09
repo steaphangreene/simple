@@ -21,9 +21,9 @@
 
 #include "stt_default.h"
 
-SDL_Surface *STT_Default::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
+SDL_Surface *STT_Default::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                       const Uint32 ysize,
+                                       const SDL_Color &col) {
   SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, col.r, col.g, col.b));
   return surf;
-  }
+}

@@ -19,30 +19,30 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_OBJ_H
-#define	SIMPLEMODEL_OBJ_H
+#ifndef SIMPLEMODEL_OBJ_H
+#define SIMPLEMODEL_OBJ_H
 
 #include "simplemodel.h"
 
 class SimpleModel_OBJ : public SimpleModel {
-public:
+ public:
   SimpleModel_OBJ();
   SimpleModel_OBJ(const string &filenm, const string &texnm = "");
   virtual ~SimpleModel_OBJ();
 
   virtual bool Load(const string &filenm, const string &texnm = "");
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
   GLuint vertices;
   GLenum format;
   int num_verts;
 
   static set<SimpleModel_OBJ *> valid_models;
   static void ReloadValidModels();
-  };
+};
 
-#endif	//SIMPLEMODEL_OBJ_H
+#endif  // SIMPLEMODEL_OBJ_H

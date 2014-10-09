@@ -31,77 +31,75 @@
 #include "sg_editable.h"
 #include "sg_stickybutton.h"
 
-const int binvpro = 8; //FIXME: Changable?
+const int binvpro = 8;  // FIXME: Changable?
 
 SG_Spinner::SG_Spinner(bool edit) : SG_Compound(binvpro, 2, 0.0, 0.0) {
   upb = new SG_Button();
   upb->SetAlignment(SG_ALIGN_CENTER);
   upb->SetTexturator(stt_upbutt_up, 0);
   upb->SetTexturator(stt_upbutt_dn, 2);
-  AddWidget(upb, binvpro-1, 0, 1, 1);
+  AddWidget(upb, binvpro - 1, 0, 1, 1);
   downb = new SG_Button();
   downb->SetAlignment(SG_ALIGN_CENTER);
   downb->SetTexturator(stt_dnbutt_up, 0);
   downb->SetTexturator(stt_dnbutt_dn, 2);
-  AddWidget(downb, binvpro-1, 1, 1, 1);
+  AddWidget(downb, binvpro - 1, 1, 1, 1);
 
-  if(edit) text = new SG_Editable("0");
-  else text = new SG_TextArea("0");
+  if (edit)
+    text = new SG_Editable("0");
+  else
+    text = new SG_TextArea("0");
   text->SetAlignment(SG_ALIGN_RIGHT);
   text->SetVisibleSize(SG_KEEPASPECT, 1);
-  AddWidget(text, 0, 0, binvpro-1, 2);
+  AddWidget(text, 0, 0, binvpro - 1, 2);
 
   SetFixedDisplayPrecision(false);
-  }
+}
 
-SG_Spinner::~SG_Spinner() {
-  }
+SG_Spinner::~SG_Spinner() {}
 
 void SG_Spinner::SetFixedDisplayPrecision(bool f) {
-  fixed=f;
+  fixed = f;
   RangerChanged();
-  }
+}
 
 static SG_Event_DataType event_data;
 
 int SG_Spinner::HandleEvent(SDL_Event *event, float x, float y) {
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
-  if(event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
+  if (event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
     Decrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = (void*)(SG_Widget*)this;
+    event->user.data1 = (void *)(SG_Widget *)this;
     event->user.data2 = NULL;
     return 1;
-    }
-  else if(event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
+  } else if (event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
     Increment();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
-    event->user.data1 = (void*)(SG_Widget*)this;
+    event->user.data1 = (void *)(SG_Widget *)this;
     event->user.data2 = NULL;
     return 1;
-    }
-  return SG_Compound::HandleEvent(event, x, y);
   }
+  return SG_Compound::HandleEvent(event, x, y);
+}
 
 bool SG_Spinner::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONCLICK) {
-    if((SG_Widget*)(event->user.data1) == (SG_Widget*)(upb)) {
+  if (event->user.code == SG_EVENT_BUTTONCLICK) {
+    if ((SG_Widget *)(event->user.data1) == (SG_Widget *)(upb)) {
       Increment();
-      }
-    else {
+    } else {
       Decrement();
-      }
-    event->user.code = SG_EVENT_MOVE;
-    event->user.data1 = (void*)(SG_Ranger*)this;
-    event_data.f[0] = Value();
-    event->user.data2 = (void*)&event_data;
-    return 1;
     }
-  else if(event->user.code == SG_EVENT_NEWTEXT) {
+    event->user.code = SG_EVENT_MOVE;
+    event->user.data1 = (void *)(SG_Ranger *)this;
+    event_data.f[0] = Value();
+    event->user.data2 = (void *)&event_data;
+    return 1;
+  } else if (event->user.code == SG_EVENT_NEWTEXT) {
     float v = strtof(text->Text().c_str(), NULL);
     v -= Min();
     v /= (float)(inc);
@@ -111,13 +109,13 @@ bool SG_Spinner::ChildEvent(SDL_Event *event) {
     v += Min();
     SetValue(v);
     event->user.code = SG_EVENT_MOVE;
-    event->user.data1 = (void*)(SG_Ranger*)this;
+    event->user.data1 = (void *)(SG_Ranger *)this;
     event_data.f[0] = Value();
-    event->user.data2 = (void*)&event_data;
+    event->user.data2 = (void *)&event_data;
     return 1;
-    }
-  return 0; // Silence children doing other things
   }
+  return 0;  // Silence children doing other things
+}
 
 //  bool SG_Spinner::SetDefaultCursor(GL_MODEL *cur);
 
@@ -127,19 +125,20 @@ void SG_Spinner::RangerChanged() {
   char buf[64];
   char format[64];
 
-  snprintf(format, 64,"%%.%df%%c%c",getSignificantDigits( (fixed ? inc : Value()) ) ,0);
+  snprintf(format, 64, "%%.%df%%c%c",
+           getSignificantDigits((fixed ? inc : Value())), 0);
   snprintf(buf, 64, format, Value(), 0);
 
   text->SetText(buf);
-  }
+}
 
 int SG_Spinner::getSignificantDigits(float f) {
-  float fB=f-((int) f);
-  int p=0;
-  while(fB != 0) {
+  float fB = f - ((int)f);
+  int p = 0;
+  while (fB != 0) {
     fB *= 10;
-    fB = fB - ((int) fB); 		
+    fB = fB - ((int)fB);
     p++;
-    }
-  return p;
   }
+  return p;
+}

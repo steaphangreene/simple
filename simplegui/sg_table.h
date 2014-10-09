@@ -31,18 +31,19 @@
 using namespace std;
 
 struct SG_TableGeometry {
-  int xpos, ypos;	//Starting X/Y Position (Cell)
-  int xsize, ysize;	//X/Y Size (in Cells)
-  };
+  int xpos, ypos;    // Starting X/Y Position (Cell)
+  int xsize, ysize;  // X/Y Size (in Cells)
+};
 
 class SG_Table : public SG_Alignment {
-public:
+ public:
   SG_Table(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Table();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs = 1,
+                         int ys = 1);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
 
@@ -69,22 +70,21 @@ public:
 
   virtual void RangerChanged();
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   void CalcGeometry(SG_AlignmentGeometry &geom,
-	const vector<SG_TableGeometry>::iterator &wgeom
-	);
+                    const vector<SG_TableGeometry>::iterator &wgeom);
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  int xsize, ysize;	//Geometry of Table
-  int xpos, ypos;		//Current X/Y Position
+  //  static GL_MODEL Default_Mouse_Cursor;
+  int xsize, ysize;  // Geometry of Table
+  int xpos, ypos;    // Current X/Y Position
   vector<SG_TableGeometry> wgeom;
 
   void SendResize();
   void SendXResize();
   void SendYResize();
   SG_Ranger2D ranger;
-  };
+};
 
-#endif // SG_TABLE_H
+#endif  // SG_TABLE_H

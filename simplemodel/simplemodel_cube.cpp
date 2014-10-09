@@ -27,78 +27,74 @@ using namespace std;
 
 #include "simplemodel_cube.h"
 
-SimpleModel_Cube::SimpleModel_Cube(const string &filenm) {
-  }
+SimpleModel_Cube::SimpleModel_Cube(const string &filenm) {}
 
-SimpleModel_Cube::SimpleModel_Cube() {
-  }
+SimpleModel_Cube::SimpleModel_Cube() {}
 
-SimpleModel_Cube::~SimpleModel_Cube() {
-  }
+SimpleModel_Cube::~SimpleModel_Cube() {}
 
-bool SimpleModel_Cube::Load(const string &filenm) {
-  return true;
-  }
+bool SimpleModel_Cube::Load(const string &filenm) { return true; }
 
 bool SimpleModel_Cube::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+                                  const vector<Uint32> &start_time,
+                                  Uint32 anim_offset) const {
   glBegin(GL_QUADS);
 
   glTexCoord2f(0.0, 0.0);
-  glVertex3f(-1.0,  1.0, -1.0);
+  glVertex3f(-1.0, 1.0, -1.0);
   glTexCoord2f(0.0, 0.5);
-  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f(-1.0, 1.0, 1.0);
   glTexCoord2f(0.25, 0.5);
-  glVertex3f( 1.0,  1.0,  1.0);
+  glVertex3f(1.0, 1.0, 1.0);
   glTexCoord2f(0.25, 0.0);
-  glVertex3f( 1.0,  1.0, -1.0);
+  glVertex3f(1.0, 1.0, -1.0);
 
   glTexCoord2f(0.50, 0.0);
   glVertex3f(-1.0, -1.0, -1.0);
   glTexCoord2f(0.25, 0.0);
-  glVertex3f( 1.0, -1.0, -1.0);
+  glVertex3f(1.0, -1.0, -1.0);
   glTexCoord2f(0.25, 0.5);
-  glVertex3f( 1.0, -1.0,  1.0);
+  glVertex3f(1.0, -1.0, 1.0);
   glTexCoord2f(0.50, 0.5);
-  glVertex3f(-1.0, -1.0,  1.0);
+  glVertex3f(-1.0, -1.0, 1.0);
 
   glTexCoord2f(0.50, 0.5);
-  glVertex3f(-1.0, -1.0,  1.0);
+  glVertex3f(-1.0, -1.0, 1.0);
   glTexCoord2f(0.75, 0.5);
-  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f(-1.0, 1.0, 1.0);
   glTexCoord2f(0.75, 0.0);
-  glVertex3f(-1.0,  1.0, -1.0);
+  glVertex3f(-1.0, 1.0, -1.0);
   glTexCoord2f(0.50, 0.0);
   glVertex3f(-1.0, -1.0, -1.0);
 
   glTexCoord2f(0.75, 0.5);
-  glVertex3f( 1.0, -1.0,  1.0);
+  glVertex3f(1.0, -1.0, 1.0);
   glTexCoord2f(0.75, 0.0);
-  glVertex3f( 1.0, -1.0, -1.0);
+  glVertex3f(1.0, -1.0, -1.0);
   glTexCoord2f(1.0, 0.0);
-  glVertex3f( 1.0,  1.0, -1.0);
+  glVertex3f(1.0, 1.0, -1.0);
   glTexCoord2f(1.0, 0.5);
-  glVertex3f( 1.0,  1.0,  1.0);
+  glVertex3f(1.0, 1.0, 1.0);
 
   glTexCoord2f(0.0, 0.5);
   glVertex3f(-1.0, -1.0, -1.0);
   glTexCoord2f(0.0, 1.0);
-  glVertex3f(-1.0,  1.0, -1.0);
+  glVertex3f(-1.0, 1.0, -1.0);
   glTexCoord2f(0.5, 1.0);
-  glVertex3f( 1.0,  1.0, -1.0);
+  glVertex3f(1.0, 1.0, -1.0);
   glTexCoord2f(0.5, 0.5);
-  glVertex3f( 1.0, -1.0, -1.0);
+  glVertex3f(1.0, -1.0, -1.0);
 
   glTexCoord2f(0.5, 0.5);
-  glVertex3f(-1.0, -1.0,  1.0);
+  glVertex3f(-1.0, -1.0, 1.0);
   glTexCoord2f(1.0, 0.5);
-  glVertex3f( 1.0, -1.0,  1.0);
+  glVertex3f(1.0, -1.0, 1.0);
   glTexCoord2f(1.0, 1.0);
-  glVertex3f( 1.0,  1.0,  1.0);
+  glVertex3f(1.0, 1.0, 1.0);
   glTexCoord2f(0.5, 1.0);
-  glVertex3f(-1.0,  1.0,  1.0);
+  glVertex3f(-1.0, 1.0, 1.0);
 
   glEnd();
 
   return true;
-  }
+}

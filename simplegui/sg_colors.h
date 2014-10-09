@@ -22,12 +22,12 @@
 #ifndef SG_COLORS_H
 #define SG_COLORS_H
 
-#define SG_COL_NONE	0
-#define SG_COL_BG	1
-#define SG_COL_FG	2
-#define SG_COL_RAISED	3
-#define SG_COL_LOW	4
-#define SG_COL_HIGH	5
-#define SG_COL_MAX	6
+#define SG_COL_NONE 0
+#define SG_COL_BG 1
+#define SG_COL_FG 2
+#define SG_COL_RAISED 3
+#define SG_COL_LOW 4
+#define SG_COL_HIGH 5
+#define SG_COL_MAX 6
 
-#endif // SG_COLORS_H
+#endif  // SG_COLORS_H

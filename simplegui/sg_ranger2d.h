@@ -19,17 +19,16 @@
 //
 // *************************************************************************
 
-#ifndef	SG_RANGER2_H
-#define	SG_RANGER2_H
+#ifndef SG_RANGER2_H
+#define SG_RANGER2_H
 
 #include "sg_ranger.h"
 
 class SG_Ranger2D {
-public:
-  SG_Ranger2D(float xspn = 0.0, float yspn = 0.0,
-	float xval = 0.0, float yval = 0.0,
-	float xmin = 0.0, float ymin = 0.0,
-	float xmax = 1.0, float ymax = 1.0);
+ public:
+  SG_Ranger2D(float xspn = 0.0, float yspn = 0.0, float xval = 0.0,
+              float yval = 0.0, float xmin = 0.0, float ymin = 0.0,
+              float xmax = 1.0, float ymax = 1.0);
   virtual ~SG_Ranger2D();
 
   void SetSpans(float xspn, float yspn);
@@ -51,14 +50,30 @@ public:
   void YIncrement();
   void YDecrement();
 
-  float XSpan() { return xranger.Span(); };
-  float YSpan() { return yranger.Span(); };
-  float XValue() { return xranger.Value(); };
-  float YValue() { return yranger.Value(); };
-  float XMin() { return xranger.Min(); };
-  float YMin() { return yranger.Min(); };
-  float XMax() { return xranger.Max(); };
-  float YMax() { return yranger.Max(); };
+  float XSpan() {
+    return xranger.Span();
+  };
+  float YSpan() {
+    return yranger.Span();
+  };
+  float XValue() {
+    return xranger.Value();
+  };
+  float YValue() {
+    return yranger.Value();
+  };
+  float XMin() {
+    return xranger.Min();
+  };
+  float YMin() {
+    return yranger.Min();
+  };
+  float XMax() {
+    return xranger.Max();
+  };
+  float YMax() {
+    return yranger.Max();
+  };
 
   void LinkTo(SG_Ranger2D *other);
   void LinkXTo(SG_Ranger *other);
@@ -72,13 +87,17 @@ public:
   void LinkYFrom(SG_Ranger *other);
   void LinkYFrom(SG_Ranger2D *other);
 
-  SG_Ranger *XRanger() { return &xranger; };
-  SG_Ranger *YRanger() { return &yranger; };
+  SG_Ranger *XRanger() {
+    return &xranger;
+  };
+  SG_Ranger *YRanger() {
+    return &yranger;
+  };
 
   virtual void RangerChanged();
 
-protected:
+ protected:
   SG_Ranger xranger, yranger;
-  };
+};
 
-#endif	//SG_RANGER2_H
+#endif  // SG_RANGER2_H

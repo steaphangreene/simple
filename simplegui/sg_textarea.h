@@ -31,29 +31,30 @@
 using namespace std;
 
 #ifndef SG_AUTOSIZE
-#define SG_AUTOSIZE	ST_AUTOSIZE
+#define SG_AUTOSIZE ST_AUTOSIZE
 #endif
 
 #ifndef SG_KEEPASPECT
-#define SG_KEEPASPECT	ST_KEEPASPECT
+#define SG_KEEPASPECT ST_KEEPASPECT
 #endif
 
 using namespace std;
 
 class SG_TextArea : public SG_Panel, public SG_Text, public SG_Ranger2D {
-public:
+ public:
   SG_TextArea(const string mes = "", SimpleTexture tex = SG_COL_BG,
-	SimpleTexture dis_tex = SG_COL_BG, float mx = 0.03125, float my = 0.125);
+              SimpleTexture dis_tex = SG_COL_BG, float mx = 0.03125,
+              float my = 0.125);
   virtual ~SG_TextArea();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetMargins(float xmar, float ymar);
-  void SetFontSize(int sz);	// Ignored for defined-texture widgets
+  void SetFontSize(int sz);  // Ignored for defined-texture widgets
   virtual void Disable();
   virtual void Enable();
 
   void SetVisibleSize(float xs, float ys);
-  void SetVisibleLines(int numlns);	//Depricated!
+  void SetVisibleLines(int numlns);  // Depricated!
 
   virtual void SetAlignment(int align);
 
@@ -64,12 +65,12 @@ public:
 
   virtual void RangerChanged();
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
 
   void UpdateRange();
 
   string message;
-  };
+};
 
-#endif // SG_TEXTAREA_H
+#endif  // SG_TEXTAREA_H

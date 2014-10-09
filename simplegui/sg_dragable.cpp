@@ -29,8 +29,8 @@ using namespace std;
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_Dragable::SG_Dragable(SimpleTexture tex) : SG_Panel(tex),
-	SG_Ranger2D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
+SG_Dragable::SG_Dragable(SimpleTexture tex)
+    : SG_Panel(tex), SG_Ranger2D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {
   SetDisplayLimits(0.0, 0.0, 0.0, 0.0);
   start_x = 0.0;
   start_y = 0.0;
@@ -39,26 +39,26 @@ SG_Dragable::SG_Dragable(SimpleTexture tex) : SG_Panel(tex),
   off_x = 0.0;
   off_y = 0.0;
   label = NULL;
-  }
+}
 
 SG_Dragable::~SG_Dragable() {
-  if(label) delete label;
-  }
+  if (label) delete label;
+}
 
 int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "Dragable/Handle: Button Down at (%f,%f)\n", x, y);
+  //  if(event->type == SDL_MOUSEBUTTONDOWN)
+  //    fprintf(stderr, "Dragable/Handle: Button Down at (%f,%f)\n", x, y);
 
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
   static SG_Event_DataType event_data;
 
-  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
+  if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_DRAGGRAB;
-    event->user.data1 = (void*)(SG_Ranger2D*)this;
+    event->user.data1 = (void *)(SG_Ranger2D *)this;
     event->user.data2 = NULL;
     start_x = XValue();
     start_y = YValue();
@@ -68,18 +68,16 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     off_x = x - base_x;
     off_y = y - base_y;
     return 1;
-    }
-  else if(event->type == SDL_MOUSEBUTTONDOWN
-	&& (event->button.button == 4 || event->button.button == 5)) {
-		// Allow mousewheel events to pass through
+  } else if (event->type == SDL_MOUSEBUTTONDOWN &&
+             (event->button.button == 4 || event->button.button == 5)) {
+    // Allow mousewheel events to pass through
     return -1;
-    }
-  else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
+  } else if (event->type == SDL_MOUSEBUTTONDOWN) {  // Eat other buttons
     return 0;
-    }
-  else if(event->type == SDL_MOUSEMOTION) {
-    if(current_sg->CurrentWidget() == this) {
-      x -= off_x;  y -= off_y;
+  } else if (event->type == SDL_MOUSEMOTION) {
+    if (current_sg->CurrentWidget() == this) {
+      x -= off_x;
+      y -= off_y;
       Disp2Limits(x, y);
       SetXValue(x);
       SetYValue(y);
@@ -88,14 +86,14 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_MOVE2D;
-      event->user.data1 = (void*)(SG_Ranger2D*)this;
-      event->user.data2 = (void*)&event_data;
+      event->user.data1 = (void *)(SG_Ranger2D *)this;
+      event->user.data2 = (void *)&event_data;
       return 1;
-      }
-    return 0;
     }
-  else if(event->type == SDL_MOUSEBUTTONUP) {
-    x -= off_x;  y -= off_y;
+    return 0;
+  } else if (event->type == SDL_MOUSEBUTTONUP) {
+    x -= off_x;
+    y -= off_y;
     Disp2Limits(x, y);
     SetXValue(x);
     SetYValue(y);
@@ -110,13 +108,13 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
     current_sg->UnsetCurrentWidget();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_DRAGRELEASE;
-    event->user.data1 = (void*)(SG_Ranger2D*)this;
-    event->user.data2 = (void*)&event_data;
+    event->user.data1 = (void *)(SG_Ranger2D *)this;
+    event->user.data2 = (void *)&event_data;
     return 1;
-    }
+  }
 
   return 1;
-  }
+}
 
 //  bool SG_Dragable::SetDefaultCursor(GL_MODEL *cur);
 
@@ -124,81 +122,78 @@ int SG_Dragable::HandleEvent(SDL_Event *event, float x, float y) {
 
 bool SG_Dragable::RenderSelf(unsigned long cur_time) {
   bool ret = SG_Panel::RenderSelf(cur_time);
-  if(!ret) return ret;
+  if (!ret) return ret;
 
-  if(label) ret = label->Render(cur_time);
+  if (label) ret = label->Render(cur_time);
 
   return ret;
-  }
+}
 
 void SG_Dragable::SetDisplayLimits(float mnx, float mny, float mxx, float mxy) {
   min_dx = mnx;
   min_dy = mny;
   max_dx = mxx;
   max_dy = mxy;
-  }
+}
 
 void SG_Dragable::SetXDisplayLimits(float mnx, float mxx) {
   min_dx = mnx;
   max_dx = mxx;
-  }
+}
 
 void SG_Dragable::SetYDisplayLimits(float mny, float mxy) {
   min_dy = mny;
   max_dy = mxy;
-  }
+}
 
 void SG_Dragable::Disp2Limits(float &x, float &y) {
-  if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
+  if (min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
     x -= min_dx + base_x;
     x /= fabs(max_dx - min_dx);
     x *= (fabs(XMax() - XMin()) - XSpan());
     x += XMin() + start_x;
-    }
-  else x = XMin();
+  } else
+    x = XMin();
 
-  if(min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
+  if (min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
     y -= -min_dy + base_y;
     y /= fabs(max_dy - min_dy);
     y = -y;
     y *= (fabs(YMax() - YMin()) - YSpan());
     y += YMin() + start_y;
-    }
-  else y = YMin();
-  }
+  } else
+    y = YMin();
+}
 
 void SG_Dragable::Limits2Disp(float &x, float &y) {
-  if(min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
+  if (min_dx != max_dx && fabs(XMax() - XMin()) > XSpan()) {
     x -= XMin();
     x /= (fabs(XMax() - XMin()) - XSpan());
     x *= fabs(max_dx - min_dx);
     x += min_dx;
-    }
-  else x = min_dx;
+  } else
+    x = min_dx;
 
-  if(min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
+  if (min_dy != max_dy && fabs(YMax() - YMin()) > YSpan()) {
     y -= YMin();
     y /= (fabs(YMax() - YMin()) - YSpan());
     y = -y;
     y *= fabs(max_dy - min_dy);
     y += -min_dy;
-    }
-  else y = min_dy;
-  }
+  } else
+    y = min_dy;
+}
 
 void SG_Dragable::AdjustGeometry(SG_AlignmentGeometry *geom) {
   float xprog = XValue(), yprog = YValue();
   Limits2Disp(xprog, yprog);
   geom->xp += xprog * geom->xs;
   geom->yp += yprog * geom->ys;
-  }
+}
 
-void SG_Dragable::SetLabel(SG_Widget *lab) {
-  label = lab;
-  }
+void SG_Dragable::SetLabel(SG_Widget *lab) { label = lab; }
 
 void SG_Dragable::SetAspectRatio(float asp) {
   SG_Panel::SetAspectRatio(asp);
-  if(label) label->SetAspectRatio(asp);
-  }
-
+  if (label) label->SetAspectRatio(asp);
+}

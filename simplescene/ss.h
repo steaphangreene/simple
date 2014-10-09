@@ -45,7 +45,7 @@ typedef int SS_Object;
 typedef int SS_Action;
 
 class SimpleScene {
-public:
+ public:
   SimpleScene();
   ~SimpleScene();
 
@@ -54,7 +54,9 @@ public:
   void RestrictZ(float y1, float z1);
   bool Render(Uint32 offset);
 
-  static SimpleScene *Current() { return current; };
+  static SimpleScene *Current() {
+    return current;
+  };
 
   SS_Skin AddSkin(SimpleTexture *skin);
 
@@ -65,16 +67,16 @@ public:
   void SetModelMoveAnim(SS_Model mod, const string &an, int submodel = 0);
   void SetModelTurnAnim(SS_Model mod, const string &an, int submodel = 0);
 
-  SS_Object AddObject(
-	SS_Model mod = SS_UNDEFINED_MODEL, SS_Skin skin = SS_UNDEFINED_SKIN);
+  SS_Object AddObject(SS_Model mod = SS_UNDEFINED_MODEL,
+                      SS_Skin skin = SS_UNDEFINED_SKIN);
   void ModelObject(SS_Object obj, SS_Model mod, Uint32 fin = 0, Uint32 dur = 0);
   void SkinObject(SS_Object obj, SS_Model skin, Uint32 fin = 0, Uint32 dur = 0);
   void SizeObject(SS_Object obj, float sz, Uint32 end = 0, Uint32 dur = 0);
-  void MoveObject(SS_Object obj, float xp, float yp, float zp,
-	Uint32 end = 0, Uint32 dur = 0);
+  void MoveObject(SS_Object obj, float xp, float yp, float zp, Uint32 end = 0,
+                  Uint32 dur = 0);
   void TurnObject(SS_Object obj, float ang, Uint32 end = 0, Uint32 dur = 0);
-  void TargetObject(SS_Object obj, float xt, float yt, float zt,
-	Uint32 end = 0, Uint32 dur = 0);
+  void TargetObject(SS_Object obj, float xt, float yt, float zt, Uint32 end = 0,
+                    Uint32 dur = 0);
   void UnTargetObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
   void ShowObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
   void HideObject(SS_Object obj, Uint32 end = 0, Uint32 dur = 0);
@@ -82,7 +84,8 @@ public:
   void ActObject(SS_Object obj, SS_Action act, Uint32 fin, Uint32 dur);
 
   void GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos);
-  void GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos, float &zpos);
+  void GetObjectPos(SS_Object obj, Uint32 offset, float &xpos, float &ypos,
+                    float &zpos);
 
   SS_PType AddPType();
   void SetPTypeTexture(SS_PType type, SimpleTexture *tex);
@@ -102,46 +105,48 @@ public:
 
   void Clear();
 
-protected:
+ protected:
   struct ActionData {
     SS_Object obj;
     Uint32 finish, duration;
-    };
+  };
 
   struct ActionTime {
     Uint32 finish, duration;
-    };
+  };
 
   struct Color {
     float r, g, b;
-    };
+  };
 
   struct Coord {
     float x, y, z;
-    //These are so set<> and map<> can sort by these, and for basic comparisons.
-    bool operator < (const SimpleScene::Coord &b) const {
+    // These are so set<> and map<> can sort by these, and for basic
+    // comparisons.
+    bool operator<(const SimpleScene::Coord &b) const {
       return (z < b.z || (z == b.z && (y < b.y || (y == b.y && x < b.x))));
-      }
-    bool operator > (const SimpleScene::Coord &b) const {
+    }
+    bool operator>(const SimpleScene::Coord &b) const {
       return (z > b.z || (z == b.z && (y > b.y || (y == b.y && x > b.x))));
-      }
-    bool operator != (const SimpleScene::Coord &b) const {
+    }
+    bool operator!=(const SimpleScene::Coord &b) const {
       return (z != b.z || y != b.y || x != b.x);
-      }
-    bool operator == (const SimpleScene::Coord &b) const {
+    }
+    bool operator==(const SimpleScene::Coord &b) const {
       return (z != b.z || y != b.y || x != b.x);
-      }
-    };
+    }
+  };
 
-  void SetModelAnimInt(SS_Model mod, int id, const string &an, int submodel = 0);
+  void SetModelAnimInt(SS_Model mod, int id, const string &an,
+                       int submodel = 0);
   struct Model {
     SimpleModel *model;
     multimap<int, pair<int, int> > animmap;
-    };
+  };
 
   struct Skin {
     SimpleTexture *tex;
-    };
+  };
 
   struct Object {
     list<pair<SS_Model, ActionTime> > model;
@@ -152,7 +157,7 @@ protected:
     list<pair<float, ActionTime> > turns;
     list<pair<Coord, ActionTime> > targets;
     list<pair<SS_Action, ActionTime> > acts;
-    };
+  };
 
   struct PType {
     SimpleTexture *tex;
@@ -161,13 +166,13 @@ protected:
     float xv, yv, zv;
     float sz0, sz1;
     Uint32 dur;
-    };
+  };
 
   struct Particle {
     SS_PType type;
     float xp, yp, zp;
     Uint32 start;
-    };
+  };
 
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
@@ -186,6 +191,6 @@ protected:
   float resx1, resy1, resz1;
   float xlim0, ylim0, zlim0;
   float xlim1, ylim1, zlim1;
-  };
+};
 
-#endif // SS_H
+#endif  // SS_H

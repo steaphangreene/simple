@@ -19,8 +19,8 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_PMX_H
-#define	SIMPLEMODEL_PMX_H
+#ifndef SIMPLEMODEL_PMX_H
+#define SIMPLEMODEL_PMX_H
 
 #include "simplemodel.h"
 
@@ -38,21 +38,19 @@
 #define PMX_BONE_FLAG_IS_EXTERNAL_PARENT_DEFORM 0x2000
 
 class SimpleModel_PMX : public SimpleModel {
-public:
-  SimpleModel_PMX(const string &filenm,
-	const string &defskin = "default");
+ public:
+  SimpleModel_PMX(const string &filenm, const string &defskin = "default");
   virtual ~SimpleModel_PMX();
 
-  virtual bool Load(const string &filenm,
-	const string &defskin = "default");
+  virtual bool Load(const string &filenm, const string &defskin = "default");
 
   virtual bool LoadAnimation(const string &filenm);
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
 
   SimpleModel_PMX();
 
@@ -69,11 +67,11 @@ protected:
     Uint32 bone[4];
     float bone_weight[4];
     Uint8 bone_weight_type;
-    };
+  };
 
   struct PMXTriangle {
     Uint32 vertex[3];
-    };
+  };
 
   struct PMXMaterial {
     Uint8 mode;
@@ -83,20 +81,20 @@ protected:
     float diffuse[4];
     float specular[3];
     float specularity;
-    };
+  };
 
   struct PMXBone {
     string name;
     Vector3 pos;
     Uint32 parent;
     Uint16 flags;
-    };
+  };
 
   vector<PMXVertex> vertices;
   vector<PMXTriangle> triangles;
   vector<PMXMaterial> material;
   vector<PMXBone> bone;
-  map<string,Uint32> bone_by_name;
+  map<string, Uint32> bone_by_name;
 
   struct VMDBoneKeyFrame {
     Vector3 pos;
@@ -105,10 +103,10 @@ protected:
     float bez_y[4];
     float bez_z[4];
     float bez_r[4];
-    };
-
-  // Bone ID, Frame #, Data
-  map<Uint32,map<Uint32,VMDBoneKeyFrame>> bone_frame;
   };
 
-#endif	//SIMPLEMODEL_PMX_H
+  // Bone ID, Frame #, Data
+  map<Uint32, map<Uint32, VMDBoneKeyFrame>> bone_frame;
+};
+
+#endif  // SIMPLEMODEL_PMX_H

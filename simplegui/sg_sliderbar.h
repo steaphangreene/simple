@@ -35,27 +35,29 @@ class SG_TextArea;
 class SG_Dragable;
 
 class SG_SliderBar : public SG_Compound, public SG_Ranger {
-public:
-  SG_SliderBar(bool vert = false,
-        SimpleTexture b1tex = SG_COL_RAISED, SimpleTexture b1tex_dis = SG_COL_LOW,
-        SimpleTexture b1tex_click = SG_COL_LOW,
-        SimpleTexture b2tex = SG_COL_RAISED, SimpleTexture b2tex_dis = SG_COL_LOW,
-        SimpleTexture b2tex_click = SG_COL_LOW,
-	SimpleTexture handtex = SG_COL_FG, SimpleTexture bgtex = SG_COL_BG);
+ public:
+  SG_SliderBar(bool vert = false, SimpleTexture b1tex = SG_COL_RAISED,
+               SimpleTexture b1tex_dis = SG_COL_LOW,
+               SimpleTexture b1tex_click = SG_COL_LOW,
+               SimpleTexture b2tex = SG_COL_RAISED,
+               SimpleTexture b2tex_dis = SG_COL_LOW,
+               SimpleTexture b2tex_click = SG_COL_LOW,
+               SimpleTexture handtex = SG_COL_FG,
+               SimpleTexture bgtex = SG_COL_BG);
   virtual ~SG_SliderBar();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   static ST_Texturator *stt_slider;
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_Dragable *handle;
   SG_Button *incb, *decb;
   bool vertical;
-  };
+};
 
-#endif // SG_SLIDERBAR_H
+#endif  // SG_SLIDERBAR_H

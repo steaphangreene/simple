@@ -19,25 +19,25 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_WEDGE_H
-#define	SIMPLEMODEL_WEDGE_H
+#ifndef SIMPLEMODEL_WEDGE_H
+#define SIMPLEMODEL_WEDGE_H
 
 #include "simplemodel.h"
 #include "simplemodel_md3.h"
 
 class SimpleModel_Wedge : public SimpleModel {
-public:
+ public:
   SimpleModel_Wedge();
   SimpleModel_Wedge(const string &filenm);
   virtual ~SimpleModel_Wedge();
 
   virtual bool Load(const string &filenm);
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-  };
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
+};
 
-#endif	//SIMPLEMODEL_WEDGE_H
+#endif  // SIMPLEMODEL_WEDGE_H

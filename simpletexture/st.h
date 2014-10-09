@@ -34,50 +34,50 @@ using namespace std;
 
 #include "stt.h"
 
-#define ST_ALIGN_LEFT	0
-#define ST_ALIGN_CENTER	1
-#define ST_ALIGN_RIGHT	2
+#define ST_ALIGN_LEFT 0
+#define ST_ALIGN_CENTER 1
+#define ST_ALIGN_RIGHT 2
 
-#define ST_AUTOSIZE	-1
-#define ST_KEEPASPECT	0
+#define ST_AUTOSIZE -1
+#define ST_KEEPASPECT 0
 
 struct _TTF_Font;
 typedef struct _TTF_Font TTF_Font;
 
 enum SimpleTextureType {
-   SIMPLETEXTURE_NONE = 0,
-   SIMPLETEXTURE_COLOR,
-   SIMPLETEXTURE_TRANSCOLOR,
-   SIMPLETEXTURE_DEFINED,
-   SIMPLETEXTURE_TRANS,
-   SIMPLETEXTURE_FILE,
-   SIMPLETEXTURE_TRANSFILE,
-   SIMPLETEXTURE_MAX
-   };
+  SIMPLETEXTURE_NONE = 0,
+  SIMPLETEXTURE_COLOR,
+  SIMPLETEXTURE_TRANSCOLOR,
+  SIMPLETEXTURE_DEFINED,
+  SIMPLETEXTURE_TRANS,
+  SIMPLETEXTURE_FILE,
+  SIMPLETEXTURE_TRANSFILE,
+  SIMPLETEXTURE_MAX
+};
 
-struct TextGeometry {	//FIXME: Only needed temporarily!
+struct TextGeometry {  // FIXME: Only needed temporarily!
   float visible_xlines;
   float visible_ylines;
   float aspect_ratio;
   int text_xsize;
-  };
+};
 
 class SimpleTexture {
-public:
+ public:
   SimpleTexture(SDL_Surface *tex);
   SimpleTexture(const string &filenm);
   SimpleTexture(int col_index);
   SimpleTexture(const SimpleTexture &in);
   ~SimpleTexture();
 
-// Tell us to prep to renew ourselves
+  // Tell us to prep to renew ourselves
   static void NeedToReacquireContext(const int xsize, const int ysize);
-// Are we preparing?
+  // Are we preparing?
   static bool ReacquireNeeded(int &xsize, int &ysize);
-// Go ahead and do it!
+  // Go ahead and do it!
   static void ReacquireContext();
 
-  const SimpleTexture &operator = (const SimpleTexture &in);
+  const SimpleTexture &operator=(const SimpleTexture &in);
   void SetTexture(const SimpleTexture &in);
 
   bool CheckCache();
@@ -87,12 +87,12 @@ public:
 
   void SetText(const string txt);
   void SetTextAspectRatio(const float asp);
-  void SetTextVisibleSize(const float ylines=-1.0, const float xlines=-1.0);
-  void SetTextPosition(const float yoff=0.0, const float xoff=0.0);
+  void SetTextVisibleSize(const float ylines = -1.0, const float xlines = -1.0);
+  void SetTextPosition(const float yoff = 0.0, const float xoff = 0.0);
   void SetTextMargins(const float xmar, const float ymar);
   void SetTextAlignment(int align);
   void SetTextFontSize(const int sz);
-  TTF_Font *CurrentFont();	// FIXME: Make this const somehow?
+  TTF_Font *CurrentFont();  // FIXME: Make this const somehow?
 
   void EnableCursor();
   void DisableCursor();
@@ -106,19 +106,19 @@ public:
 
   float ScaleX(float base);
   float ScaleY(float base);
-  float xfact, yfact;	// Portion of texture actually shown
-			// Using these publically is depricated!
-			// You should use ScaleX and ScaleY instead!
+  float xfact, yfact;  // Portion of texture actually shown
+                       // Using these publically is depricated!
+                       // You should use ScaleX and ScaleY instead!
 
-  //FIXME: All this should be protected!
+  // FIXME: All this should be protected!
   SimpleTextureType type;
-  SDL_Surface *cur;	//Current texture buffer
-  SDL_Surface *src;	//Only for SIMPLETEXTURE_DEFINED/SIMPLETEXTURE_FILE
-  SDL_Color col;	//Only for SIMPLETEXTURE_COLOR
-  SDL_Color fg;		//Text Color
-  bool dirty; //Does the system need to rebuild this texture?
+  SDL_Surface *cur;  // Current texture buffer
+  SDL_Surface *src;  // Only for SIMPLETEXTURE_DEFINED/SIMPLETEXTURE_FILE
+  SDL_Color col;     // Only for SIMPLETEXTURE_COLOR
+  SDL_Color fg;      // Text Color
+  bool dirty;        // Does the system need to rebuild this texture?
 
-  //Color Code (originally from SimpleGUI)
+  // Color Code (originally from SimpleGUI)
   static float Red(const int c);
   static float Green(const int c);
   static float Blue(const int c);
@@ -128,33 +128,36 @@ public:
   static const SDL_Color *BGColor(const int c);
   static const SDL_Color *TextColor(const int c);
   static void SetColor(const int c, const SDL_Color &col,
-	const SDL_Color &text = default_text_color);
+                       const SDL_Color &text = default_text_color);
   static void SetColor(const int c, const float r, const float g, const float b,
-	const float tr = -1.0, const float tg = -1.0, const float tb = -1.0);
+                       const float tr = -1.0, const float tg = -1.0,
+                       const float tb = -1.0);
   static int NewColor();
   static int NewColor(const float r, const float g, const float b,
-	const float tr = -1.0, const float tg = -1.0, const float tb = -1.0);
-  static void SetDefaultTextColor(
-	const float tr, const float tg, const float tb
-	);
+                      const float tr = -1.0, const float tg = -1.0,
+                      const float tb = -1.0);
+  static void SetDefaultTextColor(const float tr, const float tg,
+                                  const float tb);
   static const SDL_Color *DefaultTextColor();
 
   static int ColorByName(const string &cname);
   static bool IsColorName(const string &cname);
 
-  //Font Code (originally from SimpleGUI)
+  // Font Code (originally from SimpleGUI)
   static void LoadFont(const char *fontfn, int pxsz = 20);
   static void SetDefaultFontSize(const int pxsz);
   static void SetFont(TTF_Font *f);
-  static void UnsetFont() { SetFont(NULL); };
+  static void UnsetFont() {
+    SetFont(NULL);
+  };
   static TTF_Font *Font(const int pxsz = -1);
 
   void SetTexturator(ST_Texturator *ttr);
 
-  //For Internal Use Only!
+  // For Internal Use Only!
   static void EmptyTrash();
 
-protected:
+ protected:
   struct TextData;
   TextData *text;
   bool show_cursor;
@@ -177,7 +180,7 @@ protected:
   void CopyFrom(const SimpleTexture &in);
   static void LoadFont(const int pxsz);
 
-  GLuint texture;	//Current texture (when active)
+  GLuint texture;  // Current texture (when active)
 
   void UpdateCache();
 
@@ -197,15 +200,15 @@ protected:
   static SDL_RWops *fontrw;
   static Uint8 *fontdata;
 
-  static set<SimpleTexture *> all_textures;	//For invalidation
+  static set<SimpleTexture *> all_textures;  // For invalidation
   static bool need_to_reaquire;
   static int new_xsize, new_ysize;
 
   static map<string, Uint32> color_name;
   static void init_colors();
-  };
+};
 
-//Exported Utility Functions
-SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode);
+// Exported Utility Functions
+SDL_RWops *SDL_RWFromZZIP(const char *file, const char *mode);
 
-#endif // ST_H
+#endif  // ST_H

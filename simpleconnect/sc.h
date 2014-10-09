@@ -22,7 +22,7 @@
 #ifndef SC_H
 #define SC_H
 
-#define SG_EVENT_CONNECTDONE	4000
+#define SG_EVENT_CONNECTDONE 4000
 
 #ifndef DEFAULT_PORT
 #define DEFAULT_PORT 8942
@@ -57,7 +57,7 @@ enum SC_SlotType {
   SC_SLOT_OPTAIONLY,
   SC_SLOT_SPEC,
   SC_SLOT_MAX
-  };
+};
 
 enum SC_PlayerType {
   SC_PLAYER_NONE = 0,
@@ -67,7 +67,7 @@ enum SC_PlayerType {
   SC_PLAYER_REMOTEAI,
   SC_PLAYER_SPEC,
   SC_PLAYER_MAX
-  };
+};
 
 enum SC_Mode {
   SC_MODE_NONE = 0,
@@ -76,18 +76,20 @@ enum SC_Mode {
   SC_MODE_HOST,
   SC_MODE_SLAVE,
   SC_MODE_MAX
-  };
+};
 
 #define SC_FLAG_COLOR
 #define SC_FLAG_TEAM
 
 struct SC_Host {
-  SC_Host() { line = -1; };
+  SC_Host() {
+    line = -1;
+  };
   IPaddress address;
   string mapname;
   int line;
   bool changed;
-  };
+};
 
 struct SlotData {
   Uint8 type;
@@ -96,45 +98,51 @@ struct SlotData {
   Uint8 color;
   string playername;
   string password;
-  Sint8 sock;	//Socket Number within SimpleNetwork
-  };
+  Sint8 sock;  // Socket Number within SimpleNetwork
+};
 
 struct SimpleConnections {
   vector<SlotData> slots;
   SimpleNetwork *net;
-  };
+};
 
 class SimpleConnect : public SG_Compound {
-public:
+ public:
   SimpleConnect();
   virtual ~SimpleConnect();
 
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-  void SetPort(Uint16 p) { port = p; };
+  void SetPort(Uint16 p) {
+    port = p;
+  };
   void SetTag(const string &tag);
-  void SetColors(const vector<int> &cols);	//SG_Color List Used
+  void SetColors(const vector<int> &cols);  // SG_Color List Used
 
   void SetSlots(const vector<SC_SlotType> &slts);
-  void SetSlotColors(const vector<int> &cols);	//Color for each slot
-  void SetSlotTeams(const vector<int> &cols);	//Team for each slot
+  void SetSlotColors(const vector<int> &cols);  // Color for each slot
+  void SetSlotTeams(const vector<int> &cols);   // Team for each slot
 
-  void Host();					//Host new game
-  void Search();				//Find network games
-  void Config();				//Local game, no networking
-  void Connect(const IPaddress &location);	//Connect to active game
+  void Host();                              // Host new game
+  void Search();                            // Find network games
+  void Config();                            // Local game, no networking
+  void Connect(const IPaddress &location);  // Connect to active game
   void Reset();
 
   void SetPlayerName(const string &pln);
   const string &PlayerName();
 
-  void SetMapName(const string &mp) { mapname = mp; };
-  const string &MapName() { return mapname; };
+  void SetMapName(const string &mp) {
+    mapname = mp;
+  };
+  const string &MapName() {
+    return mapname;
+  };
 
   const SimpleConnections &ClaimConnections();
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   void SetupDefaultColors();
@@ -142,7 +150,7 @@ protected:
   int NextTeam(int oldteam);
   vector<int> colors;
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_Editable *nameb;
   SG_TextArea *namep;
   SG_Button *scanb;
@@ -163,12 +171,12 @@ protected:
   Uint16 port;
   IPaddress connect_to;
   bool rescan;
-  map<SG_Widget*, IPaddress> joinmap;
-  map<SG_Widget*, IPaddress> specmap;
+  map<SG_Widget *, IPaddress> joinmap;
+  map<SG_Widget *, IPaddress> specmap;
 
-  map<SG_Widget*, int> colmap;
-  map<SG_Widget*, int> teammap;
-  map<SG_Ranger2D*, int> pnamemap;
+  map<SG_Widget *, int> colmap;
+  map<SG_Widget *, int> teammap;
+  map<SG_Ranger2D *, int> pnamemap;
 
   static int search_thread_handler(void *me);
   int HandleSearchThread();
@@ -188,9 +196,11 @@ protected:
   bool needtoscan;
   map<Uint64, SC_Host> hosts;
 
-  struct Request { int size; Uint8 data[20]; };
-  list<Request> reqs;	
-
+  struct Request {
+    int size;
+    Uint8 data[20];
   };
+  list<Request> reqs;
+};
 
-#endif // SC_H
+#endif  // SC_H

@@ -26,21 +26,21 @@
 
 #include "SDL_ttf.h"
 
-SG_AnimatedPanel::SG_AnimatedPanel(const vector<SimpleTexture> &txtrs, float mspf)
-	: SG_Panel(txtrs[0]) {
-  for(int tx=1; tx < int(txtrs.size()); ++tx) {
+SG_AnimatedPanel::SG_AnimatedPanel(const vector<SimpleTexture> &txtrs,
+                                   float mspf)
+    : SG_Panel(txtrs[0]) {
+  for (int tx = 1; tx < int(txtrs.size()); ++tx) {
     texture.push_back(txtrs[tx]);
-    }
+  }
   speed = mspf;
-  }
+}
 
-SG_AnimatedPanel::~SG_AnimatedPanel() {
-  }
+SG_AnimatedPanel::~SG_AnimatedPanel() {}
 
 bool SG_AnimatedPanel::RenderSelf(unsigned long cur_time) {
   state = int((float)(cur_time) / speed + 0.5) % texture.size();
   return SG_Panel::RenderSelf(cur_time);
-  }
+}
 //  bool SG_AnimatedPanel::SetDefaultCursor(GL_MODEL *cur);
 
 //  static GL_MODEL SG_AnimatedPanel::Default_Mouse_Cursor = NULL;

@@ -24,93 +24,93 @@
 #include "sg_events.h"
 #include "sg_aspecttable.h"
 
-SG_AspectTable::SG_AspectTable(float asp, int xsz, int ysz,
-		float xbor, float ybor)
-	: SG_Table(xsz, ysz, xbor, ybor) {
+SG_AspectTable::SG_AspectTable(float asp, int xsz, int ysz, float xbor,
+                               float ybor)
+    : SG_Table(xsz, ysz, xbor, ybor) {
   fixed_aspect = asp;
-  }
+}
 
-SG_AspectTable::~SG_AspectTable() {
-  }
+SG_AspectTable::~SG_AspectTable() {}
 
 int SG_AspectTable::HandleEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "AspectTable/Handle: Button Down at (%f,%f)\n", x, y);
+  //  if(event->type == SDL_MOUSEBUTTONDOWN)
+  //    fprintf(stderr, "AspectTable/Handle: Button Down at (%f,%f)\n", x, y);
 
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
-  if(xsize <= 0 || ysize <= 0) return -1;
+  if (xsize <= 0 || ysize <= 0) return -1;
 
   int ret = HandleEdgeEvent(event, x, y);
-  if(ret) return ret;
+  if (ret) return ret;
 
   vector<int>::iterator itrgr = wgrav.begin();
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
+  for (; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
     SG_AlignmentGeometry geom;
     CalcGeometry(geom, itrg, itrgr);
     SG_AlignmentGeometry adj_geom = geom;
     (*itrw)->AdjustGeometry(&adj_geom);
-    if(x >= adj_geom.xp-adj_geom.xs && x <= adj_geom.xp+adj_geom.xs
-	&& y >= adj_geom.yp-adj_geom.ys && y <= adj_geom.yp+adj_geom.ys) {
+    if (x >= adj_geom.xp - adj_geom.xs && x <= adj_geom.xp + adj_geom.xs &&
+        y >= adj_geom.yp - adj_geom.ys && y <= adj_geom.yp + adj_geom.ys) {
       float back_x = x, back_y = y;
 
-      x -= geom.xp;	//Scale the coordinates to widget's relative coords
+      x -= geom.xp;  // Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
       y /= geom.ys;
       ret = (*itrw)->HandleEvent(event, x, y);
-      if(ret != -1) return ret;
+      if (ret != -1) return ret;
 
-      x = back_x; y = back_y;
-      }
+      x = back_x;
+      y = back_y;
     }
-
-  if(background) {
-    ret = background->HandleEvent(event, x, y);
-    if(ret != -1) return ret;
-    }
-
-  if(event->type == SDL_MOUSEBUTTONDOWN
-	&& (event->button.button == 4 || event->button.button == 5)) {
-		// Allow mousewheel events to pass through
-    return -1;
-    }
-
-  return ret;
   }
 
-bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONUP)
-//    fprintf(stderr, "AspectTable/Hand: Button Up at (%f,%f)\n", x, y);
+  if (background) {
+    ret = background->HandleEvent(event, x, y);
+    if (ret != -1) return ret;
+  }
 
-  if(targ == this) return HandleEvent(event, x, y);
+  if (event->type == SDL_MOUSEBUTTONDOWN &&
+      (event->button.button == 4 || event->button.button == 5)) {
+    // Allow mousewheel events to pass through
+    return -1;
+  }
 
-  if(xsize <= 0 || ysize <= 0) return false;
+  return ret;
+}
+
+bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event, float x,
+                                 float y) {
+  //  if(event->type == SDL_MOUSEBUTTONUP)
+  //    fprintf(stderr, "AspectTable/Hand: Button Up at (%f,%f)\n", x, y);
+
+  if (targ == this) return HandleEvent(event, x, y);
+
+  if (xsize <= 0 || ysize <= 0) return false;
 
   vector<int>::iterator itrgr = wgrav.begin();
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
-    if((*itrw)->HasWidget(targ)) {
+  for (; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
+    if ((*itrw)->HasWidget(targ)) {
       SG_AlignmentGeometry geom;
       CalcGeometry(geom, itrg, itrgr);
-      x -= geom.xp;	//Scale the coordinates to widget's relative coords
+      x -= geom.xp;  // Scale the coordinates to widget's relative coords
       y -= geom.yp;
       x /= geom.xs;
       y /= geom.ys;
       return (*itrw)->HandEventTo(targ, event, x, y);
-      }
     }
+  }
 
-  if(background->HasWidget(targ))
+  if (background->HasWidget(targ))
     return background->HandEventTo(targ, event, x, y);
 
   return true;
-  }
+}
 
 //  bool SG_AspectTable::SetDefaultCursor(GL_MODEL *cur);
 
@@ -118,55 +118,54 @@ bool SG_AspectTable::HandEventTo(SG_Widget *targ, SDL_Event *event,
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid) {
   return AddWidget(wid, SG_CENTER);
-  }
+}
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int grav) {
   wgrav.push_back(grav);
-  if(!SG_Table::AddWidget(wid)) {
+  if (!SG_Table::AddWidget(wid)) {
     wgrav.pop_back();
     return false;
-    }
-  return true;
   }
+  return true;
+}
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1) {
   return AddWidget(wid, x1, y1, 1, 1, SG_CENTER);
-  }
+}
 
 bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1, int grav) {
   return AddWidget(wid, x1, y1, 1, 1, grav);
-  }
+}
 
-bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
-	int xs, int ys) {
+bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
   return AddWidget(wid, x1, y1, xs, ys, SG_CENTER);
-  }
+}
 
-bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1,
-	int xs, int ys, int grav) {
+bool SG_AspectTable::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys,
+                               int grav) {
   wgrav.push_back(grav);
-  if(!SG_Table::AddWidget(wid, x1, y1, xs, ys)) {
+  if (!SG_Table::AddWidget(wid, x1, y1, xs, ys)) {
     wgrav.pop_back();
     return false;
-    }
-  return true;
   }
+  return true;
+}
 
 bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
-//  fprintf(stderr, "Rendering AspectTable %p!\n", this);
+  //  fprintf(stderr, "Rendering AspectTable %p!\n", this);
 
-  if(xsize <= 0 || ysize <= 0) return true;
+  if (xsize <= 0 || ysize <= 0) return true;
 
   glPushMatrix();
 
-  if(background) background->Render(cur_time);  //Same "layer" as parent
-  glTranslatef(0.0, 0.0, 0.0625);               //Advance to next "layer"
+  if (background) background->Render(cur_time);  // Same "layer" as parent
+  glTranslatef(0.0, 0.0, 0.0625);                // Advance to next "layer"
 
   vector<int>::iterator itrgr = wgrav.begin();
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
-    if(*itrw) {
+  for (; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
+    if (*itrw) {
       glPushMatrix();
       SG_AlignmentGeometry geom;
       CalcGeometry(geom, itrg, itrgr);
@@ -175,37 +174,36 @@ bool SG_AspectTable::RenderSelf(unsigned long cur_time) {
       glScalef(geom.xs, geom.ys, 1.0);
       (*itrw)->Render(cur_time);
       glPopMatrix();
-      }
     }
+  }
 
   glPopMatrix();
 
-//  fprintf(stderr, "  Done.\n\n");
+  //  fprintf(stderr, "  Done.\n\n");
 
   return true;
-  }
+}
 
 void SG_AspectTable::SetAspectRatio(float asp) {
   aspect_ratio = asp;
-  if(background) background->SetAspectRatio(aspect_ratio);	//BG Unchanged
+  if (background) background->SetAspectRatio(aspect_ratio);  // BG Unchanged
 
   vector<int>::iterator itrgr = wgrav.begin();
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
+  for (; itrw != widgets.end(); ++itrw, ++itrg, ++itrgr) {
     SG_AlignmentGeometry geom;
     CalcGeometry(geom, itrg, itrgr);
     (*itrw)->AdjustGeometry(&geom);
     (*itrw)->SetAspectRatio(aspect_ratio * geom.xs / geom.ys);
-    }
   }
+}
 
-void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
-	const vector<SG_TableGeometry>::iterator &wgeom,
-	const vector<int>::iterator &wgrav
-	) {
-  float xcs, ycs; //Relative Cell Sizes.
-  float xcp, ycp; //Center Cell Poisiton.
+void SG_AspectTable::CalcGeometry(
+    SG_AlignmentGeometry &geom, const vector<SG_TableGeometry>::iterator &wgeom,
+    const vector<int>::iterator &wgrav) {
+  float xcs, ycs;  // Relative Cell Sizes.
+  float xcp, ycp;  // Center Cell Poisiton.
 
   xcs = 2.0 / xsize;
   ycs = 2.0 / ysize;
@@ -215,27 +213,24 @@ void SG_AspectTable::CalcGeometry(SG_AlignmentGeometry &geom,
 
   geom.xp = -1.0 + xcs * xcp;
   geom.yp = 1.0 - ycs * ycp;
-  geom.xs = xcs * float((*wgeom).xsize) / 2.0 - xborder/float(xsize);
-  geom.ys = ycs * float((*wgeom).ysize) / 2.0 - yborder/float(ysize);
+  geom.xs = xcs * float((*wgeom).xsize) / 2.0 - xborder / float(xsize);
+  geom.ys = ycs * float((*wgeom).ysize) / 2.0 - yborder / float(ysize);
 
-  if(fixed_aspect < aspect_ratio) {
-    geom.xp *= fixed_aspect/aspect_ratio;
-    if((*wgrav) & SG_LEFT) {
-      geom.xp -= (1.0 - fixed_aspect/aspect_ratio);
-      }
-    else if((*wgrav) & SG_RIGHT) {
-      geom.xp += (1.0 - fixed_aspect/aspect_ratio);
-      }
-    geom.xs *= fixed_aspect/aspect_ratio;
+  if (fixed_aspect < aspect_ratio) {
+    geom.xp *= fixed_aspect / aspect_ratio;
+    if ((*wgrav) & SG_LEFT) {
+      geom.xp -= (1.0 - fixed_aspect / aspect_ratio);
+    } else if ((*wgrav) & SG_RIGHT) {
+      geom.xp += (1.0 - fixed_aspect / aspect_ratio);
     }
-  else if(aspect_ratio < fixed_aspect) {
-    geom.yp *= aspect_ratio/fixed_aspect;
-    if((*wgrav) & SG_DOWN) {
-      geom.yp -= (1.0 - aspect_ratio/fixed_aspect);
-      }
-    else if((*wgrav) & SG_UP) {
-      geom.yp += (1.0 - aspect_ratio/fixed_aspect);
-      }
-    geom.ys *= aspect_ratio/fixed_aspect;
+    geom.xs *= fixed_aspect / aspect_ratio;
+  } else if (aspect_ratio < fixed_aspect) {
+    geom.yp *= aspect_ratio / fixed_aspect;
+    if ((*wgrav) & SG_DOWN) {
+      geom.yp -= (1.0 - aspect_ratio / fixed_aspect);
+    } else if ((*wgrav) & SG_UP) {
+      geom.yp += (1.0 - aspect_ratio / fixed_aspect);
     }
+    geom.ys *= aspect_ratio / fixed_aspect;
   }
+}

@@ -32,31 +32,30 @@ class SG_Table;
 class SG_TextArea;
 
 class SG_Scrollable : public SG_Alignment, public SG_Ranger2D {
-public:
+ public:
   SG_Scrollable(float xspn, float yspn, float xoff = 0.0, float yoff = 0.0,
-	float xmin = 0.0, float ymin = 0.0, float xmax = 1.0, float ymax = 1.0);
+                float xmin = 0.0, float ymin = 0.0, float xmax = 1.0,
+                float ymax = 1.0);
   virtual ~SG_Scrollable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   virtual bool AddWidget(SG_Widget *wid);
-  virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
-  virtual bool AddWidget(SG_TextArea *text);	//Special Handler for TextAreas
+  virtual bool AddWidget(SG_Table *tab);      // Special Handler for Tables
+  virtual bool AddWidget(SG_TextArea *text);  // Special Handler for TextAreas
 
   virtual void SetAspectRatio(const float asp);
 
   virtual void RangerChanged();
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   void CalcGeometry(SG_AlignmentGeometry &geom);
   bool subwidget_handles;
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_SCROLLABLE_H
-
+#endif  // SG_SCROLLABLE_H

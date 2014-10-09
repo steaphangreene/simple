@@ -26,17 +26,16 @@
 #include "simpletexture.h"
 
 class SG_Compound : public SG_Table {
-public:
+ public:
   SG_Compound(int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Compound();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
 
   static ST_Texturator *stt_upbutt_up;
   static ST_Texturator *stt_upbutt_dn;
@@ -46,7 +45,6 @@ protected:
   static ST_Texturator *stt_rtbutt_dn;
   static ST_Texturator *stt_ltbutt_up;
   static ST_Texturator *stt_ltbutt_dn;
-  };
+};
 
-#endif // SG_COMPOUND_H
-
+#endif  // SG_COMPOUND_H

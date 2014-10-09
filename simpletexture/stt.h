@@ -25,22 +25,22 @@
 #include "SDL.h"
 
 class ST_Texturator {
-public:
+ public:
   ST_Texturator();
   virtual ~ST_Texturator();
 
-  SDL_Surface *Generate(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col);
+  SDL_Surface *Generate(SDL_Surface *surf, const Uint32 xsize,
+                        const Uint32 ysize, const SDL_Color &col);
 
-protected:
-  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col);
-  };
+ protected:
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                    const Uint32 ysize, const SDL_Color &col);
+};
 
 union Uint8_32 {
   Uint8 u8[4];
   Uint32 u32;
-  };
+};
 
 extern Uint8_32 st_col_u32b1;
 extern Uint8_32 st_col_u32b2;
@@ -52,6 +52,7 @@ extern Uint8_32 st_col_u32b4;
 #define ST_COL_U32B3 (st_col_u32b3.u32)
 #define ST_COL_U32B4 (st_col_u32b4.u32)
 
-#define ST_SDL_RGBA_COLFIELDS ST_COL_U32B1, ST_COL_U32B2, ST_COL_U32B3, ST_COL_U32B4
+#define ST_SDL_RGBA_COLFIELDS \
+  ST_COL_U32B1, ST_COL_U32B2, ST_COL_U32B3, ST_COL_U32B4
 
-#endif // STT_H
+#endif  // STT_H

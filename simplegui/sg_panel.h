@@ -32,32 +32,36 @@ using namespace std;
 #include "simpletexture.h"
 #include "sg_widget.h"
 
-#define SG_STATE_DEFAULT	0
-#define SG_STATE_DISABLED	1
+#define SG_STATE_DEFAULT 0
+#define SG_STATE_DISABLED 1
 
 class SG_Panel : public SG_Widget {
-public:
+ public:
   SG_Panel(SimpleTexture tex = SG_COL_BG);
   virtual ~SG_Panel();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   void SetTransparent(bool val = true);
 
   void SetTexture(SimpleTexture tex, int st = SG_STATE_DEFAULT);
   void SetTexturator(ST_Texturator *stt, int st = SG_STATE_DEFAULT);
 
-  //For Internal Use Only!
-  void SetState(int st) { state = st; };
-  int State() { return state; };
+  // For Internal Use Only!
+  void SetState(int st) {
+    state = st;
+  };
+  int State() {
+    return state;
+  };
 
   virtual void SetAspectRatio(float asp);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
 
   vector<SimpleTexture> texture;
-  int state; //Which texture to use - for multi-state support
-  };
+  int state;  // Which texture to use - for multi-state support
+};
 
-#endif // SG_PANEL_H
+#endif  // SG_PANEL_H

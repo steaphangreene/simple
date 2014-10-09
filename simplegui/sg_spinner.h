@@ -36,23 +36,23 @@ class SG_Button;
 class SG_TextArea;
 
 class SG_Spinner : public SG_Compound, public SG_Ranger {
-public:
+ public:
   SG_Spinner(bool edit = false);
   virtual ~SG_Spinner();
   virtual void SetFixedDisplayPrecision(bool f);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual void RangerChanged();
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
   SG_Button *upb, *downb;
   bool fixed;
 
   virtual int getSignificantDigits(float f);
-  };
+};
 
-#endif // SG_SPINNER_H
+#endif  // SG_SPINNER_H

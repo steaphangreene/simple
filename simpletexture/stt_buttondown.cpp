@@ -21,8 +21,9 @@
 
 #include "stt_buttondown.h"
 
-SDL_Surface *STT_ButtonDown::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  return BuildInternal(surf, xsize, ysize,
-	base_col(col), dark_col(col), light_col(col));
-  }
+SDL_Surface *STT_ButtonDown::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                          const Uint32 ysize,
+                                          const SDL_Color &col) {
+  return BuildInternal(surf, xsize, ysize, base_col(col), dark_col(col),
+                       light_col(col));
+}

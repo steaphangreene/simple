@@ -26,67 +26,63 @@
 #include "sg_globals.h"
 
 SG_StickyButton::SG_StickyButton(string mes, SimpleTexture tex,
-	SimpleTexture dis_tex, SimpleTexture click_tex, SimpleTexture down_tex)
-	: SG_Button(mes, tex, dis_tex, click_tex) {
+                                 SimpleTexture dis_tex, SimpleTexture click_tex,
+                                 SimpleTexture down_tex)
+    : SG_Button(mes, tex, dis_tex, click_tex) {
   down_tex.LinkTextFrom(&(texture[0]));
   texture.push_back(down_tex);
   texture[3].SetTexturator(stt_butt_dn);
-  }
+}
 
-SG_StickyButton::~SG_StickyButton() {
-  }
+SG_StickyButton::~SG_StickyButton() {}
 
 int SG_StickyButton::HandleEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "StickyButton/Handle: Button Down at (%f,%f)\n", x, y);
+  //  if(event->type == SDL_MOUSEBUTTONDOWN)
+  //    fprintf(stderr, "StickyButton/Handle: Button Down at (%f,%f)\n", x, y);
 
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
-  if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
+  if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 1) {
     flags |= SG_WIDGET_FLAGS_PRESSED;
     flags ^= SG_WIDGET_FLAGS_ON;
     state = 2;
     current_sg->SetCurrentWidget(this);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_STICKYOFF + ((flags & SG_WIDGET_FLAGS_ON) > 0);
-    event->user.data1 = (void*)(SG_Widget*)this;
+    event->user.data1 = (void *)(SG_Widget *)this;
     event->user.data2 = NULL;
     return 1;
-    }
-  else if(event->type == SDL_MOUSEBUTTONDOWN
-	&& (event->button.button == 4 || event->button.button == 5)) {
-		// Allow mousewheel events to pass through
+  } else if (event->type == SDL_MOUSEBUTTONDOWN &&
+             (event->button.button == 4 || event->button.button == 5)) {
+    // Allow mousewheel events to pass through
     return -1;
-    }
-  else if(event->type == SDL_MOUSEBUTTONDOWN) {	// Eat other buttons
+  } else if (event->type == SDL_MOUSEBUTTONDOWN) {  // Eat other buttons
     return 0;
-    }
-  else if(event->type == SDL_MOUSEBUTTONUP) {
+  } else if (event->type == SDL_MOUSEBUTTONUP) {
     current_sg->UnsetCurrentWidget();
     flags &= (~SG_WIDGET_FLAGS_PRESSED);
     state = 3 * ((flags & SG_WIDGET_FLAGS_ON) > 0);
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_BUTTONRELEASE;
-    event->user.data1 = (void*)(SG_Widget*)this;
+    event->user.data1 = (void *)(SG_Widget *)this;
     event->user.data2 = NULL;
     return 1;
-    }
+  }
 
   return 1;
-  }
+}
 
 void SG_StickyButton::TurnOn() {
   flags |= SG_WIDGET_FLAGS_ON;
-  if(state == 0) state = 3;
-  }
+  if (state == 0) state = 3;
+}
 
 void SG_StickyButton::TurnOff() {
   flags &= (~SG_WIDGET_FLAGS_ON);
-  if(state == 3) state = 0;
-  }
+  if (state == 3) state = 0;
+}
 
 //  bool SG_StickyButton::SetDefaultCursor(GL_MODEL *cur);
 
 //  static GL_MODEL SG_StickyButton::Default_Mouse_Cursor = NULL;
-

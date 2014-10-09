@@ -32,21 +32,21 @@ class SG_TextArea;
 class SG_ComboBox;
 
 class SG_FileBrowser : public SG_Compound {
-public:
+ public:
   SG_FileBrowser(const string &filter, bool newfile = false);
   virtual ~SG_FileBrowser();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   const string &FileName();
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  string dir;	//Directory
-  string reg;	//Pseudo-Regex of Files
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
+  string dir;  // Directory
+  string reg;  // Pseudo-Regex of Files
   SG_Button *openb, *cancelb;
   SG_TextArea *dirb;
   SG_ComboBox *fileb;
   string filename;
-  };
+};
 
-#endif // SG_FILEBROWSER_H
+#endif  // SG_FILEBROWSER_H

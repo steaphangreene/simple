@@ -19,22 +19,20 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_PMD_H
-#define	SIMPLEMODEL_PMD_H
+#ifndef SIMPLEMODEL_PMD_H
+#define SIMPLEMODEL_PMD_H
 
 #include "simplemodel_pmx.h"
 
 class SimpleModel_PMD : public SimpleModel_PMX {
-public:
-  SimpleModel_PMD(const string &filenm,
-	const string &defskin = "default");
+ public:
+  SimpleModel_PMD(const string &filenm, const string &defskin = "default");
   virtual ~SimpleModel_PMD();
 
-  virtual bool Load(const string &filenm,
-	const string &defskin = "default");
+  virtual bool Load(const string &filenm, const string &defskin = "default");
 
-protected:
+ protected:
   SimpleModel_PMD();
-  };
+};
 
-#endif	//SIMPLEMODEL_PMD_H
+#endif  // SIMPLEMODEL_PMD_H

@@ -35,19 +35,20 @@ using namespace std;
 #include "sg_colors.h"
 
 #ifndef SG_AUTOSIZE
-#define SG_AUTOSIZE	-1
+#define SG_AUTOSIZE -1
 #endif
 
 class SG_StickyButton;
 
 class SG_Tabs : public SG_Compound, public SG_MultiText {
-public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
-  SG_Tabs(const vector<string> &items = vector<string>(),
-	int x = SG_AUTOSIZE, int y = SG_AUTOSIZE,
-	SimpleTexture tex = SG_COL_RAISED, SimpleTexture dis_tex = SG_COL_LOW,
-	SimpleTexture click_tex = SG_COL_LOW, SimpleTexture down_tex = SG_COL_HIGH);
+ public:  // Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
+  SG_Tabs(const vector<string> &items = vector<string>(), int x = SG_AUTOSIZE,
+          int y = SG_AUTOSIZE, SimpleTexture tex = SG_COL_RAISED,
+          SimpleTexture dis_tex = SG_COL_LOW,
+          SimpleTexture click_tex = SG_COL_LOW,
+          SimpleTexture down_tex = SG_COL_HIGH);
   virtual ~SG_Tabs();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   int Which() { return cur_on; }
 
@@ -63,10 +64,10 @@ public:		// Note: only either x OR y can be SG_AUTOSIZE, NOT BOTH!
   void Up(bool wrap = false);
   void Down(bool wrap = false);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  int cur_on; //Which widget is currently on
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
+  int cur_on;  // Which widget is currently on
   int fixed_x, fixed_y;
-  };
+};
 
-#endif // SG_TABS_H
+#endif  // SG_TABS_H

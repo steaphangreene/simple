@@ -19,25 +19,25 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_XYPLANE_H
-#define	SIMPLEMODEL_XYPLANE_H
+#ifndef SIMPLEMODEL_XYPLANE_H
+#define SIMPLEMODEL_XYPLANE_H
 
 #include "simplemodel.h"
 #include "simplemodel_md3.h"
 
 class SimpleModel_XYPlane : public SimpleModel {
-public:
+ public:
   SimpleModel_XYPlane();
   SimpleModel_XYPlane(const string &filenm);
   virtual ~SimpleModel_XYPlane();
 
   virtual bool Load(const string &filenm);
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-  };
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
+};
 
-#endif	//SIMPLEMODEL_XYPLANE_H
+#endif  // SIMPLEMODEL_XYPLANE_H

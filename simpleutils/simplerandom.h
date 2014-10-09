@@ -27,17 +27,16 @@
 /*
  * Implements Lagged Fibonacci Generator RNG
  */
-class SimpleRandom
-{
-  private:
-  //TODO: int, or uint32?
+class SimpleRandom {
+ private:
+  // TODO: int, or uint32?
   int seed;
   int state[2];
   void InitSeed();
   static int sequence;
   static SDL_mutex* mutex;
 
-  public:
+ public:
   static void Initialize();
   void ChangeSeed(int seed);
   int GetSeed();

@@ -29,26 +29,34 @@ template <class Tp>
 static void ReadNBO(Tp &var, const void *buf) {
   std::memcpy(&var, buf, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
-  union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  int i1=0, i2=sizeof(Tp)-1;
-  while(i1 < i2) {
+  union DTp {
+    Tp v;
+    Uint8 b[sizeof(Tp)];
+  } data;
+  int i1 = 0, i2 = sizeof(Tp) - 1;
+  while (i1 < i2) {
     swap(((DTp *)(&var))->b[i1], ((DTp *)(&var))->b[i2]);
-    ++i1; --i2;
-    }
+    ++i1;
+    --i2;
+  }
 #endif
-  };
+};
 
 template <class Tp>
 static void WriteNBO(const Tp &var, void *buf) {
   std::memcpy(buf, &var, sizeof(Tp));
 #if SDL_BYTEORDER == SDL_LITTLE_ENDIAN
-  union DTp { Tp v; Uint8 b[sizeof(Tp)]; } data;
-  int i1=0, i2=sizeof(Tp)-1;
-  while(i1 < i2) {
+  union DTp {
+    Tp v;
+    Uint8 b[sizeof(Tp)];
+  } data;
+  int i1 = 0, i2 = sizeof(Tp) - 1;
+  while (i1 < i2) {
     swap(((DTp *)(buf))->b[i1], ((DTp *)(buf))->b[i2]);
-    ++i1; --i2;
-    }
+    ++i1;
+    --i2;
+  }
 #endif
-  };
+};
 
-#endif // SAFECOMM_H
+#endif  // SAFECOMM_H

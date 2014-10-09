@@ -19,8 +19,8 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEGUI_H
-#define	SIMPLEGUI_H
+#ifndef SIMPLEGUI_H
+#define SIMPLEGUI_H
 
 #include "sg_ranger.h"
 #include "sg_ranger2d.h"
@@ -59,5 +59,4 @@
 #include "sg_scrollingarea.h"
 #include "sg_sliderbar.h"
 
-#endif	//SIMPLEGUI_H
-
+#endif  // SIMPLEGUI_H

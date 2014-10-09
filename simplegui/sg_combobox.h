@@ -39,16 +39,16 @@ class SG_TextArea;
 class SG_Menu;
 
 class SG_ComboBox : public SG_Compound, public SG_Text, public SG_MultiText {
-public:
-  SG_ComboBox(const vector<string> &options, bool edit = false,
-	SimpleTexture btex = SG_COL_RAISED, SimpleTexture btex_dis = SG_COL_LOW,
-	SimpleTexture btex_click = SG_COL_LOW,
-	SimpleTexture ttex = SG_COL_FG, SimpleTexture ttex_dis = SG_COL_BG,
-	SimpleTexture ttex_fg = SG_COL_HIGH,
-	SimpleTexture mtex = SG_COL_BG, SimpleTexture mtex_dis = SG_COL_LOW,
-	SimpleTexture mtex_sel = SG_COL_RAISED);
+ public:
+  SG_ComboBox(
+      const vector<string> &options, bool edit = false,
+      SimpleTexture btex = SG_COL_RAISED, SimpleTexture btex_dis = SG_COL_LOW,
+      SimpleTexture btex_click = SG_COL_LOW, SimpleTexture ttex = SG_COL_FG,
+      SimpleTexture ttex_dis = SG_COL_BG, SimpleTexture ttex_fg = SG_COL_HIGH,
+      SimpleTexture mtex = SG_COL_BG, SimpleTexture mtex_dis = SG_COL_LOW,
+      SimpleTexture mtex_sel = SG_COL_RAISED);
   virtual ~SG_ComboBox();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual const string &Text();
@@ -59,11 +59,11 @@ public:
 
   void Set(int);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_TextArea *text;
   SG_StickyButton *opb;
   SG_Menu *menu;
-  };
+};
 
-#endif // SG_COMBOBOX_H
+#endif  // SG_COMBOBOX_H

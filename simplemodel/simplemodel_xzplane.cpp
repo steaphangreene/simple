@@ -27,34 +27,30 @@ using namespace std;
 
 #include "simplemodel_xzplane.h"
 
-SimpleModel_XZPlane::SimpleModel_XZPlane(const string &filenm) {
-  }
+SimpleModel_XZPlane::SimpleModel_XZPlane(const string &filenm) {}
 
-SimpleModel_XZPlane::SimpleModel_XZPlane() {
-  }
+SimpleModel_XZPlane::SimpleModel_XZPlane() {}
 
-SimpleModel_XZPlane::~SimpleModel_XZPlane() {
-  }
+SimpleModel_XZPlane::~SimpleModel_XZPlane() {}
 
-bool SimpleModel_XZPlane::Load(const string &filenm) {
-  return true;
-  }
+bool SimpleModel_XZPlane::Load(const string &filenm) { return true; }
 
 bool SimpleModel_XZPlane::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+                                     const vector<Uint32> &start_time,
+                                     Uint32 anim_offset) const {
   glBegin(GL_QUADS);
 
   glNormal3d(0.0, 1.0, 0.0);
   glTexCoord2f(0.0, 0.0);
-  glVertex3f(-1.0,  0.0, -1.0);
+  glVertex3f(-1.0, 0.0, -1.0);
   glTexCoord2f(0.0, 1.0);
-  glVertex3f( 1.0,  0.0, -1.0);
+  glVertex3f(1.0, 0.0, -1.0);
   glTexCoord2f(1.0, 1.0);
-  glVertex3f( 1.0,  0.0,  1.0);
+  glVertex3f(1.0, 0.0, 1.0);
   glTexCoord2f(1.0, 0.0);
-  glVertex3f(-1.0,  0.0,  1.0);
+  glVertex3f(-1.0, 0.0, 1.0);
 
   glEnd();
 
   return true;
-  }
+}

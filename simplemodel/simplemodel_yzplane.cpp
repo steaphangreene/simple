@@ -27,34 +27,30 @@ using namespace std;
 
 #include "simplemodel_yzplane.h"
 
-SimpleModel_YZPlane::SimpleModel_YZPlane(const string &filenm) {
-  }
+SimpleModel_YZPlane::SimpleModel_YZPlane(const string &filenm) {}
 
-SimpleModel_YZPlane::SimpleModel_YZPlane() {
-  }
+SimpleModel_YZPlane::SimpleModel_YZPlane() {}
 
-SimpleModel_YZPlane::~SimpleModel_YZPlane() {
-  }
+SimpleModel_YZPlane::~SimpleModel_YZPlane() {}
 
-bool SimpleModel_YZPlane::Load(const string &filenm) {
-  return true;
-  }
+bool SimpleModel_YZPlane::Load(const string &filenm) { return true; }
 
 bool SimpleModel_YZPlane::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+                                     const vector<Uint32> &start_time,
+                                     Uint32 anim_offset) const {
   glBegin(GL_QUADS);
 
   glNormal3d(1.0, 0.0, 0.0);
   glTexCoord2f(0.0, 0.0);
-  glVertex3f( 0.0, -1.0, -1.0);
+  glVertex3f(0.0, -1.0, -1.0);
   glTexCoord2f(0.0, 1.0);
-  glVertex3f( 0.0,  1.0, -1.0);
+  glVertex3f(0.0, 1.0, -1.0);
   glTexCoord2f(1.0, 1.0);
-  glVertex3f( 0.0,  1.0,  1.0);
+  glVertex3f(0.0, 1.0, 1.0);
   glTexCoord2f(1.0, 0.0);
-  glVertex3f( 0.0, -1.0,  1.0);
+  glVertex3f(0.0, -1.0, 1.0);
 
   glEnd();
 
   return true;
-  }
+}

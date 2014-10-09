@@ -26,11 +26,11 @@
 #include "sg_ranger2d.h"
 
 class SG_Dragable : public SG_Panel, public SG_Ranger2D {
-public:
+ public:
   SG_Dragable(SimpleTexture tex = SG_COL_RAISED);
   virtual ~SG_Dragable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   void SetDisplayLimits(float mnx, float mny, float mxx, float mxy);
   void SetXDisplayLimits(float mnx, float mxx);
@@ -40,20 +40,20 @@ public:
 
   virtual void SetAspectRatio(float asp);
 
-	//Internal Use Only!  For self-reconfiguring widgets.
+  // Internal Use Only!  For self-reconfiguring widgets.
   virtual void AdjustGeometry(SG_AlignmentGeometry *geom);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   float base_x, base_y, off_x, off_y, start_x, start_y;
 
-  float min_dx, min_dy, max_dx, max_dy;	//Display Limits
+  float min_dx, min_dy, max_dx, max_dy;  // Display Limits
   void Disp2Limits(float &x, float &y);
   void Limits2Disp(float &x, float &y);
 
   SG_Widget *label;
-  };
+};
 
-#endif // SG_DRAGABLE_H
+#endif  // SG_DRAGABLE_H

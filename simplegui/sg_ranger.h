@@ -19,8 +19,8 @@
 //
 // *************************************************************************
 
-#ifndef	SG_RANGER_H
-#define	SG_RANGER_H
+#ifndef SG_RANGER_H
+#define SG_RANGER_H
 
 #include <set>
 using namespace std;
@@ -28,9 +28,9 @@ using namespace std;
 class SG_Ranger2D;
 
 class SG_Ranger {
-public:
+ public:
   SG_Ranger(float spn = 0.0, float val = 0.0, float mn = 0.0, float mx = 1.0,
-	SG_Ranger2D *par = 0);
+            SG_Ranger2D *par = 0);
   virtual ~SG_Ranger();
 
   void SetValue(float val);
@@ -51,12 +51,12 @@ public:
 
   virtual void RangerChanged();
 
-protected:
+ protected:
   float span, value;
   float min, max;
   float inc;
-  set<SG_Ranger*> linked;
+  set<SG_Ranger *> linked;
   SG_Ranger2D *parent;
-  };
+};
 
-#endif	//SG_RANGER_H
+#endif  // SG_RANGER_H

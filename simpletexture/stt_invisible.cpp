@@ -21,8 +21,9 @@
 
 #include "stt_invisible.h"
 
-SDL_Surface *STT_Invisible::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  //FIXME: Actually clear surface!
+SDL_Surface *STT_Invisible::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                         const Uint32 ysize,
+                                         const SDL_Color &col) {
+  // FIXME: Actually clear surface!
   return surf;
-  }
+}

@@ -25,17 +25,15 @@
 #include "simplemodel_md.h"
 
 class SimpleModel_MDX : public SimpleModel_MD {
-public:
-  SimpleModel_MDX(const string &filenm,
-	const string &modelnm = "",
-	const vector<string> &skins = vector<string>()
-	);
+ public:
+  SimpleModel_MDX(const string &filenm, const string &modelnm = "",
+                  const vector<string> &skins = vector<string>());
   virtual ~SimpleModel_MDX();
 
-  virtual bool Load(const string &filenm,
-	const string &modelnm, const vector<string> &skins);
+  virtual bool Load(const string &filenm, const string &modelnm,
+                    const vector<string> &skins);
 
-protected:
+ protected:
   SimpleModel_MDX();
 
   bool HandleMagicWord(SDL_RWops *);
@@ -52,7 +50,8 @@ protected:
   bool HandleBones(SDL_RWops *);
   bool HandlePivots(SDL_RWops *);
   bool HandleHelpers(SDL_RWops *);
-  string GetNextToken(SDL_RWops *);    // Returns the identifier for the next chunk
+  string GetNextToken(
+      SDL_RWops *);  // Returns the identifier for the next chunk
   bool IsIgnoredToken(const string &);
   void SkipChunk(SDL_RWops *);
   bool HandleVertices(SDL_RWops *, vector<MDXVertex> &);
@@ -74,6 +73,6 @@ protected:
   bool NextTokenIs(SDL_RWops *, const string &);
 
   Uint32 file_size;
-  };
+};
 
-#endif  //SIMPLEMODEL_MDX_H
+#endif  // SIMPLEMODEL_MDX_H

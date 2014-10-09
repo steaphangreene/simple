@@ -31,30 +31,30 @@
 #include "sg_sliderbar.h"
 
 #ifndef SG_AUTOSIZE
-#define SG_AUTOSIZE     -1
+#define SG_AUTOSIZE -1
 #endif
 
 class SG_Button;
 class SG_TextArea;
 
 class SG_ScrollingArea : public SG_Compound, public SG_Ranger2D {
-public:
+ public:
   SG_ScrollingArea(float xvs = SG_AUTOSIZE, float yvs = SG_AUTOSIZE,
-	float xsz = SG_AUTOSIZE, float ysz = SG_AUTOSIZE);
+                   float xsz = SG_AUTOSIZE, float ysz = SG_AUTOSIZE);
   virtual ~SG_ScrollingArea();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
-  virtual bool AddWidget(SG_Table *tab);	//Special Handler for Tables
-  virtual bool AddWidget(SG_TextArea *text);	//Special Handler for TextAreas
+  virtual bool AddWidget(SG_Table *tab);      // Special Handler for Tables
+  virtual bool AddWidget(SG_TextArea *text);  // Special Handler for TextAreas
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_Scrollable *scroll;
   SG_SliderBar *vert, *horiz;
-  };
+};
 
-#endif // SG_SCROLLINGAREA_H
+#endif  // SG_SCROLLINGAREA_H

@@ -33,40 +33,44 @@
 using namespace std;
 
 class SG_DNDBoxes : public SG_Compound {
-public:
+ public:
   SG_DNDBoxes(int xsz, int ysz);
   virtual ~SG_DNDBoxes();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
   void Exclude(int xp, int yp, int xs = 1, int ys = 1);
   void Include(int xp, int yp, int xs = 1, int ys = 1, int xcs = 1, int ycs = 1,
-	Uint32 id = 0, Uint32 inv = 0);
-  bool AddItem(SDL_Surface *icon, int x1, int y1, int xs=1, int ys=1,
-	Uint32 id = 0, Uint32 tps = 0);
+               Uint32 id = 0, Uint32 inv = 0);
+  bool AddItem(SDL_Surface *icon, int x1, int y1, int xs = 1, int ys = 1,
+               Uint32 id = 0, Uint32 tps = 0);
   void RemoveItem(int x1, int y1);
 
-  //Handle all these to disable them!
-  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs=1, int ys=1);
+  // Handle all these to disable them!
+  virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs = 1,
+                         int ys = 1);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-  bool CanFit(int &x1, int &y1, int xs=1, int ys=1, Uint32 tps = 0);
-  void UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
-  void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs=1, int ys=1);
+  bool CanFit(int &x1, int &y1, int xs = 1, int ys = 1, Uint32 tps = 0);
+  void UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs = 1, int ys = 1);
+  void ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs = 1, int ys = 1);
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  vector<bool> present;		// Is this potential cell present?
-  vector<bool> occupied;	// Is this cell full?
-  vector<bool> basecell;	// Is this the cell a base cell?
-  vector<Uint32> invalids;	// Bitvector of invalid types
-  vector<Uint32> cellids;	// (Non-Unique) ID of cell area
+  //  static GL_MODEL Default_Mouse_Cursor;
+  vector<bool> present;     // Is this potential cell present?
+  vector<bool> occupied;    // Is this cell full?
+  vector<bool> basecell;    // Is this the cell a base cell?
+  vector<Uint32> invalids;  // Bitvector of invalid types
+  vector<Uint32> cellids;   // (Non-Unique) ID of cell area
 
   // Maps items to [item id, item types bitvec]
-  struct ItemInfo { Uint32 id; Uint32 types; };
-  map<SG_Widget *, ItemInfo> itemmap;
+  struct ItemInfo {
+    Uint32 id;
+    Uint32 types;
   };
+  map<SG_Widget *, ItemInfo> itemmap;
+};
 
-#endif // SG_DNDBOXES_H
+#endif  // SG_DNDBOXES_H

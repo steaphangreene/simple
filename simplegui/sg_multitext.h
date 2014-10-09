@@ -27,21 +27,26 @@
 using namespace std;
 
 class SG_MultiText {
-public:
+ public:
   SG_MultiText() {};
   virtual ~SG_MultiText() {};
   virtual const string &Item(int opt) {
-    fprintf(stderr, "WARNING: Calling SG_MultiText::Item() - should not be here!\n");
+    fprintf(stderr,
+            "WARNING: Calling SG_MultiText::Item() - should not be here!\n");
     static string s;
     return s;
-    };
-  virtual void SetItems(const vector<string> &itms) {
-    fprintf(stderr, "WARNING: Calling SG_MultiText::SetItems() - should not be here!\n");
-    };
-  virtual int NumItems() {
-    fprintf(stderr, "WARNING: Calling SG_MultiText::NumItems() - should not be here!\n");
-    return 0;
-    };
   };
+  virtual void SetItems(const vector<string> &itms) {
+    fprintf(
+        stderr,
+        "WARNING: Calling SG_MultiText::SetItems() - should not be here!\n");
+  };
+  virtual int NumItems() {
+    fprintf(
+        stderr,
+        "WARNING: Calling SG_MultiText::NumItems() - should not be here!\n");
+    return 0;
+  };
+};
 
-#endif // SG_MULTITEXT_H
+#endif  // SG_MULTITEXT_H

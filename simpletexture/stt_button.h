@@ -25,20 +25,19 @@
 #include "stt.h"
 
 class STT_Button : public ST_Texturator {
-protected:
-  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	);
+ protected:
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                    const Uint32 ysize, const SDL_Color &col);
   static SDL_Color base_col(const SDL_Color &c);
   static SDL_Color light_col(const SDL_Color &c);
   static SDL_Color dark_col(const SDL_Color &c);
   static Uint8 base_col(const Uint8 c);
   static Uint8 light_col(const Uint8 c);
   static Uint8 dark_col(const Uint8 c);
-  virtual SDL_Surface *BuildInternal(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize,
-	const SDL_Color &col, const SDL_Color &tlcol, const SDL_Color &brcol
-	);
-  };
+  virtual SDL_Surface *BuildInternal(SDL_Surface *surf, const Uint32 xsize,
+                                     const Uint32 ysize, const SDL_Color &col,
+                                     const SDL_Color &tlcol,
+                                     const SDL_Color &brcol);
+};
 
-#endif // STT_BUTTON_H
+#endif  // STT_BUTTON_H

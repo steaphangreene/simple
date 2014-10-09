@@ -24,75 +24,62 @@
 #include <time.h>
 
 #ifndef assert
-#define assert( condition, string ) {\
-    if( !( condition) ) {\
-      fprintf( stderr, "Error in %s.%d: %s!\n", __FILE__, __LINE__, string );\
-      exit(1);\
-    }\
+#define assert(condition, string)                                           \
+  {                                                                         \
+    if (!(condition)) {                                                     \
+      fprintf(stderr, "Error in %s.%d: %s!\n", __FILE__, __LINE__, string); \
+      exit(1);                                                              \
+    }                                                                       \
   }
 #endif
 
-void SimpleRandom::ChangeSeed(int Seed)
-{
+void SimpleRandom::ChangeSeed(int Seed) {
   this->seed = Seed;
   this->InitSeed();
 }
 
-int SimpleRandom::GetSeed()
-{
-  return this->seed;
-}
+int SimpleRandom::GetSeed() { return this->seed; }
 
-void SimpleRandom::Initialize()
-{
-  if (SimpleRandom::mutex != NULL)
-    return;
+void SimpleRandom::Initialize() {
+  if (SimpleRandom::mutex != NULL) return;
 
   SimpleRandom::mutex = SDL_CreateMutex();
 }
 
-SimpleRandom::SimpleRandom()
-{
+SimpleRandom::SimpleRandom() {
   SimpleRandom::Initialize();
-  assert (SDL_mutexP(SimpleRandom::mutex)!=-1, "[SimpleUtils] Cannot get lock for sequence number\n")
+  assert(SDL_mutexP(SimpleRandom::mutex) != -1,
+         "[SimpleUtils] Cannot get lock for sequence number\n")
 
   this->seed = (int)time(0) + SimpleRandom::sequence++;
 
-  assert (SDL_mutexV(SimpleRandom::mutex)!=-1, "[SimpleUtils] Cannot unlock mutex for sequence number\n")
+  assert(SDL_mutexV(SimpleRandom::mutex) != -1,
+         "[SimpleUtils] Cannot unlock mutex for sequence number\n")
 
   this->InitSeed();
 }
 
-SimpleRandom::SimpleRandom(int seed)
-{
+SimpleRandom::SimpleRandom(int seed) {
   this->seed = seed;
   this->InitSeed();
 }
 
-void SimpleRandom::InitSeed()
-{
-  this->state[0] = this->state[1] = this->seed;
-}
+void SimpleRandom::InitSeed() { this->state[0] = this->state[1] = this->seed; }
 
-int SimpleRandom::Rand(int min, int max)
-{
+int SimpleRandom::Rand(int min, int max) {
   int r = 0;
 
-  assert (max - min <= 32767, "[SimpleUtils] Max - Min > 32767!\n")
+  assert(max - min <= 32767, "[SimpleUtils] Max - Min > 32767!\n")
 
   r = ((this->state[0] + this->state[1]) % 32767);
-  if (r < 0)
-    r = -r;
+  if (r < 0) r = -r;
 
   this->state[0] = this->state[1];
   this->state[1] = r;
 
-  if(min == max)
-  {
+  if (min == max) {
     return min;
-  }
-  else
-  {
+  } else {
     return min + (r % (max - min));
   }
 }

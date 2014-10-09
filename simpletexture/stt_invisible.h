@@ -25,10 +25,9 @@
 #include "stt.h"
 
 class STT_Invisible : public ST_Texturator {
-protected:
-  virtual SDL_Surface *BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	);
-  };
+ protected:
+  virtual SDL_Surface *BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                    const Uint32 ysize, const SDL_Color &col);
+};
 
-#endif // STT_INVISIBLE_H
+#endif  // STT_INVISIBLE_H

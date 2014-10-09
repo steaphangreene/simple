@@ -19,7 +19,7 @@
 //
 // *************************************************************************
 
-int NUM_FRAMES = 32;	//Not #defines so they can be capped later.
+int NUM_FRAMES = 32;  // Not #defines so they can be capped later.
 int FRAME_DIM = 128;
 
 #include "SDL.h"
@@ -44,17 +44,17 @@ static SimpleVideo *video;
 
 int main(int argc, char **argv) {
   char *fontfn = NULL;
-  int xs=1024, ys=768;
+  int xs = 1024, ys = 768;
 
-  video = new SimpleVideo(xs, ys, 4.0/3.0);
+  video = new SimpleVideo(xs, ys, 4.0 / 3.0);
 
-  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
+  gui = new SimpleGUI(ASPECT_FIXED_Y | ASPECT_FIXED_X, 4.0 / 3.0);
 
   audio_init(2048);
 
   int click = audio_buildsound(click_data, sizeof(click_data));
 
-  if(fontfn) gui->LoadFont(fontfn);
+  if (fontfn) gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
@@ -64,35 +64,36 @@ int main(int argc, char **argv) {
 
   SDL_Event event;
   int user_quit = 0;
-  while(!user_quit) {
-    while(gui->PollEvent(&event)) {
-      if(event.type == SDL_SG_EVENT) {
-	switch(event.user.code) {
-	  case(SG_EVENT_SELECT): {
-	    audio_play(click, 8, 8);
-	    }break;
-	  }
-	}
-      else if(event.type == SDL_KEYDOWN) {
-	if(event.key.keysym.sym == SDLK_ESCAPE) user_quit = 1;
-	else if(event.key.keysym.sym == SDLK_SPACE) {
-	  static bool mouseon = true;
-	  mouseon = !mouseon;
-	  if(mouseon) gui->EnableMouse();
-	  else gui->DisableMouse();
-	  }
-	}
-      else if(event.type == SDL_QUIT) {
-	user_quit = 1;
-	}
+  while (!user_quit) {
+    while (gui->PollEvent(&event)) {
+      if (event.type == SDL_SG_EVENT) {
+        switch (event.user.code) {
+          case(SG_EVENT_SELECT) : {
+            audio_play(click, 8, 8);
+          } break;
+        }
+      } else if (event.type == SDL_KEYDOWN) {
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+          user_quit = 1;
+        else if (event.key.keysym.sym == SDLK_SPACE) {
+          static bool mouseon = true;
+          mouseon = !mouseon;
+          if (mouseon)
+            gui->EnableMouse();
+          else
+            gui->DisableMouse();
+        }
+      } else if (event.type == SDL_QUIT) {
+        user_quit = 1;
       }
+    }
 
     video->StartScene();
     gui->RenderStart(SDL_GetTicks());
     gui->RenderFinish(SDL_GetTicks());
     video->FinishScene();
-    }
-  delete gui;    //Will delete all children
+  }
+  delete gui;  // Will delete all children
 
   return 0;
-  }
+}

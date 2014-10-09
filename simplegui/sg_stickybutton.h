@@ -25,19 +25,19 @@
 #include "sg_button.h"
 
 class SG_StickyButton : public SG_Button {
-public:
+ public:
   SG_StickyButton(const string mes = "", SimpleTexture tex = SG_COL_RAISED,
-	SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW,
-	SimpleTexture down_tex = SG_COL_HIGH );
+                  SimpleTexture dis_tex = SG_COL_LOW,
+                  SimpleTexture click_tex = SG_COL_LOW,
+                  SimpleTexture down_tex = SG_COL_HIGH);
   virtual ~SG_StickyButton();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual void TurnOn();
   virtual void TurnOff();
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_STICKYBUTTON_H
-
+#endif  // SG_STICKYBUTTON_H

@@ -30,71 +30,71 @@
 #include "sg_events.h"
 #include "sg_globals.h"
 
-SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz)
-	: SG_Compound(xsz, ysz, 0.0, 0.0) {
-  present.resize(xsize*ysize, false);
-  occupied.resize(xsize*ysize, false);
-  basecell.resize(xsize*ysize, false);
-  invalids.resize(xsize*ysize, 0);
-  cellids.resize(xsize*ysize, 0);
-  }
+SG_DNDBoxes::SG_DNDBoxes(int xsz, int ysz) : SG_Compound(xsz, ysz, 0.0, 0.0) {
+  present.resize(xsize * ysize, false);
+  occupied.resize(xsize * ysize, false);
+  basecell.resize(xsize * ysize, false);
+  invalids.resize(xsize * ysize, 0);
+  cellids.resize(xsize * ysize, 0);
+}
 
-SG_DNDBoxes::~SG_DNDBoxes() {
-  }
+SG_DNDBoxes::~SG_DNDBoxes() {}
 
 bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
-  if(background) background->Render(cur_time);
+  if (background) background->Render(cur_time);
   SG_Widget *tmpback = background;
   background = NULL;
 
   glPushMatrix();
 
-  glTranslatef(0.0, 0.0, 0.03125);		//Advance to next half "layer"
+  glTranslatef(0.0, 0.0, 0.03125);  // Advance to next half "layer"
 
   glBegin(GL_LINES);
-  for(int x = 0; x <= xsize; ++x) {
-    for(int y = 0; y <= ysize; ++y) {
+  for (int x = 0; x <= xsize; ++x) {
+    for (int y = 0; y <= ysize; ++y) {
       int num_cells;
 
       num_cells = 0;
-      if(x < xsize && y < ysize && present[y*xsize+x]) ++num_cells;
-      if(x < xsize && y > 0 && present[(y-1)*xsize+x]) ++num_cells;
-      if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
-      if(num_cells > 0) {
-	int xrun = 1;
-	float bor_col = 1.0;
-	if(num_cells > 1) {	// Is between two active cells
-	  bor_col = 0.5;
-	  while((x+xrun) < xsize && present[y*xsize+x+xrun]
-		&& (!basecell[y*xsize+x+xrun])) ++xrun;
-	  }
-	glColor3f(bor_col, bor_col, bor_col);
-	glVertex3f(-1.0 + (2.0*((float)(x+xrun))/((float)(xsize))),
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	}
+      if (x < xsize && y < ysize && present[y * xsize + x]) ++num_cells;
+      if (x < xsize && y > 0 && present[(y - 1) * xsize + x]) ++num_cells;
+      if (num_cells > 1 && (!basecell[y * xsize + x])) num_cells = 0;
+      if (num_cells > 0) {
+        int xrun = 1;
+        float bor_col = 1.0;
+        if (num_cells > 1) {  // Is between two active cells
+          bor_col = 0.5;
+          while ((x + xrun) < xsize && present[y * xsize + x + xrun] &&
+                 (!basecell[y * xsize + x + xrun]))
+            ++xrun;
+        }
+        glColor3f(bor_col, bor_col, bor_col);
+        glVertex3f(-1.0 + (2.0 * ((float)(x + xrun)) / ((float)(xsize))),
+                   1.0 - (2.0 * ((float)(y)) / ((float)(ysize))), 0.0);
+        glVertex3f(-1.0 + (2.0 * ((float)(x)) / ((float)(xsize))),
+                   1.0 - (2.0 * ((float)(y)) / ((float)(ysize))), 0.0);
+      }
 
       num_cells = 0;
-      if(y < ysize && x < xsize && present[y*xsize+x]) ++num_cells;
-      if(y < ysize && x > 0 && present[y*xsize+x-1]) ++num_cells;
-      if(num_cells > 1 && (!basecell[y*xsize+x])) num_cells = 0;
-      if(num_cells > 0) {
-	int yrun = 1;
-	float bor_col = 1.0;
-	if(num_cells > 1) {	// Is between two active cells
-	  bor_col = 0.5;
-	  while((y+yrun) < ysize && present[(y+yrun)*xsize+x]
-		&& (!basecell[(y+yrun)*xsize+x])) ++yrun;
-	  }
-	glColor3f(bor_col, bor_col, bor_col);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
-		1.0 - (2.0*((float)(y))/((float)(ysize))), 0.0);
-	glVertex3f(-1.0 + (2.0*((float)(x))/((float)(xsize))),
-		1.0 - (2.0*((float)(y+yrun))/((float)(ysize))), 0.0);
-	}
+      if (y < ysize && x < xsize && present[y * xsize + x]) ++num_cells;
+      if (y < ysize && x > 0 && present[y * xsize + x - 1]) ++num_cells;
+      if (num_cells > 1 && (!basecell[y * xsize + x])) num_cells = 0;
+      if (num_cells > 0) {
+        int yrun = 1;
+        float bor_col = 1.0;
+        if (num_cells > 1) {  // Is between two active cells
+          bor_col = 0.5;
+          while ((y + yrun) < ysize && present[(y + yrun) * xsize + x] &&
+                 (!basecell[(y + yrun) * xsize + x]))
+            ++yrun;
+        }
+        glColor3f(bor_col, bor_col, bor_col);
+        glVertex3f(-1.0 + (2.0 * ((float)(x)) / ((float)(xsize))),
+                   1.0 - (2.0 * ((float)(y)) / ((float)(ysize))), 0.0);
+        glVertex3f(-1.0 + (2.0 * ((float)(x)) / ((float)(xsize))),
+                   1.0 - (2.0 * ((float)(y + yrun)) / ((float)(ysize))), 0.0);
       }
     }
+  }
   glEnd();
 
   glPopMatrix();
@@ -102,22 +102,24 @@ bool SG_DNDBoxes::RenderSelf(unsigned long cur_time) {
   int ret = SG_Table::RenderSelf(cur_time);
   background = tmpback;
   return ret;
-  }
+}
 
-void SG_DNDBoxes::UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) {
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      occupied[y*xsize + x] = false;
-      }
+void SG_DNDBoxes::UnconfigDrag(SG_Dragable *drag, int x1, int y1, int xs,
+                               int ys) {
+  for (int x = x1; x < x1 + xs; ++x) {
+    for (int y = y1; y < y1 + ys; ++y) {
+      occupied[y * xsize + x] = false;
     }
   }
+}
 
-void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) {
-  float mnx, mny, mxx, mxy;	//Limits
+void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs,
+                             int ys) {
+  float mnx, mny, mxx, mxy;  // Limits
   mnx = -(float)(x1) / (float)(xs);
   mny = -(float)(y1) / (float)(ys);
-  mxx = (float)(xsize-(x1+xs)) / (float)(xs);
-  mxy = (float)(ysize-(y1+ys)) / (float)(ys);
+  mxx = (float)(xsize - (x1 + xs)) / (float)(xs);
+  mxy = (float)(ysize - (y1 + ys)) / (float)(ys);
 
   drag->SetLimits(mnx, mny, mxx, mxy);
   drag->SetDisplayLimits(mnx * 2.0, mny * 2.0, mxx * 2.0, mxy * 2.0);
@@ -125,172 +127,163 @@ void SG_DNDBoxes::ConfigDrag(SG_Dragable *drag, int x1, int y1, int xs, int ys) 
   SG_Table::RemoveWidget(drag);
   SG_Table::AddWidget(drag, x1, y1, xs, ys);
 
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      occupied[y*xsize + x] = true;
-      }
+  for (int x = x1; x < x1 + xs; ++x) {
+    for (int y = y1; y < y1 + ys; ++y) {
+      occupied[y * xsize + x] = true;
     }
   }
+}
 
 bool SG_DNDBoxes::CanFit(int &x1, int &y1, int xs, int ys, Uint32 tps) {
-  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
-        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
+  if (x1 >= xsize || x1 < 0 || x1 + xs > xsize || xs < 1 || y1 >= ysize ||
+      y1 < 0 || y1 + ys > ysize || ys < 1) {
     return false;
-    }
-
-  if(!basecell[y1*xsize + x1]) {
-    for(int step = 1; step < 5; ++step) {	//FIXME: Auto-Detect Max Step
-      for(int lean = 0; lean < step; ++lean) {
-	if(basecell[(y1-step)*xsize + (x1-lean)]) {
-	  x1 -= lean;
-	  y1 -= step;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1-lean)*xsize + (x1-step)]) {
-	  x1 -= step;
-	  y1 -= lean;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1-step)*xsize + (x1+lean)]) {
-	  x1 += lean;
-	  y1 -= step;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1+lean)*xsize + (x1-step)]) {
-	  x1 -= step;
-	  y1 += lean;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1+step)*xsize + (x1-lean)]) {
-	  x1 -= lean;
-	  y1 += step;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1-lean)*xsize + (x1+step)]) {
-	  x1 += step;
-	  y1 -= lean;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1+step)*xsize + (x1+lean)]) {
-	  x1 += lean;
-	  y1 += step;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	else if(basecell[(y1+lean)*xsize + (x1+step)]) {
-	  x1 += step;
-	  y1 += lean;
-	  goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	  }
-	}
-      if(basecell[(y1-step)*xsize + (x1-step)]) {
-	y1 -= step;
-	x1 -= step;
-	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	}
-      else if(basecell[(y1-step)*xsize + (x1+step)]) {
-	y1 -= step;
-	x1 += step;
-	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	}
-      else if(basecell[(y1+step)*xsize + (x1+step)]) {
-	y1 += step;
-	x1 += step;
-	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	}
-      else if(basecell[(y1+step)*xsize + (x1-step)]) {
-	y1 += step;
-	x1 -= step;
-	goto fit;	//FIXME: A "goto"?  Man, I'm lazy.
-	}
-      }
-    }
-fit:
-
-  if(!basecell[y1*xsize + x1]) return false;
-
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      if(!present[y*xsize + x]) return false;
-      if(occupied[y*xsize + x]) return false;
-      if((invalids[y*xsize + x] & tps) != 0) return false;
-      }
-    }
-  return true;
   }
 
-bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
-	Uint32 id, Uint32 tps) {
-  if(!CanFit(x1, y1, xs, ys, tps)) {
-    fprintf(stderr, "Illegal DND add, (%d,%d) %dx%d (0x%.8X).\n",
-	x1, y1, xs, ys, tps);
-    return false;
+  if (!basecell[y1 * xsize + x1]) {
+    for (int step = 1; step < 5; ++step) {  // FIXME: Auto-Detect Max Step
+      for (int lean = 0; lean < step; ++lean) {
+        if (basecell[(y1 - step) * xsize + (x1 - lean)]) {
+          x1 -= lean;
+          y1 -= step;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 - lean) * xsize + (x1 - step)]) {
+          x1 -= step;
+          y1 -= lean;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 - step) * xsize + (x1 + lean)]) {
+          x1 += lean;
+          y1 -= step;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 + lean) * xsize + (x1 - step)]) {
+          x1 -= step;
+          y1 += lean;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 + step) * xsize + (x1 - lean)]) {
+          x1 -= lean;
+          y1 += step;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 - lean) * xsize + (x1 + step)]) {
+          x1 += step;
+          y1 -= lean;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 + step) * xsize + (x1 + lean)]) {
+          x1 += lean;
+          y1 += step;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        } else if (basecell[(y1 + lean) * xsize + (x1 + step)]) {
+          x1 += step;
+          y1 += lean;
+          goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+        }
+      }
+      if (basecell[(y1 - step) * xsize + (x1 - step)]) {
+        y1 -= step;
+        x1 -= step;
+        goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+      } else if (basecell[(y1 - step) * xsize + (x1 + step)]) {
+        y1 -= step;
+        x1 += step;
+        goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+      } else if (basecell[(y1 + step) * xsize + (x1 + step)]) {
+        y1 += step;
+        x1 += step;
+        goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+      } else if (basecell[(y1 + step) * xsize + (x1 - step)]) {
+        y1 += step;
+        x1 -= step;
+        goto fit;  // FIXME: A "goto"?  Man, I'm lazy.
+      }
     }
+  }
+fit:
+
+  if (!basecell[y1 * xsize + x1]) return false;
+
+  for (int x = x1; x < x1 + xs; ++x) {
+    for (int y = y1; y < y1 + ys; ++y) {
+      if (!present[y * xsize + x]) return false;
+      if (occupied[y * xsize + x]) return false;
+      if ((invalids[y * xsize + x] & tps) != 0) return false;
+    }
+  }
+  return true;
+}
+
+bool SG_DNDBoxes::AddItem(SDL_Surface *icon, int x1, int y1, int xs, int ys,
+                          Uint32 id, Uint32 tps) {
+  if (!CanFit(x1, y1, xs, ys, tps)) {
+    fprintf(stderr, "Illegal DND add, (%d,%d) %dx%d (0x%.8X).\n", x1, y1, xs,
+            ys, tps);
+    return false;
+  }
 
   SG_Dragable *drag = new SG_Dragable(icon);
   drag->SetTransparent();
 
   ConfigDrag(drag, x1, y1, xs, ys);
-  ItemInfo info = { id, tps };
+  ItemInfo info = {id, tps};
   itemmap[drag] = info;
 
   return true;
-  }
+}
 
 void SG_DNDBoxes::RemoveItem(int x1, int y1) {
   vector<SG_Dragable *> to_delete;
 
   vector<SG_Widget *>::iterator itrw = widgets.begin();
   vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-  for(; itrw != widgets.end(); ++itrw, ++itrg) {
-    if(itrg->xpos == x1 && itrg->ypos == y1) {
-      SG_Dragable *drag = (SG_Dragable*)(*itrw);
+  for (; itrw != widgets.end(); ++itrw, ++itrg) {
+    if (itrg->xpos == x1 && itrg->ypos == y1) {
+      SG_Dragable *drag = (SG_Dragable *)(*itrw);
       UnconfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
       to_delete.push_back(drag);
-      }
     }
+  }
 
   vector<SG_Dragable *>::iterator itrd = to_delete.begin();
-  for(; itrd != to_delete.end(); ++itrd) {
+  for (; itrd != to_delete.end(); ++itrd) {
     SG_Dragable *drag = (*itrd);
     SG_Table::RemoveWidget(drag);
     itemmap.erase(drag);
     delete drag;
-    }
   }
+}
 
 bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_DRAGRELEASE) {
+  if (event->user.code == SG_EVENT_DRAGRELEASE) {
     vector<SG_Widget *>::iterator itrw = widgets.begin();
     vector<SG_TableGeometry>::iterator itrg = wgeom.begin();
-    for(; itrw != widgets.end(); ++itrw, ++itrg) {
-      if(((SG_Ranger2D*)(event->user.data1))
-		== (SG_Ranger2D*)(SG_Dragable*)(*itrw)) break;
-      }
-    if(itrw == widgets.end()) {
+    for (; itrw != widgets.end(); ++itrw, ++itrg) {
+      if (((SG_Ranger2D *)(event->user.data1)) ==
+          (SG_Ranger2D *)(SG_Dragable *)(*itrw))
+        break;
+    }
+    if (itrw == widgets.end()) {
       fprintf(stderr, "ERROR: DNDBoxes got an event from a non-child child!\n");
       exit(1);
-      }
+    }
 
-    SG_Dragable *drag = (SG_Dragable*)(*itrw);
+    SG_Dragable *drag = (SG_Dragable *)(*itrw);
 
-    float offx = ((float*)(event->user.data2))[0] * itrg->xsize;
-    float offy = ((float*)(event->user.data2))[1] * itrg->ysize;
+    float offx = ((float *)(event->user.data2))[0] * itrg->xsize;
+    float offy = ((float *)(event->user.data2))[1] * itrg->ysize;
     int targx = (int)(offx + itrg->xpos + 0.5);
     int targy = (int)(offy + itrg->ypos + 0.5);
 
-    if(targx == itrg->xpos && targy == itrg->ypos) {
+    if (targx == itrg->xpos && targy == itrg->ypos) {
       event->type = SDL_SG_EVENT;
       event->user.code = SG_EVENT_NEEDTORENDER;
       event->user.data1 = NULL;
       event->user.data2 = NULL;
       return true;
-      }
+    }
 
     bool allowed = false;
     UnconfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
-    if(CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
+    if (CanFit(targx, targy, itrg->xsize, itrg->ysize, itemmap[drag].types)) {
       allowed = true;
-      }
+    }
 
     static SG_Event_DataType event_data;
     event_data.i[0] = itemmap[drag].id;
@@ -300,30 +293,28 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
     event_data.i[4] = itrg->ypos;
 
     event->type = SDL_SG_EVENT;
-    event->user.data1 = (SG_Compound*)(this);
-    event->user.data2 = (void*)&event_data;
+    event->user.data1 = (SG_Compound *)(this);
+    event->user.data2 = (void *)&event_data;
 
-    if(allowed) {
+    if (allowed) {
       event->user.code = SG_EVENT_DND;
-      event_data.i[5] = cellids[targy*xsize + targx];
-      event_data.i[6] = cellids[itrg->ypos*xsize + itrg->xpos];
+      event_data.i[5] = cellids[targy * xsize + targx];
+      event_data.i[6] = cellids[itrg->ypos * xsize + itrg->xpos];
 
       ConfigDrag(drag, targx, targy, itrg->xsize, itrg->ysize);
       drag->SetValues(0.0, 0.0);
       return true;
-      }
-    else {
+    } else {
       ConfigDrag(drag, itrg->xpos, itrg->ypos, itrg->xsize, itrg->ysize);
       drag->SetValues(0.0, 0.0);
       event->user.code = SG_EVENT_DNDDENIED;
       return true;
-      }
     }
-  else if(event->user.code == SG_EVENT_MOVE2D) {
+  } else if (event->user.code == SG_EVENT_MOVE2D) {
     // Fixme - dynamic highlighting?
-    }
-  return false; // Silence children doing other things
   }
+  return false;  // Silence children doing other things
+}
 
 //  bool SG_DNDBoxes::SetDefaultCursor(GL_MODEL *cur);
 
@@ -332,49 +323,49 @@ bool SG_DNDBoxes::ChildEvent(SDL_Event *event) {
 bool SG_DNDBoxes::AddWidget(SG_Widget *wid) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
   return 0;
-  }
+}
 
 bool SG_DNDBoxes::AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
   return 0;
-  }
+}
 
 void SG_DNDBoxes::RemoveWidget(SG_Widget *wid) {
   fprintf(stderr, "WARNING: Called %s on DNDBoxes - INVALID!\n", __FUNCTION__);
-  }
+}
 
 void SG_DNDBoxes::Exclude(int x1, int y1, int xs, int ys) {
-  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
-        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
-    fprintf(stderr, "Illegal DNDBox Exclude, (%d,%d)/%dx%d in (%dx%d)\n",
-        x1, y1, xs, ys, xsize, ysize);
+  if (x1 >= xsize || x1 < 0 || x1 + xs > xsize || xs < 1 || y1 >= ysize ||
+      y1 < 0 || y1 + ys > ysize || ys < 1) {
+    fprintf(stderr, "Illegal DNDBox Exclude, (%d,%d)/%dx%d in (%dx%d)\n", x1,
+            y1, xs, ys, xsize, ysize);
     exit(1);
-    }
+  }
 
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      present[y*xsize + x] = false;
-      }
+  for (int x = x1; x < x1 + xs; ++x) {
+    for (int y = y1; y < y1 + ys; ++y) {
+      present[y * xsize + x] = false;
     }
   }
+}
 
 void SG_DNDBoxes::Include(int x1, int y1, int xs, int ys, int xcs, int ycs,
-	Uint32 id, Uint32 inv) {
-  if(x1 >= xsize || x1 < 0 || x1+xs > xsize || xs < 1
-        || y1 >= ysize || y1 < 0 || y1+ys > ysize || ys < 1) {
-    fprintf(stderr, "Illegal DNDBox Include, (%d,%d)/%dx%d in (%dx%d)\n",
-        x1, y1, xs, ys, xsize, ysize);
+                          Uint32 id, Uint32 inv) {
+  if (x1 >= xsize || x1 < 0 || x1 + xs > xsize || xs < 1 || y1 >= ysize ||
+      y1 < 0 || y1 + ys > ysize || ys < 1) {
+    fprintf(stderr, "Illegal DNDBox Include, (%d,%d)/%dx%d in (%dx%d)\n", x1,
+            y1, xs, ys, xsize, ysize);
     exit(1);
-    }
+  }
 
-  for(int x = x1; x < x1+xs; ++x) {
-    for(int y = y1; y < y1+ys; ++y) {
-      present[y*xsize + x] = true;
-      if((x - x1) % xcs == 0 && (y - y1) % ycs == 0) {	//Is it a base cell?
-	basecell[y*xsize + x] = true;
-	}
-      cellids[y*xsize + x] = id;
-      invalids[y*xsize + x] = inv;
+  for (int x = x1; x < x1 + xs; ++x) {
+    for (int y = y1; y < y1 + ys; ++y) {
+      present[y * xsize + x] = true;
+      if ((x - x1) % xcs == 0 && (y - y1) % ycs == 0) {  // Is it a base cell?
+        basecell[y * xsize + x] = true;
       }
+      cellids[y * xsize + x] = id;
+      invalids[y * xsize + x] = inv;
     }
   }
+}

@@ -19,12 +19,11 @@
 //
 // *************************************************************************
 
-#ifndef	Q3ANIM_H
-#define	Q3ANIM_H
+#ifndef Q3ANIM_H
+#define Q3ANIM_H
 
 enum Q3Animation {
   ANIM_START = 0,
-
   BOTH_START = ANIM_START,
   BOTH_DEATH1 = BOTH_START,
   BOTH_DEAD1,
@@ -33,7 +32,6 @@ enum Q3Animation {
   BOTH_DEATH3,
   BOTH_DEAD3,
   BOTH_MAX,
-
   TORSO_START = BOTH_MAX,
   TORSO_GESTURE = TORSO_START,
   TORSO_ATTACK,
@@ -43,7 +41,6 @@ enum Q3Animation {
   TORSO_STAND,
   TORSO_STAND2,
   TORSO_MAX,
-
   LEGS_START = TORSO_MAX,
   LEGS_WALKCR = LEGS_START,
   LEGS_WALK,
@@ -58,8 +55,7 @@ enum Q3Animation {
   LEGS_IDLECR,
   LEGS_TURN,
   LEGS_MAX,
-
   ANIM_MAX = LEGS_MAX
-  };
+};
 
-#endif	//Q3ANIM_H
+#endif  // Q3ANIM_H

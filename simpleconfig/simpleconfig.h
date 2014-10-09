@@ -35,18 +35,19 @@ class SG_ComboBox;
 class SG_Alignment;
 
 class SimpleConfig : public SG_MultiTab {
-public:
-  SimpleConfig(const vector<string> &other_tabs= vector<string>(),
-	const vector<SG_Alignment*> &other_screens = vector<SG_Alignment*>());
+ public:
+  SimpleConfig(
+      const vector<string> &other_tabs = vector<string>(),
+      const vector<SG_Alignment *> &other_screens = vector<SG_Alignment *>());
   virtual ~SimpleConfig();
 
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_Alignment *BuildVideoScreen();
   SG_Alignment *BuildAudioScreen();
   SG_Alignment *BuildMouseScreen();
@@ -65,6 +66,6 @@ protected:
   SG_TextArea *rescue_indicator;
   SG_TextArea *rescue_label;
   vector<int> xsize, ysize;
-  };
+};
 
-#endif // SIMPLECONFIG_H
+#endif  // SIMPLECONFIG_H

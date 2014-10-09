@@ -36,7 +36,7 @@ using namespace std;
 
 #include "click.h"
 
-int user_quit = 0;	//Don't need to mutex this one - no race condition
+int user_quit = 0;  // Don't need to mutex this one - no race condition
 static SimpleGUI *gui;
 
 static bool go_left = false, go_right = false, go_up = false, go_down = false;
@@ -47,97 +47,103 @@ int event_thread_handler(void *arg) {
 
   SDL_Event event;
 
-  while(!user_quit) {
-    while(!user_quit && gui->WaitEvent(&event, true)) {
-      if(event.type == SDL_SG_EVENT) {
-	if(event.user.code == SG_EVENT_BUTTONPRESS) {
-	  audio_play(click, 8, 8);
-	  }
-	}
-      else if(event.type == SDL_KEYDOWN) {
-	if(event.key.keysym.sym == SDLK_ESCAPE) {
-	  user_quit = 1;
-	  }
-	else if(event.key.keysym.sym == SDLK_LEFT) {
-	  while(go_left) SDL_Delay(10);
-	  go_left = true;
-	  }
-	else if(event.key.keysym.sym == SDLK_RIGHT) {
-	  while(go_right) SDL_Delay(10);
-	  go_right = true;
-	  }
-	else if(event.key.keysym.sym == SDLK_UP) {
-	  while(go_up) SDL_Delay(10);
-	  go_up = true;
-	  }
-	else if(event.key.keysym.sym == SDLK_DOWN) {
-	  while(go_down) SDL_Delay(10);
-	  go_down = true;
-	  }
-	}
-      else if(event.type == SDL_QUIT) {
-	user_quit = 1;
-	}
+  while (!user_quit) {
+    while (!user_quit && gui->WaitEvent(&event, true)) {
+      if (event.type == SDL_SG_EVENT) {
+        if (event.user.code == SG_EVENT_BUTTONPRESS) {
+          audio_play(click, 8, 8);
+        }
+      } else if (event.type == SDL_KEYDOWN) {
+        if (event.key.keysym.sym == SDLK_ESCAPE) {
+          user_quit = 1;
+        } else if (event.key.keysym.sym == SDLK_LEFT) {
+          while (go_left) SDL_Delay(10);
+          go_left = true;
+        } else if (event.key.keysym.sym == SDLK_RIGHT) {
+          while (go_right) SDL_Delay(10);
+          go_right = true;
+        } else if (event.key.keysym.sym == SDLK_UP) {
+          while (go_up) SDL_Delay(10);
+          go_up = true;
+        } else if (event.key.keysym.sym == SDLK_DOWN) {
+          while (go_down) SDL_Delay(10);
+          go_down = true;
+        }
+      } else if (event.type == SDL_QUIT) {
+        user_quit = 1;
       }
-    SDL_Delay(10); // Weak, yes, but this is how SDL does it too. :(
     }
-  return 0;
+    SDL_Delay(10);  // Weak, yes, but this is how SDL does it too. :(
   }
+  return 0;
+}
 
-int video_thread_handler(void *arg) { // MUST BE IN SAME THREAD AS SDL_Init()!
+int video_thread_handler(void *arg) {  // MUST BE IN SAME THREAD AS SDL_Init()!
   SimpleVideo *video = (SimpleVideo *)arg;
-  while(!user_quit) {
+  while (!user_quit) {
     unsigned long cur_time = SDL_GetTicks();
 
-    if(go_left)  { tabs->Left();  go_left = false;  }
-    if(go_right) { tabs->Right(); go_right = false; }
-    if(go_up)    { tabs->Up();    go_up = false;    }
-    if(go_down)  { tabs->Down();  go_down = false;  }
+    if (go_left) {
+      tabs->Left();
+      go_left = false;
+    }
+    if (go_right) {
+      tabs->Right();
+      go_right = false;
+    }
+    if (go_up) {
+      tabs->Up();
+      go_up = false;
+    }
+    if (go_down) {
+      tabs->Down();
+      go_down = false;
+    }
 
     video->StartScene();
     gui->RenderStart(cur_time, true);
     gui->RenderFinish(cur_time, true);
     video->FinishScene();
-    }
-  return 0;
   }
+  return 0;
+}
 
 int game_thread_handler(void *arg) {
-//  while(!user_quit) {
-//    We would do game stuff - carfully coordinated with input from events
-//    and output to renderers.
+  //  while(!user_quit) {
+  //    We would do game stuff - carfully coordinated with input from events
+  //    and output to renderers.
 
-//    This would just busy-wait as it's written now, so the while() is
-//    commented out.
-//    }
+  //    This would just busy-wait as it's written now, so the while() is
+  //    commented out.
+  //    }
   return 0;
-  }
+}
 
 int main(int argc, char **argv) {
   char *fontfn = NULL;
-  int xs=640, ys=480;
+  int xs = 640, ys = 480;
 
   int cur_arg = 1;
 
-  while(1) {		//Don't ever code anything like this
-    if(argc > cur_arg) {
-      if(!strcasecmp(argv[cur_arg]+strlen(argv[cur_arg])-4, ".ttf")) {
-	fontfn = argv[cur_arg];
-	++cur_arg;
-	continue;
-	}
+  while (1) {  // Don't ever code anything like this
+    if (argc > cur_arg) {
+      if (!strcasecmp(argv[cur_arg] + strlen(argv[cur_arg]) - 4, ".ttf")) {
+        fontfn = argv[cur_arg];
+        ++cur_arg;
+        continue;
       }
-    if(argc > cur_arg) {
-      if(sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
-	xs=1024; ys=768;
-	}
-      else {
-	++cur_arg;
-	continue;
-	}
-      }
-    break;
     }
+    if (argc > cur_arg) {
+      if (sscanf(argv[cur_arg], "%dx%d", &xs, &ys) != 2) {
+        xs = 1024;
+        ys = 768;
+      } else {
+        ++cur_arg;
+        continue;
+      }
+    }
+    break;
+  }
 
   // Set up SimpleVideo, aligned just like old renderer was
   fprintf(stderr, "Yah, set this shit up.\n");
@@ -148,11 +154,11 @@ int main(int argc, char **argv) {
 
   audio_init(2048);
 
-//  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);
-  gui = new SimpleGUI(ASPECT_FIXED_Y|ASPECT_FIXED_X, 4.0/3.0);
-//  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
+  //  gui = new SimpleGUI(ASPECT_NO_SUPPORT, 4.0/3.0);
+  gui = new SimpleGUI(ASPECT_FIXED_Y | ASPECT_FIXED_X, 4.0 / 3.0);
+  //  gui = new SimpleGUI(ASPECT_EXPANDING_Y|ASPECT_EXPANDING_X, 4.0/3.0);
 
-  if(fontfn) gui->LoadFont(fontfn);
+  if (fontfn) gui->LoadFont(fontfn);
 
   gui->SetDefaultTextColor(0.0, 0.0, 0.0);
 
@@ -160,11 +166,11 @@ int main(int argc, char **argv) {
   gui->MasterWidget()->AddWidget(split);
 
   vector<string> buttons;
-  for(int n=0; n < 4*16; ++n) {
-    static char buf[8] = { 0 };
-    sprintf(buf, "B:%d%c", n+1, 0);  //I don't trust sprintf() to null term.
+  for (int n = 0; n < 4 * 16; ++n) {
+    static char buf[8] = {0};
+    sprintf(buf, "B:%d%c", n + 1, 0);  // I don't trust sprintf() to null term.
     buttons.push_back(buf);
-    }
+  }
   SG_Scrollable *scr = new SG_Scrollable(3.0, 12.0);
   split->AddWidget(scr, 3, 0);
 
@@ -179,11 +185,12 @@ int main(int argc, char **argv) {
 
   ev_t = SDL_CreateThread(event_thread_handler, "event", NULL);
   game_t = SDL_CreateThread(game_thread_handler, "game", NULL);
-  video_thread_handler((void *)(video)); //THIS thread MUST be the video thread
+  video_thread_handler((void *)(video));  // THIS thread MUST be the video
+                                          // thread
 
   SDL_WaitThread(ev_t, NULL);
   SDL_WaitThread(game_t, NULL);
 
   delete gui;
   return 0;
-  }
+}

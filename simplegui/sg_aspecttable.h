@@ -24,19 +24,20 @@
 
 #include "sg_table.h"
 
-#define SG_CENTER	0x00
-#define SG_LEFT		0x01
-#define SG_RIGHT	0x02
-#define SG_UP		0x10
-#define SG_UP_LEFT	0x11
-#define SG_UP_RIGHT	0x12
-#define SG_DOWN		0x20
-#define SG_DOWN_LEFT	0x21
-#define SG_DOWN_RIGHT	0x22
+#define SG_CENTER 0x00
+#define SG_LEFT 0x01
+#define SG_RIGHT 0x02
+#define SG_UP 0x10
+#define SG_UP_LEFT 0x11
+#define SG_UP_RIGHT 0x12
+#define SG_DOWN 0x20
+#define SG_DOWN_LEFT 0x21
+#define SG_DOWN_RIGHT 0x22
 
 class SG_AspectTable : public SG_Table {
-public:
-  SG_AspectTable(float aspect, int xsz, int ysz, float xbor = 0.0, float ybor = 0.0);
+ public:
+  SG_AspectTable(float aspect, int xsz, int ysz, float xbor = 0.0,
+                 float ybor = 0.0);
   virtual ~SG_AspectTable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
   virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
@@ -46,21 +47,20 @@ public:
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int grav);
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys);
   virtual bool AddWidget(SG_Widget *wid, int x1, int y1, int xs, int ys,
-	int grav);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+                         int grav);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
   virtual void SetAspectRatio(float asp);
   virtual bool RenderSelf(unsigned long cur_time);
 
-protected:
+ protected:
   void CalcGeometry(SG_AlignmentGeometry &geom,
-	const vector<SG_TableGeometry>::iterator &wgeom,
-	const vector<int>::iterator &wgrav
-	);
+                    const vector<SG_TableGeometry>::iterator &wgeom,
+                    const vector<int>::iterator &wgrav);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   float fixed_aspect;
   vector<int> wgrav;
-  };
+};
 
-#endif // SG_ASPECTTABLE_H
+#endif  // SG_ASPECTTABLE_H

@@ -23,31 +23,31 @@
 
 STT_RightButton_Down::STT_RightButton_Down(const SDL_Color &txtcol) {
   textcol = txtcol;
-  }
+}
 
 SDL_Surface *STT_RightButton_Down::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  SDL_Surface *ret = BuildInternal(surf, xsize, ysize,
-	base_col(col), dark_col(col), light_col(col));
+                                                const Uint32 xsize,
+                                                const Uint32 ysize,
+                                                const SDL_Color &col) {
+  SDL_Surface *ret = BuildInternal(surf, xsize, ysize, base_col(col),
+                                   dark_col(col), light_col(col));
 
-  int width = xsize/16;
-  if(width > int(ysize/16)) width = ysize/16;
-  if(width < 1) width = 1;
+  int width = xsize / 16;
+  if (width > int(ysize / 16)) width = ysize / 16;
+  if (width < 1) width = 1;
 
-  SDL_Rect point = { width * 2, width * 2, width, width };
+  SDL_Rect point = {width * 2, width * 2, width, width};
 
-  for(Uint32 pos = ysize/4; pos <= ysize / 2; ++pos) {
-    point.x = xsize/2;
+  for (Uint32 pos = ysize / 4; pos <= ysize / 2; ++pos) {
+    point.x = xsize / 2;
     point.y = pos;
-    point.w = (xsize * pos / ysize) - ysize/4;
-    SDL_FillRect(ret, &point, SDL_MapRGB(
-	ret->format, textcol.r, textcol.g, textcol.b
-	));
+    point.w = (xsize * pos / ysize) - ysize / 4;
+    SDL_FillRect(ret, &point,
+                 SDL_MapRGB(ret->format, textcol.r, textcol.g, textcol.b));
     point.y = ysize - pos;
-    SDL_FillRect(ret, &point, SDL_MapRGB(
-	ret->format, textcol.r, textcol.g, textcol.b
-	));
-    }
+    SDL_FillRect(ret, &point,
+                 SDL_MapRGB(ret->format, textcol.r, textcol.g, textcol.b));
+  }
 
   return ret;
-  }
+}

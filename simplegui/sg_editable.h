@@ -25,18 +25,17 @@
 #include "sg_textarea.h"
 
 class SG_Editable : public SG_TextArea {
-public:
+ public:
   SG_Editable(const string mes = "", SimpleTexture c = SG_COL_LOW,
-	SimpleTexture dc = SG_COL_BG, SimpleTexture fc = SG_COL_HIGH);
+              SimpleTexture dc = SG_COL_BG, SimpleTexture fc = SG_COL_HIGH);
   virtual ~SG_Editable();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_EDITABLE_H
-
+#endif  // SG_EDITABLE_H

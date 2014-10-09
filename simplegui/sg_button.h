@@ -25,19 +25,19 @@
 #include "sg_textarea.h"
 
 class SG_Button : public SG_TextArea {
-public:
+ public:
   SG_Button(const string &mes = "", SimpleTexture tex = SG_COL_RAISED,
-	SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW);
+            SimpleTexture dis_tex = SG_COL_LOW,
+            SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_Button();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
 
   static ST_Texturator *stt_butt_up;
   static ST_Texturator *stt_butt_dn;
-  };
+};
 
-#endif // SG_BUTTON_H
-
+#endif  // SG_BUTTON_H

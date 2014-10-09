@@ -22,69 +22,55 @@
 #include "sg_alignment.h"
 #include "sg_globals.h"
 
-SG_Widget::SG_Widget() {
-  flags = 0;
-  }
+SG_Widget::SG_Widget() { flags = 0; }
 
 SG_Widget::~SG_Widget() {
-  if(current_sg->CurrentWidget() == this) current_sg->UnsetCurrentWidget();
-  if(current_sg->FocusWidget() == this) current_sg->UnsetFocusWidget();
-  if(current_sg->PopupWidget() == this) current_sg->UnsetPopupWidget();
-  }
+  if (current_sg->CurrentWidget() == this) current_sg->UnsetCurrentWidget();
+  if (current_sg->FocusWidget() == this) current_sg->UnsetFocusWidget();
+  if (current_sg->PopupWidget() == this) current_sg->UnsetPopupWidget();
+}
 
 int SG_Widget::HandleEvent(SDL_Event *event, float x, float y) {
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
-  if(event->type == SDL_MOUSEBUTTONDOWN
-	&& (event->button.button == 4 || event->button.button == 5)) {
-		// Allow mousewheel events to pass through
+  if (event->type == SDL_MOUSEBUTTONDOWN &&
+      (event->button.button == 4 || event->button.button == 5)) {
+    // Allow mousewheel events to pass through
     return -1;
-    }
+  }
 
   return 1;
-  }
+}
 
-bool SG_Widget::HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y) {
-  if(targ == this) return HandleEvent(event, x, y);
+bool SG_Widget::HandEventTo(SG_Widget *targ, SDL_Event *event, float x,
+                            float y) {
+  if (targ == this) return HandleEvent(event, x, y);
   return 1;
-  }
+}
 
-bool SG_Widget::HasWidget(SG_Widget *targ) {
-  return this == targ;
-  }
+bool SG_Widget::HasWidget(SG_Widget *targ) { return this == targ; }
 
 bool SG_Widget::Render(unsigned long cur_time, bool final) {
-  if(flags & SG_WIDGET_FLAGS_HIDDEN) return true;
+  if (flags & SG_WIDGET_FLAGS_HIDDEN) return true;
 
-  if((!final) && current_sg->CurrentWidget() == this) {	// Not my turn yet
+  if ((!final) && current_sg->CurrentWidget() == this) {  // Not my turn yet
     current_sg->SaveCurrentMatrix();
     return true;
-    }
+  }
 
   return RenderSelf(cur_time);
-  }
+}
 
-bool SG_Widget::RenderSelf(unsigned long cur_time) {
-  return 1;
-  }
+bool SG_Widget::RenderSelf(unsigned long cur_time) { return 1; }
 
-void SG_Widget::Disable() {
-  flags |= SG_WIDGET_FLAGS_DISABLED;
-  }
+void SG_Widget::Disable() { flags |= SG_WIDGET_FLAGS_DISABLED; }
 
-void SG_Widget::Enable() {
-  flags &= (~SG_WIDGET_FLAGS_DISABLED);
-  }
+void SG_Widget::Enable() { flags &= (~SG_WIDGET_FLAGS_DISABLED); }
 
-void SG_Widget::TurnOn() {
-  flags |= SG_WIDGET_FLAGS_ON;
-  }
+void SG_Widget::TurnOn() { flags |= SG_WIDGET_FLAGS_ON; }
 
-void SG_Widget::TurnOff() {
-  flags &= (~SG_WIDGET_FLAGS_ON);
-  }
+void SG_Widget::TurnOff() { flags &= (~SG_WIDGET_FLAGS_ON); }
 
 //  bool SG_Widget::SetDefaultCursor(GL_MODEL *cur);
 //  bool SG_Widget::SetCursor(GL_MODEL *cur)
@@ -92,12 +78,8 @@ void SG_Widget::TurnOff() {
 
 //  static GL_MODEL SG_Widget::Default_Mouse_Cursor = NULL;
 
-void SG_Widget::AdjustGeometry(SG_AlignmentGeometry *geom) {
-  }
+void SG_Widget::AdjustGeometry(SG_AlignmentGeometry *geom) {}
 
-void SG_Widget::SetAspectRatio(float asp) {
-  aspect_ratio = asp;
-  }
+void SG_Widget::SetAspectRatio(float asp) { aspect_ratio = asp; }
 
-void SG_Widget::SetAlignment(int align) {
-  }
+void SG_Widget::SetAlignment(int align) {}

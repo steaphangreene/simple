@@ -26,11 +26,14 @@
 using namespace std;
 
 class SG_Text {
-public:
+ public:
   SG_Text() {};
   virtual ~SG_Text() {};
-  virtual const string &Text() { static string s; return s; };
-  virtual void SetText(const string &txt) {};
+  virtual const string &Text() {
+    static string s;
+    return s;
   };
+  virtual void SetText(const string &txt) {};
+};
 
-#endif // SG_TEXT_H
+#endif  // SG_TEXT_H

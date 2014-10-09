@@ -28,49 +28,48 @@
 SG_Panel::SG_Panel(SimpleTexture tex) : SG_Widget() {
   texture.push_back(tex);
   state = 0;
-  }
+}
 
 SG_Panel::~SG_Panel() {
-// Deletion of SimpleTexture objects takes care of everything.
-  }
+  // Deletion of SimpleTexture objects takes care of everything.
+}
 
 int SG_Panel::HandleEvent(SDL_Event *event, float x, float y) {
-//  if(event->type == SDL_MOUSEBUTTONDOWN)
-//    fprintf(stderr, "Panel/Handle: Button Down at (%f,%f)\n", x, y);
+  //  if(event->type == SDL_MOUSEBUTTONDOWN)
+  //    fprintf(stderr, "Panel/Handle: Button Down at (%f,%f)\n", x, y);
 
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;  // Ignore all events
 
-  if(event->type == SDL_MOUSEBUTTONDOWN
-	&& (event->button.button == 4 || event->button.button == 5)) {
-		// Allow mousewheel events to pass through
+  if (event->type == SDL_MOUSEBUTTONDOWN &&
+      (event->button.button == 4 || event->button.button == 5)) {
+    // Allow mousewheel events to pass through
     return -1;
-    }
-
-  return 0;	// This widget eats all other mouse events all the time
   }
 
+  return 0;  // This widget eats all other mouse events all the time
+}
+
 bool SG_Panel::RenderSelf(unsigned long cur_time) {
-//  fprintf(stderr, "Rendering Panel %p!\n", this);
+  //  fprintf(stderr, "Rendering Panel %p!\n", this);
 
   glPushMatrix();
 
-  if(texture[state].type == SIMPLETEXTURE_TRANS
-	|| texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
+  if (texture[state].type == SIMPLETEXTURE_TRANS ||
+      texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
     glEnable(GL_BLEND);
-    }
+  }
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texture[state].GLTexture());
   glColor3f(1.0f, 1.0f, 1.0f);
 
-
   glBegin(GL_QUADS);
   glTexCoord2f(texture[state].ScaleX(0.0), texture[state].ScaleY(1.0));
   glVertex3f(-1.0, -1.0, 0.0);
   glTexCoord2f(texture[state].ScaleX(1.0), texture[state].ScaleY(1.0));
-  glVertex3f( 1.0, -1.0, 0.0);
+  glVertex3f(1.0, -1.0, 0.0);
   glTexCoord2f(texture[state].ScaleX(1.0), texture[state].ScaleY(0.0));
-  glVertex3f( 1.0, 1.0, 0.0);
+  glVertex3f(1.0, 1.0, 0.0);
   glTexCoord2f(texture[state].ScaleX(0.0), texture[state].ScaleY(0.0));
   glVertex3f(-1.0, 1.0, 0.0);
   glEnd();
@@ -78,46 +77,44 @@ bool SG_Panel::RenderSelf(unsigned long cur_time) {
   glBindTexture(GL_TEXTURE_2D, 0);
   glDisable(GL_TEXTURE_2D);
 
-  if(texture[state].type == SIMPLETEXTURE_TRANS
-	|| texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
+  if (texture[state].type == SIMPLETEXTURE_TRANS ||
+      texture[state].type == SIMPLETEXTURE_TRANSCOLOR) {
     glDisable(GL_BLEND);
-    }
+  }
 
   glPopMatrix();
 
   return true;
-  }
+}
 
 void SG_Panel::SetTransparent(bool val) {
-  for(int tx = 0; tx < int(texture.size()); ++tx) {
-    if(texture[tx].type == SIMPLETEXTURE_COLOR
-	|| texture[tx].type == SIMPLETEXTURE_TRANSCOLOR) {
+  for (int tx = 0; tx < int(texture.size()); ++tx) {
+    if (texture[tx].type == SIMPLETEXTURE_COLOR ||
+        texture[tx].type == SIMPLETEXTURE_TRANSCOLOR) {
       texture[tx].type = (val) ? SIMPLETEXTURE_TRANSCOLOR : SIMPLETEXTURE_COLOR;
-      }
-    else if(texture[tx].type == SIMPLETEXTURE_TRANS
-	|| texture[tx].type == SIMPLETEXTURE_DEFINED) {
+    } else if (texture[tx].type == SIMPLETEXTURE_TRANS ||
+               texture[tx].type == SIMPLETEXTURE_DEFINED) {
       texture[tx].type = (val) ? SIMPLETEXTURE_TRANS : SIMPLETEXTURE_DEFINED;
-      }
     }
   }
+}
 
 //  bool SG_Panel::SetDefaultCursor(GL_MODEL *cur);
 
 //  static GL_MODEL SG_Panel::Default_Mouse_Cursor = NULL;
 
 void SG_Panel::SetTexture(SimpleTexture tex, int st) {
-  if(st < 0 || st >= (int)(texture.size())) return;
+  if (st < 0 || st >= (int)(texture.size())) return;
   texture[st].SetTexture(tex);
-  }
+}
 
 void SG_Panel::SetTexturator(ST_Texturator *stt, int st) {
   texture[st].SetTexturator(stt);
-  }
-
+}
 
 void SG_Panel::SetAspectRatio(float asp) {
   aspect_ratio = asp;
-  for(int tx = 0; tx < int(texture.size()); ++tx) {
+  for (int tx = 0; tx < int(texture.size()); ++tx) {
     texture[tx].SetTextAspectRatio(asp);
-    }
   }
+}

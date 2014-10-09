@@ -31,15 +31,15 @@ class SG_Button;
 class SG_TextArea;
 
 class SG_BasicCompound : public SG_Compound {
-public:
+ public:
   SG_BasicCompound();
   virtual ~SG_BasicCompound();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_Button *okb;
-  };
+};
 
-#endif // SG_BASICCOMPOUND_H
+#endif  // SG_BASICCOMPOUND_H

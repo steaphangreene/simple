@@ -26,9 +26,9 @@
 #include "simplevideo.h"
 
 SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
-        const vector<SG_Alignment*> &other_screens) {
+                           const vector<SG_Alignment *> &other_screens) {
   vector<string> items(4 + other_tabs.size());
-  vector<SG_Alignment*> screens(4 + other_tabs.size());
+  vector<SG_Alignment *> screens(4 + other_tabs.size());
   items[0] = "Video";
   items[1] = "Audio";
   items[2] = "Mouse";
@@ -37,8 +37,8 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   screens[1] = BuildAudioScreen();
   screens[2] = BuildMouseScreen();
   screens[3] = BuildKeyboardScreen();
-  copy(other_tabs.begin(), other_tabs.end(), items.begin()+4);
-  copy(other_screens.begin(), other_screens.end(), screens.begin()+4);
+  copy(other_tabs.begin(), other_tabs.end(), items.begin() + 4);
+  copy(other_screens.begin(), other_screens.end(), screens.begin() + 4);
   Resize(1, 16);
   SetItems(items);
   SetAreas(screens);
@@ -50,81 +50,81 @@ SimpleConfig::SimpleConfig(const vector<string> &other_tabs,
   confirm = true;
   rescue_thread = NULL;
   SetBackground(new SG_Panel());
-  }
+}
 
 SimpleConfig::~SimpleConfig() {
   confirm = true;
-  if(rescue_thread) SDL_WaitThread(rescue_thread, NULL);
+  if (rescue_thread) SDL_WaitThread(rescue_thread, NULL);
   rescue_thread = NULL;
-  }
+}
 
 bool SimpleConfig::RenderSelf(unsigned long cur_time) {
-  if(setback) {
+  if (setback) {
     SetMode(oldmode);
     setback = false;
     modebox->Set(mode);
-    }
-  if(timeleft != disptime) {
-    if(disptime == 0) {
+  }
+  if (timeleft != disptime) {
+    if (disptime == 0) {
       modebox->Hide();
       modebox->Ignore();
       rescue_label->Hide();
       rescue_indicator->Show();
       confirmbut->Show();
       confirmbut->Listen();
-      }
-    else if(timeleft == 0) {
+    } else if (timeleft == 0) {
       confirmbut->Ignore();
       confirmbut->Hide();
       rescue_indicator->Hide();
       rescue_label->Show();
       modebox->Show();
       modebox->Listen();
-      }
+    }
     disptime = timeleft;
-    if(disptime != 0) {
+    if (disptime != 0) {
       char buf[64];
       sprintf(buf, "Confirm in %d seconds or will be undone%c",
-	(disptime+999)/1000, 0);
+              (disptime + 999) / 1000, 0);
       rescue_indicator->SetText(buf);
-      }
     }
-  return SG_MultiTab::RenderSelf(cur_time);
   }
+  return SG_MultiTab::RenderSelf(cur_time);
+}
 
 bool SimpleConfig::ChildEvent(SDL_Event *event) {
-  if(event->type == SDL_SG_EVENT) {
-    switch(event->user.code) {
-      case(SG_EVENT_NEWTEXT): {
-	oldmode = mode;
-	mode = -1;
-	for(int ctr=0; ctr < modebox->NumItems(); ++ctr) {
-	  if(modebox->Text() == modebox->Item(ctr)) {
-	    SetMode(ctr);
-	    break;
-	    }
-	  }
-	if(mode == -1) {
-	  fprintf(stderr, "ERROR, Got a non-mode mode!\n");
-	  exit(1);
-	  }
-	if(rescue_thread) {
-	  confirm = true;
-	  SDL_WaitThread(rescue_thread, NULL);
-	  rescue_thread = NULL;
-	  }
-	confirm = false;
-	rescue_thread = SDL_CreateThread(rescue_thread_handler, "rescue", (void*)(this));
-	}break;
-      case(SG_EVENT_BUTTONCLICK): {
-	if((SG_Widget*)(event->user.data1) == (SG_Widget*)confirmbut) {
-	  confirm = 1;
-	  }
-	}break;
-      }
+  if (event->type == SDL_SG_EVENT) {
+    switch (event->user.code) {
+      case(SG_EVENT_NEWTEXT) : {
+        oldmode = mode;
+        mode = -1;
+        for (int ctr = 0; ctr < modebox->NumItems(); ++ctr) {
+          if (modebox->Text() == modebox->Item(ctr)) {
+            SetMode(ctr);
+            break;
+          }
+        }
+        if (mode == -1) {
+          fprintf(stderr, "ERROR, Got a non-mode mode!\n");
+          exit(1);
+        }
+        if (rescue_thread) {
+          confirm = true;
+          SDL_WaitThread(rescue_thread, NULL);
+          rescue_thread = NULL;
+        }
+        confirm = false;
+        rescue_thread =
+            SDL_CreateThread(rescue_thread_handler, "rescue", (void *)(this));
+      } break;
+      case(SG_EVENT_BUTTONCLICK) : {
+        if ((SG_Widget *)(event->user.data1) == (SG_Widget *)confirmbut) {
+          confirm = 1;
+        }
+      } break;
     }
-  return SG_MultiTab::ChildEvent(event);
   }
+  return SG_MultiTab::ChildEvent(event);
+}
 
 //  bool SimpleConfig::SetDefaultCursor(GL_MODEL *cur);
 
@@ -141,12 +141,12 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
   xsize.clear();
   ysize.clear();
   vector<SimpleVideo_Mode> modes =
-	SimpleVideo::CurrentVideo()->GetFullScreenModes();
+      SimpleVideo::CurrentVideo()->GetFullScreenModes();
   vector<string> modenames;
   modenames.push_back("Resizable Window");
   Uint32 lastx = 0, lasty = 0;
-  for(Uint32 mode = 0; mode < modes.size(); ++mode) {
-    if(modes[mode].x == lastx && modes[mode].y == lasty) continue;
+  for (Uint32 mode = 0; mode < modes.size(); ++mode) {
+    if (modes[mode].x == lastx && modes[mode].y == lasty) continue;
     lastx = modes[mode].x;
     lasty = modes[mode].y;
     char buf[256];
@@ -154,7 +154,7 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
     modenames.push_back(buf);
     xsize.push_back(int(modes[mode].x));
     ysize.push_back(int(modes[mode].y));
-    }
+  }
 
   SG_TextArea *mlabel = new SG_TextArea("Resolution:");
   ret->AddWidget(mlabel, 0, 2);
@@ -171,12 +171,11 @@ SG_Alignment *SimpleConfig::BuildVideoScreen() {
   rescue_indicator->Hide();
   ret->AddWidget(rescue_indicator, 0, 3, 2, 1);
 
-  rescue_label =
-	new SG_TextArea("You will have 5 seconds to confirm changes");
+  rescue_label = new SG_TextArea("You will have 5 seconds to confirm changes");
   ret->AddWidget(rescue_label, 0, 3, 2, 1);
 
   return (SG_Alignment *)ret;
-  }
+}
 
 SG_Alignment *SimpleConfig::BuildAudioScreen() {
   SG_Table *ret;
@@ -185,7 +184,7 @@ SG_Alignment *SimpleConfig::BuildAudioScreen() {
   SG_TextArea *label = new SG_TextArea("Audio Config");
   ret->AddWidget(label, 0, 0, 2, 2);
   return (SG_Alignment *)ret;
-  }
+}
 
 SG_Alignment *SimpleConfig::BuildMouseScreen() {
   SG_Table *ret;
@@ -194,7 +193,7 @@ SG_Alignment *SimpleConfig::BuildMouseScreen() {
   SG_TextArea *label = new SG_TextArea("Mouse Config");
   ret->AddWidget(label, 0, 0, 2, 2);
   return (SG_Alignment *)ret;
-  }
+}
 
 SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
   SG_Table *ret;
@@ -203,36 +202,33 @@ SG_Alignment *SimpleConfig::BuildKeyboardScreen() {
   SG_TextArea *label = new SG_TextArea("Keyboard Config");
   ret->AddWidget(label, 0, 0, 2, 2);
   return (SG_Alignment *)ret;
-  }
+}
 
 int SimpleConfig::HandleRescueThread() {
-  Uint32 ttime = 5000;	// 5 Seconds
-  Uint32 tstep = 250;	// In 1/4 second steps
-  for(timeleft = ttime; timeleft > 0 && (!confirm); timeleft -= tstep) {
+  Uint32 ttime = 5000;  // 5 Seconds
+  Uint32 tstep = 250;   // In 1/4 second steps
+  for (timeleft = ttime; timeleft > 0 && (!confirm); timeleft -= tstep) {
     SDL_Delay(tstep);
-    }
-  if(!confirm) {
+  }
+  if (!confirm) {
     setback = true;
-    }
-  else {
+  } else {
     confirm = false;
-    }
+  }
   timeleft = 0;
   return 0;
-  }
+}
 
 int SimpleConfig::rescue_thread_handler(void *me) {
-  return ((SimpleConfig*)(me))->HandleRescueThread();
-  }
+  return ((SimpleConfig *)(me))->HandleRescueThread();
+}
 
 void SimpleConfig::SetMode(int md) {
   mode = md;
-  if(mode == 0) {
-    SimpleVideo::CurrentVideo()->SetWindowedMode(1024, 768);	//FIXME: Size!
-    }
-  else {
-    SimpleVideo::CurrentVideo()->SetFullScreenMode(
-	xsize[mode-1], ysize[mode-1]
-	);
-    }
+  if (mode == 0) {
+    SimpleVideo::CurrentVideo()->SetWindowedMode(1024, 768);  // FIXME: Size!
+  } else {
+    SimpleVideo::CurrentVideo()->SetFullScreenMode(xsize[mode - 1],
+                                                   ysize[mode - 1]);
   }
+}

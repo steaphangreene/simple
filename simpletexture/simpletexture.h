@@ -36,4 +36,4 @@
 #include "stt_leftbuttonup.h"
 #include "stt_leftbuttondown.h"
 
-#endif  //SIMPLETEXTURE_H
+#endif  // SIMPLETEXTURE_H

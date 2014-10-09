@@ -29,85 +29,83 @@
 #include "sg_events.h"
 
 SG_MultiTab::SG_MultiTab(const vector<string> &items,
-	const vector<SG_Alignment *> &areas,
-	int tinvpro,
-	SimpleTexture ttex, SimpleTexture dis_ttex, SimpleTexture click_ttex,
-	SimpleTexture down_ttex) : SG_Compound(1, tinvpro, 0.0, 0.0) {
+                         const vector<SG_Alignment *> &areas, int tinvpro,
+                         SimpleTexture ttex, SimpleTexture dis_ttex,
+                         SimpleTexture click_ttex, SimpleTexture down_ttex)
+    : SG_Compound(1, tinvpro, 0.0, 0.0) {
 
   tabs = new SG_Tabs(items, SG_AUTOSIZE, 1);
   AddWidget(tabs, 0, 0, 1, 1);
 
   subscreens = areas;
-  if(subscreens.size() < items.size()) subscreens.resize(items.size());
-  for(unsigned int anum = 0; anum != subscreens.size(); ++anum) {
-    if(!subscreens[anum]) subscreens[anum] = new SG_Alignment();
-    }
-
-  if(items.size() > 0) AddWidget(subscreens[tabs->Which()], 0, 1, 1, ysize - 1);
+  if (subscreens.size() < items.size()) subscreens.resize(items.size());
+  for (unsigned int anum = 0; anum != subscreens.size(); ++anum) {
+    if (!subscreens[anum]) subscreens[anum] = new SG_Alignment();
   }
+
+  if (items.size() > 0)
+    AddWidget(subscreens[tabs->Which()], 0, 1, 1, ysize - 1);
+}
 
 SG_MultiTab::~SG_MultiTab() {
-  if(widgets.size() > 1) RemoveWidget(widgets[1]);
+  if (widgets.size() > 1) RemoveWidget(widgets[1]);
   vector<SG_Alignment *>::iterator itrw = subscreens.begin();
-  for(; itrw != subscreens.end(); ++itrw) {
-    if(*itrw) delete (*itrw);
-    }
+  for (; itrw != subscreens.end(); ++itrw) {
+    if (*itrw) delete (*itrw);
+  }
   subscreens.clear();
-  }
+}
 
-const string &SG_MultiTab::Item(int opt) {
-  return tabs->Item(opt);
-  }
+const string &SG_MultiTab::Item(int opt) { return tabs->Item(opt); }
 
 void SG_MultiTab::SetItems(const vector<string> &items) {
   tabs->SetItems(items);
-  if(widgets.size() > 1) RemoveWidget(widgets[1]);
-  while(subscreens.size() > 0) delete subscreens[0];
+  if (widgets.size() > 1) RemoveWidget(widgets[1]);
+  while (subscreens.size() > 0) delete subscreens[0];
   subscreens.clear();
-  if(subscreens.size() < items.size()) subscreens.resize(items.size());
+  if (subscreens.size() < items.size()) subscreens.resize(items.size());
   Set(tabs->Which());
-  }
+}
 
 void SG_MultiTab::SetArea(int page, SG_Alignment *area) {
-  if(page < 0 || page >= int(subscreens.size())) return;
-  if(subscreens[page]) {
-    if(page == tabs->Which()) RemoveWidget(subscreens[page]);
+  if (page < 0 || page >= int(subscreens.size())) return;
+  if (subscreens[page]) {
+    if (page == tabs->Which()) RemoveWidget(subscreens[page]);
     delete subscreens[page];
-    }
-  subscreens[page] = area;
   }
+  subscreens[page] = area;
+}
 
 void SG_MultiTab::SetAreas(const vector<SG_Alignment *> &areas) {
-  for(Uint32 i = 0; i < subscreens.size(); ++i) {
+  for (Uint32 i = 0; i < subscreens.size(); ++i) {
     delete subscreens[i];
-    }
+  }
   subscreens = areas;
-  if(int(subscreens.size()) < tabs->NumItems())
-	subscreens.resize(tabs->NumItems());
+  if (int(subscreens.size()) < tabs->NumItems())
+    subscreens.resize(tabs->NumItems());
   Set(tabs->Which());
-  }
+}
 
-int SG_MultiTab::NumItems() {
-  return tabs->NumItems();
-  }
+int SG_MultiTab::NumItems() { return tabs->NumItems(); }
 
 void SG_MultiTab::Set(int which) {
-  if(which >= int(subscreens.size()) || which < 0) return;
-  if(tabs->Which() != which) tabs->Set(which);
-  if(widgets.size() > 1)
-    RemoveWidget(widgets[1]); //Always REALLY current subwidget
-  if(which < int(subscreens.size()) && subscreens[which])
+  if (which >= int(subscreens.size()) || which < 0) return;
+  if (tabs->Which() != which) tabs->Set(which);
+  if (widgets.size() > 1)
+    RemoveWidget(widgets[1]);  // Always REALLY current subwidget
+  if (which < int(subscreens.size()) && subscreens[which])
     AddWidget(subscreens[which], 0, 1, 1, ysize - 1);
-  }
+}
 
 bool SG_MultiTab::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_SELECT) {
+  if (event->user.code == SG_EVENT_SELECT) {
     Set(*((int *)(event->user.data2)));
-    event->user.data1 = (void*)(SG_Compound*)this;  //Now it's MY select event
+    event->user.data1 = (void *)(SG_Compound *)this;  // Now it's MY select
+                                                      // event
     return 1;
-    }
-  return 1; // Don't silence children doing other things
   }
+  return 1;  // Don't silence children doing other things
+}
 
 //  bool SG_MultiTab::SetDefaultCursor(GL_MODEL *cur);
 

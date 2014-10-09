@@ -24,4 +24,4 @@
 #include "simplerandom.h"
 #include "simplenetwork.h"
 
-#endif  //SIMPLEUTILS_H
+#endif  // SIMPLEUTILS_H

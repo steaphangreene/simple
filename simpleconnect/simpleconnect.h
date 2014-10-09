@@ -24,4 +24,4 @@
 
 #include "sc.h"
 
-#endif  //SIMPLECONNECT_H
+#endif  // SIMPLECONNECT_H

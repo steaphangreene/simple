@@ -26,9 +26,9 @@
 #include "sg_events.h"
 
 SG_ScrollingArea::SG_ScrollingArea(float xvs, float yvs, float xsz, float ysz)
-	: SG_Compound(41, 41, 0.0, 0.0) {
-  if(xsz < 0.0) xsz = 0.0;
-  if(ysz < 0.0) ysz = 0.0;
+    : SG_Compound(41, 41, 0.0, 0.0) {
+  if (xsz < 0.0) xsz = 0.0;
+  if (ysz < 0.0) ysz = 0.0;
   scroll = new SG_Scrollable(xvs, yvs, 0.0, 0.0, 0.0, 0.0, xsz, ysz);
   LinkFrom(scroll);
   SG_Compound::AddWidget(scroll, 0, 0, 40, 40);
@@ -40,53 +40,50 @@ SG_ScrollingArea::SG_ScrollingArea(float xvs, float yvs, float xsz, float ysz)
   vert = new SG_SliderBar(true);
   scroll->LinkYTo(vert);
   SG_Compound::AddWidget(vert, 40, 0, 1, 40);
-  }
+}
 
-SG_ScrollingArea::~SG_ScrollingArea() {
-  }
+SG_ScrollingArea::~SG_ScrollingArea() {}
 
 int SG_ScrollingArea::HandleEvent(SDL_Event *event, float x, float y) {
-  if(flags & SG_WIDGET_FLAGS_IGNORE) return -1; //Ignore all events
-  if(flags & SG_WIDGET_FLAGS_DISABLED) return 0; //Eat all events
+  if (flags & SG_WIDGET_FLAGS_IGNORE) return -1;   // Ignore all events
+  if (flags & SG_WIDGET_FLAGS_DISABLED) return 0;  // Eat all events
 
   int ret = SG_Compound::HandleEvent(event, x, y);
-  if(ret != -1) return ret;
+  if (ret != -1) return ret;
 
-  if(event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
+  if (event->type == SDL_MOUSEWHEEL && event->wheel.y < 1) {
     YDecrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;
-    }
-  else if(event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
+  } else if (event->type == SDL_MOUSEWHEEL && event->wheel.y > 1) {
     YIncrement();
     event->type = SDL_SG_EVENT;
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
     return 1;
-    }
+  }
 
   return ret;
-  }
+}
 
 bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
-  if(event->user.data1 == (void*)(SG_Ranger*)horiz) {
+  if (event->user.data1 == (void *)(SG_Ranger *)horiz) {
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
-    return 1; // Silence my children doing things
-    }
-  else if(event->user.data1 == (void*)(SG_Ranger*)vert) {
+    return 1;  // Silence my children doing things
+  } else if (event->user.data1 == (void *)(SG_Ranger *)vert) {
     event->user.code = SG_EVENT_NEEDTORENDER;
     event->user.data1 = NULL;
     event->user.data2 = NULL;
-    return 1; // Silence my children doing things
-    }
-  return 1; // Others can do whatever they want
+    return 1;  // Silence my children doing things
   }
+  return 1;  // Others can do whatever they want
+}
 
 //  bool SG_ScrollingArea::SetDefaultCursor(GL_MODEL *cur);
 
@@ -94,16 +91,16 @@ bool SG_ScrollingArea::ChildEvent(SDL_Event *event) {
 
 bool SG_ScrollingArea::AddWidget(SG_Widget *wid) {
   return scroll->AddWidget(wid);
-  }
+}
 
 void SG_ScrollingArea::RemoveWidget(SG_Widget *wid) {
   scroll->RemoveWidget(wid);
-  }
+}
 
 bool SG_ScrollingArea::AddWidget(SG_Table *tab) {
   return scroll->AddWidget(tab);
-  }
+}
 
 bool SG_ScrollingArea::AddWidget(SG_TextArea *text) {
   return scroll->AddWidget(text);
-  }
+}

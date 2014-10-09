@@ -19,25 +19,25 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_CUBE_H
-#define	SIMPLEMODEL_CUBE_H
+#ifndef SIMPLEMODEL_CUBE_H
+#define SIMPLEMODEL_CUBE_H
 
 #include "simplemodel.h"
 #include "simplemodel_md3.h"
 
 class SimpleModel_Cube : public SimpleModel {
-public:
+ public:
   SimpleModel_Cube();
   SimpleModel_Cube(const string &filenm);
   virtual ~SimpleModel_Cube();
 
   virtual bool Load(const string &filenm);
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-  };
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
+};
 
-#endif	//SIMPLEMODEL_CUBE_H
+#endif  // SIMPLEMODEL_CUBE_H

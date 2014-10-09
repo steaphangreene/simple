@@ -19,25 +19,25 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_XZPLANE_H
-#define	SIMPLEMODEL_XZPLANE_H
+#ifndef SIMPLEMODEL_XZPLANE_H
+#define SIMPLEMODEL_XZPLANE_H
 
 #include "simplemodel.h"
 #include "simplemodel_md3.h"
 
 class SimpleModel_XZPlane : public SimpleModel {
-public:
+ public:
   SimpleModel_XZPlane();
   SimpleModel_XZPlane(const string &filenm);
   virtual ~SimpleModel_XZPlane();
 
   virtual bool Load(const string &filenm);
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
-  };
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
+};
 
-#endif	//SIMPLEMODEL_XZPLANE_H
+#endif  // SIMPLEMODEL_XZPLANE_H

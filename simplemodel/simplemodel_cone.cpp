@@ -28,24 +28,20 @@ using namespace std;
 
 #include "simplemodel_cone.h"
 
-SimpleModel_Cone::SimpleModel_Cone(const string &filenm) {
-  }
+SimpleModel_Cone::SimpleModel_Cone(const string &filenm) {}
 
-SimpleModel_Cone::SimpleModel_Cone() {
-  }
+SimpleModel_Cone::SimpleModel_Cone() {}
 
-SimpleModel_Cone::~SimpleModel_Cone() {
-  }
+SimpleModel_Cone::~SimpleModel_Cone() {}
 
-bool SimpleModel_Cone::Load(const string &filenm) {
-  return true;
-  }
+bool SimpleModel_Cone::Load(const string &filenm) { return true; }
 
 bool SimpleModel_Cone::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-	const vector<Uint32> &start_time, Uint32 anim_offset) const {
+                                  const vector<Uint32> &start_time,
+                                  Uint32 anim_offset) const {
   GLUquadric *quad = gluNewQuadric();
   gluQuadricTexture(quad, true);
   gluCylinder(quad, 1.0, 0.0, 1.0, 16, 8);
   gluDeleteQuadric(quad);
   return true;
-  }
+}

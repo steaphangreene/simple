@@ -21,26 +21,23 @@
 
 #include "stt.h"
 
-ST_Texturator::ST_Texturator() {
-  }
+ST_Texturator::ST_Texturator() {}
 
-ST_Texturator::~ST_Texturator() {
-  }
+ST_Texturator::~ST_Texturator() {}
 
-SDL_Surface *ST_Texturator::Generate(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
+SDL_Surface *ST_Texturator::Generate(SDL_Surface *surf, const Uint32 xsize,
+                                     const Uint32 ysize, const SDL_Color &col) {
   return BuildTexture(surf, xsize, ysize, col);
-  }
+}
 
-SDL_Surface *ST_Texturator::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
+SDL_Surface *ST_Texturator::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                         const Uint32 ysize,
+                                         const SDL_Color &col) {
   fprintf(stderr, "WARNING: Abstract class ST_Texturator called!\n");
   return NULL;
-  }
+}
 
-Uint8_32 st_col_u32b1 = {{ 0xFF, 0x00, 0x00, 0x00 }};
-Uint8_32 st_col_u32b2 = {{ 0x00, 0xFF, 0x00, 0x00 }};
-Uint8_32 st_col_u32b3 = {{ 0x00, 0x00, 0xFF, 0x00 }};
-Uint8_32 st_col_u32b4 = {{ 0x00, 0x00, 0x00, 0xFF }};
+Uint8_32 st_col_u32b1 = {{0xFF, 0x00, 0x00, 0x00}};
+Uint8_32 st_col_u32b2 = {{0x00, 0xFF, 0x00, 0x00}};
+Uint8_32 st_col_u32b3 = {{0x00, 0x00, 0xFF, 0x00}};
+Uint8_32 st_col_u32b4 = {{0x00, 0x00, 0x00, 0xFF}};

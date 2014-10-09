@@ -29,35 +29,31 @@
 using namespace std;
 
 class SG_Positional : public SG_Alignment {
-public:
+ public:
   SG_Positional();
   virtual ~SG_Positional();
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-  virtual bool AddWidget(SG_Widget *wid,
-	const float xoff = 0.0, const float yoff = 0.0,
-	const float xsize = 0.5, const float ysize = 0.5,
-	bool modal = false);
+  virtual bool AddWidget(SG_Widget *wid, const float xoff = 0.0,
+                         const float yoff = 0.0, const float xsize = 0.5,
+                         const float ysize = 0.5, bool modal = false);
 
   virtual void RemoveWidget(SG_Widget *wid);
 
   virtual void SetAspectRatio(const float asp);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
   vector<SG_AlignmentGeometry> wgeom;
   void CalcGeometry(SG_AlignmentGeometry &geom,
-	const vector<SG_AlignmentGeometry>::iterator &wgeom
-	);
+                    const vector<SG_AlignmentGeometry>::iterator &wgeom);
 
   SG_Ranger2D ranger;
 
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_POSITIONAL_H
-
+#endif  // SG_POSITIONAL_H

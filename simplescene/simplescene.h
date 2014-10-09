@@ -24,4 +24,4 @@
 
 #include "ss.h"
 
-#endif  //SIMPLESCENE_H
+#endif  // SIMPLESCENE_H

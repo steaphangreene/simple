@@ -29,14 +29,14 @@ using namespace std;
 #include "sg_textarea.h"
 
 class SG_TransLabel : public SG_TextArea {
-public:
-  SG_TransLabel(const string mes = "", int col = -1,
-	float mx = 0.125, float my = 0.125);
+ public:
+  SG_TransLabel(const string mes = "", int col = -1, float mx = 0.125,
+                float my = 0.125);
   virtual ~SG_TransLabel();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_TRANSLABEL_H
+#endif  // SG_TRANSLABEL_H

@@ -29,30 +29,27 @@
 #include "sg_button.h"
 #include "sg_events.h"
 
-SG_RadioButtons::SG_RadioButtons()
-	: SG_Compound(8, 5, 0.1, 0.1) {
+SG_RadioButtons::SG_RadioButtons() : SG_Compound(8, 5, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
   okb = new SG_Button("Ok", SG_COL_RAISED, SG_COL_LOW);
   AddWidget(okb, 7, 4, 1, 1);
-  SG_Widget *labelb =
-	new SG_TextArea("SG_RadioButtons", SG_COL_LOW);
+  SG_Widget *labelb = new SG_TextArea("SG_RadioButtons", SG_COL_LOW);
   AddWidget(labelb, 1, 2, 6, 1);
-  }
+}
 
-SG_RadioButtons::~SG_RadioButtons() {
-  }
+SG_RadioButtons::~SG_RadioButtons() {}
 
 bool SG_RadioButtons::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(okb)) {
+  if (event->user.code == SG_EVENT_BUTTONPRESS) {
+    if (event->user.data1 == (void *)(okb)) {
       event->user.code = SG_EVENT_OK;
-      event->user.data1 = (void*)(SG_Compound*)this;
+      event->user.data1 = (void *)(SG_Compound *)this;
       event->user.data2 = NULL;
       return 1;
-      }
     }
-  return 0; // Silence children doing other things
   }
+  return 0;  // Silence children doing other things
+}
 
 //  bool SG_RadioButtons::SetDefaultCursor(GL_MODEL *cur);
 

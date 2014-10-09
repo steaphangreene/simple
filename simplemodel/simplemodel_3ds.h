@@ -23,56 +23,56 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_3DS_H
-#define	SIMPLEMODEL_3DS_H
+#ifndef SIMPLEMODEL_3DS_H
+#define SIMPLEMODEL_3DS_H
 
 #include "simplemodel.h"
 
 #include <sys/stat.h>
 
-struct MAXVertex{
-    GLfloat x;
-	GLfloat y;
-	GLfloat z;
+struct MAXVertex {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
 };
 
 struct MAXPolygon {
-    Uint16 v1;
-	Uint16 v2;
-	Uint16 v3;
+  Uint16 v1;
+  Uint16 v2;
+  Uint16 v3;
 };
 
 struct MAXTexCoord {
-    GLfloat u;
-	GLfloat v;
+  GLfloat u;
+  GLfloat v;
 };
 
-struct MAXMesh{
-	char name[20];
+struct MAXMesh {
+  char name[20];
 
-    vector<MAXVertex> vertex;
-    vector<MAXPolygon> polygon;
-    vector<MAXTexCoord> tex_coord;
-	bool has_texture;
-    SimpleTexture *texture;
+  vector<MAXVertex> vertex;
+  vector<MAXPolygon> polygon;
+  vector<MAXTexCoord> tex_coord;
+  bool has_texture;
+  SimpleTexture *texture;
 };
 
 class SimpleModel_3DS : public SimpleModel {
-public:
+ public:
   SimpleModel_3DS();
   SimpleModel_3DS(const string &filenm, const string &texnm = "");
   virtual ~SimpleModel_3DS();
 
   virtual bool Load(const string &filenm, const string &texnm = "");
 
-protected:
+ protected:
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
 
   GLuint display_list;
   vector<MAXMesh> mesh;
-  };
+};
 
-#endif	//SIMPLEMODEL_3DS_H
+#endif  // SIMPLEMODEL_3DS_H

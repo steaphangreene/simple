@@ -32,13 +32,13 @@ typedef int PlayingSound;
 typedef int LoadedSound;
 
 class SimpleAudio {
-public:
-  SimpleAudio(int bufsize=512);
+ public:
+  SimpleAudio(int bufsize = 512);
   ~SimpleAudio();
 
   PlayingSound Play(LoadedSound snd, float vol = 1.0, float pan = 0.0);
   PlayingSound Loop(LoadedSound snd, float vol = 1.0, float pan = 0.0,
-	int loops = -1);
+                    int loops = -1);
   void Stop(PlayingSound);
 
   void SetVol(PlayingSound, float vol = 1.0);
@@ -48,11 +48,13 @@ public:
   LoadedSound LoadSound(const string &);
   LoadedSound LoadMusic(const string &);
 
-  static SimpleAudio *Current() { return current; };
-
-private:
-  static SimpleAudio *current;
-//  static void Callback(void *userdata, Uint8 *stream, int len);
+  static SimpleAudio *Current() {
+    return current;
   };
 
-#endif //AUDIO_H
+ private:
+  static SimpleAudio *current;
+  //  static void Callback(void *userdata, Uint8 *stream, int len);
+};
+
+#endif  // AUDIO_H

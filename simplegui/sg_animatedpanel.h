@@ -29,15 +29,15 @@ using namespace std;
 #include "sg_panel.h"
 
 class SG_AnimatedPanel : public SG_Panel {
-public:
+ public:
   SG_AnimatedPanel(const vector<SimpleTexture> &txtrs, float mspf);
   virtual ~SG_AnimatedPanel();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   float speed;
-  };
+};
 
-#endif // SG_ANIMATEDPANEL_H
+#endif  // SG_ANIMATEDPANEL_H

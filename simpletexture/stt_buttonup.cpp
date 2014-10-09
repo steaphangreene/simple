@@ -21,8 +21,9 @@
 
 #include "stt_buttonup.h"
 
-SDL_Surface *STT_ButtonUp::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col) {
-  return BuildInternal(surf, xsize, ysize,
-	base_col(col), light_col(col), dark_col(col));
-  }
+SDL_Surface *STT_ButtonUp::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                        const Uint32 ysize,
+                                        const SDL_Color &col) {
+  return BuildInternal(surf, xsize, ysize, base_col(col), light_col(col),
+                       dark_col(col));
+}

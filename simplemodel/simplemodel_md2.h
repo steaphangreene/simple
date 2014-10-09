@@ -19,29 +19,29 @@
 //
 // *************************************************************************
 
-#ifndef	SIMPLEMODEL_MD2_H
-#define	SIMPLEMODEL_MD2_H
+#ifndef SIMPLEMODEL_MD2_H
+#define SIMPLEMODEL_MD2_H
 
 #include "simplemodel.h"
 
 class SimpleModel_MD2 : public SimpleModel {
-public:
-  SimpleModel_MD2(const string &filenm,
-	const string &modelnm, const string &defskin = "default");
+ public:
+  SimpleModel_MD2(const string &filenm, const string &modelnm,
+                  const string &defskin = "default");
   virtual ~SimpleModel_MD2();
 
-  virtual bool Load(const string &filenm,
-	const string &modelnm, const string &defskin = "default");
+  virtual bool Load(const string &filenm, const string &modelnm,
+                    const string &defskin = "default");
 
   virtual bool MoveToTag(Uint32 tag, Uint32 cur_time,
-        const vector<int> &anim = vector<int>(),
-        const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
+                         const vector<int> &anim = vector<int>(),
+                         const vector<Uint32> &start_time = vector<Uint32>(),
+                         Uint32 anim_offset = 0) const;
 
   virtual const vector<string> &GetSkinList();
   virtual void AddSkin(const string &skinnm);
 
-protected:
+ protected:
   string modelname;
   vector<string> skins;
   vector<vector<Vector3> > verts;
@@ -51,23 +51,23 @@ protected:
   struct GLVertex {
     float tex_x, tex_y;
     Uint32 vindex;
-    };
+  };
 
   struct GLCommand {
     bool strip;
     vector<GLVertex> verts;
-    };
+  };
 
   vector<GLCommand> glcomms;
 
   virtual bool RenderSelf(Uint32 cur_time,
-	const vector<int> &anim = vector<int>(),
-	const vector<Uint32> &start_time = vector<Uint32>(),
-	Uint32 anim_offset = 0) const;
+                          const vector<int> &anim = vector<int>(),
+                          const vector<Uint32> &start_time = vector<Uint32>(),
+                          Uint32 anim_offset = 0) const;
 
   Uint32 NormalizeFrame(int anim, Uint32 frame) const;
   Uint32 CalcBaseFrame(Uint32 cur_time, int anim, Uint32 start_time,
-	float &offset) const;
-  };
+                       float &offset) const;
+};
 
-#endif	//SIMPLEMODEL_MD2_H
+#endif  // SIMPLEMODEL_MD2_H

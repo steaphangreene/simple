@@ -19,16 +19,16 @@
 //
 // *************************************************************************
 
-#define COL_SCALOR      (12.0 / 16.0)
+#define COL_SCALOR (12.0 / 16.0)
 
 #include "stt_button.h"
 
-SDL_Surface *STT_Button::BuildTexture(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize, const SDL_Color &col
-	) {
+SDL_Surface *STT_Button::BuildTexture(SDL_Surface *surf, const Uint32 xsize,
+                                      const Uint32 ysize,
+                                      const SDL_Color &col) {
   fprintf(stderr, "WARNING: Abstract class STT_Button called!\n");
   return NULL;
-  }
+}
 
 SDL_Color STT_Button::base_col(const SDL_Color &c) {
   SDL_Color ret = {0, 0, 0, 0};
@@ -36,7 +36,7 @@ SDL_Color STT_Button::base_col(const SDL_Color &c) {
   ret.g = base_col(c.g);
   ret.b = base_col(c.b);
   return ret;
-  }
+}
 
 SDL_Color STT_Button::light_col(const SDL_Color &c) {
   SDL_Color ret = {0, 0, 0, 0};
@@ -44,7 +44,7 @@ SDL_Color STT_Button::light_col(const SDL_Color &c) {
   ret.g = light_col(c.g);
   ret.b = light_col(c.b);
   return ret;
-  }
+}
 
 SDL_Color STT_Button::dark_col(const SDL_Color &c) {
   SDL_Color ret = {0, 0, 0, 0};
@@ -52,7 +52,7 @@ SDL_Color STT_Button::dark_col(const SDL_Color &c) {
   ret.g = dark_col(c.g);
   ret.b = dark_col(c.b);
   return ret;
-  }
+}
 
 Uint8 STT_Button::base_col(const Uint8 c) {
   float col = (float)c;
@@ -60,7 +60,7 @@ Uint8 STT_Button::base_col(const Uint8 c) {
   col *= COL_SCALOR;
   col += 127.5 + 0.5;
   return Uint8(col);
-  }
+}
 
 Uint8 STT_Button::light_col(const Uint8 c) {
   float col = (float)c;
@@ -68,26 +68,27 @@ Uint8 STT_Button::light_col(const Uint8 c) {
   col *= COL_SCALOR;
   col += 255.0 + 0.5;
   return Uint8(col);
-  }
+}
 
 Uint8 STT_Button::dark_col(const Uint8 c) {
   float col = (float)c;
   col *= COL_SCALOR;
   col += 0.5;
   return Uint8(col);
-  }
+}
 
-SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf,
-	const Uint32 xsize, const Uint32 ysize,
-	const SDL_Color &col, const SDL_Color &tlcol, const SDL_Color &brcol) {
+SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf, const Uint32 xsize,
+                                       const Uint32 ysize, const SDL_Color &col,
+                                       const SDL_Color &tlcol,
+                                       const SDL_Color &brcol) {
 
   SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, col.r, col.g, col.b));
 
-  int width = ysize/8;
-  if(width > int(xsize/8)) width = xsize/8;
+  int width = ysize / 8;
+  if (width > int(xsize / 8)) width = xsize / 8;
 
-  SDL_Rect lft = { 0, 0, width, surf->h };
-  SDL_Rect top = { 0, 0, surf->w, width };
+  SDL_Rect lft = {0, 0, width, surf->h};
+  SDL_Rect top = {0, 0, surf->w, width};
   SDL_FillRect(surf, &lft, SDL_MapRGB(surf->format, tlcol.r, tlcol.g, tlcol.b));
   SDL_FillRect(surf, &top, SDL_MapRGB(surf->format, tlcol.r, tlcol.g, tlcol.b));
 
@@ -102,16 +103,25 @@ SDL_Surface *STT_Button::BuildInternal(SDL_Surface *surf,
   btm.y = ysize - width;
   btm.h = 1;
 
-  for(int x = 0; x < width; ++x) {
-    SDL_FillRect(surf, &rgt, SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
-    SDL_FillRect(surf, &btm, SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
-    --rgt.y;  --btm.x;
+  for (int x = 0; x < width; ++x) {
+    SDL_FillRect(surf, &rgt,
+                 SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
+    SDL_FillRect(surf, &btm,
+                 SDL_MapRGB(surf->format, brcol.r, brcol.g, brcol.b));
+    --rgt.y;
+    --btm.x;
     SDL_Rect tmpb = btm, tmpr = rgt;
-    ++rgt.x;  ++rgt.h;  ++btm.y;  ++btm.w;
-    tmpb.w = 1;  tmpb.h = 1;  tmpr.w = 1;  tmpr.h = 1;
+    ++rgt.x;
+    ++rgt.h;
+    ++btm.y;
+    ++btm.w;
+    tmpb.w = 1;
+    tmpb.h = 1;
+    tmpr.w = 1;
+    tmpr.h = 1;
     SDL_FillRect(surf, &tmpb, SDL_MapRGB(surf->format, col.r, col.g, col.b));
     SDL_FillRect(surf, &tmpr, SDL_MapRGB(surf->format, col.r, col.g, col.b));
-    }
+  }
 
   return surf;
-  }
+}

@@ -36,7 +36,7 @@ using namespace std;
 #include "sg_events.h"
 
 SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
-	: SG_Compound(12, 10, 0.1, 0.1) {
+    : SG_Compound(12, 10, 0.1, 0.1) {
   background = new SG_Panel(SG_COL_FG);
 
   openb = new SG_Button("Open", SG_COL_RAISED, SG_COL_LOW);
@@ -52,10 +52,10 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
   do {
     pos = npos + 1;
     npos = filter.find('/', pos);
-    } while(npos >= 0 && npos < (int)(filter.length()));
+  } while (npos >= 0 && npos < (int)(filter.length()));
 
   string path = filter.substr(0, pos);
-  if(path[0] != '/') path = (string)("./") + path;
+  if (path[0] != '/') path = (string)("./") + path;
 
   string reg = filter.substr(pos);
 
@@ -64,74 +64,70 @@ SG_FileBrowser::SG_FileBrowser(const string &filter, bool newfile)
   vector<string> files;
 
   unsigned int astpos = reg.find('*');
-  if(astpos >= reg.length()) {			//No '*' in filename!
+  if (astpos >= reg.length()) {  // No '*' in filename!
     files.push_back(reg);
-    }
-  else {
+  } else {
     unsigned int testast = reg.find('*', astpos + 1);
 
-    if(testast < reg.length()) {		//Multiple '*'s in filename!
+    if (testast < reg.length()) {  // Multiple '*'s in filename!
       fprintf(stderr,
-	"WARNING: Unhandled complex regex '%s' in SG_FileBrowser!\n",
-	reg.c_str());
+              "WARNING: Unhandled complex regex '%s' in SG_FileBrowser!\n",
+              reg.c_str());
       return;
-      }
+    }
 
-    if(astpos > 0) {			//'*'s not at start (unhandled)!
+    if (astpos > 0) {  //'*'s not at start (unhandled)!
       fprintf(stderr,
-	"WARNING: Unhandled non-simple regex '%s' in SG_FileBrowser!\n",
-	reg.c_str());
+              "WARNING: Unhandled non-simple regex '%s' in SG_FileBrowser!\n",
+              reg.c_str());
       return;
-      }
+    }
 
     DIR *dir = opendir(path.c_str());
-    if(dir == NULL) {
+    if (dir == NULL) {
       fprintf(stderr, "WARNING: Unable to open directory '%s'!\n",
-	path.c_str());
-      }
-    else {
+              path.c_str());
+    } else {
       struct dirent *ent;
-      while((ent = readdir(dir))) {	// Only works with '*' first (eg: *.map)
-	if(strlen(ent->d_name) >= reg.length() - 1) {
-	  if(!strncmp(ent->d_name + strlen(ent->d_name) - (reg.length() - 1),
-		reg.c_str() + 1, reg.length() - 1)) {
-	    files.push_back(ent->d_name);
-	    }
-	  }
-	}
-      closedir(dir);
+      while ((ent = readdir(dir))) {  // Only works with '*' first (eg: *.map)
+        if (strlen(ent->d_name) >= reg.length() - 1) {
+          if (!strncmp(ent->d_name + strlen(ent->d_name) - (reg.length() - 1),
+                       reg.c_str() + 1, reg.length() - 1)) {
+            files.push_back(ent->d_name);
+          }
+        }
       }
+      closedir(dir);
     }
+  }
   fileb = new SG_ComboBox(files, false);
-  if(files.size() == 0) fileb->SetText("<no files>");
+  if (files.size() == 0) fileb->SetText("<no files>");
   AddWidget(fileb, 1, 2, 10, 1);
-  }
+}
 
-SG_FileBrowser::~SG_FileBrowser() {
-  }
+SG_FileBrowser::~SG_FileBrowser() {}
 
 bool SG_FileBrowser::ChildEvent(SDL_Event *event) {
-  if(event->user.code == SG_EVENT_BUTTONPRESS) {
-    if(event->user.data1 == (void *)(openb)) {
+  if (event->user.code == SG_EVENT_BUTTONPRESS) {
+    if (event->user.data1 == (void *)(openb)) {
       event->user.code = SG_EVENT_FILEOPEN;
-      event->user.data1 = (void*)(SG_FileBrowser*)this;
+      event->user.data1 = (void *)(SG_FileBrowser *)this;
       event->user.data2 = NULL;
       return 1;
-      }
-    else if(event->user.data1 == (void *)(cancelb)) {
+    } else if (event->user.data1 == (void *)(cancelb)) {
       event->user.code = SG_EVENT_CANCEL;
-      event->user.data1 = (void*)(SG_FileBrowser*)this;
+      event->user.data1 = (void *)(SG_FileBrowser *)this;
       event->user.data2 = NULL;
       return 1;
-      }
     }
-  return 0; // Silence children doing other things
   }
+  return 0;  // Silence children doing other things
+}
 
 const string &SG_FileBrowser::FileName() {
   filename = dirb->Text() + "/" + fileb->Text();
   return filename;
-  }
+}
 
 //  bool SG_FileBrowser::SetDefaultCursor(GL_MODEL *cur);
 

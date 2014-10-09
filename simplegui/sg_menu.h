@@ -29,26 +29,29 @@ using namespace std;
 #include "sg_multitext.h"
 
 class SG_Menu : public SG_Button, SG_MultiText {
-public:
+ public:
   SG_Menu(const vector<string> &itms, SimpleTexture tex = SG_COL_RAISED,
-        SimpleTexture dis_tex = SG_COL_LOW, SimpleTexture click_tex = SG_COL_LOW);
+          SimpleTexture dis_tex = SG_COL_LOW,
+          SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_Menu();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
 
   void SetID(int id);
-  int ID() { return menu_id; };
+  int ID() {
+    return menu_id;
+  };
 
   virtual const string &Item(int opt);
   virtual void SetItems(const vector<string> &itms);
   virtual int NumItems();
 
-protected:
+ protected:
   virtual bool RenderSelf(unsigned long cur_time);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   vector<string> items;
   int menu_id;
-  };
+};
 
-#endif // SG_MENU_H
+#endif  // SG_MENU_H

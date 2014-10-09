@@ -25,15 +25,14 @@
 #include "sg_textarea.h"
 
 class SG_ProgressBar : public SG_TextArea {
-public:
+ public:
   SG_ProgressBar(const string mes = "", SimpleTexture c = SG_COL_LOW,
-	SimpleTexture dc = SG_COL_HIGH);
+                 SimpleTexture dc = SG_COL_HIGH);
   virtual ~SG_ProgressBar();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
-  };
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
+};
 
-#endif // SG_PROGRESSBAR_H
-
+#endif  // SG_PROGRESSBAR_H

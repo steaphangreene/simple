@@ -35,10 +35,10 @@ int main(int argc, char **argv) {
   int xs = 1024, ys = 768;
   int offset = 1;
 
-  if(argc < 2) {
+  if (argc < 2) {
     fprintf(stderr, "ERROR: requires at least one file argument\n");
     exit(1);
-    }
+  }
 
   SimpleTexture *tex = new SimpleTexture(argv[1]);
 
@@ -49,31 +49,32 @@ int main(int argc, char **argv) {
   video->SetPosition(6.0, 0.0, 0);
 
   int quit = 0;
-  while(!quit) {
+  while (!quit) {
     SDL_Event event;
-    while(SDL_PollEvent(&event)) {
-      if(event.type == SDL_QUIT) {
-	quit = 1;
-	}
-      else if(event.type == SDL_KEYDOWN) {
-        if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-        else if(event.key.keysym.sym == SDLK_q) quit = 1;
-        else if(event.key.keysym.sym == SDLK_BACKSPACE) {
-	  --offset;
-	  if(offset < 1) offset = 1;
-	  delete tex;
-	  SimpleTexture::EmptyTrash();
-	  tex = new SimpleTexture(argv[offset]);
-	  }
-        else if(event.key.keysym.sym == SDLK_SPACE) {
-	  ++offset;
-	  if(offset >= argc) offset = argc-1;
-	  delete tex;
-	  SimpleTexture::EmptyTrash();
-	  tex = new SimpleTexture(argv[offset]);
-	  }break;
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_QUIT) {
+        quit = 1;
+      } else if (event.type == SDL_KEYDOWN) {
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+          quit = 1;
+        else if (event.key.keysym.sym == SDLK_q)
+          quit = 1;
+        else if (event.key.keysym.sym == SDLK_BACKSPACE) {
+          --offset;
+          if (offset < 1) offset = 1;
+          delete tex;
+          SimpleTexture::EmptyTrash();
+          tex = new SimpleTexture(argv[offset]);
+        } else if (event.key.keysym.sym == SDLK_SPACE) {
+          ++offset;
+          if (offset >= argc) offset = argc - 1;
+          delete tex;
+          SimpleTexture::EmptyTrash();
+          tex = new SimpleTexture(argv[offset]);
         }
+        break;
       }
+    }
     video->StartScene();
 
     glMatrixMode(GL_PROJECTION);
@@ -81,7 +82,6 @@ int main(int argc, char **argv) {
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
 
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
@@ -93,23 +93,23 @@ int main(int argc, char **argv) {
     glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(1.0));
     glVertex3f(-1.0, -1.0, 0.0);
     glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(1.0));
-    glVertex3f( 1.0, -1.0, 0.0);
+    glVertex3f(1.0, -1.0, 0.0);
     glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(0.0));
-    glVertex3f( 1.0, 1.0, 0.0);
+    glVertex3f(1.0, 1.0, 0.0);
     glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(0.0));
     glVertex3f(-1.0, 1.0, 0.0);
     glEnd();
 
     glTranslatef(sin(SDL_GetTicks() / 1024.0) / 2.0,
-	cos(SDL_GetTicks() / 1024.0) / 2.0, 0.0);
+                 cos(SDL_GetTicks() / 1024.0) / 2.0, 0.0);
     glBindTexture(GL_TEXTURE_2D, tex->GLTexture());
     glBegin(GL_QUADS);
     glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(1.0));
     glVertex3f(-1.0, -1.0, 0.0);
     glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(1.0));
-    glVertex3f( 1.0, -1.0, 0.0);
+    glVertex3f(1.0, -1.0, 0.0);
     glTexCoord2f(tex->ScaleX(1.0), tex->ScaleY(0.0));
-    glVertex3f( 1.0, 1.0, 0.0);
+    glVertex3f(1.0, 1.0, 0.0);
     glTexCoord2f(tex->ScaleX(0.0), tex->ScaleY(0.0));
     glVertex3f(-1.0, 1.0, 0.0);
     glEnd();
@@ -120,11 +120,11 @@ int main(int argc, char **argv) {
 
     video->FinishScene();
 
-    SDL_Delay(10);	// Let the OS breathe
-    }
+    SDL_Delay(10);  // Let the OS breathe
+  }
 
   delete tex;
   SimpleTexture::EmptyTrash();
 
   return 0;
-  }
+}

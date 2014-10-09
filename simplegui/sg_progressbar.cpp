@@ -26,15 +26,12 @@
 #include "sg_events.h"
 
 SG_ProgressBar::SG_ProgressBar(string mes, SimpleTexture c, SimpleTexture dc)
-	: SG_TextArea(mes, c) {
+    : SG_TextArea(mes, c) {
   texture.push_back(dc);
-  }
+}
 
-SG_ProgressBar::~SG_ProgressBar() {
-  }
+SG_ProgressBar::~SG_ProgressBar() {}
 
 //  bool SG_ProgressBar::SetDefaultCursor(GL_MODEL *cur);
 
 //  static GL_MODEL SG_ProgressBar::Default_Mouse_Cursor = NULL;
-
-

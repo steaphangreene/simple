@@ -30,13 +30,14 @@
 class SG_StickyButton;
 class SG_Menu;
 
-class SG_PullDown : public SG_Compound, public SG_MultiText{
-public:
+class SG_PullDown : public SG_Compound, public SG_MultiText {
+ public:
   SG_PullDown(const string &mes, const vector<string> &itms,
-	SimpleTexture tex = SG_COL_RAISED, SimpleTexture dis_tex = SG_COL_LOW,
-	SimpleTexture click_tex = SG_COL_LOW);
+              SimpleTexture tex = SG_COL_RAISED,
+              SimpleTexture dis_tex = SG_COL_LOW,
+              SimpleTexture click_tex = SG_COL_LOW);
   virtual ~SG_PullDown();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
   virtual const string &Item(int opt);
@@ -46,10 +47,10 @@ public:
   void SetID(int id);
   int ID();
 
-protected:
-//  static GL_MODEL Default_Mouse_Cursor;
+ protected:
+  //  static GL_MODEL Default_Mouse_Cursor;
   SG_StickyButton *but;
   SG_Menu *menu;
-  };
+};
 
-#endif // SG_PULLDOWN_H
+#endif  // SG_PULLDOWN_H

@@ -27,4 +27,4 @@
 
 extern SimpleGUI *current_sg;
 
-#endif // SG_GLOBALS_H
+#endif  // SG_GLOBALS_H

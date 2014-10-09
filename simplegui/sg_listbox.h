@@ -39,49 +39,54 @@ class SG_Button;
 class SG_TextArea;
 
 class SG_ListBox : public SG_Compound {
-public:
+ public:
   SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
-		  SimpleTexture sel, SimpleTexture click, SimpleTexture disable,
-		  unsigned int min=1, unsigned int max=1,
-		  bool vert=true, float border=0.1);
+             SimpleTexture sel, SimpleTexture click, SimpleTexture disable,
+             unsigned int min = 1, unsigned int max = 1, bool vert = true,
+             float border = 0.1);
   virtual ~SG_ListBox();
 
   bool SetSelection(const set<int>& toselect);
 
-  void AddItem( SG_Widget* w, int at=-1 );
-  //Adds the passed widget pointer to the list
-  //If at == -1 or at >= number of items in the list, it is added to the end of the list
-  //	(NOTE passing a value larger then the number of items will NOT expand the list
+  void AddItem(SG_Widget* w, int at = -1);
+  // Adds the passed widget pointer to the list
+  // If at == -1 or at >= number of items in the list, it is added to the end of
+  // the list
+  //	(NOTE passing a value larger then the number of items will NOT expand
+  // the list
   //	 accomodate the passed index, it will expand the list item count by ONE)
-  //If at >= 0 && a < number of items it will be inserted at that the passed position
-  //	and will push the former occupier and all the follow one position forward
+  // If at >= 0 && a < number of items it will be inserted at that the passed
+  // position
+  //	and will push the former occupier and all the follow one position
+  // forward
 
-  bool RemoveItem( unsigned int item );
-  //Removes item number from list
-  //Will succeed only if with this item the minimum selection count can still be satisified
-  //If selected and at minimum selection the minimum will be satisified starting with the
-  //first item and proceeding down the list until the minimum is reached
+  bool RemoveItem(unsigned int item);
+  // Removes item number from list
+  // Will succeed only if with this item the minimum selection count can still
+  // be satisified
+  // If selected and at minimum selection the minimum will be satisified
+  // starting with the
+  // first item and proceeding down the list until the minimum is reached
 
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
-  virtual bool ChildEvent(SDL_Event *event);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  virtual bool ChildEvent(SDL_Event* event);
 
   deque<int> Which() { return selhistory; }
 
-
-protected:
+ protected:
   void Select(int ind);
-  bool Deselect(bool override=false, int ind=-1);
+  bool Deselect(bool override = false, int ind = -1);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   bool vertical;
   unsigned int listsize;
-  unsigned int minsel,maxsel;
+  unsigned int minsel, maxsel;
   float alignborder;
   SimpleTexture texdesel, texsel, texclick, texdisable;
   deque<int> selhistory;
   vector<SG_StickyButton*> stickies;
   vector<SG_Alignment*> aligns;
   map<SG_StickyButton*, int> ptr2pos;
-  };
+};
 
-#endif // SG_LISTBOX_H
+#endif  // SG_LISTBOX_H

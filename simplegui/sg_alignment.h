@@ -28,24 +28,23 @@
 using namespace std;
 
 struct SG_AlignmentGeometry {
-  float xp, yp; //Relative Position (Center)
-  float xs, ys; //Relative Size (From Center)
-  };
+  float xp, yp;  // Relative Position (Center)
+  float xs, ys;  // Relative Size (From Center)
+};
 
 class SG_Alignment : public SG_Widget {
-public:
+ public:
   SG_Alignment(float xbor = 0.0, float ybor = 0.0);
   virtual ~SG_Alignment();
   void SetBorder(float xbor, float ybor);
   virtual int HandleEvent(SDL_Event *event, float x, float y);
-  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event,
-		float x, float y);
+  virtual bool HandEventTo(SG_Widget *targ, SDL_Event *event, float x, float y);
   virtual bool HasWidget(SG_Widget *targ);
   virtual void Disable();
   virtual void Enable();
   virtual void TurnOn();
   virtual void TurnOff();
-//  virtual bool SetDefaultCursor(GL_MODEL *cur);
+  //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool AddWidget(SG_Widget *wid);
   virtual void RemoveWidget(SG_Widget *wid);
   void SetBackground(SG_Widget *wid);
@@ -56,17 +55,16 @@ public:
   void EnableEdgeEvents();
   void DisableEdgeEvents();
 
-protected:
+ protected:
   void CalcGeometry(SG_AlignmentGeometry &geom);
   int HandleEdgeEvent(SDL_Event *event, float x, float y);
   virtual bool RenderSelf(unsigned long cur_time);
 
-//  static GL_MODEL Default_Mouse_Cursor;
+  //  static GL_MODEL Default_Mouse_Cursor;
   vector<SG_Widget *> widgets;
   SG_Widget *background;
   float xborder, yborder;
   int last_edge_event;
-  };
+};
 
-#endif // SG_ALIGNMENT_H
-
+#endif  // SG_ALIGNMENT_H
