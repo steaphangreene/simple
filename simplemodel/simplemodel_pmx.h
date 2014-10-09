@@ -60,6 +60,8 @@ class SimpleModel_PMX : public SimpleModel {
 
   Uint32 ReadVarInt(SDL_RWops *model, Uint8 size) const;
 
+  void CalculateSpaces(vector<Uint32> bones, Matrix4x4 *bone_space,
+                       Matrix4x4 *bone_rot, Matrix4x4 *bone_pos) const;
   void CalculateSpaces(Matrix4x4 *bone_space, Matrix4x4 *bone_rot,
                        Matrix4x4 *bone_pos) const;
 

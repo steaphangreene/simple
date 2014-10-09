@@ -503,6 +503,30 @@ bool SimpleModel_PMX::LoadAnimation(const string &filename) {
   return false;
 }
 
+void SimpleModel_PMX::CalculateSpaces(vector<Uint32> bones,
+                                      Matrix4x4 *bone_space,
+                                      Matrix4x4 *bone_rot,
+                                      Matrix4x4 *bone_pos) const {
+  sort(bones.begin(), bones.end());
+  for (auto bn = bones.begin(); bn != bones.end(); ++bn) {
+    Uint32 bone_id = *bn;
+    Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
+    pre.data[12] = -bone[bone_id].pos.data[0];
+    pre.data[13] = -bone[bone_id].pos.data[1];
+    pre.data[14] = -bone[bone_id].pos.data[2];
+    post.data[12] += bone[bone_id].pos.data[0];
+    post.data[13] += bone[bone_id].pos.data[1];
+    post.data[14] += bone[bone_id].pos.data[2];
+
+    if (bone[bone_id].parent != 0xFFFFFFFF) {
+      Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
+               bone_rot[bone_id], pre);
+    } else {
+      Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
+    }
+  }
+}
+
 void SimpleModel_PMX::CalculateSpaces(Matrix4x4 *bone_space,
                                       Matrix4x4 *bone_rot,
                                       Matrix4x4 *bone_pos) const {
@@ -659,12 +683,14 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
             Matrix4x4 mat_diff;
             QuaternionToMatrix4x4(mat_diff, diff);
             Multiply(bone_rot[link], mat_diff, mat_reset, bone_rot[link]);
+
+            // Re-calculate the affected bone spaces, after one IK step
+            vector<Uint32> bones = ik_link.at(bone_id);
+            bones.push_back(targ);
+            CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
           }
         }
       }
-
-      // Re-calculate all the bone spaces, after IK
-      CalculateSpaces(bone_space, bone_rot, bone_pos);
     }
   }
 
