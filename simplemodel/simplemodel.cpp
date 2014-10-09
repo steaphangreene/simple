@@ -634,7 +634,47 @@ void SimpleModel::Multiply(Matrix4x4 &res, const Matrix4x4 m1,
   Multiply(res, m1, m2, temp);
 }
 
-void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat) {
+void SimpleModel::EulerToQuaternion(Quaternion &quat, const Vector3 &angles) {
+  double c1 = cos(angles.data[0] / 2);
+  double s1 = sin(angles.data[0] / 2);
+  double c2 = cos(angles.data[1] / 2);
+  double s2 = sin(angles.data[1] / 2);
+  double c3 = cos(angles.data[2] / 2);
+  double s3 = sin(angles.data[2] / 2);
+  double c1c2 = c1 * c2;
+  double s1s2 = s1 * s2;
+  quat.w = c1c2 * c3 - s1s2 * s3;
+  quat.x = c1c2 * s3 + s1s2 * c3;
+  quat.y = s1 * c2 * c3 + c1 * s2 * s3;
+  quat.z = c1 * s2 * c3 - s1 * c2 * s3;
+}
+
+void SimpleModel::QuaternionToEuler(Vector3 &angles, const Quaternion &quat) {
+  double test = quat.x * quat.y + quat.z * quat.w;
+  if (test > 0.499) {  // singularity at north pole
+    angles.data[0] = 2 * atan2(quat.x, quat.w);
+    angles.data[1] = M_PI / 2;
+    angles.data[2] = 0;
+    return;
+  }
+  if (test < -0.499) {  // singularity at south pole
+    angles.data[0] = -2 * atan2(quat.x, quat.w);
+    angles.data[1] = -M_PI / 2;
+    angles.data[2] = 0;
+    return;
+  }
+  double sqx = quat.x * quat.x;
+  double sqy = quat.y * quat.y;
+  double sqz = quat.z * quat.z;
+  angles.data[0] =
+      atan2(2 * quat.y * quat.w - 2 * quat.x * quat.z, 1 - 2 * sqy - 2 * sqz);
+  angles.data[1] = asin(2 * test);
+  angles.data[2] =
+      atan2(2 * quat.x * quat.w - 2 * quat.y * quat.z, 1 - 2 * sqx - 2 * sqz);
+}
+
+void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat,
+                                        const Quaternion &quat) {
   mat.data[0] = 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z);
   mat.data[1] = 2.0f * (quat.x * quat.y + quat.z * quat.w);
   mat.data[2] = 2.0f * (quat.x * quat.z - quat.y * quat.w);
@@ -656,7 +696,8 @@ void SimpleModel::QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat) {
   mat.data[15] = 1.0f;
 }
 
-void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat) {
+void SimpleModel::Matrix4x4ToQuaternion(Quaternion &quat,
+                                        const Matrix4x4 &mat) {
   float trace = mat.data[0] + mat.data[5] + mat.data[10];
   if (trace > 0.0) {
     float s = 0.5f / sqrtf(trace + 1.0f);

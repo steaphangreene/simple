@@ -131,8 +131,10 @@ class SimpleModel {
   };
 
   // Conversions
-  static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion quat);
-  static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 mat);
+  static void QuaternionToEuler(Vector3 &angles, const Quaternion &quat);
+  static void EulerToQuaternion(Quaternion &quat, const Vector3 &angles);
+  static void QuaternionToMatrix4x4(Matrix4x4 &mat, const Quaternion &quat);
+  static void Matrix4x4ToQuaternion(Quaternion &quat, const Matrix4x4 &mat);
 
   // Math
   template <class Tp>
