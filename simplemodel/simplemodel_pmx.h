@@ -97,13 +97,20 @@ class SimpleModel_PMX : public SimpleModel {
     Uint16 flags;
   };
 
+  struct IKLink {
+    Uint32 bone;
+    Vector3 min;
+    Vector3 max;
+    Uint8 limited;
+  };
+
   vector<PMXVertex> vertices;
   vector<PMXTriangle> triangles;
   vector<PMXMaterial> material;
   vector<PMXBone> bone;
   map<string, Uint32> bone_by_name;
   map<Uint32, Uint32> bone_target;
-  map<Uint32, vector<Uint32>> ik_link;
+  map<Uint32, vector<IKLink>> ik_link;
 
   struct VMDBoneKeyFrame {
     Vector3 pos;

@@ -392,13 +392,14 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       Uint32 num_ik_links;
       freadLE(num_ik_links, model);
       for (Uint32 link = 0; link < num_ik_links; ++link) {
-        // "IK Link Info (?)"?
-        ik_link[bn].push_back(ReadVarInt(model, bone_index_size));
-        Uint8 ik_limit_angle;
-        freadLE(ik_limit_angle, model);  // ?
-        if (ik_limit_angle == 1) {
-          SDL_RWseek(model, 24, SEEK_CUR);  // "min/max (Vector3 x 2)"?
+        IKLink ik;
+        ik.bone = ReadVarInt(model, bone_index_size);
+        freadLE(ik.limited, model);
+        if (ik.limited == 1) {
+          freadLE(ik.min, model);
+          freadLE(ik.max, model);
         }
+        ik_link[bn].push_back(ik);
       }
     }
   }
@@ -507,7 +508,6 @@ void SimpleModel_PMX::CalculateSpaces(vector<Uint32> bones,
                                       Matrix4x4 *bone_space,
                                       Matrix4x4 *bone_rot,
                                       Matrix4x4 *bone_pos) const {
-  sort(bones.begin(), bones.end());
   for (auto bn = bones.begin(); bn != bones.end(); ++bn) {
     Uint32 bone_id = *bn;
     Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
@@ -631,7 +631,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         if (ik_link.count(bone_id)) {
           for (auto link_itr = ik_link.at(bone_id).begin();
                link_itr != ik_link.at(bone_id).end(); ++link_itr) {
-            Uint32 link = *link_itr;
+            Uint32 link = link_itr->bone;
             //          Uint32 link = ik_link.at(bone_id).front();
             if (((offset++) % ik_link.at(bone_id).size()) > x) continue;
 
@@ -674,6 +674,22 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
             Vector3 ang;
             QuaternionToEuler(ang, diff);
+            if (link_itr->limited) {
+              if (ang.data[0] < link_itr->min.data[0])
+                ang.data[0] = link_itr->min.data[0];
+              if (ang.data[1] < link_itr->min.data[1])
+                ang.data[1] = link_itr->min.data[1];
+              if (ang.data[2] < link_itr->min.data[2])
+                ang.data[2] = link_itr->min.data[2];
+              if (ang.data[0] > link_itr->max.data[0])
+                ang.data[0] = link_itr->max.data[0];
+              if (ang.data[1] > link_itr->max.data[1])
+                ang.data[1] = link_itr->max.data[1];
+              if (ang.data[2] > link_itr->max.data[2])
+                ang.data[2] = link_itr->max.data[2];
+            } else {
+              ang.data[2] = 0.0; // My Method doesn't do joint rotates well
+            }
             EulerToQuaternion(diff, ang);
 
             Quaternion reset;
@@ -691,7 +707,11 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                      bone_rot[link]);
 
             // Re-calculate the affected bone spaces, after one IK step
-            vector<Uint32> bones = ik_link.at(bone_id);
+            vector<Uint32> bones;
+            for (auto bn = ik_link.at(bone_id).rbegin();
+                 bn != ik_link.at(bone_id).rend(); ++bn) {
+              bones.push_back(bn->bone);
+            }
             bones.push_back(targ);
             CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
           }
