@@ -796,6 +796,7 @@ void SimpleModel::SLERP(Quaternion &res, const Quaternion q1,
     res.y = s1 * q1.y + s2 * q2.y;  // Y
     res.z = s1 * q1.z + s2 * q2.z;  // Z
   }
+  Normalize(res, res);
 }
 
 void SimpleModel::AddSourceFile(const string &in) {
