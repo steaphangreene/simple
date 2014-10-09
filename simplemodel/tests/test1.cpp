@@ -327,7 +327,7 @@ int main(int argc, char **argv) {
         //	else if(event.key.keysym.sym == SDLK_KP_PLUS)  posx += dist;
         //	else if(event.key.keysym.sym == SDLK_KP_MINUS) posx -= dist;
 
-        else if (event.key.keysym.sym == SDLK_SPACE) {
+        else if (event.key.keysym.sym == SDLK_RETURN) {
           if (modnum < mod.size() - 1) ++modnum;
         } else if (event.key.keysym.sym == SDLK_BACKSPACE) {
           if (modnum > 0) --modnum;
