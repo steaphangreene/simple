@@ -331,6 +331,8 @@ int main(int argc, char **argv) {
           if (modnum < mod.size() - 1) ++modnum;
         } else if (event.key.keysym.sym == SDLK_BACKSPACE) {
           if (modnum > 0) --modnum;
+        } else if (event.key.keysym.sym == SDLK_v) {
+          video->ToggleVSync();
         } else {
         }
         if (toggle >= 0) {

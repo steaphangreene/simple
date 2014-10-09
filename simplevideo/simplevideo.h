@@ -96,6 +96,10 @@ class SimpleVideo {
     ResizeGL(xsize, ysize);
   }
 
+  void VSyncOn();
+  void VSyncOff();
+  void ToggleVSync();
+
   void SetScene(SimpleScene *scene);
   void SetGUI(SimpleGUI *gui);
 
@@ -125,6 +129,7 @@ class SimpleVideo {
   float aspect;
   float yfov;  // Used only by perspective
   bool sbs;    // Side-by-Side 3D
+  bool vsync;  // Side-by-Side 3D
 
   float minz, maxz;
 

@@ -58,6 +58,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   flags = 0;
   yfov = 45.0;
   sbs = false;
+  vsync = false;
 
   scene = NULL;
   gui = NULL;
@@ -205,6 +206,23 @@ void SimpleVideo::SetPerspective(float vert_fov) {
 
 SimpleVideo::~SimpleVideo() {
   // at_exit handles all this
+}
+
+void SimpleVideo::VSyncOn() {
+  SDL_GL_SetSwapInterval(1);
+  vsync = true;
+}
+
+void SimpleVideo::VSyncOff() {
+  SDL_GL_SetSwapInterval(0);
+  vsync = false;
+}
+
+void SimpleVideo::ToggleVSync() {
+  if (vsync)
+    VSyncOff();
+  else
+    VSyncOn();
 }
 
 bool SimpleVideo::StartScene() {
