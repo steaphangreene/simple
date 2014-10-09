@@ -672,6 +672,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
             diff.z = cross.data[2];
             Normalize(diff, diff);
 
+            Vector3 ang;
+            QuaternionToEuler(ang, diff);
+            EulerToQuaternion(diff, ang);
+
             Quaternion reset;
             Matrix4x4ToQuaternion(reset, bone_space[link]);
             Matrix4x4 mat_restore, mat_reset;
