@@ -447,7 +447,7 @@ bool SimpleModel_PMX::LoadAnimation(const string &filename) {
       continue;
     }
 
-    Uint16 bone = bone_by_name[bone_name];
+    Uint32 bone = bone_by_name[bone_name];
 
     // Coordinate vector
     freadLE(bone_frame[bone][frame].pos.data[0], model);
@@ -516,7 +516,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   Matrix4x4 bone_trans[bone.size()];
 
-  for (Uint16 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+  for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     Matrix4x4 btrans = identity4x4;
     if (bone[bone_id].parent != 0xFFFFFFFF) {
       bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
@@ -623,8 +623,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       } else {
         float bone_weight;
         bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
-        Uint16 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
-        Uint16 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+        Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
+        Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
 
         Matrix4x4 m1, m2;
         m1 = bone_trans[bone1];
