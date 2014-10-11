@@ -503,6 +503,27 @@ bool SimpleModel_PMX::LoadAnimation(const string &filename) {
   return false;
 }
 
+void SimpleModel_PMX::CalculateSpaces(Matrix4x4 *bone_space,
+                                      Matrix4x4 *bone_rot,
+                                      Matrix4x4 *bone_pos) const {
+  for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+    Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
+    pre.data[12] = -bone[bone_id].pos.data[0];
+    pre.data[13] = -bone[bone_id].pos.data[1];
+    pre.data[14] = -bone[bone_id].pos.data[2];
+    post.data[12] += bone[bone_id].pos.data[0];
+    post.data[13] += bone[bone_id].pos.data[1];
+    post.data[14] += bone[bone_id].pos.data[2];
+
+    if (bone[bone_id].parent != 0xFFFFFFFF) {
+      Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
+               bone_rot[bone_id], pre);
+    } else {
+      Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
+    }
+  }
+}
+
 bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                                  const vector<Uint32> &start_time,
                                  Uint32 anim_offset) const {
@@ -570,22 +591,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   }
 
   // Calculate all the normal bone spaces, after frame load
-  for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-    Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
-    pre.data[12] = -bone[bone_id].pos.data[0];
-    pre.data[13] = -bone[bone_id].pos.data[1];
-    pre.data[14] = -bone[bone_id].pos.data[2];
-    post.data[12] += bone[bone_id].pos.data[0];
-    post.data[13] += bone[bone_id].pos.data[1];
-    post.data[14] += bone[bone_id].pos.data[2];
-
-    if (bone[bone_id].parent != 0xFFFFFFFF) {
-      Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
-               bone_rot[bone_id], pre);
-    } else {
-      Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
-    }
-  }
+  CalculateSpaces(bone_space, bone_rot, bone_pos);
 
   for (size_t x = 0; x < ik_steps; ++x) {
 
@@ -658,22 +664,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       }
 
       // Re-calculate all the bone spaces, after IK
-      for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-        Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
-        pre.data[12] = -bone[bone_id].pos.data[0];
-        pre.data[13] = -bone[bone_id].pos.data[1];
-        pre.data[14] = -bone[bone_id].pos.data[2];
-        post.data[12] += bone[bone_id].pos.data[0];
-        post.data[13] += bone[bone_id].pos.data[1];
-        post.data[14] += bone[bone_id].pos.data[2];
-
-        if (bone[bone_id].parent != 0xFFFFFFFF) {
-          Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
-                   bone_rot[bone_id], pre);
-        } else {
-          Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
-        }
-      }
+      CalculateSpaces(bone_space, bone_rot, bone_pos);
     }
   }
 
