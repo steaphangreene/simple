@@ -617,18 +617,18 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   // Calculate all the normal bone spaces, after frame load
   CalculateSpaces(bone_space, bone_rot, bone_pos);
 
-  for (size_t x = 0; x < ik_steps; ++x) {
+  // Run through the IK sets, and move stuff around
+  size_t offset = 0;
+  for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+    if (bone_target.count(bone_id)) {
+      Uint32 targ = bone_target.at(bone_id);
 
-    // Run through the IK sets, and move stuff around
-    size_t offset = 0;
-    for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-      if (bone_target.count(bone_id)) {
-        Uint32 targ = bone_target.at(bone_id);
+      //      Uint32 parent = bone[targ].parent;
+      //      bone_space[parent] = bone_space[bone_id];
 
-        //      Uint32 parent = bone[targ].parent;
-        //      bone_space[parent] = bone_space[bone_id];
+      if (ik_link.count(bone_id)) {
+        for (size_t x = 0; x < ik_steps; ++x) {
 
-        if (ik_link.count(bone_id)) {
           for (auto link_itr = ik_link.at(bone_id).begin();
                link_itr != ik_link.at(bone_id).end(); ++link_itr) {
             Uint32 link = link_itr->bone;
@@ -688,7 +688,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
               if (ang.data[2] > link_itr->max.data[2])
                 ang.data[2] = link_itr->max.data[2];
             } else {
-              ang.data[2] = 0.0; // My Method doesn't do joint rotates well
+              ang.data[2] = 0.0;  // My Method doesn't do joint rotates well
             }
             EulerToQuaternion(diff, ang);
 
@@ -715,6 +715,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
             bones.push_back(targ);
             CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
           }
+          // Calculate all the normal bone spaces, after IK pass
+          CalculateSpaces(bone_space, bone_rot, bone_pos);
         }
       }
     }
