@@ -387,12 +387,13 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       SDL_RWseek(model, 4, SEEK_CUR);  // "External Key (Uint32)"?
     }
     if (bone[bn].flags & PMX_BONE_FLAG_IS_IK) {
-      ReadVarInt(model, bone_index_size);  // "IK Info (?)"?
-      SDL_RWseek(model, 8, SEEK_CUR);      // "IK Info (?)"?
+      bone_target[bn] = ReadVarInt(model, bone_index_size);  // "IK Info (?)"?
+      SDL_RWseek(model, 8, SEEK_CUR);                        // "IK Info (?)"?
       Uint32 num_ik_links;
       freadLE(num_ik_links, model);
-      for (Uint32 ik_link = 0; ik_link < num_ik_links; ++ik_link) {
-        ReadVarInt(model, bone_index_size);  // "IK Link Info (?)"?
+      for (Uint32 link = 0; link < num_ik_links; ++link) {
+        // "IK Link Info (?)"?
+        ik_link[bn].push_back(ReadVarInt(model, bone_index_size));
         Uint8 ik_limit_angle;
         freadLE(ik_limit_angle, model);  // ?
         if (ik_limit_angle == 1) {
@@ -507,6 +508,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                                  Uint32 anim_offset) const {
 
   float frame = float(cur_time - start_time[0]) * 30.0 / 1000.0;
+  Uint32 ik_steps = 2;
 
   Uint32 mat = -1;
   Uint32 to_next_mat = 0;
@@ -518,15 +520,14 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   glRotatef(-90.0, 0.0, 1.0, 0.0);
   glRotatef(-90.0, 0.0, 0.0, 1.0);
 
-  Matrix4x4 bone_trans[bone.size()];
+  Matrix4x4 bone_pos[bone.size()];
+  Matrix4x4 bone_rot[bone.size()];
+  Matrix4x4 bone_space[bone.size()];
 
   for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
-    Matrix4x4 btrans = identity4x4;
-    if (bone[bone_id].parent != 0xFFFFFFFF) {
-      bone_trans[bone_id] = bone_trans[bone[bone_id].parent];
-    } else {
-      bone_trans[bone_id] = identity4x4;
-    }
+    bone_pos[bone_id] = identity4x4;
+    bone_rot[bone_id] = identity4x4;
+    bone_space[bone_id] = identity4x4;
 
     if (bone_frame.count(bone_id) == 0) {
       continue;
@@ -539,15 +540,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       if (fr == bone_frame.at(bone_id).end() || fr->first > frame) {
 
         if (fr == bone_frame.at(bone_id).end()) {
-          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-          QuaternionToMatrix4x4(trans, f1->second.rot);
-          pre.data[12] = -bone[bone_id].pos.data[0];
-          pre.data[13] = -bone[bone_id].pos.data[1];
-          pre.data[14] = -bone[bone_id].pos.data[2];
-          post.data[12] = f1->second.pos.data[0] + bone[bone_id].pos.data[0];
-          post.data[13] = f1->second.pos.data[1] + bone[bone_id].pos.data[1];
-          post.data[14] = f1->second.pos.data[2] + bone[bone_id].pos.data[2];
-          Multiply(btrans, post, trans, pre);
+          QuaternionToMatrix4x4(bone_rot[bone_id], f1->second.rot);
+          bone_pos[bone_id].data[12] = f1->second.pos.data[0];
+          bone_pos[bone_id].data[13] = f1->second.pos.data[1];
+          bone_pos[bone_id].data[14] = f1->second.pos.data[2];
         } else {
           float progress =
               float(frame - f1->first) / float(fr->first - f1->first);
@@ -558,27 +554,127 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
           // BERP(pos, pos1, pos2, progress,
           //     fr->second.bez_x, fr->second.bez_y, fr->second.bez_z);
           LERP(pos, pos1, pos2, progress);
+          bone_pos[bone_id].data[12] = pos.data[0];
+          bone_pos[bone_id].data[13] = pos.data[1];
+          bone_pos[bone_id].data[14] = pos.data[2];
 
           Quaternion rot;
           // BERP(rot, f1->second.rot, fr->second.rot, progress,
           // fr->second.bez_r);
           SLERP(rot, f1->second.rot, fr->second.rot, progress);
-
-          Matrix4x4 pre = identity4x4, post = identity4x4, trans;
-          QuaternionToMatrix4x4(trans, rot);
-          pre.data[12] = -bone[bone_id].pos.data[0];
-          pre.data[13] = -bone[bone_id].pos.data[1];
-          pre.data[14] = -bone[bone_id].pos.data[2];
-          post.data[12] = pos.data[0] + bone[bone_id].pos.data[0];
-          post.data[13] = pos.data[1] + bone[bone_id].pos.data[1];
-          post.data[14] = pos.data[2] + bone[bone_id].pos.data[2];
-          Multiply(btrans, post, trans, pre);
+          QuaternionToMatrix4x4(bone_rot[bone_id], rot);
         }
         break;
       }
     }
+  }
 
-    Multiply(bone_trans[bone_id], bone_trans[bone_id], btrans);
+  // Calculate all the normal bone spaces, after frame load
+  for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+    Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
+    pre.data[12] = -bone[bone_id].pos.data[0];
+    pre.data[13] = -bone[bone_id].pos.data[1];
+    pre.data[14] = -bone[bone_id].pos.data[2];
+    post.data[12] += bone[bone_id].pos.data[0];
+    post.data[13] += bone[bone_id].pos.data[1];
+    post.data[14] += bone[bone_id].pos.data[2];
+
+    if (bone[bone_id].parent != 0xFFFFFFFF) {
+      Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
+               bone_rot[bone_id], pre);
+    } else {
+      Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
+    }
+  }
+
+  for (size_t x = 0; x < ik_steps; ++x) {
+
+    // Run through the IK sets, and move stuff around
+    size_t offset = 0;
+    for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+      if (bone_target.count(bone_id)) {
+        Uint32 targ = bone_target.at(bone_id);
+
+        //      Uint32 parent = bone[targ].parent;
+        //      bone_space[parent] = bone_space[bone_id];
+
+        if (ik_link.count(bone_id)) {
+          for (auto link_itr = ik_link.at(bone_id).begin();
+               link_itr != ik_link.at(bone_id).end(); ++link_itr) {
+            Uint32 link = *link_itr;
+            //          Uint32 link = ik_link.at(bone_id).front();
+            if (((offset++) % ik_link.at(bone_id).size()) > x) continue;
+
+            Vector3 tmp1 = {{bone[link].pos.data[0], bone[link].pos.data[1],
+                             bone[link].pos.data[2]}};
+            Vector3 tmp2 = {{bone[targ].pos.data[0], bone[targ].pos.data[1],
+                             bone[targ].pos.data[2]}};
+            MatrixTransform(tmp1, bone_space[link]);
+            MatrixTransform(tmp2, bone_space[targ]);
+            Vector3 base = {{tmp2.data[0] - tmp1.data[0],
+                             tmp2.data[1] - tmp1.data[1],
+                             tmp2.data[2] - tmp1.data[2]}};
+            Normalize(base, base);
+
+            Vector3 tmp3 = {{bone[link].pos.data[0], bone[link].pos.data[1],
+                             bone[link].pos.data[2]}};
+            Vector3 tmp4 = {{bone[bone_id].pos.data[0],
+                             bone[bone_id].pos.data[1],
+                             bone[bone_id].pos.data[2]}};
+            MatrixTransform(tmp3, bone_space[link]);
+            MatrixTransform(tmp4, bone_space[bone_id]);
+            Vector3 goal = {{tmp4.data[0] - tmp3.data[0],
+                             tmp4.data[1] - tmp3.data[1],
+                             tmp4.data[2] - tmp3.data[2]}};
+            Normalize(goal, goal);
+
+            Vector3 half;
+            Add(half, goal, base);
+            Normalize(half, half);
+
+            Vector3 cross;
+            CrossProduct(cross, base, half);
+
+            Quaternion diff;
+            DotProduct(diff.w, base, half);
+            diff.x = cross.data[0];
+            diff.y = cross.data[1];
+            diff.z = cross.data[2];
+            Normalize(diff, diff);
+
+            Quaternion reset;
+            Matrix4x4 mat_reset;
+            Matrix4x4ToQuaternion(reset, bone_space[link]);
+            reset.x = -reset.x;
+            reset.y = -reset.y;
+            reset.z = -reset.z;
+            QuaternionToMatrix4x4(mat_reset, reset);
+
+            Matrix4x4 mat_diff;
+            QuaternionToMatrix4x4(mat_diff, diff);
+            Multiply(bone_rot[link], mat_diff, mat_reset, bone_rot[link]);
+          }
+        }
+      }
+
+      // Re-calculate all the bone spaces, after IK
+      for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+        Matrix4x4 pre = identity4x4, post = bone_pos[bone_id];
+        pre.data[12] = -bone[bone_id].pos.data[0];
+        pre.data[13] = -bone[bone_id].pos.data[1];
+        pre.data[14] = -bone[bone_id].pos.data[2];
+        post.data[12] += bone[bone_id].pos.data[0];
+        post.data[13] += bone[bone_id].pos.data[1];
+        post.data[14] += bone[bone_id].pos.data[2];
+
+        if (bone[bone_id].parent != 0xFFFFFFFF) {
+          Multiply(bone_space[bone_id], bone_space[bone[bone_id].parent], post,
+                   bone_rot[bone_id], pre);
+        } else {
+          Multiply(bone_space[bone_id], post, bone_rot[bone_id], pre);
+        }
+      }
+    }
   }
 
   glDisable(GL_CULL_FACE);
@@ -623,7 +719,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       Matrix4x4 mat;
       if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
-        mat = bone_trans[vertices[triangles[tri].vertex[vert]].bone[0]];
+        mat = bone_space[vertices[triangles[tri].vertex[vert]].bone[0]];
       } else if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 2) {
         float b1_weight, b2_weight, b3_weight, b4_weight;
         b1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
@@ -636,10 +732,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         Uint32 bone4 = vertices[triangles[tri].vertex[vert]].bone[3];
 
         Matrix4x4 m1, m2, m3, m4;
-        m1 = bone_trans[bone1];
-        m2 = bone_trans[bone2];
-        m3 = bone_trans[bone3];
-        m4 = bone_trans[bone4];
+        m1 = bone_space[bone1];
+        m2 = bone_space[bone2];
+        m3 = bone_space[bone3];
+        m4 = bone_space[bone4];
 
         LERP(mat, m1, m2, m3, m4, b1_weight, b2_weight, b3_weight, b4_weight);
       } else {
@@ -650,8 +746,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
 
         Matrix4x4 m1, m2;
-        m1 = bone_trans[bone1];
-        m2 = bone_trans[bone2];
+        m1 = bone_space[bone1];
+        m2 = bone_space[bone2];
 
         LERP(mat, m1, m2, bone1_weight, bone2_weight);
       }

@@ -97,6 +97,8 @@ class SimpleModel_PMX : public SimpleModel {
   vector<PMXMaterial> material;
   vector<PMXBone> bone;
   map<string, Uint32> bone_by_name;
+  map<Uint32, Uint32> bone_target;
+  map<Uint32, vector<Uint32>> ik_link;
 
   struct VMDBoneKeyFrame {
     Vector3 pos;
