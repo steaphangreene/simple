@@ -620,9 +620,28 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       Matrix4x4 mat;
       if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
         mat = bone_trans[vertices[triangles[tri].vertex[vert]].bone[0]];
+      } else if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 2) {
+        float bone1_weight, bone2_weight, bone3_weight, bone4_weight;
+        bone1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
+        bone2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
+        bone3_weight = vertices[triangles[tri].vertex[vert]].bone_weight[2];
+        bone4_weight = vertices[triangles[tri].vertex[vert]].bone_weight[3];
+        Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
+        Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+        Uint32 bone3 = vertices[triangles[tri].vertex[vert]].bone[2];
+        Uint32 bone4 = vertices[triangles[tri].vertex[vert]].bone[3];
+
+        Matrix4x4 m1, m2, m3, m4;
+        m1 = bone_trans[bone1];
+        m2 = bone_trans[bone2];
+        m3 = bone_trans[bone3];
+        m4 = bone_trans[bone4];
+
+        LERP(mat, m1, m2, m3, m4, bone1_weight, bone2_weight, bone3_weight, bone4_weight);
       } else {
-        float bone_weight;
-        bone_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
+        float bone1_weight, bone2_weight;
+        bone1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
+        bone2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
         Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
         Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
 
@@ -630,8 +649,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         m1 = bone_trans[bone1];
         m2 = bone_trans[bone2];
 
-        // Note: m1 and m2 are swapped, this has weight of first, not progress
-        LERP(mat, m2, m1, bone_weight);
+        LERP(mat, m1, m2, bone1_weight, bone2_weight);
       }
 
       float x, y, z;
