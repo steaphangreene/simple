@@ -181,6 +181,20 @@ class SimpleModel {
       res.data[n] = m1.data[n] * (1.0 - t) + m2.data[n] * t;
     }
   }
+  template <class Tp>
+  static void LERP(Tp &res, const Tp m1, const Tp m2, float t1, float t2) {
+    for (unsigned int n = 0; n < sizeof(res.data) / sizeof(res.data[0]); ++n) {
+      res.data[n] = m1.data[n] * t1 + m2.data[n] * t2;
+    }
+  }
+  template <class Tp>
+  static void LERP(Tp &res, const Tp m1, const Tp m2, const Tp m3, const Tp m4,
+                   float t1, float t2, float t3, float t4) {
+    for (unsigned int n = 0; n < sizeof(res.data) / sizeof(res.data[0]); ++n) {
+      res.data[n] =
+          m1.data[n] * t1 + m2.data[n] * t2 + m3.data[n] * t3 + m4.data[n] * t4;
+    }
+  }
   static void SLERP(Matrix4x4 &res, const Matrix4x4 m1, const Matrix4x4 m2,
                     const float t);
   static void SLERP(Quaternion &res, const Quaternion q1, const Quaternion q2,
