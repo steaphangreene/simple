@@ -627,11 +627,11 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
         mat = bone_trans[vertices[triangles[tri].vertex[vert]].bone[0]];
       } else if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 2) {
-        float bone1_weight, bone2_weight, bone3_weight, bone4_weight;
-        bone1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
-        bone2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
-        bone3_weight = vertices[triangles[tri].vertex[vert]].bone_weight[2];
-        bone4_weight = vertices[triangles[tri].vertex[vert]].bone_weight[3];
+        float b1_weight, b2_weight, b3_weight, b4_weight;
+        b1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
+        b2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
+        b3_weight = vertices[triangles[tri].vertex[vert]].bone_weight[2];
+        b4_weight = vertices[triangles[tri].vertex[vert]].bone_weight[3];
         Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
         Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
         Uint32 bone3 = vertices[triangles[tri].vertex[vert]].bone[2];
@@ -643,7 +643,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         m3 = bone_trans[bone3];
         m4 = bone_trans[bone4];
 
-        LERP(mat, m1, m2, m3, m4, bone1_weight, bone2_weight, bone3_weight, bone4_weight);
+        LERP(mat, m1, m2, m3, m4, b1_weight, b2_weight, b3_weight, b4_weight);
       } else {
         float bone1_weight, bone2_weight;
         bone1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
