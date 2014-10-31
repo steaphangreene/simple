@@ -81,11 +81,13 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     freadLE(vertices[vert].vertex[0], model);
     freadLE(vertices[vert].vertex[1], model);
     freadLE(vertices[vert].vertex[2], model);
+    vertices[vert].vertex[0] *= -1.0;
 
     // Normal vector
     freadLE(vertices[vert].normal[0], model);
     freadLE(vertices[vert].normal[1], model);
     freadLE(vertices[vert].normal[2], model);
+    vertices[vert].normal[0] *= -1.0;
 
     // Texture coordinates
     freadLE(vertices[vert].texcoord[0], model);
@@ -215,6 +217,7 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     freadLE(bone[bn].pos.data[0], model);
     freadLE(bone[bn].pos.data[1], model);
     freadLE(bone[bn].pos.data[2], model);
+    bone[bn].pos.data[0] *= -1.0;
   }
 
   return false;

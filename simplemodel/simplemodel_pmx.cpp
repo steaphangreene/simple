@@ -215,11 +215,13 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     freadLE(vertices[vert].vertex[0], model);
     freadLE(vertices[vert].vertex[1], model);
     freadLE(vertices[vert].vertex[2], model);
+    vertices[vert].vertex[0] *= -1.0;
 
     // Normal vector
     freadLE(vertices[vert].normal[0], model);
     freadLE(vertices[vert].normal[1], model);
     freadLE(vertices[vert].normal[2], model);
+    vertices[vert].normal[0] *= -1.0;
 
     // Texture coordinates
     freadLE(vertices[vert].texcoord[0], model);
@@ -363,6 +365,7 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     freadLE(bone[bn].pos.data[0], model);
     freadLE(bone[bn].pos.data[1], model);
     freadLE(bone[bn].pos.data[2], model);
+    bone[bn].pos.data[0] *= -1.0;
     bone[bn].parent = ReadVarInt(model, bone_index_size);
     SDL_RWseek(model, 4, SEEK_CUR);  // "Layer"?
     freadLE(bone[bn].flags, model);
@@ -453,12 +456,15 @@ bool SimpleModel_PMX::LoadAnimation(const string &filename) {
     freadLE(bone_frame[bone][frame].pos.data[0], model);
     freadLE(bone_frame[bone][frame].pos.data[1], model);
     freadLE(bone_frame[bone][frame].pos.data[2], model);
+    bone_frame[bone][frame].pos.data[0] *= -1.0;
 
     // Rotation quaternion
     freadLE(bone_frame[bone][frame].rot.x, model);
     freadLE(bone_frame[bone][frame].rot.y, model);
     freadLE(bone_frame[bone][frame].rot.z, model);
     freadLE(bone_frame[bone][frame].rot.w, model);
+    bone_frame[bone][frame].rot.y *= -1.0;
+    bone_frame[bone][frame].rot.z *= -1.0;
 
     // Load bezier interp data... stored [0..127]
     // X_x1, Y_x1, Z_x1, R_x1, X_y1, Y_y1, Z_y1, R_y1,
