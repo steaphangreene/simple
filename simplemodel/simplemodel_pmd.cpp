@@ -222,5 +222,24 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     bone[bn].effector = 0xFFFFFFFF;  // Effector is not supported in PMD format
   }
 
+  Uint32 num_ik_chains;
+  num_ik_chains = ReadVarInt(model, 2);
+  for (Uint32 ik = 0; ik < num_ik_chains; ++ik) {
+    Uint32 bn = ReadVarInt(model, 2);
+    bone_target[bn] = ReadVarInt(model, 2);
+
+    Uint32 num_ik_links = ReadVarInt(model, 1);
+
+    // Ignore IK Algorithm Hints, For Now
+    SDL_RWseek(model, 6, SEEK_CUR);
+
+    for (Uint32 link = 0; link < num_ik_links; ++link) {
+      IKLink ik;
+      ik.bone = ReadVarInt(model, 2);
+      ik.limited = 0;  // Always 0 - PMD format doesn't support these limits
+      ik_link[bn].push_back(ik);
+    }
+  }
+
   return false;
 }
