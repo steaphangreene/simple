@@ -621,8 +621,28 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   // Run through the IK sets, and move stuff around
   for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     if (bone[bone_id].effector != 0xFFFFFFFF) {
-      bone_pos[bone_id] = bone_pos[bone[bone_id].effector];
-      bone_rot[bone_id] = bone_rot[bone[bone_id].effector];
+
+      if (bone[bone_id].effector_factor >= 1.0) {
+        // Fully affected, just clone it.
+        bone_pos[bone_id] = bone_pos[bone[bone_id].effector];
+        bone_rot[bone_id] = bone_rot[bone[bone_id].effector];
+      } else if (bone[bone_id].effector_factor <= -1.0) {
+        // Fully reverse affected, just reverse it.
+        bone_pos[bone_id].data[12] = -bone_pos[bone[bone_id].effector].data[12];
+        bone_pos[bone_id].data[13] = -bone_pos[bone[bone_id].effector].data[13];
+        bone_pos[bone_id].data[14] = -bone_pos[bone[bone_id].effector].data[14];
+
+        Quaternion quat;
+        Matrix4x4ToQuaternion(quat, bone_rot[bone[bone_id].effector]);
+        quat.x = -quat.x;
+        quat.y = -quat.y;
+        quat.z = -quat.z;
+        QuaternionToMatrix4x4(bone_rot[bone_id], quat);
+
+      } else if (bone[bone_id].effector_factor != 0.0) {
+        // TODO: SLERP
+      }
+      // Zero means do nothing, so that case is ignored.
     }
 
     if (bone_target.count(bone_id)) {
