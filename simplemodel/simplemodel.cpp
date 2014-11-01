@@ -266,6 +266,26 @@ const vector<string> &SimpleModel::GetSkinList() {
   return skins;
 }
 
+void SimpleModel::Normalize(Vector3 &res, const Vector3 vec) {
+  float scale = sqrtf(vec.data[0] * vec.data[0] + vec.data[1] * vec.data[1] +
+                      vec.data[2] * vec.data[2]);
+  res.data[0] = vec.data[0] / scale;
+  res.data[1] = vec.data[1] / scale;
+  res.data[2] = vec.data[2] / scale;
+}
+
+void SimpleModel::CrossProduct(Vector3 &res, const Vector3 v1,
+                               const Vector3 v2) {
+  res.data[0] = v1.data[1] * v2.data[2] - v1.data[2] * v2.data[1];
+  res.data[1] = v1.data[2] * v2.data[0] - v1.data[0] * v2.data[2];
+  res.data[2] = v1.data[0] * v2.data[1] - v1.data[1] * v2.data[0];
+}
+
+void SimpleModel::DotProduct(float &res, const Vector3 v1, const Vector3 v2) {
+  res = v1.data[0] * v2.data[0] + v1.data[1] * v2.data[1] +
+        v1.data[2] * v2.data[2];
+}
+
 void SimpleModel::Normalize(Quaternion &res, const Quaternion quat) {
   float scale = sqrtf(quat.w * quat.w + quat.x * quat.x + quat.y * quat.y +
                       quat.z * quat.z);

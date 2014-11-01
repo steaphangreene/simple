@@ -172,7 +172,11 @@ class SimpleModel {
   static void MatrixTransform(Vector3 &v, const Matrix4x4 &rot);
   static void MatrixTransform(float &x, float &y, float &z,
                               const Matrix4x4 &rot);
-  static void Normalize(Matrix4x4 &res, const Matrix4x4 quat);
+
+  // Vector Operations
+  static void Normalize(Vector3 &res, const Vector3 vec);
+  static void CrossProduct(Vector3 &res, const Vector3 v1, const Vector3 v2);
+  static void DotProduct(float &res, const Vector3 v1, const Vector3 v2);
 
   // Interpolations
   template <class Tp>
