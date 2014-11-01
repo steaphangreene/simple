@@ -228,15 +228,12 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     freadLE(vertices[vert].texcoord[1], model);
 
     freadLE(vertices[vert].bone_weight_type, model);
-    if (vertices[vert].bone_weight_type == 0) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
-    } else if (vertices[vert].bone_weight_type == 1) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+    vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
+    if (vertices[vert].bone_weight_type == 1) {
       vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
       freadLE(vertices[vert].bone_weight[0], model);
       vertices[vert].bone_weight[1] = 1.0 - vertices[vert].bone_weight[0];
     } else if (vertices[vert].bone_weight_type == 2) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
       vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
       vertices[vert].bone[2] = ReadVarInt(model, bone_index_size);
       vertices[vert].bone[3] = ReadVarInt(model, bone_index_size);
@@ -245,7 +242,6 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       freadLE(vertices[vert].bone_weight[2], model);
       freadLE(vertices[vert].bone_weight[3], model);
     } else if (vertices[vert].bone_weight_type == 3) {
-      vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
       vertices[vert].bone[1] = ReadVarInt(model, bone_index_size);
 
       // TODO: No clue yet what this is.
@@ -264,7 +260,7 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       SDL_RWseek(model, 4, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
       SDL_RWseek(model, 4, SEEK_CUR);
-    } else {
+    } else if (vertices[vert].bone_weight_type != 0) {
       fprintf(stderr, "ERROR: Unknown bone_weight_type: %u\n",
               vertices[vert].bone_weight_type);
       exit(1);
@@ -375,8 +371,10 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       SDL_RWseek(model, 12, SEEK_CUR);  // "Tail (Vector3)"?
     }
     if (bone[bn].flags & PMX_BONE_FLAG_IS_EXTERNAL_ROTATION) {
-      ReadVarInt(model, bone_index_size);  // "Effector"?
-      SDL_RWseek(model, 4, SEEK_CUR);      // "Factor (float)"?
+      bone[bn].effector = ReadVarInt(model, bone_index_size);
+      freadLE(bone[bn].effector_factor, model);
+    } else {
+      bone[bn].effector = 0xFFFFFFFF;
     }
     if (bone[bn].flags & PMX_BONE_FLAG_HAS_FIXED_AXIS) {
       SDL_RWseek(model, 12, SEEK_CUR);  // "Fixed Axis (Vector3)"?

@@ -218,6 +218,8 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     freadLE(bone[bn].pos.data[1], model);
     freadLE(bone[bn].pos.data[2], model);
     bone[bn].pos.data[0] *= -1.0;
+
+    bone[bn].effector = 0xFFFFFFFF;  // Effector is not supported in PMD format
   }
 
   return false;

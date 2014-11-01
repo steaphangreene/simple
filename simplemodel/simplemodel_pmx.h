@@ -87,6 +87,8 @@ class SimpleModel_PMX : public SimpleModel {
     string name;
     Vector3 pos;
     Uint32 parent;
+    Uint32 effector;
+    float effector_factor;
     Uint16 flags;
   };
 
