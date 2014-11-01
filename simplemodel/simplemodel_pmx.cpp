@@ -620,6 +620,11 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   // Run through the IK sets, and move stuff around
   for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
+    if (bone[bone_id].effector != 0xFFFFFFFF) {
+      bone_pos[bone_id] = bone_pos[bone[bone_id].effector];
+      bone_rot[bone_id] = bone_rot[bone[bone_id].effector];
+    }
+
     if (bone_target.count(bone_id)) {
       Uint32 targ = bone_target.at(bone_id);
 
