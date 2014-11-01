@@ -607,6 +607,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
           // BERP(rot, f1->second.rot, fr->second.rot, progress,
           // fr->second.bez_r);
           SLERP(rot, f1->second.rot, fr->second.rot, progress);
+          // rot = f1->second.rot;
           QuaternionToMatrix4x4(bone_rot[bone_id], rot);
         }
         break;
@@ -618,106 +619,255 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   CalculateSpaces(bone_space, bone_rot, bone_pos);
 
   // Run through the IK sets, and move stuff around
-  size_t offset = 0;
   for (Uint32 bone_id = 0; bone_id < bone.size(); ++bone_id) {
     if (bone_target.count(bone_id)) {
       Uint32 targ = bone_target.at(bone_id);
 
-      //      Uint32 parent = bone[targ].parent;
-      //      bone_space[parent] = bone_space[bone_id];
-
       if (ik_link.count(bone_id)) {
-        for (size_t x = 0; x < ik_steps; ++x) {
+        if (ik_link.at(bone_id).size() <= 2) {  // Calculate IK Directly
+          Uint32 bn0 = ik_link.at(bone_id).rbegin()->bone;
 
-          for (auto link_itr = ik_link.at(bone_id).begin();
-               link_itr != ik_link.at(bone_id).end(); ++link_itr) {
-            Uint32 link = link_itr->bone;
-            //          Uint32 link = ik_link.at(bone_id).front();
-            if (((offset++) % ik_link.at(bone_id).size()) > x) continue;
+          vector<Uint32> bones;
+          bones.push_back(bn0);
 
-            Vector3 tmp1 = {{bone[link].pos.data[0], bone[link].pos.data[1],
-                             bone[link].pos.data[2]}};
-            Vector3 tmp2 = {{bone[targ].pos.data[0], bone[targ].pos.data[1],
-                             bone[targ].pos.data[2]}};
-            MatrixTransform(tmp1, bone_space[link]);
-            MatrixTransform(tmp2, bone_space[targ]);
-            Vector3 base = {{tmp2.data[0] - tmp1.data[0],
-                             tmp2.data[1] - tmp1.data[1],
-                             tmp2.data[2] - tmp1.data[2]}};
-            Normalize(base, base);
+          Vector3 cang = {{0.0, 0.0, 0.0}};
 
-            Vector3 tmp3 = {{bone[link].pos.data[0], bone[link].pos.data[1],
-                             bone[link].pos.data[2]}};
-            Vector3 tmp4 = {{bone[bone_id].pos.data[0],
-                             bone[bone_id].pos.data[1],
-                             bone[bone_id].pos.data[2]}};
-            MatrixTransform(tmp3, bone_space[link]);
-            MatrixTransform(tmp4, bone_space[bone_id]);
-            Vector3 goal = {{tmp4.data[0] - tmp3.data[0],
-                             tmp4.data[1] - tmp3.data[1],
-                             tmp4.data[2] - tmp3.data[2]}};
-            Normalize(goal, goal);
+          if (ik_link.at(bone_id).size() == 2) {  // Pre-bend knees/elbows
+            Uint32 bn1 = ik_link.at(bone_id).at(0).bone;
+            bones.push_back(bn1);
 
-            Vector3 half;
-            Add(half, goal, base);
-            Normalize(half, half);
+            Vector3 pos[4];
+            pos[0] = bone[bn0].pos;
+            MatrixTransform(pos[0], bone_space[bn0]);
+            pos[1] = bone[bn1].pos;
+            MatrixTransform(pos[1], bone_space[bn1]);
+            pos[2] = bone[targ].pos;
+            MatrixTransform(pos[2], bone_space[targ]);
+            pos[3] = bone[bone_id].pos;
+            MatrixTransform(pos[3], bone_space[bone_id]);
 
-            Vector3 cross;
-            CrossProduct(cross, base, half);
+            float tlen2 = (pos[3].data[0] - pos[0].data[0]) *
+                              (pos[3].data[0] - pos[0].data[0]) +
+                          (pos[3].data[1] - pos[0].data[1]) *
+                              (pos[3].data[1] - pos[0].data[1]) +
+                          (pos[3].data[2] - pos[0].data[2]) *
+                              (pos[3].data[2] - pos[0].data[2]);
+            float ulen2 = (pos[1].data[0] - pos[0].data[0]) *
+                              (pos[1].data[0] - pos[0].data[0]) +
+                          (pos[1].data[1] - pos[0].data[1]) *
+                              (pos[1].data[1] - pos[0].data[1]) +
+                          (pos[1].data[2] - pos[0].data[2]) *
+                              (pos[1].data[2] - pos[0].data[2]);
+            float llen2 = (pos[2].data[0] - pos[1].data[0]) *
+                              (pos[2].data[0] - pos[1].data[0]) +
+                          (pos[2].data[1] - pos[1].data[1]) *
+                              (pos[2].data[1] - pos[1].data[1]) +
+                          (pos[2].data[2] - pos[1].data[2]) *
+                              (pos[2].data[2] - pos[1].data[2]);
+            float num, den;
 
-            Quaternion diff;
-            DotProduct(diff.w, base, half);
-            diff.x = cross.data[0];
-            diff.y = cross.data[1];
-            diff.z = cross.data[2];
-            Normalize(diff, diff);
-
-            Vector3 ang;
-            QuaternionToEuler(ang, diff);
-            if (link_itr->limited) {
-              if (ang.data[0] < link_itr->min.data[0])
-                ang.data[0] = link_itr->min.data[0];
-              if (ang.data[1] < link_itr->min.data[1])
-                ang.data[1] = link_itr->min.data[1];
-              if (ang.data[2] < link_itr->min.data[2])
-                ang.data[2] = link_itr->min.data[2];
-              if (ang.data[0] > link_itr->max.data[0])
-                ang.data[0] = link_itr->max.data[0];
-              if (ang.data[1] > link_itr->max.data[1])
-                ang.data[1] = link_itr->max.data[1];
-              if (ang.data[2] > link_itr->max.data[2])
-                ang.data[2] = link_itr->max.data[2];
-            } else {
-              ang.data[2] = 0.0;  // My Method doesn't do joint rotates well
+            // Calculate first bone angle (hip/shoulder)
+            num = tlen2 + ulen2 - llen2;
+            den = 2 * sqrt(tlen2 * ulen2);
+            if (den > 0.0 && num < den && -num < den) {
+              // Offset by bent angle
+              cang.data[2] += acos(num / den);
             }
-            EulerToQuaternion(diff, ang);
 
-            Quaternion reset;
-            Matrix4x4ToQuaternion(reset, bone_space[link]);
-            Matrix4x4 mat_restore, mat_reset;
-            QuaternionToMatrix4x4(mat_restore, reset);
-            reset.x = -reset.x;
-            reset.y = -reset.y;
-            reset.z = -reset.z;
-            QuaternionToMatrix4x4(mat_reset, reset);
+            // Calculate second bone angle (knee/elbow)
+            num = ulen2 + llen2 - tlen2;
+            den = 2 * sqrt(ulen2 * llen2);
+            if (den > 0.0 && num < den && -num < den) {
+              Vector3 ang = {{0.0, 0.0, acos(num / den) - float(M_PI)}};
+              Quaternion rot;
+              EulerToQuaternion(rot, ang);
 
-            Matrix4x4 mat_diff;
-            QuaternionToMatrix4x4(mat_diff, diff);
-            Multiply(bone_rot[link], mat_restore, mat_diff, mat_reset,
-                     bone_rot[link]);
-
-            // Re-calculate the affected bone spaces, after one IK step
-            vector<Uint32> bones;
-            for (auto bn = ik_link.at(bone_id).rbegin();
-                 bn != ik_link.at(bone_id).rend(); ++bn) {
-              bones.push_back(bn->bone);
+              Matrix4x4 mat_rot;
+              QuaternionToMatrix4x4(mat_rot, rot);
+              Multiply(bone_rot[bn1], mat_rot, bone_rot[bn1]);
             }
-            bones.push_back(targ);
-            CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
+
+            // Calculate initial target bone angle (ankle/wrist)
+            num = tlen2 + llen2 - ulen2;
+            den = 2 * sqrt(tlen2 * llen2);
+            if (den > 0.0 && num < den && -num < den) {
+              Vector3 ang = {{0.0, 0.0, acos(num / den)}};
+              Quaternion rot;
+              EulerToQuaternion(rot, ang);
+
+              Matrix4x4 mat_rot;
+              QuaternionToMatrix4x4(mat_rot, rot);
+              Multiply(bone_rot[targ], mat_rot, bone_rot[targ]);
+            }
           }
-          // Calculate all the normal bone spaces, after IK pass
-          CalculateSpaces(bone_space, bone_rot, bone_pos);
+
+          if (ik_link.at(bone_id).rbegin()->limited) {
+            if (cang.data[0] < ik_link.at(bone_id).rbegin()->min.data[0])
+              cang.data[0] = ik_link.at(bone_id).rbegin()->min.data[0];
+            if (cang.data[1] < ik_link.at(bone_id).rbegin()->min.data[1])
+              cang.data[1] = ik_link.at(bone_id).rbegin()->min.data[1];
+            if (cang.data[2] < ik_link.at(bone_id).rbegin()->min.data[2])
+              cang.data[2] = ik_link.at(bone_id).rbegin()->min.data[2];
+            if (cang.data[0] > ik_link.at(bone_id).rbegin()->max.data[0])
+              cang.data[0] = ik_link.at(bone_id).rbegin()->max.data[0];
+            if (cang.data[1] > ik_link.at(bone_id).rbegin()->max.data[1])
+              cang.data[1] = ik_link.at(bone_id).rbegin()->max.data[1];
+            if (cang.data[2] > ik_link.at(bone_id).rbegin()->max.data[2])
+              cang.data[2] = ik_link.at(bone_id).rbegin()->max.data[2];
+          }
+          // Re-set base chain rotation, and re-calculate bone spaces
+          Quaternion diff;
+          EulerToQuaternion(diff, cang);
+          QuaternionToMatrix4x4(bone_rot[bn0], diff);
+          bones.push_back(targ);
+          CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
+
+          // Point the entire chain at the target location
+          Quaternion reset;
+          Matrix4x4ToQuaternion(reset, bone_space[bn0]);
+          Matrix4x4 mat_restore, mat_reset;
+          QuaternionToMatrix4x4(mat_restore, reset);
+          reset.x = -reset.x;
+          reset.y = -reset.y;
+          reset.z = -reset.z;
+          QuaternionToMatrix4x4(mat_reset, reset);
+
+          Vector3 tmp1 = {{bone[bn0].pos.data[0], bone[bn0].pos.data[1],
+                           bone[bn0].pos.data[2]}};
+          Vector3 tmp2 = {{bone[targ].pos.data[0], bone[targ].pos.data[1],
+                           bone[targ].pos.data[2]}};
+          MatrixTransform(tmp1, bone_space[bn0]);
+          MatrixTransform(tmp2, bone_space[targ]);
+          Vector3 base = {{tmp2.data[0] - tmp1.data[0],
+                           tmp2.data[1] - tmp1.data[1],
+                           tmp2.data[2] - tmp1.data[2]}};
+          Normalize(base, base);
+          QuaternionRotate(base, reset);
+
+          Vector3 tmp3 = {{bone[bn0].pos.data[0], bone[bn0].pos.data[1],
+                           bone[bn0].pos.data[2]}};
+          Vector3 tmp4 = {{bone[bone_id].pos.data[0], bone[bone_id].pos.data[1],
+                           bone[bone_id].pos.data[2]}};
+          MatrixTransform(tmp3, bone_space[bn0]);
+          MatrixTransform(tmp4, bone_space[bone_id]);
+          Vector3 goal = {{tmp4.data[0] - tmp3.data[0],
+                           tmp4.data[1] - tmp3.data[1],
+                           tmp4.data[2] - tmp3.data[2]}};
+          Normalize(goal, goal);
+          QuaternionRotate(goal, reset);
+
+          Vector3 half;
+          Add(half, goal, base);
+          Normalize(half, half);
+
+          Vector3 cross;
+          CrossProduct(cross, base, half);
+
+          DotProduct(diff.w, base, half);
+          diff.x = cross.data[0];
+          diff.y = cross.data[1];
+          diff.z = cross.data[2];
+          Normalize(diff, diff);
+
+          Vector3 temp;
+          QuaternionToEuler(temp, diff);
+          cang.data[0] += temp.data[0];
+          cang.data[1] += temp.data[1];
+          cang.data[2] += temp.data[2];
+          EulerToQuaternion(diff, cang);
+          QuaternionToMatrix4x4(bone_rot[bn0], diff);
+
+        } else {
+          for (size_t x = 0; x < ik_steps; ++x) {
+            for (auto link_itr = ik_link.at(bone_id).begin();
+                 link_itr != ik_link.at(bone_id).end(); ++link_itr) {
+              Uint32 link = link_itr->bone;
+
+              Vector3 tmp1 = {{bone[link].pos.data[0], bone[link].pos.data[1],
+                               bone[link].pos.data[2]}};
+              Vector3 tmp2 = {{bone[targ].pos.data[0], bone[targ].pos.data[1],
+                               bone[targ].pos.data[2]}};
+              MatrixTransform(tmp1, bone_space[link]);
+              MatrixTransform(tmp2, bone_space[targ]);
+              Vector3 base = {{tmp2.data[0] - tmp1.data[0],
+                               tmp2.data[1] - tmp1.data[1],
+                               tmp2.data[2] - tmp1.data[2]}};
+              Normalize(base, base);
+
+              Vector3 tmp3 = {{bone[link].pos.data[0], bone[link].pos.data[1],
+                               bone[link].pos.data[2]}};
+              Vector3 tmp4 = {{bone[bone_id].pos.data[0],
+                               bone[bone_id].pos.data[1],
+                               bone[bone_id].pos.data[2]}};
+              MatrixTransform(tmp3, bone_space[link]);
+              MatrixTransform(tmp4, bone_space[bone_id]);
+              Vector3 goal = {{tmp4.data[0] - tmp3.data[0],
+                               tmp4.data[1] - tmp3.data[1],
+                               tmp4.data[2] - tmp3.data[2]}};
+              Normalize(goal, goal);
+
+              Vector3 half;
+              Add(half, goal, base);
+              Normalize(half, half);
+
+              Vector3 cross;
+              CrossProduct(cross, base, half);
+
+              Quaternion diff;
+              DotProduct(diff.w, base, half);
+              diff.x = cross.data[0];
+              diff.y = cross.data[1];
+              diff.z = cross.data[2];
+              Normalize(diff, diff);
+
+              Vector3 ang;
+              QuaternionToEuler(ang, diff);
+              if (link_itr->limited) {
+                if (ang.data[0] < link_itr->min.data[0])
+                  ang.data[0] = link_itr->min.data[0];
+                if (ang.data[1] < link_itr->min.data[1])
+                  ang.data[1] = link_itr->min.data[1];
+                if (ang.data[2] < link_itr->min.data[2])
+                  ang.data[2] = link_itr->min.data[2];
+                if (ang.data[0] > link_itr->max.data[0])
+                  ang.data[0] = link_itr->max.data[0];
+                if (ang.data[1] > link_itr->max.data[1])
+                  ang.data[1] = link_itr->max.data[1];
+                if (ang.data[2] > link_itr->max.data[2])
+                  ang.data[2] = link_itr->max.data[2];
+              } else {
+                ang.data[2] = 0.0;  // My Method doesn't do joint rotates well
+              }
+              EulerToQuaternion(diff, ang);
+
+              Quaternion reset;
+              Matrix4x4ToQuaternion(reset, bone_space[link]);
+              Matrix4x4 mat_restore, mat_reset;
+              QuaternionToMatrix4x4(mat_restore, reset);
+              reset.x = -reset.x;
+              reset.y = -reset.y;
+              reset.z = -reset.z;
+              QuaternionToMatrix4x4(mat_reset, reset);
+
+              Matrix4x4 mat_diff;
+              QuaternionToMatrix4x4(mat_diff, diff);
+              Multiply(bone_rot[link], mat_restore, mat_diff, mat_reset,
+                       bone_rot[link]);
+
+              // Re-calculate the affected bone spaces, after one IK step
+              vector<Uint32> bones;
+              for (auto bn = ik_link.at(bone_id).rbegin();
+                   bn != ik_link.at(bone_id).rend(); ++bn) {
+                bones.push_back(bn->bone);
+              }
+              bones.push_back(targ);
+              CalculateSpaces(bones, bone_space, bone_rot, bone_pos);
+            }
+          }
         }
+
+        // Calculate all the normal bone spaces, after IK pass
+        CalculateSpaces(bone_space, bone_rot, bone_pos);
       }
     }
   }
