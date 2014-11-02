@@ -132,8 +132,8 @@ string SimpleModel_PMX::ReadString(SDL_RWops *model, size_t len) const {
   size_t out_left = len * 4;
   while (in_left > 0) {
     if (iconv(cd, &in, &in_left, &out, &out_left) == size_t(-1)) {
-      perror("iconv");
-      exit(1);
+      perror("iconv: Can't read string");
+      return "INVALID";
     }
   }
   ret = utf8;
