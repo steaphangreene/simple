@@ -118,8 +118,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   // Enable depth testing for hidden line removal
   glEnable(GL_DEPTH_TEST);
 
-  // Hopefully you don't need this - slows things down quite a bit
-  //  glEnable(GL_NORMALIZE);
+  glEnable(GL_RESCALE_NORMAL);
 
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
