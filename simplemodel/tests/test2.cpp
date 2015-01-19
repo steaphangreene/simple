@@ -369,10 +369,10 @@ int main(int argc, char **argv) {
         }
       }
     }
-    video->SetPosition(posx, posy, 100);
-    video->SetZPosition(posz, 100);
-    video->SetAngle(yaw, 100);
-    video->SetDown(pitch, 100);
+    video->SetPosition(posx, posy, 0);
+    video->SetZPosition(posz, 0);
+    video->SetAngle(yaw, 0);
+    video->SetDown(pitch, 0);
 
     cur_time = SDL_GetTicks();
 
