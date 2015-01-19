@@ -58,7 +58,6 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   flags = 0;
   yfov = 45.0;
   sbs = false;
-  vsync = false;
 
   scene = NULL;
   gui = NULL;
@@ -94,6 +93,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
     window_flags |= SDL_WINDOW_RESIZABLE;
 
   //  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetSwapInterval(1);
+  vsync = true;
 
   window = SDL_CreateWindow("SimpleVideo Renderer", SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, xs, ys, window_flags);
