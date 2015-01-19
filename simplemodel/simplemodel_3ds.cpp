@@ -1,7 +1,7 @@
 // *************************************************************************
 //  This file is part of the SimpleModel Example Module by Steaphan Greene
 //
-//  Copyright 2005-2014 Steaphan Greene <steaphan@gmail.com>
+//  Copyright 2005-2015 Steaphan Greene <steaphan@gmail.com>
 //
 //  3DS support written by Noah Schwartz with chunk parsing code
 //  based on Damiano Vitulli's 3DS loading tutorial at
