@@ -210,6 +210,4 @@ SimpleAudio::SimpleAudio(int bufsize) {
   audio_initialized = true;
 }
 
-SimpleAudio::~SimpleAudio() {
-  Mix_CloseAudio();
-}
+SimpleAudio::~SimpleAudio() { Mix_CloseAudio(); }
