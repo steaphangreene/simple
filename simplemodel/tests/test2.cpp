@@ -217,8 +217,8 @@ int main(int argc, char **argv) {
   }
 
   int quit = 0;
-  float yaw = 0.0, pitch = 0.0;
-  float posx = 2.0, posy = 0.0, posz = 0.0;
+  float yaw = 90.0, pitch = 0.0;
+  float posx = -1.0, posy = 0.0, posz = 2.0;
   while (!quit) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
