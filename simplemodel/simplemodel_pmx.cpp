@@ -556,7 +556,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Uint32 ik_steps = 2;
 
   Uint32 mat = -1;
-  Uint32 to_next_mat = 0;
   float xfact = 1.0, yfact = 1.0;
 
   // Transform to SimpleModel axes and scale
@@ -900,45 +899,21 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   // Calculate all the normal bone spaces, after IK run
   CalculateSpaces(bone_space, bone_rot, bone_pos);
 
-  glDisable(GL_CULL_FACE);
+  GLfloat gl_vertices[triangles.size() * 3 * 3];
+  Uint32 gl_vertex = 0;
+  GLfloat gl_normals[triangles.size() * 3 * 3];
+  Uint32 gl_normal = 0;
+  GLfloat gl_texcoords[triangles.size() * 3 * 2];
+  Uint32 gl_texcoord = 0;
+
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
-    if (tri >= to_next_mat) {
-      do {
-        ++mat;
-        to_next_mat = tri + material[mat].num_tris;
-      } while (tri >= to_next_mat);
-      if (tri > 0) {
-        glEnd();
-      }
-
-      if (MaterialDisabled(mat)) continue;
-
-      Uint32 tex = material[mat].texidx;
-      if (tex >= 255 || !texture[tex]) {
-        glDisable(GL_TEXTURE);
-        xfact = 1.0;
-        yfact = 1.0;
-      } else {
-        glEnable(GL_TEXTURE);
-        glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
-        xfact = texture[tex]->xfact;
-        yfact = texture[tex]->yfact;
-      }
-
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material[mat].diffuse);
-      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material[mat].specular);
-      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material[mat].specularity);
-
-      glBegin(GL_TRIANGLES);
-    }
     for (Uint32 vert = 0; vert < 3; ++vert) {
-      glTexCoord2f(vertices[triangles[tri].vertex[vert]].texcoord[0] * xfact,
-                   vertices[triangles[tri].vertex[vert]].texcoord[1] * yfact);
+      gl_texcoords[gl_texcoord++] = vertices[triangles[tri].vertex[vert]].texcoord[0] * xfact;
+      gl_texcoords[gl_texcoord++] = vertices[triangles[tri].vertex[vert]].texcoord[1] * yfact;
 
-      glNormal3f(vertices[triangles[tri].vertex[vert]].normal[0],
-                 vertices[triangles[tri].vertex[vert]].normal[1],
-                 vertices[triangles[tri].vertex[vert]].normal[2]);
+      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[0];
+      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[1];
+      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[2];
 
       Matrix4x4 mat;
       if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
@@ -983,15 +958,63 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       MatrixTransform(x, y, z, mat);
 
-      glVertex3f(x, y, z);
+      //glVertex3f(x, y, z);
+      gl_vertices[gl_vertex++] = x;
+      gl_vertices[gl_vertex++] = y;
+      gl_vertices[gl_vertex++] = z;
+    }
+  }
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glVertexPointer(3, GL_FLOAT, 0, &gl_vertices[0]);
+  glNormalPointer(GL_FLOAT, 0, &gl_normals[0]);
+  glTexCoordPointer(2, GL_FLOAT, 0, &gl_texcoords[0]);
+
+  glDisable(GL_CULL_FACE);
+  Uint32 index = 0;
+  Uint32 to_next_mat = 0;
+  for (Uint32 tri = 0; tri < triangles.size(); tri++) {
+    if (tri >= to_next_mat) {
+      do {
+        ++mat;
+        to_next_mat = tri + material[mat].num_tris;
+      } while (tri >= to_next_mat);
+      if (tri > 0) {
+        glDrawArrays(GL_TRIANGLES, index, tri*3 - index);
+        index = tri*3;
+      }
+
+      if (MaterialDisabled(mat)) continue;
+
+      Uint32 tex = material[mat].texidx;
+      if (tex >= 255 || !texture[tex]) {
+        glDisable(GL_TEXTURE);
+        xfact = 1.0;
+        yfact = 1.0;
+      } else {
+        glEnable(GL_TEXTURE);
+        glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
+        xfact = texture[tex]->xfact;
+        yfact = texture[tex]->yfact;
+      }
+
+      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material[mat].diffuse);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material[mat].specular);
+      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material[mat].specularity);
     }
   }
 
   if (mat >= 0) {
-    glEnd();
+    glDrawArrays(GL_TRIANGLES, index, triangles.size()*3 - index);
     glPopMatrix();
   }
 
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
   glPopMatrix();
 
   return true;
