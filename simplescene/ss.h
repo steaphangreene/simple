@@ -174,6 +174,7 @@ class SimpleScene {
     Uint32 start;
   };
 
+  bool SetUpLighting(Uint32 offset);
   bool DrawObjects(Uint32 offset);
   bool DrawParticles(Uint32 offset);
 

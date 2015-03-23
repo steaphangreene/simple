@@ -83,6 +83,7 @@ bool SimpleScene::Render(Uint32 offset) {
     if (zlim0 < resz0) zlim0 = resz0;
     if (zlim1 > resz1) zlim1 = resz1;
   }
+  if (!SetUpLighting(offset)) return false;
   if (!DrawObjects(offset)) return false;
   return DrawParticles(offset);
 }
@@ -341,6 +342,26 @@ void SimpleScene::GetObjectPos(SS_Object obj, Uint32 offset, float &xpos,
 
     break;
   }
+}
+
+bool SimpleScene::SetUpLighting(Uint32 offset) {
+  //double angle = offset / 360.0;
+  //GLfloat light_position[] = {GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0};
+  GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
+  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 0.0};
+  GLfloat light_diffuse[] = {0.3, 0.3, 0.3, 0.0};
+  GLfloat light_specular[] = {1.0, 1.0, 1.0, 0.0};
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glShadeModel(GL_SMOOTH);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glEnable(GL_DEPTH_TEST);
+
+  return true;
 }
 
 bool SimpleScene::DrawObjects(Uint32 offset) {
