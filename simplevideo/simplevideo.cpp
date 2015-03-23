@@ -102,7 +102,7 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
   ResizeGL(xsize, ysize);
 
   // Set the clear color to black
-  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClearColor(0.1, 0.1, 0.1, 1.0);
   glClearDepth(1.0);
 
   // Set the shading model
