@@ -46,6 +46,10 @@ static bool verbose = false;
 
 static Uint32 cur_time;
 
+static Uint32 frames_shown = 0;
+static Uint32 frames_counted = 0;
+static Uint32 last_time = 0;
+
 static void SetAnim(int which, string anim_name = "") {
   static int anim = 0;
   int oldanim = anim;
@@ -405,6 +409,15 @@ int main(int argc, char **argv) {
     glMatrixMode(GL_MODELVIEW);
 
     video->FinishScene();
+
+    frames_shown++;
+    if (frames_shown % 100 == 0) {
+      Uint32 cur_time = SDL_GetTicks();
+      printf("FPS: %.2f\n", (float)((frames_shown - frames_counted) * 1000) /
+                                (float)(cur_time - last_time));
+      frames_counted = frames_shown;
+      last_time = cur_time;
+    }
   }
 
   return 0;

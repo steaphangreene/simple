@@ -352,7 +352,6 @@ int main(int argc, char **argv) {
         else if (event.key.keysym.sym == SDLK_TAB) {
           video->ToggleSBS();
         } else if (event.key.keysym.sym == SDLK_v) {
-          fprintf(stderr, "Toggling VSYNC\n");
           video->ToggleVSync();
         } else if (event.key.keysym.sym == SDLK_SPACE) {
           if (modnum < mod.size() - 1) ++modnum;
