@@ -50,30 +50,14 @@ class SG_Ranger2D {
   void YIncrement();
   void YDecrement();
 
-  float XSpan() {
-    return xranger.Span();
-  };
-  float YSpan() {
-    return yranger.Span();
-  };
-  float XValue() {
-    return xranger.Value();
-  };
-  float YValue() {
-    return yranger.Value();
-  };
-  float XMin() {
-    return xranger.Min();
-  };
-  float YMin() {
-    return yranger.Min();
-  };
-  float XMax() {
-    return xranger.Max();
-  };
-  float YMax() {
-    return yranger.Max();
-  };
+  float XSpan() { return xranger.Span(); };
+  float YSpan() { return yranger.Span(); };
+  float XValue() { return xranger.Value(); };
+  float YValue() { return yranger.Value(); };
+  float XMin() { return xranger.Min(); };
+  float YMin() { return yranger.Min(); };
+  float XMax() { return xranger.Max(); };
+  float YMax() { return yranger.Max(); };
 
   void LinkTo(SG_Ranger2D *other);
   void LinkXTo(SG_Ranger *other);
@@ -87,12 +71,8 @@ class SG_Ranger2D {
   void LinkYFrom(SG_Ranger *other);
   void LinkYFrom(SG_Ranger2D *other);
 
-  SG_Ranger *XRanger() {
-    return &xranger;
-  };
-  SG_Ranger *YRanger() {
-    return &yranger;
-  };
+  SG_Ranger *XRanger() { return &xranger; };
+  SG_Ranger *YRanger() { return &yranger; };
 
   virtual void RangerChanged();
 

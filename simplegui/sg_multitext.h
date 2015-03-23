@@ -28,8 +28,8 @@ using namespace std;
 
 class SG_MultiText {
  public:
-  SG_MultiText() {};
-  virtual ~SG_MultiText() {};
+  SG_MultiText(){};
+  virtual ~SG_MultiText(){};
   virtual const string &Item(int opt) {
     fprintf(stderr,
             "WARNING: Calling SG_MultiText::Item() - should not be here!\n");

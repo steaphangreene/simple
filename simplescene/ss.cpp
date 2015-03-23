@@ -31,7 +31,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846 /* pi */
 #endif
-#define DEG2RAD(d) ((d) * M_PI / 180.0)
+#define DEG2RAD(d) ((d)*M_PI / 180.0)
 
 using namespace std;
 
@@ -345,8 +345,9 @@ void SimpleScene::GetObjectPos(SS_Object obj, Uint32 offset, float &xpos,
 }
 
 bool SimpleScene::SetUpLighting(Uint32 offset) {
-  //double angle = offset / 360.0;
-  //GLfloat light_position[] = {GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0, 0.0};
+  // double angle = offset / 360.0;
+  // GLfloat light_position[] = {GLfloat(sin(angle)), GLfloat(cos(angle)), 1.0,
+  // 0.0};
   GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
   GLfloat light_ambient[] = {0.1, 0.1, 0.1, 0.0};
   GLfloat light_diffuse[] = {0.3, 0.3, 0.3, 0.0};

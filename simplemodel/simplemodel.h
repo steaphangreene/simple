@@ -37,17 +37,11 @@ class SimpleModel {
   SimpleModel();
   virtual ~SimpleModel();
 
-  const map<string, int> GetAnimations() {
-    return animations;
-  };
+  const map<string, int> GetAnimations() { return animations; };
   int LookUpAnimation(const string &anim) const;
-  virtual bool LoadAnimation(const string &filenm) {
-    return false;
-  };
+  virtual bool LoadAnimation(const string &filenm) { return false; };
 
-  const map<string, Uint32> GetTags() {
-    return tags;
-  };
+  const map<string, Uint32> GetTags() { return tags; };
 
   bool Render(Uint32 cur_time, const vector<int> &anim = vector<int>(),
               const vector<Uint32> &start_time = vector<Uint32>(),
@@ -75,14 +69,10 @@ class SimpleModel {
                     const vector<string> &skin = vector<string>());
 
   virtual const vector<string> &GetSkinList();
-  virtual void AddSkin(const string &skinnm) {};
+  virtual void AddSkin(const string &skinnm){};
 
-  void DisableMaterial(int matnum) {
-    disabled_materials.insert(matnum);
-  };
-  void EnableMaterial(int matnum) {
-    disabled_materials.erase(matnum);
-  };
+  void DisableMaterial(int matnum) { disabled_materials.insert(matnum); };
+  void EnableMaterial(int matnum) { disabled_materials.erase(matnum); };
   void ToggleMaterial(int matnum) {
     if (MaterialDisabled(matnum)) {
       EnableMaterial(matnum);

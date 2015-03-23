@@ -32,7 +32,6 @@ SG_Tabs::SG_Tabs(const vector<string> &items, int x, int y, SimpleTexture tex,
                  SimpleTexture dis_tex, SimpleTexture click_tex,
                  SimpleTexture down_tex)
     : SG_Compound(1, 1, 0.0, 0.0) {
-
   fixed_x = x;
   fixed_y = y;
   cur_on = 0;

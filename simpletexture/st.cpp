@@ -1099,7 +1099,7 @@ TTF_Font *SimpleTexture::Font(int pxsz) {
     atexit(TTF_Quit);
   }
 
-  int ptsz = (int)((float)(pxsz) * fontyratio + 0.5);  // Scale to real ptsize
+  int ptsz = (int)((float)(pxsz)*fontyratio + 0.5);  // Scale to real ptsize
 
   SDL_RWseek(fontrw, 0, SEEK_SET);
   cur_font[pxsz] = TTF_OpenFontRW(fontrw, 0, ptsz);

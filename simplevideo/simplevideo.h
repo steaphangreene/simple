@@ -76,12 +76,8 @@ class SimpleVideo {
   void GetViewLimits(float &x0, float &y0, float &z0, float &x1, float &y1,
                      float &z1);
 
-  static SimpleVideo *Current() {
-    return current;
-  };
-  static SimpleVideo *CurrentVideo() {
-    return Current();
-  };  // Depricated
+  static SimpleVideo *Current() { return current; };
+  static SimpleVideo *CurrentVideo() { return Current(); };  // Depricated
 
   void SBSOn() {
     sbs = true;

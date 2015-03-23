@@ -160,9 +160,9 @@ void SimpleAudio::SetVol(PlayingSound s, float vol) {
   if (!audio_initialized || s < 0) return;
 
   if (s == CHANNEL_MUSIC) {
-    Mix_VolumeMusic((int)((float)(MIX_MAX_VOLUME) * vol + 0.5));
+    Mix_VolumeMusic((int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
   } else {
-    Mix_Volume(s, (int)((float)(MIX_MAX_VOLUME) * vol + 0.5));
+    Mix_Volume(s, (int)((float)(MIX_MAX_VOLUME)*vol + 0.5));
   }
 }
 

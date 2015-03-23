@@ -55,7 +55,6 @@ Sound *free_blocks = NULL;
 Sound *play_blocks = NULL;
 
 void audio_callback(void *userdata, Uint8 *stream, int len) {
-
   if (play_blocks == NULL) {
     memset(stream, 0, len);
     return;

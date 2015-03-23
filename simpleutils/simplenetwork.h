@@ -36,9 +36,7 @@ enum SN_Status { SN_CONN_NONE = 0, SN_CONN_OK = 1, SN_CONN_RECON = 2 };
 
 class SimpleNetwork {
  public:
-  static SimpleNetwork *Current() {
-    return current;
-  };
+  static SimpleNetwork *Current() { return current; };
 
   struct Data {
     string playername;

@@ -54,9 +54,7 @@ class SimpleGUI {
   ~SimpleGUI();
 
   static SimpleGUI *Current();
-  static SimpleGUI *CurrentGUI() {
-    return Current();
-  };  // Depricated
+  static SimpleGUI *CurrentGUI() { return Current(); };  // Depricated
 
   bool RenderStart(unsigned long cur_time, bool ts = false);
   bool RenderFinish(unsigned long cur_time, bool ts = false);
@@ -70,38 +68,22 @@ class SimpleGUI {
                       float posx = 0.0, float posy = 0.0);
   void SetModalPopupWidget(SG_Alignment *wid, float px = 0.5, float py = 0.5,
                            float posx = 0.0, float posy = 0.0);
-  void UnsetPopupWidget() {
-    SetPopupWidget(NULL);
-  };
+  void UnsetPopupWidget() { SetPopupWidget(NULL); };
 
-  void SetCurrentWidget(SG_Widget *wid) {
-    current_widget = wid;
-  };
-  void UnsetCurrentWidget() {
-    SetCurrentWidget(NULL);
-  };
-  SG_Widget *CurrentWidget() {
-    return current_widget;
-  };
+  void SetCurrentWidget(SG_Widget *wid) { current_widget = wid; };
+  void UnsetCurrentWidget() { SetCurrentWidget(NULL); };
+  SG_Widget *CurrentWidget() { return current_widget; };
 
   void SaveCurrentMatrix();
 
-  void SetFocusWidget(SG_Widget *wid) {
-    focus_widget = wid;
-  };
-  void UnsetFocusWidget() {
-    SetFocusWidget(NULL);
-  };
-  SG_Widget *FocusWidget() {
-    return focus_widget;
-  };
+  void SetFocusWidget(SG_Widget *wid) { focus_widget = wid; };
+  void UnsetFocusWidget() { SetFocusWidget(NULL); };
+  SG_Widget *FocusWidget() { return focus_widget; };
 
   void LoadFont(const char *fontfn, int pxsz = 20);
   void SetDefaultFontSize(int pxsz);
   void SetFont(TTF_Font *f);
-  void UnsetFont() {
-    SetFont(NULL);
-  };
+  void UnsetFont() { SetFont(NULL); };
   const TTF_Font *Font(int pxsz = -1);
 
   float Red(int c);
@@ -127,22 +109,14 @@ class SimpleGUI {
 
   void SetMouseCursor(SDL_Surface *cur, float xsc = 0.0625, float ysc = 0.0625);
 
-  void Lock() {
-    SDL_mutexP(mutex);
-  };  // For multithreaded access
-  void Unlock() {
-    SDL_mutexV(mutex);
-  };  // For multithreaded access
+  void Lock() { SDL_mutexP(mutex); };    // For multithreaded access
+  void Unlock() { SDL_mutexV(mutex); };  // For multithreaded access
 
   bool Render(unsigned long cur_time);  // Depricated
   bool ProcessEvent(SDL_Event *event);  // Depricated for external use!
 
-  void DisableMouse() {
-    flags |= SIMPLEGUI_NOMOUSE;
-  };
-  void EnableMouse() {
-    flags &= (~SIMPLEGUI_NOMOUSE);
-  };
+  void DisableMouse() { flags |= SIMPLEGUI_NOMOUSE; };
+  void EnableMouse() { flags &= (~SIMPLEGUI_NOMOUSE); };
 
  protected:
   SG_Positional *mWid;    // REAL master widget

@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
     while (gui->PollEvent(&event)) {
       if (event.type == SDL_SG_EVENT) {
         switch (event.user.code) {
-          case(SG_EVENT_SELECT) : {
+          case (SG_EVENT_SELECT): {
             audio_play(click, 8, 8);
           } break;
         }

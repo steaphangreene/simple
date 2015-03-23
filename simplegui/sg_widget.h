@@ -49,28 +49,18 @@ class SG_Widget {
 
   bool Render(unsigned long cur_time, bool final = false);
 
-  void Hide() {
-    flags |= SG_WIDGET_FLAGS_HIDDEN;
-  };
-  void Show() {
-    flags &= (~SG_WIDGET_FLAGS_HIDDEN);
-  };
+  void Hide() { flags |= SG_WIDGET_FLAGS_HIDDEN; };
+  void Show() { flags &= (~SG_WIDGET_FLAGS_HIDDEN); };
 
-  void Ignore() {
-    flags |= SG_WIDGET_FLAGS_IGNORE;
-  };
-  void Listen() {
-    flags &= (~SG_WIDGET_FLAGS_IGNORE);
-  };
+  void Ignore() { flags |= SG_WIDGET_FLAGS_IGNORE; };
+  void Listen() { flags &= (~SG_WIDGET_FLAGS_IGNORE); };
 
   virtual void Disable();
   virtual void Enable();
 
   virtual void TurnOn();
   virtual void TurnOff();
-  bool IsOn() {
-    return ((flags & SG_WIDGET_FLAGS_ON) > 0);
-  };
+  bool IsOn() { return ((flags & SG_WIDGET_FLAGS_ON) > 0); };
 
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   //  bool SetCursor(GL_MODEL *cur)

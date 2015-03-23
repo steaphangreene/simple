@@ -48,9 +48,7 @@ class SimpleAudio {
   LoadedSound LoadSound(const string &);
   LoadedSound LoadMusic(const string &);
 
-  static SimpleAudio *Current() {
-    return current;
-  };
+  static SimpleAudio *Current() { return current; };
 
  private:
   static SimpleAudio *current;

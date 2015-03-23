@@ -33,7 +33,6 @@ SG_MultiTab::SG_MultiTab(const vector<string> &items,
                          SimpleTexture ttex, SimpleTexture dis_ttex,
                          SimpleTexture click_ttex, SimpleTexture down_ttex)
     : SG_Compound(1, tinvpro, 0.0, 0.0) {
-
   tabs = new SG_Tabs(items, SG_AUTOSIZE, 1);
   AddWidget(tabs, 0, 0, 1, 1);
 

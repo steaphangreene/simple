@@ -47,12 +47,8 @@ class SG_Panel : public SG_Widget {
   void SetTexturator(ST_Texturator *stt, int st = SG_STATE_DEFAULT);
 
   // For Internal Use Only!
-  void SetState(int st) {
-    state = st;
-  };
-  int State() {
-    return state;
-  };
+  void SetState(int st) { state = st; };
+  int State() { return state; };
 
   virtual void SetAspectRatio(float asp);
 

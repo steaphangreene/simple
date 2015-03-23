@@ -94,7 +94,7 @@ bool SimpleConfig::RenderSelf(unsigned long cur_time) {
 bool SimpleConfig::ChildEvent(SDL_Event *event) {
   if (event->type == SDL_SG_EVENT) {
     switch (event->user.code) {
-      case(SG_EVENT_NEWTEXT) : {
+      case (SG_EVENT_NEWTEXT): {
         oldmode = mode;
         mode = -1;
         for (int ctr = 0; ctr < modebox->NumItems(); ++ctr) {
@@ -116,7 +116,7 @@ bool SimpleConfig::ChildEvent(SDL_Event *event) {
         rescue_thread =
             SDL_CreateThread(rescue_thread_handler, "rescue", (void *)(this));
       } break;
-      case(SG_EVENT_BUTTONCLICK) : {
+      case (SG_EVENT_BUTTONCLICK): {
         if ((SG_Widget *)(event->user.data1) == (SG_Widget *)confirmbut) {
           confirm = 1;
         }

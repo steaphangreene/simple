@@ -29,9 +29,7 @@ class SimpleModel_MD : public SimpleModel {
   SimpleModel_MD(const string &filenm);
   virtual ~SimpleModel_MD();
 
-  virtual bool Load(const string &filenm) {
-    return false;
-  };
+  virtual bool Load(const string &filenm) { return false; };
 
  protected:
   virtual bool RenderSelf(Uint32 cur_time,

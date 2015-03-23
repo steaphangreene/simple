@@ -82,9 +82,7 @@ enum SC_Mode {
 #define SC_FLAG_TEAM
 
 struct SC_Host {
-  SC_Host() {
-    line = -1;
-  };
+  SC_Host() { line = -1; };
   IPaddress address;
   string mapname;
   int line;
@@ -114,9 +112,7 @@ class SimpleConnect : public SG_Compound {
   //  virtual bool SetDefaultCursor(GL_MODEL *cur);
   virtual bool ChildEvent(SDL_Event *event);
 
-  void SetPort(Uint16 p) {
-    port = p;
-  };
+  void SetPort(Uint16 p) { port = p; };
   void SetTag(const string &tag);
   void SetColors(const vector<int> &cols);  // SG_Color List Used
 
@@ -133,12 +129,8 @@ class SimpleConnect : public SG_Compound {
   void SetPlayerName(const string &pln);
   const string &PlayerName();
 
-  void SetMapName(const string &mp) {
-    mapname = mp;
-  };
-  const string &MapName() {
-    return mapname;
-  };
+  void SetMapName(const string &mp) { mapname = mp; };
+  const string &MapName() { return mapname; };
 
   const SimpleConnections &ClaimConnections();
 

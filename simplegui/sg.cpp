@@ -45,7 +45,7 @@ SimpleGUI::SimpleGUI(int aspmeth, const float asp) {
   current_sg = this;
 
   SDL_SG_EVENT = SDL_RegisterEvents(1);
-  if (SDL_SG_EVENT == ((Uint32) - 1)) {
+  if (SDL_SG_EVENT == ((Uint32)-1)) {
     fprintf(stderr, "ERROR: Failed to allocate SDL event.\n");
     exit(1);
   }
@@ -273,7 +273,7 @@ bool SimpleGUI::ProcessEvent(SDL_Event *event) {
 
     float asp = (float)(newxsize) / (float)(newysize);
     if ((aspect_method & ASPECT_FIXED_X) && asp > aspect) {
-      newxsize = int((float)(newysize) * aspect + 0.5);
+      newxsize = int((float)(newysize)*aspect + 0.5);
       newxunused = (event->window.data1 - newxsize);
     } else if ((aspect_method & ASPECT_FIXED_Y) && asp < aspect) {
       newysize = int((float)(newxsize) / aspect + 0.5);

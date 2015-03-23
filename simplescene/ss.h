@@ -54,9 +54,7 @@ class SimpleScene {
   void RestrictZ(float y1, float z1);
   bool Render(Uint32 offset);
 
-  static SimpleScene *Current() {
-    return current;
-  };
+  static SimpleScene *Current() { return current; };
 
   SS_Skin AddSkin(SimpleTexture *skin);
 

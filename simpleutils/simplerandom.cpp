@@ -51,12 +51,12 @@ SimpleRandom::SimpleRandom() {
   assert(SDL_mutexP(SimpleRandom::mutex) != -1,
          "[SimpleUtils] Cannot get lock for sequence number\n")
 
-  this->seed = (int)time(0) + SimpleRandom::sequence++;
+      this->seed = (int)time(0) + SimpleRandom::sequence++;
 
   assert(SDL_mutexV(SimpleRandom::mutex) != -1,
          "[SimpleUtils] Cannot unlock mutex for sequence number\n")
 
-  this->InitSeed();
+      this->InitSeed();
 }
 
 SimpleRandom::SimpleRandom(int seed) {
@@ -71,7 +71,7 @@ int SimpleRandom::Rand(int min, int max) {
 
   assert(max - min <= 32767, "[SimpleUtils] Max - Min > 32767!\n")
 
-  r = ((this->state[0] + this->state[1]) % 32767);
+      r = ((this->state[0] + this->state[1]) % 32767);
   if (r < 0) r = -r;
 
   this->state[0] = this->state[1];

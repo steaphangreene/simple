@@ -188,7 +188,6 @@ bool SimpleModel_OBJ::Load(const string &filenm, const string &texnm) {
 bool SimpleModel_OBJ::RenderSelf(Uint32 cur_time, const vector<int> &anim,
                                  const vector<Uint32> &start_time,
                                  Uint32 anim_offset) const {
-
   if (SimpleModel::glGenBuffersARB == NULL) {
     if (!glIsList(vertices)) {
       ReloadValidModels();

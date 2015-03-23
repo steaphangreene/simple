@@ -147,9 +147,7 @@ class SimpleTexture {
   static void LoadFont(const char *fontfn, int pxsz = 20);
   static void SetDefaultFontSize(const int pxsz);
   static void SetFont(TTF_Font *f);
-  static void UnsetFont() {
-    SetFont(NULL);
-  };
+  static void UnsetFont() { SetFont(NULL); };
   static TTF_Font *Font(const int pxsz = -1);
 
   void SetTexturator(ST_Texturator *ttr);

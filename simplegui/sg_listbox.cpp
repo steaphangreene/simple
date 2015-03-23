@@ -79,7 +79,6 @@ SG_ListBox::SG_ListBox(const vector<SG_Widget*>& items, SimpleTexture desel,
 SG_ListBox::~SG_ListBox() {}
 
 bool SG_ListBox::ChildEvent(SDL_Event* event) {
-
   if (event->user.code == SG_EVENT_STICKYOFF) {
     if (ptr2pos.count((SG_StickyButton*)(event->user.data1)) == 1) {
       int ind = ptr2pos[(SG_StickyButton*)(event->user.data1)];

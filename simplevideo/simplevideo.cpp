@@ -31,7 +31,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846 /* pi */
 #endif
-#define DEG2RAD(d) ((d) * M_PI / 180.0)
+#define DEG2RAD(d) ((d)*M_PI / 180.0)
 
 #define MIN_DOWN 5.0  // Minimum of 5 degrees angle to z plane
 

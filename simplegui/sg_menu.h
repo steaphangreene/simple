@@ -38,9 +38,7 @@ class SG_Menu : public SG_Button, SG_MultiText {
   virtual int HandleEvent(SDL_Event *event, float x, float y);
 
   void SetID(int id);
-  int ID() {
-    return menu_id;
-  };
+  int ID() { return menu_id; };
 
   virtual const string &Item(int opt);
   virtual void SetItems(const vector<string> &itms);

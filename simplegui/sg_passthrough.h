@@ -36,9 +36,7 @@ class SG_PassThrough : public SG_Alignment {
 
   void SetBehavior(int lact, int mact, int ract);
   void SetMenu(int but, const vector<string> itms);
-  void SetSendMotion(bool val = true) {
-    send_motion = val;
-  };
+  void SetSendMotion(bool val = true) { send_motion = val; };
 
  protected:
   virtual bool RenderSelf(unsigned long cur_time);
