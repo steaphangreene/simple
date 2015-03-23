@@ -915,10 +915,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       gl_texcoords[vertex*2+0] = vertices[vertex].texcoord[0] * xfact;
       gl_texcoords[vertex*2+1] = vertices[vertex].texcoord[1] * yfact;
 
-      gl_normals[vertex*3+0] = vertices[vertex].normal[0];
-      gl_normals[vertex*3+1] = vertices[vertex].normal[1];
-      gl_normals[vertex*3+2] = vertices[vertex].normal[2];
-
       Matrix4x4 mat;
       if (vertices[vertex].bone_weight_type == 0) {
         mat = bone_space[vertices[vertex].bone[0]];
@@ -962,10 +958,21 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       MatrixTransform(x, y, z, mat);
 
-      //glVertex3f(x, y, z);
       gl_vertices[vertex*3+0] = x;
       gl_vertices[vertex*3+1] = y;
       gl_vertices[vertex*3+2] = z;
+
+      x = vertices[vertex].normal[0];
+      y = vertices[vertex].normal[1];
+      z = vertices[vertex].normal[2];
+
+      Quaternion quat;
+      Matrix4x4ToQuaternion(quat, mat);
+      QuaternionRotate(x, y, z, quat);
+
+      gl_normals[vertex*3+0] = x;
+      gl_normals[vertex*3+1] = y;
+      gl_normals[vertex*3+2] = z;
   }
 
   glEnableClientState(GL_VERTEX_ARRAY);
