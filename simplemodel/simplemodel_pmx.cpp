@@ -908,27 +908,30 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
     for (Uint32 vert = 0; vert < 3; ++vert) {
       gl_vindex[tri*3 + vert] = triangles[tri].vertex[vert];
+    }
+  }
 
-      gl_texcoords[gl_vindex[tri*3 + vert]*2+0] = vertices[gl_vindex[tri*3 + vert]].texcoord[0] * xfact;
-      gl_texcoords[gl_vindex[tri*3 + vert]*2+1] = vertices[gl_vindex[tri*3 + vert]].texcoord[1] * yfact;
+  for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
+      gl_texcoords[vertex*2+0] = vertices[vertex].texcoord[0] * xfact;
+      gl_texcoords[vertex*2+1] = vertices[vertex].texcoord[1] * yfact;
 
-      gl_normals[gl_vindex[tri*3 + vert]*3+0] = vertices[gl_vindex[tri*3 + vert]].normal[0];
-      gl_normals[gl_vindex[tri*3 + vert]*3+1] = vertices[gl_vindex[tri*3 + vert]].normal[1];
-      gl_normals[gl_vindex[tri*3 + vert]*3+2] = vertices[gl_vindex[tri*3 + vert]].normal[2];
+      gl_normals[vertex*3+0] = vertices[vertex].normal[0];
+      gl_normals[vertex*3+1] = vertices[vertex].normal[1];
+      gl_normals[vertex*3+2] = vertices[vertex].normal[2];
 
       Matrix4x4 mat;
-      if (vertices[gl_vindex[tri*3 + vert]].bone_weight_type == 0) {
-        mat = bone_space[vertices[gl_vindex[tri*3 + vert]].bone[0]];
-      } else if (vertices[gl_vindex[tri*3 + vert]].bone_weight_type == 2) {
+      if (vertices[vertex].bone_weight_type == 0) {
+        mat = bone_space[vertices[vertex].bone[0]];
+      } else if (vertices[vertex].bone_weight_type == 2) {
         float b1_weight, b2_weight, b3_weight, b4_weight;
-        b1_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[0];
-        b2_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[1];
-        b3_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[2];
-        b4_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[3];
-        Uint32 bone1 = vertices[gl_vindex[tri*3 + vert]].bone[0];
-        Uint32 bone2 = vertices[gl_vindex[tri*3 + vert]].bone[1];
-        Uint32 bone3 = vertices[gl_vindex[tri*3 + vert]].bone[2];
-        Uint32 bone4 = vertices[gl_vindex[tri*3 + vert]].bone[3];
+        b1_weight = vertices[vertex].bone_weight[0];
+        b2_weight = vertices[vertex].bone_weight[1];
+        b3_weight = vertices[vertex].bone_weight[2];
+        b4_weight = vertices[vertex].bone_weight[3];
+        Uint32 bone1 = vertices[vertex].bone[0];
+        Uint32 bone2 = vertices[vertex].bone[1];
+        Uint32 bone3 = vertices[vertex].bone[2];
+        Uint32 bone4 = vertices[vertex].bone[3];
 
         Matrix4x4 m1, m2, m3, m4;
         m1 = bone_space[bone1];
@@ -939,10 +942,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         LERP(mat, m1, m2, m3, m4, b1_weight, b2_weight, b3_weight, b4_weight);
       } else {
         float bone1_weight, bone2_weight;
-        bone1_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[0];
-        bone2_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[1];
-        Uint32 bone1 = vertices[gl_vindex[tri*3 + vert]].bone[0];
-        Uint32 bone2 = vertices[gl_vindex[tri*3 + vert]].bone[1];
+        bone1_weight = vertices[vertex].bone_weight[0];
+        bone2_weight = vertices[vertex].bone_weight[1];
+        Uint32 bone1 = vertices[vertex].bone[0];
+        Uint32 bone2 = vertices[vertex].bone[1];
 
         Matrix4x4 m1, m2;
         m1 = bone_space[bone1];
@@ -953,17 +956,16 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       float x, y, z;
 
-      x = vertices[gl_vindex[tri*3 + vert]].vertex[0];
-      y = vertices[gl_vindex[tri*3 + vert]].vertex[1];
-      z = vertices[gl_vindex[tri*3 + vert]].vertex[2];
+      x = vertices[vertex].vertex[0];
+      y = vertices[vertex].vertex[1];
+      z = vertices[vertex].vertex[2];
 
       MatrixTransform(x, y, z, mat);
 
       //glVertex3f(x, y, z);
-      gl_vertices[gl_vindex[tri*3 + vert]*3+0] = x;
-      gl_vertices[gl_vindex[tri*3 + vert]*3+1] = y;
-      gl_vertices[gl_vindex[tri*3 + vert]*3+2] = z;
-    }
+      gl_vertices[vertex*3+0] = x;
+      gl_vertices[vertex*3+1] = y;
+      gl_vertices[vertex*3+2] = z;
   }
 
   glEnableClientState(GL_VERTEX_ARRAY);
