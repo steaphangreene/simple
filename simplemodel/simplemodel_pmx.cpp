@@ -900,34 +900,35 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   CalculateSpaces(bone_space, bone_rot, bone_pos);
 
   GLfloat gl_vertices[triangles.size() * 3 * 3];
-  Uint32 gl_vertex = 0;
   GLfloat gl_normals[triangles.size() * 3 * 3];
-  Uint32 gl_normal = 0;
   GLfloat gl_texcoords[triangles.size() * 3 * 2];
-  Uint32 gl_texcoord = 0;
+
+  Uint32 gl_vindex[triangles.size() * 3];
 
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
     for (Uint32 vert = 0; vert < 3; ++vert) {
-      gl_texcoords[gl_texcoord++] = vertices[triangles[tri].vertex[vert]].texcoord[0] * xfact;
-      gl_texcoords[gl_texcoord++] = vertices[triangles[tri].vertex[vert]].texcoord[1] * yfact;
+      gl_vindex[tri*3 + vert] = triangles[tri].vertex[vert];
 
-      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[0];
-      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[1];
-      gl_normals[gl_normal++] = vertices[triangles[tri].vertex[vert]].normal[2];
+      gl_texcoords[gl_vindex[tri*3 + vert]*2+0] = vertices[gl_vindex[tri*3 + vert]].texcoord[0] * xfact;
+      gl_texcoords[gl_vindex[tri*3 + vert]*2+1] = vertices[gl_vindex[tri*3 + vert]].texcoord[1] * yfact;
+
+      gl_normals[gl_vindex[tri*3 + vert]*3+0] = vertices[gl_vindex[tri*3 + vert]].normal[0];
+      gl_normals[gl_vindex[tri*3 + vert]*3+1] = vertices[gl_vindex[tri*3 + vert]].normal[1];
+      gl_normals[gl_vindex[tri*3 + vert]*3+2] = vertices[gl_vindex[tri*3 + vert]].normal[2];
 
       Matrix4x4 mat;
-      if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 0) {
-        mat = bone_space[vertices[triangles[tri].vertex[vert]].bone[0]];
-      } else if (vertices[triangles[tri].vertex[vert]].bone_weight_type == 2) {
+      if (vertices[gl_vindex[tri*3 + vert]].bone_weight_type == 0) {
+        mat = bone_space[vertices[gl_vindex[tri*3 + vert]].bone[0]];
+      } else if (vertices[gl_vindex[tri*3 + vert]].bone_weight_type == 2) {
         float b1_weight, b2_weight, b3_weight, b4_weight;
-        b1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
-        b2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
-        b3_weight = vertices[triangles[tri].vertex[vert]].bone_weight[2];
-        b4_weight = vertices[triangles[tri].vertex[vert]].bone_weight[3];
-        Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
-        Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
-        Uint32 bone3 = vertices[triangles[tri].vertex[vert]].bone[2];
-        Uint32 bone4 = vertices[triangles[tri].vertex[vert]].bone[3];
+        b1_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[0];
+        b2_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[1];
+        b3_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[2];
+        b4_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[3];
+        Uint32 bone1 = vertices[gl_vindex[tri*3 + vert]].bone[0];
+        Uint32 bone2 = vertices[gl_vindex[tri*3 + vert]].bone[1];
+        Uint32 bone3 = vertices[gl_vindex[tri*3 + vert]].bone[2];
+        Uint32 bone4 = vertices[gl_vindex[tri*3 + vert]].bone[3];
 
         Matrix4x4 m1, m2, m3, m4;
         m1 = bone_space[bone1];
@@ -938,10 +939,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         LERP(mat, m1, m2, m3, m4, b1_weight, b2_weight, b3_weight, b4_weight);
       } else {
         float bone1_weight, bone2_weight;
-        bone1_weight = vertices[triangles[tri].vertex[vert]].bone_weight[0];
-        bone2_weight = vertices[triangles[tri].vertex[vert]].bone_weight[1];
-        Uint32 bone1 = vertices[triangles[tri].vertex[vert]].bone[0];
-        Uint32 bone2 = vertices[triangles[tri].vertex[vert]].bone[1];
+        bone1_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[0];
+        bone2_weight = vertices[gl_vindex[tri*3 + vert]].bone_weight[1];
+        Uint32 bone1 = vertices[gl_vindex[tri*3 + vert]].bone[0];
+        Uint32 bone2 = vertices[gl_vindex[tri*3 + vert]].bone[1];
 
         Matrix4x4 m1, m2;
         m1 = bone_space[bone1];
@@ -952,16 +953,16 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
       float x, y, z;
 
-      x = vertices[triangles[tri].vertex[vert]].vertex[0];
-      y = vertices[triangles[tri].vertex[vert]].vertex[1];
-      z = vertices[triangles[tri].vertex[vert]].vertex[2];
+      x = vertices[gl_vindex[tri*3 + vert]].vertex[0];
+      y = vertices[gl_vindex[tri*3 + vert]].vertex[1];
+      z = vertices[gl_vindex[tri*3 + vert]].vertex[2];
 
       MatrixTransform(x, y, z, mat);
 
       //glVertex3f(x, y, z);
-      gl_vertices[gl_vertex++] = x;
-      gl_vertices[gl_vertex++] = y;
-      gl_vertices[gl_vertex++] = z;
+      gl_vertices[gl_vindex[tri*3 + vert]*3+0] = x;
+      gl_vertices[gl_vindex[tri*3 + vert]*3+1] = y;
+      gl_vertices[gl_vindex[tri*3 + vert]*3+2] = z;
     }
   }
 
@@ -982,8 +983,8 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
         to_next_mat = tri + material[mat].num_tris;
       } while (tri >= to_next_mat);
       if (tri > 0) {
-        glDrawArrays(GL_TRIANGLES, index, tri*3 - index);
-        index = tri*3;
+        glDrawRangeElements(GL_TRIANGLES, 0, triangles.size() * 3, tri * 3 - index, GL_UNSIGNED_INT, gl_vindex + index);
+        index = tri * 3;
       }
 
       if (MaterialDisabled(mat)) continue;
@@ -1008,7 +1009,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   }
 
   if (mat >= 0) {
-    glDrawArrays(GL_TRIANGLES, index, triangles.size()*3 - index);
+    glDrawRangeElements(GL_TRIANGLES, 0, triangles.size() * 3, triangles.size() * 3 - index, GL_UNSIGNED_INT, gl_vindex + index);
     glPopMatrix();
   }
 
