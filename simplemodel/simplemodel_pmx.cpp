@@ -560,7 +560,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   // Transform to SimpleModel axes and scale
   glPushMatrix();
-  glScalef(0.125, 0.125, 0.125);
+  glScalef(0.0762, 0.0762, 0.0762);
   glRotatef(-90.0, 0.0, 1.0, 0.0);
   glRotatef(-90.0, 0.0, 0.0, 1.0);
 

@@ -72,6 +72,7 @@ bool SimpleModel_Q3Dir::Load(const string &pack, const string &filenm,
   head = new SimpleModel_MD3(pack, headfile, defskin);
   if (torso && head) torso->AttachSubmodel("tag_head", head);
 
+  // FIXME: Support default animation.cfg
   if (pack.length() > 0) {
     if (!LoadCFG(pack + "/" + base_filename + "/animation.cfg")) return false;
   } else {
@@ -208,7 +209,7 @@ bool SimpleModel_Q3Dir::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   //  glPushMatrix();
   glColor3f(1.0, 1.0, 1.0);
   glEnable(GL_TEXTURE_2D);
-  glScalef(1.0 / 24.0, 1.0 / 24.0, 1.0 / 24.0);
+  glScalef(1.0 / 32.0, 1.0 / 32.0, 1.0 / 32.0);
   glTranslatef(0.0, 0.0, 24.0);  // Adjust for floor height
 
   SimpleModel_MD3::RenderSelf(cur_time, anim, start_time);

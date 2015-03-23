@@ -58,17 +58,17 @@ SimpleModel *SimpleModel::LoadModel(const string &filename,
   string skin = "";
   if (skins.size() > 0) skin = skins[0];
 
-  SDL_RWops *cfg = SDL_RWFromZZIP((filename + "/animation.cfg").c_str(), "rb");
-  if (cfg) {
-    SDL_RWclose(cfg);
+  SDL_RWops *q3dir = SDL_RWFromZZIP((filename + "/lower.md3").c_str(), "rb");
+  if (q3dir) {
+    SDL_RWclose(q3dir);
     if (skin.length() <= 0) skin = "default";
     return new SimpleModel_Q3Dir(filename, skin);
   }
-  for (Uint32 snum = 0; (!cfg) && snum < source_files.size(); ++snum) {
-    string filenm = source_files[snum] + "/" + filename + "/animation.cfg";
-    cfg = SDL_RWFromZZIP(filenm.c_str(), "rb");
-    if (cfg) {
-      SDL_RWclose(cfg);
+  for (Uint32 snum = 0; (!q3dir) && snum < source_files.size(); ++snum) {
+    string filenm = source_files[snum] + "/" + filename + "/lower.md3";
+    q3dir = SDL_RWFromZZIP(filenm.c_str(), "rb");
+    if (q3dir) {
+      SDL_RWclose(q3dir);
       if (skin.length() <= 0) skin = "default";
       return new SimpleModel_Q3Dir(source_files[snum], filename, skin);
     }
