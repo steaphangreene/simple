@@ -64,11 +64,13 @@ class SimpleModel_PMX : public SimpleModel {
                        Matrix4x4 *bone_rot, Matrix4x4 *bone_pos) const;
   void CalculateSpaces(Matrix4x4 *bone_space, Matrix4x4 *bone_rot,
                        Matrix4x4 *bone_pos) const;
+  bool CompileRender();
 
   struct PMXVertex {
     float vertex[3];
     float normal[3];
     float texcoord[2];
+    float texfac[2];
     Uint32 bone[4];
     float bone_weight[4];
     Uint8 bone_weight_type;

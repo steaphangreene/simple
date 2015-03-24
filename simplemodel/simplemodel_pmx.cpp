@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <algorithm>
+#include <unordered_set>
 
 #include <iconv.h>
 
@@ -226,6 +227,8 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     // Texture coordinates
     freadLE(vertices[vert].texcoord[0], model);
     freadLE(vertices[vert].texcoord[1], model);
+    vertices[vert].texfac[0] = 1.0;
+    vertices[vert].texfac[1] = 1.0;
 
     freadLE(vertices[vert].bone_weight_type, model);
     vertices[vert].bone[0] = ReadVarInt(model, bone_index_size);
@@ -282,19 +285,6 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
       triangles[tri].vertex[vert] = ReadVarInt(model, vertex_size);
     }
   }
-
-  // Setup Texture Coordinates VBO
-  float xfact = 1.0, yfact = 1.0;
-  GLfloat gl_texcoords[vertices.size() * 2];
-  for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
-    gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
-    gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
-  }
-  glGenBuffersARB(1, &texcoordsVBO);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
-                  gl_texcoords, GL_STATIC_DRAW_ARB);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   Uint32 num_textures;
   freadLE(num_textures, model);
@@ -417,7 +407,67 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     }
   }
 
-  return false;
+  return CompileRender();
+}
+
+bool SimpleModel_PMX::CompileRender() {
+  // Compile data for Texture Coordinates Array
+  float xfact = 1.0, yfact = 1.0;
+  GLfloat gl_texcoords[vertices.size() * 2];
+
+  unordered_set<Uint32> verts_todo;
+  unordered_set<Uint32> verts_done;
+
+  Uint32 mat = -1;
+  Uint32 to_next_mat = 0;
+  for (Uint32 tri = 0; tri < triangles.size(); tri++) {
+    if (tri >= to_next_mat) {
+      do {
+        ++mat;
+        to_next_mat = tri + material[mat].num_tris;
+      } while (tri >= to_next_mat);
+      if (tri > 0) {
+        for (const auto &vert : verts_todo) {
+          if (verts_done.count(vert)) {
+            fprintf(stderr, "ERROR: Single Vertex on Multiple Materials!\n");
+            return false;
+          }
+          vertices[vert].texfac[0] = xfact;
+          vertices[vert].texfac[1] = yfact;
+          verts_done.insert(vert);
+        }
+        verts_todo.clear();
+      }
+
+      Uint32 tex = material[mat].texidx;
+      if (tex >= 255 || !texture[tex]) {
+        xfact = 1.0;
+        yfact = 1.0;
+      } else {
+        xfact = texture[tex]->xfact;
+        yfact = texture[tex]->yfact;
+      }
+    }
+    verts_todo.insert(triangles[tri].vertex[0]);
+    verts_todo.insert(triangles[tri].vertex[1]);
+    verts_todo.insert(triangles[tri].vertex[2]);
+  }
+
+  for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
+    gl_texcoords[vertex * 2 + 0] =
+        vertices[vertex].texcoord[0] * vertices[vertex].texfac[0];
+    gl_texcoords[vertex * 2 + 1] =
+        vertices[vertex].texcoord[1] * vertices[vertex].texfac[1];
+  }
+
+  // Setup Texture Coordinates VBO
+  glGenBuffersARB(1, &texcoordsVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
+                  gl_texcoords, GL_STATIC_DRAW_ARB);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+  return true;
 }
 
 bool SimpleModel_PMX::LoadAnimation(const string &filename) {
