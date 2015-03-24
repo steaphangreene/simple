@@ -51,6 +51,10 @@ class SimpleModel_PMX : public SimpleModel {
                           const vector<int> &anim = vector<int>(),
                           const vector<Uint32> &start_time = vector<Uint32>(),
                           Uint32 anim_offset = 0) const;
+  virtual bool PrepareSelf(Uint32 cur_time,
+                           const vector<int> &anim = vector<int>(),
+                           const vector<Uint32> &start_time = vector<Uint32>(),
+                           Uint32 anim_offset = 0) const;
 
   SimpleModel_PMX();
 

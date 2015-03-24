@@ -210,6 +210,10 @@ class SimpleModel {
   static void Normalize(Quaternion &res, const Quaternion quat);
 
  protected:
+  virtual bool PrepareSelf(Uint32 cur_time,
+                           const vector<int> &anim = vector<int>(),
+                           const vector<Uint32> &start_time = vector<Uint32>(),
+                           Uint32 anim_offset = 0) const;
   virtual bool RenderSelf(Uint32 cur_time,
                           const vector<int> &anim = vector<int>(),
                           const vector<Uint32> &start_time = vector<Uint32>(),

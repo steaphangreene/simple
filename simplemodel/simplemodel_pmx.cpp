@@ -643,19 +643,9 @@ void SimpleModel_PMX::CalculateSpaces(Matrix4x4 *bone_space,
   }
 }
 
-bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
-                                 const vector<Uint32> &start_time,
-                                 Uint32 anim_offset) const {
-
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  // Transform to SimpleModel axes and scale
-  glPushMatrix();
-  glScalef(0.0762, 0.0762, 0.0762);
-  glRotatef(-90.0, 0.0, 1.0, 0.0);
-  glRotatef(-90.0, 0.0, 0.0, 1.0);
+bool SimpleModel_PMX::PrepareSelf(Uint32 cur_time, const vector<int> &anim,
+                                  const vector<Uint32> &start_time,
+                                  Uint32 anim_offset) const {
 
   if (lastVBOtime != cur_time) {
     float frame = float(cur_time - start_time[0]) * 30.0 / 1000.0;
@@ -1066,20 +1056,36 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
     glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0,
                        vertices.size() * 3 * sizeof(GLfloat), gl_vertices);
-    glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalsVBO);
     glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0,
                        vertices.size() * 3 * sizeof(GLfloat), gl_normals);
-    glNormalPointer(GL_FLOAT, 0, nullptr);
-  }
-  else {
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
-    glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalsVBO);
-    glNormalPointer(GL_FLOAT, 0, nullptr);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   }
+
+  return true;
+}
+
+bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
+                                 const vector<Uint32> &start_time,
+                                 Uint32 anim_offset) const {
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  // Transform to SimpleModel axes and scale
+  glPushMatrix();
+  glScalef(0.0762, 0.0762, 0.0762);
+  glRotatef(-90.0, 0.0, 1.0, 0.0);
+  glRotatef(-90.0, 0.0, 0.0, 1.0);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
+  glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalsVBO);
+  glNormalPointer(GL_FLOAT, 0, nullptr);
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
   glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
