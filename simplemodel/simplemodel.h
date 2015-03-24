@@ -227,6 +227,7 @@ class SimpleModel {
   GLuint texcoordsVBO;
   GLuint verticesVBO;
   GLuint normalsVBO;
+  mutable Uint32 lastVBOtime;
 
   static vector<string> source_files;
 

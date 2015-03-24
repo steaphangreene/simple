@@ -185,6 +185,7 @@ SimpleModel *SimpleModel::LoadModel(const string &filename,
 }
 
 SimpleModel::SimpleModel() {
+  lastVBOtime = SDL_GetTicks() - 1;
   trianglesVBO = 0;
   texcoordsVBO = 0;
   verticesVBO = 0;
