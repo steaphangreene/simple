@@ -411,6 +411,7 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
 }
 
 bool SimpleModel_PMX::CompileRender() {
+
   // Compile data for Texture Coordinates Array
   float xfact = 1.0, yfact = 1.0;
   GLfloat gl_texcoords[vertices.size() * 2];
@@ -460,15 +461,6 @@ bool SimpleModel_PMX::CompileRender() {
         vertices[vertex].texcoord[1] * vertices[vertex].texfac[1];
   }
 
-  // Setup Texture Coordinates VBO
-  glGenBuffersARB(1, &texcoordsVBO);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
-                  gl_texcoords, GL_STATIC_DRAW_ARB);
-
-  // Unbind the buffer
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
   // Compile data for Triangle Vertex Index Array
   GLuint gl_vindex[triangles.size() * 3];
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
@@ -476,6 +468,27 @@ bool SimpleModel_PMX::CompileRender() {
     gl_vindex[tri * 3 + 1] = triangles[tri].vertex[1];
     gl_vindex[tri * 3 + 2] = triangles[tri].vertex[2];
   }
+
+  // Create (Empty) Vertices VBO
+  glGenBuffersARB(1, &verticesVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 3 * sizeof(GLfloat),
+                  nullptr, GL_DYNAMIC_DRAW_ARB);
+
+  // Create (Empty) Normals VBO
+  glGenBuffersARB(1, &normalsVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalsVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 3 * sizeof(GLfloat),
+                  nullptr, GL_DYNAMIC_DRAW_ARB);
+
+  // Setup Texture Coordinates VBO
+  glGenBuffersARB(1, &texcoordsVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
+                  gl_texcoords, GL_STATIC_DRAW_ARB);
+
+  // Unbind the array buffer
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   // Setup Texture Coordinates VBO
   glGenBuffersARB(1, &trianglesVBO);
@@ -1045,11 +1058,18 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, &gl_vertices[0]);
-  glNormalPointer(GL_FLOAT, 0, &gl_normals[0]);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
+  glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, vertices.size() * 3 * sizeof(GLfloat), gl_vertices);
+  glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalsVBO);
+  glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, vertices.size() * 3 * sizeof(GLfloat), gl_normals);
+  glNormalPointer(GL_FLOAT, 0, nullptr);
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
   glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   // Bind the index buffer (for glDrawRangeElements() calls below)
