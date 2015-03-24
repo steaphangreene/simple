@@ -465,7 +465,27 @@ bool SimpleModel_PMX::CompileRender() {
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
                   gl_texcoords, GL_STATIC_DRAW_ARB);
+
+  // Unbind the buffer
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+  // Compile data for Triangle Vertex Index Array
+  GLuint gl_vindex[triangles.size() * 3];
+  for (Uint32 tri = 0; tri < triangles.size(); tri++) {
+    gl_vindex[tri * 3 + 0] = triangles[tri].vertex[0];
+    gl_vindex[tri * 3 + 1] = triangles[tri].vertex[1];
+    gl_vindex[tri * 3 + 2] = triangles[tri].vertex[2];
+  }
+
+  // Setup Texture Coordinates VBO
+  glGenBuffersARB(1, &trianglesVBO);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, trianglesVBO);
+  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
+                  triangles.size() * 3 * sizeof(GLuint), gl_vindex,
+                  GL_STATIC_DRAW_ARB);
+
+  // Unbind the index buffer
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
   return true;
 }
@@ -960,13 +980,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   GLfloat gl_vertices[triangles.size() * 3 * 3];
   GLfloat gl_normals[triangles.size() * 3 * 3];
-  Uint32 gl_vindex[triangles.size() * 3];
-
-  for (Uint32 tri = 0; tri < triangles.size(); tri++) {
-    for (Uint32 vert = 0; vert < 3; ++vert) {
-      gl_vindex[tri * 3 + vert] = triangles[tri].vertex[vert];
-    }
-  }
 
   for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
     Matrix4x4 mat;
@@ -1039,6 +1052,9 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
+  // Bind the index buffer (for glDrawRangeElements() calls below)
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, trianglesVBO);
+
   glDisable(GL_CULL_FACE);
   Uint32 index = 0;
   Uint32 to_next_mat = 0;
@@ -1051,7 +1067,7 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       if (tri > 0) {
         glDrawRangeElements(GL_TRIANGLES, 0, triangles.size() * 3,
                             tri * 3 - index, GL_UNSIGNED_INT,
-                            gl_vindex + index);
+                            ((const GLuint *)(0)) + index);
         index = tri * 3;
       }
 
@@ -1075,9 +1091,12 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   if (mat >= 0) {
     glDrawRangeElements(GL_TRIANGLES, 0, triangles.size() * 3,
                         triangles.size() * 3 - index, GL_UNSIGNED_INT,
-                        gl_vindex + index);
+                        ((const GLuint *)(0)) + index);
     glPopMatrix();
   }
+
+  // Unbind the index buffer
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
