@@ -223,7 +223,10 @@ class SimpleModel {
   map<Uint32, Uint32> tag_anim_offsets;
   set<Uint32> target_models;
 
-  GLfloat *gl_texcoords;
+  GLuint trianglesVBO;
+  GLuint texcoordsVBO;
+  GLuint verticesVBO;
+  GLuint normalsVBO;
 
   static vector<string> source_files;
 

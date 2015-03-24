@@ -283,13 +283,18 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     }
   }
 
-  // Setup Texture Coordinates Array
+  // Setup Texture Coordinates VBO
   float xfact = 1.0, yfact = 1.0;
-  gl_texcoords = new GLfloat[vertices.size() * 2];
+  GLfloat gl_texcoords[vertices.size() * 2];
   for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
     gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
     gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
   }
+  glGenBuffersARB(1, &texcoordsVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
+                  gl_texcoords, GL_STATIC_DRAW_ARB);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   Uint32 num_textures;
   freadLE(num_textures, model);
@@ -979,7 +984,10 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   glVertexPointer(3, GL_FLOAT, 0, &gl_vertices[0]);
   glNormalPointer(GL_FLOAT, 0, &gl_normals[0]);
-  glTexCoordPointer(2, GL_FLOAT, 0, &gl_texcoords[0]);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
+  glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   glDisable(GL_CULL_FACE);
   Uint32 index = 0;

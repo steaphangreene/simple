@@ -132,13 +132,18 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     }
   }
 
-  // Setup Texture Coordinates Array
+  // Setup Texture Coordinates VBO
   float xfact = 1.0, yfact = 1.0;
-  gl_texcoords = new GLfloat[vertices.size() * 2];
+  GLfloat gl_texcoords[vertices.size() * 2];
   for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
     gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
     gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
   }
+  glGenBuffersARB(1, &texcoordsVBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, texcoordsVBO);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vertices.size() * 2 * sizeof(GLfloat),
+                  gl_texcoords, GL_STATIC_DRAW_ARB);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   Uint32 num_materials;
   freadLE(num_materials, model);

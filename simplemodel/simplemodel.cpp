@@ -185,15 +185,27 @@ SimpleModel *SimpleModel::LoadModel(const string &filename,
 }
 
 SimpleModel::SimpleModel() {
-  gl_texcoords = nullptr;
+  trianglesVBO = 0;
+  texcoordsVBO = 0;
+  verticesVBO = 0;
+  normalsVBO = 0;
   if (!gl_ext_detected) {
     SetupGLEXT();
   }
 }
 
 SimpleModel::~SimpleModel() {
-  if (gl_texcoords) {
-    delete[] gl_texcoords;
+  if (trianglesVBO) {
+    glDeleteBuffersARB(1, &trianglesVBO);
+  }
+  if (texcoordsVBO) {
+    glDeleteBuffersARB(1, &texcoordsVBO);
+  }
+  if (verticesVBO) {
+    glDeleteBuffersARB(1, &verticesVBO);
+  }
+  if (normalsVBO) {
+    glDeleteBuffersARB(1, &normalsVBO);
   }
 }
 
