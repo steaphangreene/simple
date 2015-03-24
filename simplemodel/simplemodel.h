@@ -236,12 +236,15 @@ class SimpleModel {
   typedef void(APIENTRY *glGenVBO)(GLsizei, GLuint *);
   typedef void(APIENTRY *glBndVBO)(GLenum, GLuint);
   typedef void(APIENTRY *glBufVBO)(GLenum, GLsizeiptr, const GLvoid *, GLenum);
+  typedef void(APIENTRY *glSubVBO)(GLenum, GLintptr, GLsizeiptr,
+                                   const GLvoid *);
   typedef void(APIENTRY *glDelVBO)(GLsizei, const GLuint *);
   typedef GLboolean(APIENTRY *glIsAVBO)(GLuint);
 
   static glGenVBO glGenBuffersARB;
   static glBndVBO glBindBufferARB;
   static glBufVBO glBufferDataARB;
+  static glSubVBO glBufferSubDataARB;
   static glDelVBO glDeleteBuffersARB;
   static glIsAVBO glIsBufferARB;
 

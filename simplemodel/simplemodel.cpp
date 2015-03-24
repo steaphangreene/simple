@@ -908,6 +908,7 @@ bool SimpleModel::gl_ext_detected = false;
 SimpleModel::glGenVBO SimpleModel::glGenBuffersARB = NULL;
 SimpleModel::glBndVBO SimpleModel::glBindBufferARB = NULL;
 SimpleModel::glBufVBO SimpleModel::glBufferDataARB = NULL;
+SimpleModel::glSubVBO SimpleModel::glBufferSubDataARB = NULL;
 SimpleModel::glDelVBO SimpleModel::glDeleteBuffersARB = NULL;
 SimpleModel::glIsAVBO SimpleModel::glIsBufferARB = NULL;
 SimpleModel::glActTEX SimpleModel::glActiveTextureARB = NULL;
@@ -920,17 +921,21 @@ void SimpleModel::SetupGLEXT() {
       (glBndVBO)SDL_GL_GetProcAddress("glBindBufferARB");
   SimpleModel::glBufferDataARB =
       (glBufVBO)SDL_GL_GetProcAddress("glBufferDataARB");
+  SimpleModel::glBufferSubDataARB =
+      (glSubVBO)SDL_GL_GetProcAddress("glBufferSubDataARB");
   SimpleModel::glDeleteBuffersARB =
       (glDelVBO)SDL_GL_GetProcAddress("glDeleteBuffersARB");
   SimpleModel::glIsBufferARB = (glIsAVBO)SDL_GL_GetProcAddress("glIsBufferARB");
   if (SimpleModel::glGenBuffersARB == NULL ||
       SimpleModel::glBindBufferARB == NULL ||
       SimpleModel::glBufferDataARB == NULL ||
+      SimpleModel::glBufferSubDataARB == NULL ||
       SimpleModel::glDeleteBuffersARB == NULL ||
       SimpleModel::glIsBufferARB == NULL) {
     SimpleModel::glGenBuffersARB = NULL;
     SimpleModel::glBindBufferARB = NULL;
     SimpleModel::glBufferDataARB = NULL;
+    SimpleModel::glBufferSubDataARB = NULL;
     SimpleModel::glDeleteBuffersARB = NULL;
     SimpleModel::glIsBufferARB = NULL;
   }
