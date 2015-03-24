@@ -37,12 +37,16 @@ using namespace std;
 #include "simplemodel_pmx.h"
 #include "saferead.h"
 
+static SDL_mutex *gl_mutex = nullptr;
 SimpleModel_PMX::SimpleModel_PMX(const string &filename,
                                  const string &defskin) {
+  if (!gl_mutex) gl_mutex = SDL_CreateMutex();
   Load(filename, defskin);
 }
 
-SimpleModel_PMX::SimpleModel_PMX() {}
+SimpleModel_PMX::SimpleModel_PMX() {
+  if (!gl_mutex) gl_mutex = SDL_CreateMutex();
+}
 
 SimpleModel_PMX::~SimpleModel_PMX() {}
 
@@ -1053,6 +1057,7 @@ bool SimpleModel_PMX::PrepareSelf(Uint32 cur_time, const vector<int> &anim,
       gl_normals[vertex * 3 + 2] = z;
     }
 
+    SDL_mutexP(gl_mutex);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, verticesVBO);
     glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0,
                        vertices.size() * 3 * sizeof(GLfloat), gl_vertices);
@@ -1062,6 +1067,7 @@ bool SimpleModel_PMX::PrepareSelf(Uint32 cur_time, const vector<int> &anim,
                        vertices.size() * 3 * sizeof(GLfloat), gl_normals);
 
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    SDL_mutexV(gl_mutex);
   }
 
   return true;
