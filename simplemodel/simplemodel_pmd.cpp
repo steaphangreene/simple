@@ -132,6 +132,14 @@ bool SimpleModel_PMD::Load(const string &filename, const string &defskin) {
     }
   }
 
+  // Setup Texture Coordinates Array
+  float xfact = 1.0, yfact = 1.0;
+  gl_texcoords = new GLfloat[vertices.size() * 2];
+  for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
+    gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
+    gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
+  }
+
   Uint32 num_materials;
   freadLE(num_materials, model);
   material.resize(num_materials);

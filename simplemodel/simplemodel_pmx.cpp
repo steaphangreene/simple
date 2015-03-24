@@ -283,6 +283,14 @@ bool SimpleModel_PMX::Load(const string &filename, const string &defskin) {
     }
   }
 
+  // Setup Texture Coordinates Array
+  float xfact = 1.0, yfact = 1.0;
+  gl_texcoords = new GLfloat[vertices.size() * 2];
+  for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
+    gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
+    gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
+  }
+
   Uint32 num_textures;
   freadLE(num_textures, model);
   texture.resize(num_textures);
@@ -555,7 +563,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   Uint32 ik_steps = 2;
 
   Uint32 mat = -1;
-  float xfact = 1.0, yfact = 1.0;
 
   // Transform to SimpleModel axes and scale
   glPushMatrix();
@@ -898,8 +905,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
 
   GLfloat gl_vertices[triangles.size() * 3 * 3];
   GLfloat gl_normals[triangles.size() * 3 * 3];
-  GLfloat gl_texcoords[triangles.size() * 3 * 2];
-
   Uint32 gl_vindex[triangles.size() * 3];
 
   for (Uint32 tri = 0; tri < triangles.size(); tri++) {
@@ -909,9 +914,6 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
   }
 
   for (Uint32 vertex = 0; vertex < vertices.size(); ++vertex) {
-    gl_texcoords[vertex * 2 + 0] = vertices[vertex].texcoord[0] * xfact;
-    gl_texcoords[vertex * 2 + 1] = vertices[vertex].texcoord[1] * yfact;
-
     Matrix4x4 mat;
     if (vertices[vertex].bone_weight_type == 0) {
       mat = bone_space[vertices[vertex].bone[0]];
@@ -1000,13 +1002,9 @@ bool SimpleModel_PMX::RenderSelf(Uint32 cur_time, const vector<int> &anim,
       Uint32 tex = material[mat].texidx;
       if (tex >= 255 || !texture[tex]) {
         glDisable(GL_TEXTURE);
-        xfact = 1.0;
-        yfact = 1.0;
       } else {
         glEnable(GL_TEXTURE);
         glBindTexture(GL_TEXTURE_2D, texture[tex]->GLTexture());
-        xfact = texture[tex]->xfact;
-        yfact = texture[tex]->yfact;
       }
 
       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material[mat].ambient);

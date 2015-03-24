@@ -185,12 +185,17 @@ SimpleModel *SimpleModel::LoadModel(const string &filename,
 }
 
 SimpleModel::SimpleModel() {
+  gl_texcoords = nullptr;
   if (!gl_ext_detected) {
     SetupGLEXT();
   }
 }
 
-SimpleModel::~SimpleModel() {}
+SimpleModel::~SimpleModel() {
+  if (gl_texcoords) {
+    delete[] gl_texcoords;
+  }
+}
 
 bool SimpleModel::Load(const string &filenm, const vector<string> &skin) {
   filename = filenm;
