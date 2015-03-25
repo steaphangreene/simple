@@ -45,7 +45,8 @@ class SimpleModel {
 
   bool Render(Uint32 cur_time, const vector<int> &anim = vector<int>(),
               const vector<Uint32> &start_time = vector<Uint32>(),
-              Uint32 anim_offset = 0, float fac = 0.0, float elv = 0.0) const;
+              Uint32 anim_offset = 0, float fac = 0.0, float elv = 0.0,
+              bool prepare = true) const;
 
   virtual bool MoveToTag(Uint32 tag, Uint32 cur_time,
                          const vector<int> &anim = vector<int>(),

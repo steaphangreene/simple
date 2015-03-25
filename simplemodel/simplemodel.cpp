@@ -242,13 +242,14 @@ bool SimpleModel::MoveToTag(const string &tagname, Uint32 cur_time,
 
 bool SimpleModel::Render(Uint32 cur_time, const vector<int> &anim,
                          const vector<Uint32> &start_time, Uint32 anim_offset,
-                         float fac, float elv) const {
+                         float fac, float elv, bool prepare) const {
   if (target_models.size() < 1 && (fac != 0.0 || elv != 0.0)) {
     glPushMatrix();
     if (fac != 0.0) glRotatef(fac, 0.0, 0.0, 1.0);
     if (elv != 0.0) glRotatef(elv, 0.0, -1.0, 0.0);
   }
-  bool ret = PrepareSelf(cur_time, anim, start_time, anim_offset);
+  bool ret = true;
+  if (prepare) ret = PrepareSelf(cur_time, anim, start_time, anim_offset);
   if (ret) ret = RenderSelf(cur_time, anim, start_time, anim_offset);
   if (!ret) return ret;
   map<Uint32, SimpleModel *>::const_iterator itr = submodels.begin();

@@ -65,7 +65,7 @@ SimpleScene::~SimpleScene() {
   // at_exit handles all this
 }
 
-bool SimpleScene::Render(Uint32 offset) {
+bool SimpleScene::Render(Uint32 offset, bool prepare) {
   if (SimpleVideo::Current() !=
       NULL) {  // FIXME: What if neither way is defined?
     SimpleVideo::Current()->GetViewLimits(xlim0, ylim0, zlim0, xlim1, ylim1,
@@ -84,8 +84,8 @@ bool SimpleScene::Render(Uint32 offset) {
     if (zlim1 > resz1) zlim1 = resz1;
   }
   if (!SetUpLighting(offset)) return false;
-  if (!DrawObjects(offset)) return false;
-  return DrawParticles(offset);
+  if (!DrawObjects(offset, prepare)) return false;
+  return DrawParticles(offset, prepare);
 }
 
 SS_Model SimpleScene::AddModel(SimpleModel *mod) {
@@ -365,7 +365,7 @@ bool SimpleScene::SetUpLighting(Uint32 offset) {
   return true;
 }
 
-bool SimpleScene::DrawObjects(Uint32 offset) {
+bool SimpleScene::DrawObjects(Uint32 offset, bool prepare) {
   float xp = 0.0, yp = 0.0, zp = 0.0;
 
   set<SS_Object> done;
@@ -603,7 +603,8 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
         }
       }
 
-      models[model].model->Render(offset, anims, times, 0, facing, elevation);
+      models[model].model->Render(offset, anims, times, 0, facing, elevation,
+                                  prepare);
     }
 
     if (ang != 0.0) {
@@ -620,7 +621,7 @@ bool SimpleScene::DrawObjects(Uint32 offset) {
   return true;
 }
 
-bool SimpleScene::DrawParticles(Uint32 offset) {
+bool SimpleScene::DrawParticles(Uint32 offset, bool prepare) {
   if (parts.size() < 1) {
     return true;
   }

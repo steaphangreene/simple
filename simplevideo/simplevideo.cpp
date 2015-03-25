@@ -327,7 +327,7 @@ bool SimpleVideo::Render(Uint32 cur_time) {
   }
   if (!StartScene()) return false;
   if (gui && !gui->RenderStart(cur_time, true)) return false;
-  if (scene && !scene->Render(cur_time)) return false;
+  if (scene && !scene->Render(cur_time, true)) return false;
   if (gui && !gui->RenderFinish(cur_time, true)) return false;
 
   if (sbs) {
@@ -338,7 +338,7 @@ bool SimpleVideo::Render(Uint32 cur_time) {
     glTranslatef(-0.2, 0.0, 0.0);
     glMatrixMode(GL_MODELVIEW);
     if (gui && !gui->RenderStart(cur_time, true)) return false;
-    if (scene && !scene->Render(cur_time)) return false;
+    if (scene && !scene->Render(cur_time, false)) return false;
     if (gui && !gui->RenderFinish(cur_time, true)) return false;
   }
   return FinishScene();

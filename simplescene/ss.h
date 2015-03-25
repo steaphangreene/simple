@@ -52,7 +52,7 @@ class SimpleScene {
   void RestrictX(float x0, float y0);
   void RestrictY(float z0, float x1);
   void RestrictZ(float y1, float z1);
-  bool Render(Uint32 offset);
+  bool Render(Uint32 offset, bool prepare = true);
 
   static SimpleScene *Current() { return current; };
 
@@ -173,8 +173,8 @@ class SimpleScene {
   };
 
   bool SetUpLighting(Uint32 offset);
-  bool DrawObjects(Uint32 offset);
-  bool DrawParticles(Uint32 offset);
+  bool DrawObjects(Uint32 offset, bool prepare = true);
+  bool DrawParticles(Uint32 offset, bool prepare = true);
 
   vector<Skin> skins;
   vector<Model> models;
