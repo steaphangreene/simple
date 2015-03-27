@@ -30,10 +30,10 @@ cross_prefix=""
 arch="`gcc -v 2>&1 | grep Target | cut -f2 -d' '`"
 libdir="${exec_prefix}/lib/simple/${arch}"
 base_libs="-lSDL2_net -lSDL2_ttf -lSDL2_image -lSDL2_mixer"
-extra_libs=""
-gl_libs="-lGL -lGLU"
+extra_libs="-lOVR -ldl -lX11 -lm -lXrandr -lpthread -lrt"
+gl_libs="-lGL -lGLU -lGLEW"
 
-if [ $arch == i586-mingw32msvc ]; then
+if [ $arch = i586-mingw32msvc ]; then
   cross_prefix="/opt/i586-mingw32msvc/bin/"
   extra_libs="-lSDL -lpng -ltiff -ljpeg -lz"
   gl_libs="-lopengl32 -lglu32"

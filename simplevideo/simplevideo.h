@@ -22,8 +22,8 @@
 #ifndef SIMPLEVIDEO_H
 #define SIMPLEVIDEO_H
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_opengl.h"
 
 class SimpleScene;
 class SimpleGUI;
@@ -79,18 +79,9 @@ class SimpleVideo {
   static SimpleVideo *Current() { return current; };
   static SimpleVideo *CurrentVideo() { return Current(); };  // Depricated
 
-  void SBSOn() {
-    sbs = true;
-    ResizeGL(xsize, ysize);
-  }
-  void SBSOff() {
-    sbs = false;
-    ResizeGL(xsize, ysize);
-  }
-  void ToggleSBS() {
-    sbs = !sbs;
-    ResizeGL(xsize, ysize);
-  }
+  void SBSOn();
+  void SBSOff();
+  void ToggleSBS();
 
   void VSyncOn();
   void VSyncOff();

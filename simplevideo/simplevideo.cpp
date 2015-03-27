@@ -37,6 +37,9 @@
 
 using namespace std;
 
+#define GLEW_STATIC
+#include "GL/glew.h"
+
 #include "simplevideo.h"
 #include "st.h"
 
@@ -44,6 +47,11 @@ using namespace std;
 #include "simplegui.h"
 
 #include "GL/glu.h"
+
+#include <OVR_CAPI_GL.h>
+#include <Extras/OVR_Math.h>
+using namespace OVR;
+#include "SDL2/SDL_syswm.h"
 
 SimpleVideo *SimpleVideo::current = NULL;
 
@@ -100,6 +108,8 @@ SimpleVideo::SimpleVideo(int xs, int ys, float asp, bool fullscr) {
                             SDL_WINDOWPOS_UNDEFINED, xs, ys, window_flags);
   glcontext = SDL_GL_CreateContext(window);
   ResizeGL(xsize, ysize);
+
+  glewInit();
 
   // Set the clear color to black
   glClearColor(0.1, 0.1, 0.1, 1.0);
@@ -208,13 +218,164 @@ SimpleVideo::~SimpleVideo() {
   // at_exit handles all this
 }
 
+ovrHmd hmd = NULL;
+GLuint frameBuffer;
+GLuint texture;
+GLuint renderBuffer;
+ovrEyeRenderDesc eyeRenderDesc[2];
+ovrGLTexture eyeTexture[2];
+ovrRecti eyeRenderViewport[2];
+GLuint MVPMatrixLocation;
+
+void SimpleVideo::SBSOn() {
+  sbs = true;
+  ResizeGL(xsize, ysize);
+
+  //  ovrInitParams params = {OVR_MINOR_VERSION, 0, NULL, 0};
+  //  bool res = ovr_Initialize(&params);
+  bool res = ovr_Initialize();
+  fprintf(stderr, "RES: %d\n", res);
+  hmd = ovrHmd_Create(0);
+  if (hmd == NULL) {
+    hmd = ovrHmd_CreateDebug(ovrHmd_DK1);
+  }
+
+  ovrSizei recommendedTex0Size =
+      ovrHmd_GetFovTextureSize(hmd, ovrEye_Left, hmd->DefaultEyeFov[0], 1.0f);
+  ovrSizei recommendedTex1Size =
+      ovrHmd_GetFovTextureSize(hmd, ovrEye_Right, hmd->DefaultEyeFov[1], 1.0f);
+  ovrSizei renderTargetSize;
+  renderTargetSize.w = recommendedTex0Size.w + recommendedTex1Size.w;
+  renderTargetSize.h = std::max(recommendedTex0Size.h, recommendedTex1Size.h);
+
+  glGenFramebuffers(1, &frameBuffer);
+
+  glGenTextures(1, &texture);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, renderTargetSize.w,
+               renderTargetSize.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+
+  glGenRenderbuffers(1, &renderBuffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+                        renderTargetSize.w, renderTargetSize.h);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER, renderBuffer);
+
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glDeleteFramebuffers(1, &frameBuffer);
+    glDeleteTextures(1, &texture);
+    glDeleteRenderbuffers(1, &renderBuffer);
+
+    ovrHmd_Destroy(hmd);
+
+    ovr_Shutdown();
+
+    sbs = false;
+    ResizeGL(xsize, ysize);
+    return;
+  }
+
+  eyeRenderViewport[0].Pos.x = 0;
+  eyeRenderViewport[0].Pos.y = 0;
+  eyeRenderViewport[0].Size.w = renderTargetSize.w / 2;
+  eyeRenderViewport[0].Size.h = renderTargetSize.h;
+  eyeRenderViewport[1].Pos.x = (renderTargetSize.w + 1) / 2;
+  eyeRenderViewport[1].Pos.y = 0;
+  eyeRenderViewport[1].Size.w = renderTargetSize.w / 2;
+  eyeRenderViewport[1].Size.h = renderTargetSize.h;
+
+  eyeTexture[0].OGL.Header.API = ovrRenderAPI_OpenGL;
+  eyeTexture[0].OGL.Header.TextureSize = renderTargetSize;
+  eyeTexture[0].OGL.Header.RenderViewport = eyeRenderViewport[0];
+  eyeTexture[0].OGL.TexId = texture;
+
+  eyeTexture[1] = eyeTexture[0];
+  eyeTexture[1].OGL.Header.RenderViewport = eyeRenderViewport[1];
+
+  SDL_SysWMinfo info;
+
+  SDL_VERSION(&info.version);
+
+  SDL_GetWindowWMInfo(window, &info);
+
+  ovrGLConfig cfg;
+  cfg.OGL.Header.API = ovrRenderAPI_OpenGL;
+  cfg.OGL.Header.BackBufferSize.w = xsize;
+  cfg.OGL.Header.BackBufferSize.h = ysize;
+  cfg.OGL.Header.Multisample = 1;
+  cfg.OGL.Disp = info.info.x11.display;
+
+  ovrFovPort eyeFov[2] = {hmd->DefaultEyeFov[0], hmd->DefaultEyeFov[1]};
+
+  ovrHmd_ConfigureRendering(
+      hmd, &cfg.Config,
+      ovrDistortionCap_Vignette | ovrDistortionCap_TimeWarp |
+          ovrDistortionCap_Overdrive | ovrDistortionCap_LinuxDevFullscreen,
+      eyeFov, eyeRenderDesc);
+
+  ovrHmd_SetEnabledCaps(hmd, (vsync ? 0 : ovrHmdCap_NoVSync) |
+                                 ovrHmdCap_LowPersistence |
+                                 ovrHmdCap_DynamicPrediction);
+
+  ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
+                                    ovrTrackingCap_MagYawCorrection |
+                                    ovrTrackingCap_Position,
+                           0);
+
+  ovrHmd_RecenterPose(hmd);
+}
+
+void SimpleVideo::SBSOff() {
+  ovrFovPort eyeFov[2] = {hmd->DefaultEyeFov[0], hmd->DefaultEyeFov[1]};
+  ovrHmd_ConfigureRendering(hmd, NULL, 0, eyeFov, eyeRenderDesc);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  glDeleteFramebuffers(1, &frameBuffer);
+  glDeleteTextures(1, &texture);
+  glDeleteRenderbuffers(1, &renderBuffer);
+
+  ovrHmd_Destroy(hmd);
+
+  ovr_Shutdown();
+
+  sbs = false;
+
+  SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+
+  ResizeGL(xsize, ysize);
+}
+
+void SimpleVideo::ToggleSBS() {
+  if (sbs)
+    SBSOff();
+  else
+    SBSOn();
+}
+
 void SimpleVideo::VSyncOn() {
-  SDL_GL_SetSwapInterval(1);
+  if (sbs)
+    ovrHmd_SetEnabledCaps(
+        hmd, ovrHmdCap_LowPersistence | ovrHmdCap_DynamicPrediction);
+  else
+    SDL_GL_SetSwapInterval(1);
   vsync = true;
 }
 
 void SimpleVideo::VSyncOff() {
-  SDL_GL_SetSwapInterval(0);
+  if (sbs)
+    ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_NoVSync | ovrHmdCap_LowPersistence |
+                                   ovrHmdCap_DynamicPrediction);
+  else
+    SDL_GL_SetSwapInterval(0);
   vsync = false;
 }
 
@@ -259,7 +420,7 @@ bool SimpleVideo::StartScene() {
     zoom = targ_zoom;
   }
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  if (!sbs) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Enable depth testing for hidden line removal
   glEnable(GL_DEPTH_TEST);
@@ -315,31 +476,77 @@ bool SimpleVideo::StartScene() {
 }
 
 bool SimpleVideo::FinishScene() {
-  glFlush();
-  SDL_GL_SwapWindow(window);
+  if (!sbs) glFlush();
+  if (!sbs) SDL_GL_SwapWindow(window);
 
   return true;
 }
 
+const unsigned int projection_modifier =
+    ovrProjection_RightHanded | ovrProjection_ClipRangeOpenGL;
 bool SimpleVideo::Render(Uint32 cur_time) {
-  if (sbs) {
-    glViewport(0, 0, (GLint)xsize / 2, (GLint)ysize);
-  }
   if (!StartScene()) return false;
+  ovrPosef eyeRenderPose[2];
+  if (sbs) {
+    ovrHmd_DismissHSWDisplay(hmd);
+    ovrHmd_BeginFrame(hmd, 0);
+
+    ovrVector3f hmdToEyeViewOffset[2] = {eyeRenderDesc[0].HmdToEyeViewOffset,
+                                         eyeRenderDesc[1].HmdToEyeViewOffset};
+    ovrHmd_GetEyePoses(hmd, 0, hmdToEyeViewOffset, eyeRenderPose, nullptr);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ovrEyeType eye = hmd->EyeRenderOrder[0];
+
+    ovrVector3f hmd_position;
+    hmd_position.x = -eyeRenderPose[eye].Position.x;
+    hmd_position.y = -eyeRenderPose[eye].Position.y;
+    hmd_position.z = -eyeRenderPose[eye].Position.z;
+    Matrix4f MVPMatrix =
+        Matrix4f(ovrMatrix4f_Projection(eyeRenderDesc[eye].Fov, 0.01f, 10000.0f,
+                                        projection_modifier)) *
+        Matrix4f(Quatf(eyeRenderPose[eye].Orientation).Inverted()) *
+        Matrix4f::Translation(hmd_position);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(&MVPMatrix.Transposed().M[0][0]);
+    glMatrixMode(GL_MODELVIEW);
+
+    glViewport(eyeRenderViewport[eye].Pos.x, eyeRenderViewport[eye].Pos.y,
+               eyeRenderViewport[eye].Size.w, eyeRenderViewport[eye].Size.h);
+  }
   if (gui && !gui->RenderStart(cur_time, true)) return false;
   if (scene && !scene->Render(cur_time, true)) return false;
   if (gui && !gui->RenderFinish(cur_time, true)) return false;
 
   if (sbs) {
-    glViewport((GLint)xsize / 2, 0, (GLint)xsize / 2, (GLint)ysize);
+    ovrEyeType eye = hmd->EyeRenderOrder[1];
+
+    ovrVector3f hmd_position;
+    hmd_position.x = -eyeRenderPose[eye].Position.x;
+    hmd_position.y = -eyeRenderPose[eye].Position.y;
+    hmd_position.z = -eyeRenderPose[eye].Position.z;
+    Matrix4f MVPMatrix =
+        Matrix4f(ovrMatrix4f_Projection(eyeRenderDesc[eye].Fov, 0.01f, 10000.0f,
+                                        projection_modifier)) *
+        Matrix4f(Quatf(eyeRenderPose[eye].Orientation).Inverted()) *
+        Matrix4f::Translation(hmd_position);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(&MVPMatrix.Transposed().M[0][0]);
+    glMatrixMode(GL_MODELVIEW);
+
+    glViewport(eyeRenderViewport[eye].Pos.x, eyeRenderViewport[eye].Pos.y,
+               eyeRenderViewport[eye].Size.w, eyeRenderViewport[eye].Size.h);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    glMatrixMode(GL_PROJECTION);
-    glTranslatef(-0.2, 0.0, 0.0);
-    glMatrixMode(GL_MODELVIEW);
+
     if (gui && !gui->RenderStart(cur_time, true)) return false;
     if (scene && !scene->Render(cur_time, false)) return false;
     if (gui && !gui->RenderFinish(cur_time, true)) return false;
+    ovrHmd_EndFrame(hmd, eyeRenderPose, &eyeTexture[0].Texture);
   }
   return FinishScene();
 }

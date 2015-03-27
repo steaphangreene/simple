@@ -29,14 +29,14 @@ win32:	libsimpleconfig.win32_a
 #All of this is usually overridden by the main Makefile
 CXX=	g++
 FLAGS=	--std=c++11 -g -Wall -Werror -DSDL_DEBUG=SDL_INIT_NOPARACHUTE `pkg-config sdl2 --cflags` `pkg-config zziplib --cflags`
-LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lGL -lGLU
+LIBS=	`pkg-config sdl2 --libs` `pkg-config zziplib --libs` -lOVR -ldl -lX11 -lm -lXrandr -lpthread -lrt -lGL -lGLU -lGLEW
 WCXX=	i586-mingw32msvc-g++
 WFLAGS=	-s -O2 -Wall -Werror `/opt/i586-mingw32msvc/bin/pkg-config sdl2 --cflags`
 WLIBS=	`/opt/i586-mingw32msvc/bin/pkg-config sdl2 --libs` -lSDL -lpng -ljpeg -lpng `/opt/i586-mingw32msvc/bin/pkg-config zziplib --libs` -lopengl32 -lglu32
 
 OBJS:=	$(ARCH)/simpleconfig.o
 CXXFLAGS:=	$(FLAGS) -I../simpletexture -I../simplegui -I../simplevideo -I../simplescene -I../simplemodel
-CXXLIBS:=	-lSDL2_ttf -lSDL2_image $(LIBS) ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a
+CXXLIBS:=	-lSDL2_ttf -lSDL2_image ../simplegui/$(ARCH)/libsimplegui.a ../simpletexture/$(ARCH)/libsimpletexture.a ../simplevideo/$(ARCH)/libsimplevideo.a ../simplescene/$(ARCH)/libsimplescene.a ../simplemodel/$(ARCH)/libsimplemodel.a $(LIBS)
 
 WOBJS:=	simpleconfig.win32_o
 WCXXFLAGS:=	$(WFLAGS) -I../simpletexture -I../simplegui -I../simplevideo -I../simplescene -I../simplemodel

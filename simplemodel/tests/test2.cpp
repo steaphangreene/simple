@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  SimpleVideo *video = new SimpleVideo(1920, 1080, 0.0, true);
+  SimpleVideo *video = new SimpleVideo(1080, 1920, 0.0, true);
   SimpleAudio *audio = new SimpleAudio(4096);
   SimpleScene *scene = new SimpleScene();
   SimpleGUI *gui = new SimpleGUI(ASPECT_FIXED_Y | ASPECT_FIXED_X, 16.0 / 9.0);
